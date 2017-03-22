@@ -1,2 +1,2 @@
-# Capstone-Project
-Capstone project
+# Capstone-Project - Retirement Helper
+## Description
