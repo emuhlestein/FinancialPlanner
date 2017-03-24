@@ -6,8 +6,43 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.intelliviz.retirementhelper.MainActivity">
+    tools:context="com.intelliviz.retirementhelper.MainActivity"
+    android:background="@color/colorPrimary">
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Hello World!" />
+    <Button
+        android:text="@string/login_string"
+        android:textSize="28sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginTop="44dp"
+        android:id="@+id/login_button"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="@string/new_user_label"
+        android:textSize="22sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_button"
+        android:layout_alignStart="@+id/login_button"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="28dp"
+        android:id="@+id/new_user_button"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="@string/forgot_password"
+        android:textSize="22sp"
+        android:layout_marginEnd="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/new_user_button"
+        android:layout_alignStart="@+id/new_user_button"
+        android:layout_marginTop="14dp"
+        android:id="@+id/forgot_password_button"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>
