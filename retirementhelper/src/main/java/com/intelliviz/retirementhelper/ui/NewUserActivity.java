@@ -17,6 +17,5 @@ public class NewUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
         ButterKnife.bind(this);
-        mUserName.setHint("Name");
     }
 }
