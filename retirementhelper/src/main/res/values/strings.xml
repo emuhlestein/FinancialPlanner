@@ -3,4 +3,8 @@
     <string name="login_string">Login</string>
     <string name="new_user_label">New User</string>
     <string name="forgot_password">Forgot Password</string>
+    <string name="resgistration_name">Name</string>
+    <string name="registration_birthdate">Birthdate</string>
+    <string name="registration_email">email</string>
+    <string name="registration_password">Password</string>
 </resources>

@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.intelliviz.retirementhelper.MainActivity"
+    tools:context="com.intelliviz.retirementhelper.ui.MainActivity"
     android:background="@color/colorPrimary">
 
     <Button
