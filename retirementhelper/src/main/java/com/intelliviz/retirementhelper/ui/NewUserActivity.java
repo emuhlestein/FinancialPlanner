@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,11 @@ import com.intelliviz.retirementhelper.R;
 
 import butterknife.ButterKnife;
 
+/**
+ * Class to manager the registration of a new user.
+ * CLass gathers user name (email) and password information.
+ * @author Ed Muhlestein
+ */
 public class NewUserActivity extends AppCompatActivity {
 
     @Override
@@ -24,6 +30,8 @@ public class NewUserActivity extends AppCompatActivity {
     public void registerUser(View view) {
         validateEmail();
         validatePassword();
+        Intent intent = new Intent(this, SummaryActivity.class);
+        startActivity(intent);
     }
 
     private void validatePassword() {
