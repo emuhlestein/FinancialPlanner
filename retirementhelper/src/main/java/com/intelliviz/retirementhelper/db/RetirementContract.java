@@ -29,6 +29,7 @@ public class RetirementContract {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_EMAIL = "email";
         public static final String COLUMN_PASSWORD = "password";
+        // yyyy-MM-dd
         public static final String COLUMN_BIRTHDATE = "birthdate";
     }
 }
