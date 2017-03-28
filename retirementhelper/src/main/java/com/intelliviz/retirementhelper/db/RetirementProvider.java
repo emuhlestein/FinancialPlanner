@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "movies";
-    private static final int DBASE_VERSION = 1;
+    private static final int DBASE_VERSION = 2;
     private static final int PERSONALINFO_ID = 101;
     private static final int PERSONALINFO_LIST = 102;
 
@@ -169,9 +169,9 @@ public class RetirementProvider extends ContentProvider {
             String sql = "CREATE TABLE " + RetirementContract.PeronsalInfoEntry.TABLE_NAME +
                     " ( " + RetirementContract.PeronsalInfoEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL + " TEXT NOT NULL, " +
-                    RetirementContract.PeronsalInfoEntry.COLUMN_NAME + " TEXT NOT NULL, " +
-                    RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD + " TEXT NOT NULL, " +
-                    RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE + " TEXT NOT NULL);";
+                    RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD + " TEXT, " +
+                    RetirementContract.PeronsalInfoEntry.COLUMN_NAME + " TEXT, " +
+                    RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE + " TEXT);";
 
             db.execSQL(sql);
         }
