@@ -93,8 +93,10 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoListen
     @Override
     public void onQueryUserInfo(Cursor cursor, Object cookie) {
         if(cursor == null || !cursor.moveToFirst()) {
-            // email does not exist in db; can add it
+            // email is valid and does not exist in db; can add it
             return;
+        } else {
+            // email already exists; don't add it.
         }
 
         String dbEmail = "";
