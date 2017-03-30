@@ -90,9 +90,7 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
                 RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL + " = ?";
         String[] selectionArgs = {mEmail};
 
-        Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, mEmail);
-        uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(mEmail).build();
+        Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(mEmail).build();
         userInfoQueryHandler.startQuery(1, null, uri, null, selection, selectionArgs, null);
     }
 
@@ -101,34 +99,9 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         if(cursor == null || !cursor.moveToFirst()) {
             // email is valid and does not exist in db; can add it
             addUserInfo();
-            return;
         } else {
             // email already exists; don't add it.
             // TODO pop up toast that says email already in use
-        }
-
-        String dbEmail = "";
-        int emailIndex = cursor.getColumnIndex(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL);
-        if(emailIndex != -1) {
-            dbEmail = cursor.getString(emailIndex);
-            /*
-            if(dbEmail.equals(email)) {
-                // email already in use
-                // TODO pop up toast that says email already in use
-                mEmailStatus = UserInfoConstants.EMAIL_IN_USE;
-            } else {
-                // email not in use; add it
-                UserInfoQueryHandler emailQueryHandler =
-                        new UserInfoQueryHandler(getContentResolver(), this);
-                ContentValues values = new ContentValues();
-                values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD, "x");
-                values.put(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL, email);
-
-
-                Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(email).build();
-                emailQueryHandler.startInsert(1, null, uri, values);
-            }
-            */
         }
     }
 
