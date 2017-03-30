@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
  * CLass gathers user name (email) and password information.
  * @author Ed Muhlestein
  */
-public class NewUserActivity extends AppCompatActivity implements UserInfoListener {
+public class NewUserActivity extends AppCompatActivity implements UserInfoQueryListener {
     private String mEmail;
     private String mPassword;
     @Bind(R.id.password_edit_text) EditText mPasswordEditText;
@@ -90,12 +90,14 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoListen
                 RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL + " = ?";
         String[] selectionArgs = {mEmail};
 
-        Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(mEmail).build();
+        Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, mEmail);
+        uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(mEmail).build();
         userInfoQueryHandler.startQuery(1, null, uri, null, selection, selectionArgs, null);
     }
 
     @Override
-    public void onQueryUserInfo(Cursor cursor, Object cookie) {
+    public void onQueryUserInfo(int token, Object cookie, Cursor cursor) {
         if(cursor == null || !cursor.moveToFirst()) {
             // email is valid and does not exist in db; can add it
             addUserInfo();
@@ -131,8 +133,8 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoListen
     }
 
     @Override
-    public void onInsertUserInfo(Uri insertedUri, Object cookie) {
-        String id = insertedUri.getLastPathSegment();
+    public void onInsertUserInfo(int token, Object cookie, Uri uri) {
+        String id = uri.getLastPathSegment();
         if(!id.equals(-1)) {
             Toast.makeText(this, "Successfully add " + mEmail, Toast.LENGTH_LONG).show();
         }
@@ -162,26 +164,26 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoListen
 
     private class UserInfoQueryHandler extends AsyncQueryHandler {
 
-        private WeakReference<UserInfoListener> mListener;
+        private WeakReference<UserInfoQueryListener> mListener;
 
-        public UserInfoQueryHandler(ContentResolver cr, UserInfoListener listener) {
+        public UserInfoQueryHandler(ContentResolver cr, UserInfoQueryListener listener) {
             super(cr);
             mListener = new WeakReference<>(listener);
         }
 
         @Override
         protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-            final UserInfoListener listener = mListener.get();
+            final UserInfoQueryListener listener = mListener.get();
             if(listener != null) {
-                listener.onQueryUserInfo(cursor, cookie);
+                listener.onQueryUserInfo(token, cookie, cursor);
             }
         }
 
         @Override
         protected void onInsertComplete(int token, Object cookie, Uri uri) {
-            final UserInfoListener listener = mListener.get();
+            final UserInfoQueryListener listener = mListener.get();
             if(listener != null) {
-                listener.onInsertUserInfo(uri, cookie);
+                listener.onInsertUserInfo(token, cookie, uri);
             }
         }
     }

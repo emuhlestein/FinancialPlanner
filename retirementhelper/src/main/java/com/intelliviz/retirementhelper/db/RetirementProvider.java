@@ -20,19 +20,23 @@ import android.text.TextUtils;
 
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
-    private static final String DBASE_NAME = "movies";
+    private static final String DBASE_NAME = "retirement";
     private static final int DBASE_VERSION = 3;
-    private static final int PERSONALINFO_ID = 101;
-    private static final int PERSONALINFO_LIST = 102;
+    private static final int PERSONALINFO_LIST = 101;
+    private static final int PERSONALINFO_ID = 102;
+    private static final int PERSONALINFO_EMAIL = 103;
+
 
     private static UriMatcher sUriMatcher;
 
     static {
-        sUriMatcher = new UriMatcher((UriMatcher.NO_MATCH));
+        sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO, PERSONALINFO_LIST);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO + "/#", PERSONALINFO_ID);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO + "/*", PERSONALINFO_EMAIL);
     }
 
     @Override
@@ -63,6 +67,11 @@ public class RetirementProvider extends ContentProvider {
             case PERSONALINFO_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.PeronsalInfoEntry.TABLE_NAME);
                 sqLiteQueryBuilder.appendWhere(RetirementContract.PeronsalInfoEntry._ID +
+                        "=" + uri.getLastPathSegment());
+                break;
+            case PERSONALINFO_EMAIL:
+                sqLiteQueryBuilder.setTables(RetirementContract.PeronsalInfoEntry.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL +
                         "=" + uri.getLastPathSegment());
                 break;
             default:
