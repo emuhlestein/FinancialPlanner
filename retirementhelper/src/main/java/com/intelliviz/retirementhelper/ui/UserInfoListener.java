@@ -9,5 +9,5 @@ import android.net.Uri;
 
 public interface UserInfoListener {
     void onQueryUserInfo(Cursor cursor, Object cookie);
-    void onInsertEmail(Uri uri, Object cookie);
+    void onInsertUserInfo(Uri uri, Object cookie);
 }

@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "movies";
-    private static final int DBASE_VERSION = 2;
+    private static final int DBASE_VERSION = 3;
     private static final int PERSONALINFO_ID = 101;
     private static final int PERSONALINFO_LIST = 102;
 
@@ -29,6 +29,10 @@ public class RetirementProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher((UriMatcher.NO_MATCH));
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO, PERSONALINFO_LIST);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO + "/#", PERSONALINFO_ID);
     }
 
     @Override

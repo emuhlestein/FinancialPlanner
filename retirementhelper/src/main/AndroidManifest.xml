@@ -17,6 +17,13 @@
         </activity>
         <activity android:name=".ui.NewUserActivity" />
         <activity android:name=".ui.SummaryActivity"></activity>
+
+        <provider
+            android:name="com.intelliviz.retirementhelper.db.RetirementProvider"
+            android:authorities="com.intelliviz.retirementhelper.db.RetirementProvider"
+            android:label="my provider"
+            android:exported="true" />
+
     </application>
 
 </manifest>
