@@ -3,6 +3,7 @@ package com.intelliviz.retirementhelper.ui;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -63,8 +64,7 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         // now check password in db.
         validateUser();
 
-        //Intent intent = new Intent(this, SummaryActivity.class);
-        //startActivity(intent);
+
     }
 
     /**
@@ -110,6 +110,8 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         String id = uri.getLastPathSegment();
         if(!id.equals(-1)) {
             Toast.makeText(this, "Successfully add " + mEmail, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, SummaryActivity.class);
+            startActivity(intent);
         }
     }
 
