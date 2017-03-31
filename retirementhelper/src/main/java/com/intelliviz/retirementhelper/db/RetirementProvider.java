@@ -21,10 +21,12 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 3;
+    private static final int DBASE_VERSION = 4;
     private static final int PERSONALINFO_LIST = 101;
     private static final int PERSONALINFO_ID = 102;
     private static final int PERSONALINFO_EMAIL = 103;
+    private static final int EXPENSE_LIST = 301;
+    private static final int EXPENSE_ID = 302;
 
 
     private static UriMatcher sUriMatcher;
@@ -37,6 +39,10 @@ public class RetirementProvider extends ContentProvider {
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO + "/#", PERSONALINFO_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO + "/*", PERSONALINFO_EMAIL);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_EXPENSE, EXPENSE_LIST);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_EXPENSE + "/#", EXPENSE_ID);
     }
 
     @Override
@@ -54,6 +60,12 @@ public class RetirementProvider extends ContentProvider {
                 return RetirementContract.PeronsalInfoEntry.CONTENT_TYPE;
             case PERSONALINFO_ID:
                 return RetirementContract.PeronsalInfoEntry.CONTENT_ITEM_TYPE;
+            case PERSONALINFO_EMAIL:
+                return RetirementContract.PeronsalInfoEntry.CONTENT_ITEM_TYPE;
+            case EXPENSE_LIST:
+                return RetirementContract.ExpenseEntery.CONTENT_TYPE;
+            case EXPENSE_ID:
+                return RetirementContract.ExpenseEntery.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -73,6 +85,14 @@ public class RetirementProvider extends ContentProvider {
                 sqLiteQueryBuilder.setTables(RetirementContract.PeronsalInfoEntry.TABLE_NAME);
                 sqLiteQueryBuilder.appendWhere(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL +
                         "=" + uri.getLastPathSegment());
+                break;
+            case EXPENSE_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.ExpenseEntery.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.ExpenseEntery._ID +
+                        "=" + uri.getLastPathSegment());
+                break;
+            case EXPENSE_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.ExpenseEntery.TABLE_NAME);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
@@ -105,6 +125,16 @@ public class RetirementProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
+            case EXPENSE_LIST:
+                // The second parameter will allow an empty row to be inserted. If it was null, then no row
+                // can be inserted if values is empty.
+                rowId = db.insert(RetirementContract.ExpenseEntery.TABLE_NAME, null, values);
+                if (rowId > -1) {
+                    returnUri = ContentUris.withAppendedId(uri, rowId);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri.toString());
         }
@@ -123,6 +153,11 @@ public class RetirementProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.PeronsalInfoEntry.TABLE_NAME,
                         RetirementContract.PeronsalInfoEntry._ID + "=" + id, null);
+                break;
+            case EXPENSE_ID:
+                id = uri.getLastPathSegment();
+                rowsDeleted = db.delete(RetirementContract.ExpenseEntery.TABLE_NAME,
+                        RetirementContract.ExpenseEntery._ID + "=" + id, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
@@ -154,6 +189,22 @@ public class RetirementProvider extends ContentProvider {
                             selectionArgs);
                 }
                 break;
+            case EXPENSE_ID:
+                id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdated = db.update(RetirementContract.ExpenseEntery.TABLE_NAME,
+                            values,
+                            RetirementContract.ExpenseEntery._ID + "=?",
+                            new String[]{id});
+                } else {
+                    rowsUpdated = db.update(RetirementContract.ExpenseEntery.TABLE_NAME,
+                            values,
+                            RetirementContract.ExpenseEntery._ID + "=" + id
+                                    + " and "
+                                    + selection,
+                            selectionArgs);
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -178,13 +229,24 @@ public class RetirementProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            // create the movie table
+            // create the peronal info table
             String sql = "CREATE TABLE " + RetirementContract.PeronsalInfoEntry.TABLE_NAME +
                     " ( " + RetirementContract.PeronsalInfoEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL + " TEXT NOT NULL, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD + " TEXT, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_NAME + " TEXT, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE + " TEXT);";
+
+            db.execSQL(sql);
+
+            // create the expense table
+            sql = "CREATE TABLE " + RetirementContract.ExpenseEntery.TABLE_NAME +
+                    " ( " + RetirementContract.ExpenseEntery._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.ExpenseEntery.COLUMN_CAT_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.ExpenseEntery.COLUMN_YEAR + " TEXT NOT NULL, " +
+                    RetirementContract.ExpenseEntery.COLUMN_MONTH + " TEXT NOT NULL, " +
+                    RetirementContract.ExpenseEntery.COLUMN_ACTUAL_AMOUNT + " TEXT NOT NULL, " +
+                    RetirementContract.ExpenseEntery.COLUMN_RETIRE_AMOUNT + " TEXT NOT NULL);";
 
             db.execSQL(sql);
         }
