@@ -15,8 +15,10 @@ public class RetirementContract {
 
     public static final String PATH_PERSONALINFO = "personalinfo";
     public static final String PATH_EXPENSE = "expense";
+    public static final String PATH_CATEGORY = "category";
 
-    private RetirementContract() {}
+    private RetirementContract() {
+    }
 
     public static final class PeronsalInfoEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PERSONALINFO).build();
@@ -48,5 +50,18 @@ public class RetirementContract {
         public static final String COLUMN_MONTH = "month";
         public static final String COLUMN_ACTUAL_AMOUNT = "actual_amount";
         public static final String COLUMN_RETIRE_AMOUNT = "retire_amount";
+    }
+
+    public static final class CategoryEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_CATEGORY).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CATEGORY;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CATEGORY;
+
+        public static final String TABLE_NAME = PATH_CATEGORY;
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_PARENT_NAME = "parent_name";
     }
 }

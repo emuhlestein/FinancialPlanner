@@ -25,6 +25,8 @@ public class RetirementProvider extends ContentProvider {
     private static final int PERSONALINFO_LIST = 101;
     private static final int PERSONALINFO_ID = 102;
     private static final int PERSONALINFO_EMAIL = 103;
+    private static final int CATEGORY_LIST = 201;
+    private static final int CATEGORY_ID = 202;
     private static final int EXPENSE_LIST = 301;
     private static final int EXPENSE_ID = 302;
 
@@ -39,6 +41,10 @@ public class RetirementProvider extends ContentProvider {
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO + "/#", PERSONALINFO_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO + "/*", PERSONALINFO_EMAIL);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_CATEGORY, CATEGORY_LIST);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_CATEGORY + "/#", CATEGORY_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_EXPENSE, EXPENSE_LIST);
 
@@ -66,6 +72,10 @@ public class RetirementProvider extends ContentProvider {
                 return RetirementContract.ExpenseEntery.CONTENT_TYPE;
             case EXPENSE_ID:
                 return RetirementContract.ExpenseEntery.CONTENT_ITEM_TYPE;
+            case CATEGORY_LIST:
+                return RetirementContract.CategoryEntry.CONTENT_TYPE;
+            case CATEGORY_ID:
+                return RetirementContract.CategoryEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -85,6 +95,14 @@ public class RetirementProvider extends ContentProvider {
                 sqLiteQueryBuilder.setTables(RetirementContract.PeronsalInfoEntry.TABLE_NAME);
                 sqLiteQueryBuilder.appendWhere(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL +
                         "=" + uri.getLastPathSegment());
+                break;
+            case CATEGORY_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.CategoryEntry.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.CategoryEntry._ID +
+                        "=" + uri.getLastPathSegment());
+                break;
+            case CATEGORY_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.CategoryEntry.TABLE_NAME);
                 break;
             case EXPENSE_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.ExpenseEntery.TABLE_NAME);
@@ -125,6 +143,16 @@ public class RetirementProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
+            case CATEGORY_LIST:
+                // The second parameter will allow an empty row to be inserted. If it was null, then no row
+                // can be inserted if values is empty.
+                rowId = db.insert(RetirementContract.CategoryEntry.TABLE_NAME, null, values);
+                if (rowId > -1) {
+                    returnUri = ContentUris.withAppendedId(uri, rowId);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
             case EXPENSE_LIST:
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
@@ -153,6 +181,11 @@ public class RetirementProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.PeronsalInfoEntry.TABLE_NAME,
                         RetirementContract.PeronsalInfoEntry._ID + "=" + id, null);
+                break;
+            case CATEGORY_ID:
+                id = uri.getLastPathSegment();
+                rowsDeleted = db.delete(RetirementContract.CategoryEntry.TABLE_NAME,
+                        RetirementContract.CategoryEntry._ID + "=" + id, null);
                 break;
             case EXPENSE_ID:
                 id = uri.getLastPathSegment();
@@ -184,6 +217,22 @@ public class RetirementProvider extends ContentProvider {
                     rowsUpdated = db.update(RetirementContract.PeronsalInfoEntry.TABLE_NAME,
                             values,
                             RetirementContract.PeronsalInfoEntry._ID + "=" + id
+                                    + " and "
+                                    + selection,
+                            selectionArgs);
+                }
+                break;
+            case CATEGORY_ID:
+                id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdated = db.update(RetirementContract.CategoryEntry.TABLE_NAME,
+                            values,
+                            RetirementContract.ExpenseEntery._ID + "=?",
+                            new String[]{id});
+                } else {
+                    rowsUpdated = db.update(RetirementContract.CategoryEntry.TABLE_NAME,
+                            values,
+                            RetirementContract.CategoryEntry._ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
@@ -239,6 +288,14 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
+            // create the category table
+            sql = "CREATE TABLE " + RetirementContract.CategoryEntry.TABLE_NAME +
+                    " ( " + RetirementContract.CategoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.CategoryEntry.COLUMN_NAME + " INTEGER NOT NULL, " +
+                    RetirementContract.CategoryEntry.COLUMN_PARENT_NAME + " TEXT NOT NULL);";
+
+            db.execSQL(sql);
+
             // create the expense table
             sql = "CREATE TABLE " + RetirementContract.ExpenseEntery.TABLE_NAME +
                     " ( " + RetirementContract.ExpenseEntery._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -254,6 +311,8 @@ public class RetirementProvider extends ContentProvider {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PeronsalInfoEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.CategoryEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.ExpenseEntery.TABLE_NAME);
             onCreate(db);
         }
     }
