@@ -3,6 +3,9 @@ package com.intelliviz.retirementhelper.ui;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class SummaryActivity extends AppCompatActivity {
+    private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     @Bind(R.id.navigation_view) NavigationView mNavigationView;
     @Bind(R.id.drawer_layout) DrawerLayout mDrawer;
 
@@ -27,6 +31,18 @@ public class SummaryActivity extends AppCompatActivity {
 
         ActionBar ab = getSupportActionBar();
         ab.setSubtitle("Summary");
+
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment;
+
+        fragment = fm.findFragmentByTag(SUMMARY_FRAG_TAG);
+        if (fragment == null) {
+            fragment = SummaryFragment.newInstance();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
+            ft.commit();
+        }
+
         createNavDrawer();
 
     }
