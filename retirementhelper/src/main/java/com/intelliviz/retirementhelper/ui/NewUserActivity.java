@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -39,8 +38,9 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         setContentView(R.layout.activity_new_user);
         ButterKnife.bind(this);
 
-        ActionBar ab = getSupportActionBar();
-        ab.setSubtitle("New User");
+        // TODO create toolbar
+        //ActionBar ab = getSupportActionBar();
+        //ab.setSubtitle("New User");
     }
 
     public void registerUser(View view) {

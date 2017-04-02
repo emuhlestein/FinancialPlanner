@@ -3,6 +3,9 @@ package com.intelliviz.retirementhelper.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import com.intelliviz.retirementhelper.R;
 import butterknife.ButterKnife;
 
 public class SummaryFragment extends Fragment {
+    private ActionBarDrawerToggle mDrawerToggle;
 
     public SummaryFragment() {
         // Required empty public constructor
@@ -33,6 +37,16 @@ public class SummaryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.summary_contents, container, false);
         ButterKnife.bind(this, view);
+
+        AppCompatActivity activity = (AppCompatActivity)getActivity();
+        ActionBar actionBar = activity.getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
+
+
+
         return view;
     }
 
