@@ -32,4 +32,13 @@ The user will then set up income sources like savings/investing accounts, pensio
 ### Establish Milestones
 The user can now establish milestones. These are ages of interest to the user. This will allow the user to see what income the can expect to see at a given age. It will also estimate their expneses at the given age. Based on income growth and reduction in expenses, a retirement age can be estimated.
 
+## Third Party Libs Used
+### Firebase
+For persisting data to cloud for purpose of sharing.
+
+### Butterknife
+For making UI code easier.
+
+### MPAndroidChart
+For creating graphs.
 
