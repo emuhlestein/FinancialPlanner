@@ -15,3 +15,7 @@ The app is intended to help people plan for their retirements. It will help them
 *	Graphical show monthly expenses and income.
 *	Graphical show when a person can expect to retire.
 *	Firebase will be backend so information can be saved and shared
+
+## Project Purpose
+This project is to satifiy a requirment of Udacity Android Nano degree program. But more importantly, it is intended to help people plan for their retirement.
+
