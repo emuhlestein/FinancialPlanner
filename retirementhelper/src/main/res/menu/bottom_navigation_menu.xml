@@ -2,21 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/item1"
+        android:id="@+id/expenses_menu"
         android:enabled="true"
-        android:title="Test 1"
+        android:title="Expenses"
+        android:icon="@mipmap/ic_pie_chart_black_24dp"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/item2"
+        android:id="@+id/income_menu"
         android:enabled="true"
-        android:title="test2"
+        android:title="Income"
+        android:icon="@mipmap/ic_monetization_on_black_24dp"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/item3"
+        android:id="@+id/taxes_menu"
         android:enabled="true"
-        android:title="test3"
+        android:title="Taxes"
+        android:icon="@mipmap/ic_account_balance_black_24dp"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/milestones_menu"
+        android:enabled="true"
+        android:title="Milestones"
+        android:icon="@mipmap/ic_schedule_black_24dp"
         app:showAsAction="ifRoom" />
 
 </menu>

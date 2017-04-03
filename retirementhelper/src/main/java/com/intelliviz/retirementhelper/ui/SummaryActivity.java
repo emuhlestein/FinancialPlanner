@@ -19,6 +19,10 @@ import butterknife.ButterKnife;
 
 public class SummaryActivity extends AppCompatActivity {
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
+    private static final String EXPENSES_FRAG_TAG = "expenses frag tag";
+    private static final String INCOME_FRAG_TAG = "income frag tag";
+    private static final String TAXES_FRAG_TAG = "taxes frag tag";
+    private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
     @Bind(R.id.summary_toolbar) Toolbar mToolbar;
     @Bind(R.id.bottom_navigation) BottomNavigationView mBottonNavigation;
 
@@ -47,9 +51,38 @@ public class SummaryActivity extends AppCompatActivity {
         mBottonNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                FragmentManager fm = getSupportFragmentManager();
+                Fragment fragment = null;
+                FragmentTransaction ft = null;
                 switch(item.getItemId()) {
+                    case R.id.expenses_menu:
+                        fragment = ExpensesFragment.newInstance();
+                        ft = fm.beginTransaction();
+                        ft.replace(R.id.content_frame, fragment, EXPENSES_FRAG_TAG);
+                        ft.commit();
+                        break;
+                    case R.id.income_menu:
+                        fragment = IncomeFragment.newInstance();
+                        ft = fm.beginTransaction();
+                        ft.replace(R.id.content_frame, fragment, INCOME_FRAG_TAG);
+                        ft.commit();
+                        break;
+                    case R.id.taxes_menu:
+                        fragment = TaxesFragment.newInstance();
+                        ft = fm.beginTransaction();
+                        ft.replace(R.id.content_frame, fragment, TAXES_FRAG_TAG);
+                        ft.commit();
+                        break;
+                    case R.id.milestones_menu:
+                        fragment = MilestonesFragment.newInstance();
+                        ft = fm.beginTransaction();
+                        ft.replace(R.id.content_frame, fragment, MILESTONES_FRAG_TAG);
+                        ft.commit();
+                        break;
+                    default:
+                        return false;
                 }
-                return false;
+                return true;
             }
         });
     }
