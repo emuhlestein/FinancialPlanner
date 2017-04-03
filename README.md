@@ -14,4 +14,31 @@ The app is intended to help people plan for their retirements. It will help them
 *	Track personal data like birthday so mile stones can be determined.
 *	Graphical show monthly expenses and income.
 *	Graphical show when a person can expect to retire.
-*	Firebase will be backend so information can be saved and shared
+*	Firebase will be backend so information can be saved and shared.
+
+## Getting Started
+### Register
+To get started, a user will need to register. An email and password are required. This will allow the data to be stored using Firebase. 
+
+### Personal Information
+Next the will enter name and birthdate. Sensitive information like Social Security number is not stored. The birthday will allow the app to estimate what Social Security payments will be, the date at which pensions begin and what income can be expected at a certain age.
+
+### Set up Expense Categories
+The user will then set up exepense categories so they can track their expenses based on these categories. The categories can be whatever the user desires. For example, Rent, Mortgage, Healthcare, Groceries, Utilities and so on. Expeneses are tracked on a monthly basis.
+
+### Set up Income Sources
+The user will then set up income sources like savings/investing accounts, pensions, government-sponsored pensions like Social Security in the US.
+
+### Establish Milestones
+The user can now establish milestones. These are ages of interest to the user. This will allow the user to see what income the can expect to see at a given age. It will also estimate their expneses at the given age. Based on income growth and reduction in expenses, a retirement age can be estimated.
+
+## Third Party Libs Used
+### Firebase
+For persisting data to cloud for purpose of sharing.
+
+### Butterknife
+For making UI code easier.
+
+### MPAndroidChart
+For creating graphs.
+
