@@ -1,6 +1,8 @@
 package com.intelliviz.retirementhelper.ui;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -8,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.intelliviz.retirementhelper.R;
 
@@ -17,6 +20,7 @@ import butterknife.ButterKnife;
 public class SummaryActivity extends AppCompatActivity {
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     @Bind(R.id.summary_toolbar) Toolbar mToolbar;
+    @Bind(R.id.bottom_navigation) BottomNavigationView mBottonNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,15 @@ public class SummaryActivity extends AppCompatActivity {
             ft.add(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
             ft.commit();
         }
+
+        mBottonNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch(item.getItemId()) {
+                }
+                return false;
+            }
+        });
     }
 
     /**
