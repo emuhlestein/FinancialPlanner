@@ -1,117 +1,165 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:id="@+id/pin_indicators"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context="com.intelliviz.retirementhelper.ui.PinFragment">
 
-    <LinearLayout
-        android:id="@+id/pin_indicators"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Retirement Helper"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="24dp"
-            android:textSize="22dp"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-            <RadioButton
-                android:id="@+id/pin_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <RadioButton
-                android:id="@+id/pin_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <RadioButton
-                android:id="@+id/pin_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <RadioButton
-                android:id="@+id/pin_4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Enter your PIN"
-            android:layout_marginTop="12dp"
-            android:textSize="22dp"/>
-    </LinearLayout>
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/pin_indicators"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="12dp"
         android:gravity="center"
-        android:columnCount="3">
+        android:text="Retirement Helper"
+        android:textSize="22dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/pin_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/pin_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/pin_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/pin_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"
+        android:text="Enter your PIN"
+        android:textSize="22dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/pin_1_button"
-            android:layout_column="0"
-            android:text="1"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="1" />
+
         <Button
             android:id="@+id/pin_2_button"
-            android:layout_column="1"
-            android:text="2"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="2" />
+
         <Button
             android:id="@+id/pin_3_button"
-            android:layout_column="2"
-            android:text="3"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="3" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/pin_4_button"
-            android:layout_column="0"
-            android:text="4"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="4" />
+
         <Button
             android:id="@+id/pin_5_button"
-            android:layout_column="1"
-            android:text="5"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="5" />
+
         <Button
             android:id="@+id/pin_6_button"
-            android:layout_column="2"
-            android:text="6"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="6" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/pin_7_button"
-            android:layout_column="0"
-            android:text="7"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="7" />
+
         <Button
             android:id="@+id/pin_8_button"
-            android:layout_column="1"
-            android:text="8"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="8" />
+
         <Button
             android:id="@+id/pin_9_button"
-            android:layout_column="2"
-            android:text="9"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="9" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <Button
-            android:layout_column="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
             android:text="" />
+
         <Button
             android:id="@+id/pin_0_button"
-            android:layout_column="1"
-            android:text="0"
-            android:onClick="onClickPinButton"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="0" />
+
         <Button
             android:id="@+id/pin_x_button"
-            android:layout_column="2"
-            android:text="X"
-            android:onClick="onClickPinButton"/>
-    </GridLayout>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPinButton"
+            android:text="x" />
+    </LinearLayout>
+</LinearLayout>
 
-</RelativeLayout>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 
@@ -74,6 +75,11 @@ public class PinActivity extends AppCompatActivity {
                 break;
             default:
                 return;
+        }
+
+        if(mCurrentButton == NUM_PIN_DIGITS) {
+            String pin = String.valueOf(mPin);
+            Toast.makeText(this, pin, Toast.LENGTH_LONG).show();
         }
     }
 
