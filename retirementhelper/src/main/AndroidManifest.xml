@@ -16,14 +16,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.NewUserActivity" />
-        <activity android:name=".ui.SummaryActivity"></activity>
+        <activity android:name=".ui.SummaryActivity" />
 
         <provider
-            android:name="com.intelliviz.retirementhelper.db.RetirementProvider"
+            android:name=".db.RetirementProvider"
             android:authorities="com.intelliviz.retirementhelper.db.RetirementProvider"
-            android:label="my provider"
-            android:exported="true" />
+            android:exported="true"
+            android:label="my provider" />
 
+        <activity android:name=".ui.PinActivity"></activity>
     </application>
 
 </manifest>
