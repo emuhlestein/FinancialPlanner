@@ -278,7 +278,7 @@ public class RetirementProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            // create the peronal info table
+            // create the personal info table
             String sql = "CREATE TABLE " + RetirementContract.PeronsalInfoEntry.TABLE_NAME +
                     " ( " + RetirementContract.PeronsalInfoEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL + " TEXT NOT NULL, " +

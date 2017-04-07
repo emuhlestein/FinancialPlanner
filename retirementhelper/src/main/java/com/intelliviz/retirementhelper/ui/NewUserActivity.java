@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -16,9 +18,13 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static android.widget.Toast.makeText;
 
 /**
  * Class to manager the registration of a new user.
@@ -28,6 +34,10 @@ import butterknife.ButterKnife;
 public class NewUserActivity extends AppCompatActivity implements UserInfoQueryListener {
     private String mEmail;
     private String mPassword;
+
+    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
+    @Bind(R.id.name_edit_text) EditText mNameEditText;
+    @Bind(R.id.birthdate_edit_text) EditText mBirthdateEditText;
     @Bind(R.id.password_edit_text) EditText mPasswordEditText;
     @Bind(R.id.password2_edit_text) EditText mPassword2EditText;
     @Bind(R.id.email_edit_text) EditText mEmailEditText;
@@ -45,9 +55,30 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
 
     public void registerUser(View view) {
 
+        String name = mNameEditText.getText().toString();
+        String birthdate = mBirthdateEditText.getText().toString();
         String email = mEmailEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();
         String password2 = mPassword2EditText.getText().toString();
+
+        if(!validateName(name)) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Name is not valid. Must have at least 1 alpha character and no numbers.", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return;
+        } else {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Name is valid.", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+
+        if(!validateBirthdate(birthdate)) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Birthdate is not valid.", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return;
+        } else {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Birthdate is valid.", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+
         if(!validateEmail(email)) {
             // TODO pop up toast saying that email is invalid
             return;
@@ -63,8 +94,60 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
 
         // now check password in db.
         validateUser();
+    }
 
+    /**
+     * Validate name. Make sure name has at least one alpha character.
+     * @param name The name to validate.
+     * @return True if name is valid. false otherwise.
+     */
+    private boolean validateName(String name) {
+        if(name.matches("[a-zA-Z]+")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    private boolean validateBirthdate(String birthdate) {
+        String[] tokens = birthdate.split("-");
+        if(tokens.length != 3) {
+            return false;
+        }
+
+        // Validate month
+        if(tokens[0].length() != 2) {
+            return false;
+        }
+        if(!tokens[0].matches("[0-9][0-9]")) {
+            return false;
+        }
+
+        // Validate day
+        if(tokens[1].length() != 2) {
+            return false;
+        }
+        if(!tokens[1].matches("[0-9][0-9]")) {
+            return false;
+        }
+
+        // Validate year
+        if(tokens[2].length() != 4) {
+            return false;
+        }
+        if(!tokens[2].matches("[0-9][0-9][0-9][0-9]")) {
+            return false;
+        }
+
+        String date = tokens[2]+"-"+tokens[0]+"-"+tokens[1];
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            dateFormat.parse(date);
+        } catch(ParseException e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -109,7 +192,7 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
     public void onInsertUserInfo(int token, Object cookie, Uri uri) {
         String id = uri.getLastPathSegment();
         if(!id.equals(-1)) {
-            Toast.makeText(this, "Successfully add " + mEmail, Toast.LENGTH_LONG).show();
+            makeText(this, "Successfully add " + mEmail, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, SummaryActivity.class);
             startActivity(intent);
         }
