@@ -1,23 +1,38 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class PinActivity extends AppCompatActivity {
+    public static final String START_REASON = "reason";
+    public static final int NEW_PIN = 1;
+    public static final int SIGN_IN_PIN = 2;
     private static final int NUM_PIN_DIGITS = 4;
     private RadioButton[] mPinViews;
     private int mCurrentButton = 0;
     private char[] mPin;
+    private String mPin1;
+    private String mPin2;
+    private boolean mFirstPin = true;
+    private int mStartReason;
+    @Bind(R.id.pin_label) TextView mPinLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
+        ButterKnife.bind(this);
 
         mPin = new char[NUM_PIN_DIGITS];
         mPin[0] = ' ';
@@ -25,12 +40,15 @@ public class PinActivity extends AppCompatActivity {
         mPin[2] = ' ';
         mPin[3] = ' ';
 
-
         mPinViews = new RadioButton[NUM_PIN_DIGITS];
         mPinViews[0] = (RadioButton) findViewById(R.id.pin_1);
         mPinViews[1] = (RadioButton) findViewById(R.id.pin_2);
         mPinViews[2] = (RadioButton) findViewById(R.id.pin_3);
         mPinViews[3] = (RadioButton) findViewById(R.id.pin_4);
+
+        Intent intent = getIntent();
+        mStartReason = intent.getIntExtra(START_REASON, NEW_PIN);
+        mPinLabel.setText("Please re-enter pin");
     }
 
     public void onClickPinButton(View view) {
@@ -80,6 +98,36 @@ public class PinActivity extends AppCompatActivity {
         if(mCurrentButton == NUM_PIN_DIGITS) {
             String pin = String.valueOf(mPin);
             Toast.makeText(this, pin, Toast.LENGTH_LONG).show();
+
+            if(mStartReason == NEW_PIN) {
+                createNewPIN(pin);
+            } else {
+
+            }
+        }
+    }
+
+    private void createNewPIN(String pin) {
+        if(mFirstPin) {
+            // need to have pin re-entered to validate.
+            mFirstPin = false;
+            mPin1 = pin;
+            mPinViews[0].setChecked(false);
+            mPinViews[1].setChecked(false);
+            mPinViews[2].setChecked(false);
+            mPinViews[3].setChecked(false);
+            mPinLabel.setText("Please re-enter pin");
+        } else {
+            if(pin.equals(mPin1)) {
+                // pins match.
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("result", pin);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
+            } else {
+                Toast.makeText(this, "Pins entered pins do not match. Please try again.", Toast.LENGTH_SHORT).show();
+                mFirstPin = true;
+            }
         }
     }
 

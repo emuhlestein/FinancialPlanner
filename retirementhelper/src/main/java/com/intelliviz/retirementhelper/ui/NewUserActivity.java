@@ -32,6 +32,7 @@ import static android.widget.Toast.makeText;
  * @author Ed Muhlestein
  */
 public class NewUserActivity extends AppCompatActivity implements UserInfoQueryListener {
+    private final static int PIN_REQUEST = 1;
     private String mEmail;
     private String mPassword;
     private String mBirthday;
@@ -224,6 +225,22 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
 
         } else {
             // Everything checks out; start pin activity
+            Intent intent = new Intent(this, PinActivity.class);
+            intent.putExtra(PinActivity.START_REASON, PinActivity.NEW_PIN);
+            startActivityForResult(intent, PIN_REQUEST);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == PIN_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                String pin = data.getStringExtra("results");
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Got pin back from PinActivity: " + pin, Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
         }
     }
 
