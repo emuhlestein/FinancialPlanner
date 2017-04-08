@@ -10,4 +10,5 @@ import android.net.Uri;
 public interface UserInfoQueryListener {
     void onQueryUserInfo(int token, Object cookie, Cursor cursor);
     void onInsertUserInfo(int token, Object cookie, Uri uri);
+    void onUpdateUserInfo(int token, Object cookie, int result);
 }

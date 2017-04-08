@@ -34,6 +34,8 @@ import static android.widget.Toast.makeText;
 public class NewUserActivity extends AppCompatActivity implements UserInfoQueryListener {
     private String mEmail;
     private String mPassword;
+    private String mBirthday;
+    private String mName;
 
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.name_edit_text) EditText mNameEditText;
@@ -56,7 +58,7 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
     public void registerUser(View view) {
 
         String name = mNameEditText.getText().toString();
-        String birthdate = mBirthdateEditText.getText().toString();
+        String birthday = mBirthdateEditText.getText().toString();
         String email = mEmailEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();
         String password2 = mPassword2EditText.getText().toString();
@@ -70,7 +72,7 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
             snackbar.show();
         }
 
-        if(!validateBirthdate(birthdate)) {
+        if(!validateBirthday(birthday)) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Birthdate is not valid.", Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
@@ -80,20 +82,29 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         }
 
         if(!validateEmail(email)) {
-            // TODO pop up toast saying that email is invalid
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "email is not valid.", Snackbar.LENGTH_LONG);
+            snackbar.show();
             return;
+        } else {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "email is valid.", Snackbar.LENGTH_LONG);
+            snackbar.show();
         }
 
-        if(!validatePassword(password, password2)) {
-            // TODO pop up toast saying password is not valid
+        if(!password.equals(password2)) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Passwords do not match. Please reenter.", Snackbar.LENGTH_LONG);
+            snackbar.show();
             return;
+        } else {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Passwords match.", Snackbar.LENGTH_LONG);
+            snackbar.show();
         }
 
+        mName = name;
+        mBirthday = birthday;
         mEmail = email;
         mPassword = password;
 
-        // now check password in db.
-        validateUser();
+       updateUserInfo();
     }
 
     /**
@@ -102,14 +113,14 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
      * @return True if name is valid. false otherwise.
      */
     private boolean validateName(String name) {
-        if(name.matches("[a-zA-Z]+")) {
+        if(name.matches("[a-zA-Z]+[' ']*[a-zA-Z]*")) {
             return true;
         } else {
             return false;
         }
     }
 
-    private boolean validateBirthdate(String birthdate) {
+    private boolean validateBirthday(String birthdate) {
         String[] tokens = birthdate.split("-");
         if(tokens.length != 3) {
             return false;
@@ -154,16 +165,25 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
      * Passwords must match and must be valid.
      * TODO valid password rules need to be defined.
      */
-    private boolean validatePassword(String password1, String password2) {
-        return true;
+    private boolean validateEmail(String email) {
+        String email_pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        if(email.matches(email_pattern)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    /**
-     * Passwords must match and must be valid.
-     * TODO valid password rules need to be defined.
-     */
-    private boolean validateEmail(String email) {
-        return true;
+    private void updateUserInfo() {
+        UserInfoQueryHandler userInfoQueryHandler =
+                new UserInfoQueryHandler(getContentResolver(), this);
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL, mEmail);
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD, mPassword);
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE, mBirthday);
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_NAME, mName);
+        userInfoQueryHandler.startUpdate(1, null, RetirementContract.PeronsalInfoEntry.CONTENT_URI, values, null, null);
     }
 
     private void validateUser() {
@@ -198,14 +218,23 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         }
     }
 
+    @Override
+    public void onUpdateUserInfo(int token, Object cookie, int rowsUpdated) {
+        if(rowsUpdated != 1) {
+
+        } else {
+            // Everything checks out; start pin activity
+        }
+    }
+
     private void addUserInfo() {
         UserInfoQueryHandler userInfoQueryHandler =
                 new UserInfoQueryHandler(getContentResolver(), this);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL, mEmail);
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD, mPassword);
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE, "");
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_NAME, "");
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE, mBirthday);
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_NAME, mName);
         //Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(mEmail).build();
         userInfoQueryHandler.startInsert(1, null, RetirementContract.PeronsalInfoEntry.CONTENT_URI, values);
     }
@@ -242,6 +271,14 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
             final UserInfoQueryListener listener = mListener.get();
             if(listener != null) {
                 listener.onInsertUserInfo(token, cookie, uri);
+            }
+        }
+
+        @Override
+        protected void onUpdateComplete(int token, Object cookie, int result) {
+            final UserInfoQueryListener listener = mListener.get();
+            if(listener != null) {
+                listener.onUpdateUserInfo(token, cookie, result);
             }
         }
     }

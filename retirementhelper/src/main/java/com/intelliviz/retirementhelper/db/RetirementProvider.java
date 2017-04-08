@@ -22,9 +22,7 @@ public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
     private static final int DBASE_VERSION = 5;
-    private static final int PERSONALINFO_LIST = 101;
-    private static final int PERSONALINFO_ID = 102;
-    private static final int PERSONALINFO_EMAIL = 103;
+    private static final int PERSONALINFO_ID = 101;
     private static final int CATEGORY_LIST = 201;
     private static final int CATEGORY_ID = 202;
     private static final int EXPENSE_LIST = 301;
@@ -36,11 +34,7 @@ public class RetirementProvider extends ContentProvider {
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO, PERSONALINFO_LIST);
-
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO + "/#", PERSONALINFO_ID);
-
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO + "/*", PERSONALINFO_EMAIL);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO, PERSONALINFO_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_CATEGORY, CATEGORY_LIST);
 
@@ -62,11 +56,7 @@ public class RetirementProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         switch(sUriMatcher.match(uri)) {
-            case PERSONALINFO_LIST:
-                return RetirementContract.PeronsalInfoEntry.CONTENT_TYPE;
             case PERSONALINFO_ID:
-                return RetirementContract.PeronsalInfoEntry.CONTENT_ITEM_TYPE;
-            case PERSONALINFO_EMAIL:
                 return RetirementContract.PeronsalInfoEntry.CONTENT_ITEM_TYPE;
             case EXPENSE_LIST:
                 return RetirementContract.ExpenseEntery.CONTENT_TYPE;
@@ -87,14 +77,8 @@ public class RetirementProvider extends ContentProvider {
         SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
         switch(sUriMatcher.match(uri)) {
             case PERSONALINFO_ID:
+                // get the personal info table, there should be only one.
                 sqLiteQueryBuilder.setTables(RetirementContract.PeronsalInfoEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.PeronsalInfoEntry._ID +
-                        "=" + uri.getLastPathSegment());
-                break;
-            case PERSONALINFO_EMAIL:
-                sqLiteQueryBuilder.setTables(RetirementContract.PeronsalInfoEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL +
-                        "=" + uri.getLastPathSegment());
                 break;
             case CATEGORY_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.CategoryEntry.TABLE_NAME);
@@ -133,16 +117,6 @@ public class RetirementProvider extends ContentProvider {
         db = mSqliteHelper.getWritableDatabase();
 
         switch(sUriMatcher.match(uri)) {
-            case PERSONALINFO_LIST:
-                // The second parameter will allow an empty row to be inserted. If it was null, then no row
-                // can be inserted if values is empty.
-                rowId = db.insert(RetirementContract.PeronsalInfoEntry.TABLE_NAME, null, values);
-                if (rowId > -1) {
-                    returnUri = ContentUris.withAppendedId(uri, rowId);
-                } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
-                }
-                break;
             case CATEGORY_LIST:
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
@@ -177,11 +151,6 @@ public class RetirementProvider extends ContentProvider {
         String id;
 
         switch(sUriMatcher.match(uri)) {
-            case PERSONALINFO_ID:
-                id = uri.getLastPathSegment();
-                rowsDeleted = db.delete(RetirementContract.PeronsalInfoEntry.TABLE_NAME,
-                        RetirementContract.PeronsalInfoEntry._ID + "=" + id, null);
-                break;
             case CATEGORY_ID:
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.CategoryEntry.TABLE_NAME,
@@ -207,20 +176,8 @@ public class RetirementProvider extends ContentProvider {
 
         switch(sUriMatcher.match(uri)) {
             case PERSONALINFO_ID:
-                id = uri.getLastPathSegment();
-                if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = db.update(RetirementContract.PeronsalInfoEntry.TABLE_NAME,
-                            values,
-                            RetirementContract.PeronsalInfoEntry._ID + "=?",
-                            new String[]{id});
-                } else {
-                    rowsUpdated = db.update(RetirementContract.PeronsalInfoEntry.TABLE_NAME,
-                            values,
-                            RetirementContract.PeronsalInfoEntry._ID + "=" + id
-                                    + " and "
-                                    + selection,
-                            selectionArgs);
-                }
+                rowsUpdated = db.update(RetirementContract.PeronsalInfoEntry.TABLE_NAME,
+                        values, null, null);
                 break;
             case CATEGORY_ID:
                 id = uri.getLastPathSegment();
@@ -307,7 +264,7 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
-            String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('-1', '-1', '-1', '-1');";
+            String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1');";
             db.execSQL(ROW);
         }
 
