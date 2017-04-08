@@ -6,3 +6,6 @@
 .DS_Store
 /build
 /captures
+.idea/
+retirementhelper/libs/
+retirementhelper/src/main/res/drawable/
