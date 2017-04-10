@@ -1,7 +1,5 @@
 package com.intelliviz.retirementhelper.ui;
 
-import android.content.AsyncQueryHandler;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,8 +14,8 @@ import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.util.UserInfoQueryHandler;
 
-import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -254,49 +252,5 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_NAME, mName);
         //Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(mEmail).build();
         userInfoQueryHandler.startInsert(1, null, RetirementContract.PeronsalInfoEntry.CONTENT_URI, values);
-    }
-
-    private class UserData {
-        public String email;
-        public String password;
-        public UserData(String email, String password) {
-            this.email = email;
-            this.password = password;
-        }
-    }
-
-
-    private class UserInfoQueryHandler extends AsyncQueryHandler {
-
-        private WeakReference<UserInfoQueryListener> mListener;
-
-        public UserInfoQueryHandler(ContentResolver cr, UserInfoQueryListener listener) {
-            super(cr);
-            mListener = new WeakReference<>(listener);
-        }
-
-        @Override
-        protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-            final UserInfoQueryListener listener = mListener.get();
-            if(listener != null) {
-                listener.onQueryUserInfo(token, cookie, cursor);
-            }
-        }
-
-        @Override
-        protected void onInsertComplete(int token, Object cookie, Uri uri) {
-            final UserInfoQueryListener listener = mListener.get();
-            if(listener != null) {
-                listener.onInsertUserInfo(token, cookie, uri);
-            }
-        }
-
-        @Override
-        protected void onUpdateComplete(int token, Object cookie, int result) {
-            final UserInfoQueryListener listener = mListener.get();
-            if(listener != null) {
-                listener.onUpdateUserInfo(token, cookie, result);
-            }
-        }
     }
 }

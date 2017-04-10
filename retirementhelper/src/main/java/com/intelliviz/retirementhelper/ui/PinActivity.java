@@ -2,6 +2,8 @@ package com.intelliviz.retirementhelper.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -14,7 +16,7 @@ import com.intelliviz.retirementhelper.R;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class PinActivity extends AppCompatActivity {
+public class PinActivity extends AppCompatActivity implements UserInfoQueryListener {
     public static final String START_REASON = "reason";
     public static final int NEW_PIN = 1;
     public static final int SIGN_IN_PIN = 2;
@@ -102,7 +104,8 @@ public class PinActivity extends AppCompatActivity {
             if(mStartReason == NEW_PIN) {
                 createNewPIN(pin);
             } else {
-
+                // sign in with pin
+                signInWithPIN(pin);
             }
         }
     }
@@ -131,6 +134,10 @@ public class PinActivity extends AppCompatActivity {
         }
     }
 
+    private void signInWithPIN(String pin) {
+
+    }
+
     private void setPinDigit(char ch) {
         if(mCurrentButton == NUM_PIN_DIGITS) {
             return;
@@ -138,5 +145,20 @@ public class PinActivity extends AppCompatActivity {
         mPin[mCurrentButton] = ch;
         mPinViews[mCurrentButton].setChecked(true);
         mCurrentButton++;
+    }
+
+    @Override
+    public void onQueryUserInfo(int token, Object cookie, Cursor cursor) {
+
+    }
+
+    @Override
+    public void onInsertUserInfo(int token, Object cookie, Uri uri) {
+
+    }
+
+    @Override
+    public void onUpdateUserInfo(int token, Object cookie, int result) {
+
     }
 }
