@@ -34,6 +34,7 @@ public class RetirementContract {
         public static final String COLUMN_PASSWORD = "password";
         // yyyy-MM-dd
         public static final String COLUMN_BIRTHDATE = "birthdate";
+        public static final String COLUMN_PIN = "pin";
     }
 
     public static final class ExpenseEntery implements BaseColumns {

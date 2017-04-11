@@ -14,6 +14,8 @@ import java.lang.ref.WeakReference;
  */
 
 public class UserInfoQueryHandler extends AsyncQueryHandler {
+    public static final int TOKEN_USER_INFO = 1;
+    public static final int TOKEN_PIN = 2;
 
     private WeakReference<UserInfoQueryListener> mListener;
 

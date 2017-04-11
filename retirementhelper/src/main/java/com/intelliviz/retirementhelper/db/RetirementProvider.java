@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 5;
+    private static final int DBASE_VERSION = 6;
     private static final int PERSONALINFO_ID = 101;
     private static final int CATEGORY_LIST = 201;
     private static final int CATEGORY_ID = 202;
@@ -241,6 +241,7 @@ public class RetirementProvider extends ContentProvider {
                     RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL + " TEXT NOT NULL, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD + " TEXT, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_NAME + " TEXT, " +
+                    RetirementContract.PeronsalInfoEntry.COLUMN_PIN + " TEXT, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE + " TEXT);";
 
             db.execSQL(sql);
@@ -264,7 +265,7 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
-            String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1');";
+            String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1', '-1');";
             db.execSQL(ROW);
         }
 

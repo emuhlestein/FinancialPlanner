@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.db.RetirementContract;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -49,8 +50,9 @@ public class PinActivity extends AppCompatActivity implements UserInfoQueryListe
         mPinViews[3] = (RadioButton) findViewById(R.id.pin_4);
 
         Intent intent = getIntent();
-        mStartReason = intent.getIntExtra(START_REASON, NEW_PIN);
-        mPinLabel.setText("Please re-enter pin");
+        Bundle bundle = intent.getExtras();
+        mStartReason = bundle.getInt(PinActivity.START_REASON);
+        mPinLabel.setText("Please enter pin");
     }
 
     public void onClickPinButton(View view) {
@@ -115,11 +117,8 @@ public class PinActivity extends AppCompatActivity implements UserInfoQueryListe
             // need to have pin re-entered to validate.
             mFirstPin = false;
             mPin1 = pin;
-            mPinViews[0].setChecked(false);
-            mPinViews[1].setChecked(false);
-            mPinViews[2].setChecked(false);
-            mPinViews[3].setChecked(false);
             mPinLabel.setText("Please re-enter pin");
+            clearPIN();
         } else {
             if(pin.equals(mPin1)) {
                 // pins match.
@@ -130,12 +129,25 @@ public class PinActivity extends AppCompatActivity implements UserInfoQueryListe
             } else {
                 Toast.makeText(this, "Pins entered pins do not match. Please try again.", Toast.LENGTH_SHORT).show();
                 mFirstPin = true;
+                clearPIN();
+                mPinLabel.setText("Please enter pin");
             }
         }
     }
 
-    private void signInWithPIN(String pin) {
+    private void clearPIN() {
+        mPinViews[0].setChecked(false);
+        mPinViews[1].setChecked(false);
+        mPinViews[2].setChecked(false);
+        mPinViews[3].setChecked(false);
+        mCurrentButton = 0;
+    }
 
+    private void signInWithPIN(String pin) {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("result", pin);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 
     private void setPinDigit(char ch) {
@@ -149,7 +161,16 @@ public class PinActivity extends AppCompatActivity implements UserInfoQueryListe
 
     @Override
     public void onQueryUserInfo(int token, Object cookie, Cursor cursor) {
-
+        if(cursor.moveToFirst()) {
+            String userPin = (String)cookie;
+            int pinIndex = cursor.getColumnIndex(RetirementContract.PeronsalInfoEntry.COLUMN_PIN);
+            String pin = cursor.getString(pinIndex);
+            if(pin.equals(userPin)) {
+                Toast.makeText(this, "Pin is valid. Log in user", Toast.LENGTH_LONG).show();
+            } else {
+                // TODO invalid pin; maybe should log invalid attempts.
+            }
+        }
     }
 
     @Override

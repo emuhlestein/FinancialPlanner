@@ -35,6 +35,7 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
     private String mPassword;
     private String mBirthday;
     private String mName;
+    private String mPin;
 
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.name_edit_text) EditText mNameEditText;
@@ -103,7 +104,15 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         mEmail = email;
         mPassword = password;
 
-       updateUserInfo();
+        //updateUserInfo();
+        // Everything checks out; start pin activity to get PIN
+        createPIN();
+    }
+
+    private void createPIN() {
+        Intent intent = new Intent(this, PinActivity.class);
+        intent.putExtra(PinActivity.START_REASON, PinActivity.NEW_PIN);
+        startActivityForResult(intent, PIN_REQUEST);
     }
 
     /**
@@ -182,6 +191,7 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD, mPassword);
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE, mBirthday);
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_NAME, mName);
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PIN, mPin);
         userInfoQueryHandler.startUpdate(1, null, RetirementContract.PeronsalInfoEntry.CONTENT_URI, values, null, null);
     }
 
@@ -194,6 +204,22 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
 
         Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(mEmail).build();
         userInfoQueryHandler.startQuery(1, null, uri, null, selection, selectionArgs, null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == PIN_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Bundle bundle = data.getExtras();
+                String pin = bundle.getString("result");
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Got pin back from PinActivity: " + pin, Snackbar.LENGTH_LONG);
+                snackbar.show();
+                mPin = pin;
+                updateUserInfo();
+            }
+        }
     }
 
     @Override
@@ -219,26 +245,11 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
 
     @Override
     public void onUpdateUserInfo(int token, Object cookie, int rowsUpdated) {
-        if(rowsUpdated != 1) {
-
-        } else {
-            // Everything checks out; start pin activity
-            Intent intent = new Intent(this, PinActivity.class);
-            intent.putExtra(PinActivity.START_REASON, PinActivity.NEW_PIN);
-            startActivityForResult(intent, PIN_REQUEST);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        if (requestCode == PIN_REQUEST) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                String pin = data.getStringExtra("results");
-                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Got pin back from PinActivity: " + pin, Snackbar.LENGTH_LONG);
-                snackbar.show();
-            }
+        if(rowsUpdated == 1) {
+            // Everything checks out; start summary activity
+            Intent intent = new Intent(this, SummaryActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 
