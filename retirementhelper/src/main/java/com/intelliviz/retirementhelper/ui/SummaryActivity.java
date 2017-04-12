@@ -55,6 +55,12 @@ public class SummaryActivity extends AppCompatActivity {
                 Fragment fragment = null;
                 FragmentTransaction ft = null;
                 switch(item.getItemId()) {
+                    case R.id.home_menu:
+                        fragment = SummaryFragment.newInstance();
+                        ft = fm.beginTransaction();
+                        ft.replace(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
+                        ft.commit();
+                        break;
                     case R.id.expenses_menu:
                         fragment = ExpensesFragment.newInstance();
                         ft = fm.beginTransaction();
