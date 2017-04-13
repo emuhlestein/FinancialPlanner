@@ -76,10 +76,12 @@ public class RetirementContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INCOME_SOURCE;
 
         public static final String TABLE_NAME = PATH_INCOME_SOURCE;
+        public static final String COLUMN_TYPE = "income_type";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_BALANCE = "balance";
         public static final String COLUMN_INTEREST = "interest";
         public static final String COLUMN_MONTHLY_INCREASE = "monthly_increase";
         public static final String COLUMN_DATE = "date";
+        public static final String COLUMN_MONTHLY_BENEFIT = "monthly_benefit";
     }
 }

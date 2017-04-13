@@ -21,12 +21,14 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 6;
+    private static final int DBASE_VERSION = 7;
     private static final int PERSONALINFO_ID = 101;
     private static final int CATEGORY_LIST = 201;
     private static final int CATEGORY_ID = 202;
     private static final int EXPENSE_LIST = 301;
     private static final int EXPENSE_ID = 302;
+    private static final int INCOME_SOURCE_LIST = 401;
+    private static final int INCOME_SOURCE_ID = 402;
 
 
     private static UriMatcher sUriMatcher;
@@ -43,6 +45,10 @@ public class RetirementProvider extends ContentProvider {
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_EXPENSE, EXPENSE_LIST);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_EXPENSE + "/#", EXPENSE_ID);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_INCOME_SOURCE, INCOME_SOURCE_LIST);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_INCOME_SOURCE + "/#", INCOME_SOURCE_ID);
     }
 
     @Override
@@ -66,6 +72,10 @@ public class RetirementProvider extends ContentProvider {
                 return RetirementContract.CategoryEntry.CONTENT_TYPE;
             case CATEGORY_ID:
                 return RetirementContract.CategoryEntry.CONTENT_ITEM_TYPE;
+            case INCOME_SOURCE_LIST:
+                return RetirementContract.IncomeSourceEntry.CONTENT_TYPE;
+            case INCOME_SOURCE_ID:
+                return RetirementContract.IncomeSourceEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -95,6 +105,14 @@ public class RetirementProvider extends ContentProvider {
                 break;
             case EXPENSE_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.ExpenseEntery.TABLE_NAME);
+                break;
+            case INCOME_SOURCE_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.IncomeSourceEntry.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.IncomeSourceEntry._ID +
+                        "=" + uri.getLastPathSegment());
+                break;
+            case INCOME_SOURCE_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.IncomeSourceEntry.TABLE_NAME);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
@@ -137,6 +155,16 @@ public class RetirementProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
+            case INCOME_SOURCE_LIST:
+                // The second parameter will allow an empty row to be inserted. If it was null, then no row
+                // can be inserted if values is empty.
+                rowId = db.insert(RetirementContract.IncomeSourceEntry.TABLE_NAME, null, values);
+                if (rowId > -1) {
+                    returnUri = ContentUris.withAppendedId(uri, rowId);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri.toString());
         }
@@ -160,6 +188,11 @@ public class RetirementProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.ExpenseEntery.TABLE_NAME,
                         RetirementContract.ExpenseEntery._ID + "=" + id, null);
+                break;
+            case INCOME_SOURCE_ID:
+                id = uri.getLastPathSegment();
+                rowsDeleted = db.delete(RetirementContract.IncomeSourceEntry.TABLE_NAME,
+                        RetirementContract.IncomeSourceEntry._ID + "=" + id, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
@@ -206,6 +239,22 @@ public class RetirementProvider extends ContentProvider {
                     rowsUpdated = db.update(RetirementContract.ExpenseEntery.TABLE_NAME,
                             values,
                             RetirementContract.ExpenseEntery._ID + "=" + id
+                                    + " and "
+                                    + selection,
+                            selectionArgs);
+                }
+                break;
+            case INCOME_SOURCE_ID:
+                id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdated = db.update(RetirementContract.IncomeSourceEntry.TABLE_NAME,
+                            values,
+                            RetirementContract.IncomeSourceEntry._ID + "=?",
+                            new String[]{id});
+                } else {
+                    rowsUpdated = db.update(RetirementContract.IncomeSourceEntry.TABLE_NAME,
+                            values,
+                            RetirementContract.IncomeSourceEntry._ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
@@ -268,10 +317,12 @@ public class RetirementProvider extends ContentProvider {
             // create the income source table
             sql = "CREATE TABLE " + RetirementContract.IncomeSourceEntry.TABLE_NAME +
                     " ( " + RetirementContract.IncomeSourceEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.IncomeSourceEntry.COLUMN_TYPE + " INTEGER NOT NULL, " +
                     RetirementContract.IncomeSourceEntry.COLUMN_NAME + " TEXT NOT NULL, " +
                     RetirementContract.IncomeSourceEntry.COLUMN_BALANCE + " REAL NOT NULL, " +
                     RetirementContract.IncomeSourceEntry.COLUMN_INTEREST + " REAL NOT NULL, " +
                     RetirementContract.IncomeSourceEntry.COLUMN_MONTHLY_INCREASE + " REAL NOT NULL, " +
+                    RetirementContract.IncomeSourceEntry.COLUMN_MONTHLY_BENEFIT + " REAL NOT NULL, " +
                     RetirementContract.IncomeSourceEntry.COLUMN_DATE + " TEXT NOT NULL);";
 
             db.execSQL(sql);
@@ -285,6 +336,7 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PeronsalInfoEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.CategoryEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.ExpenseEntery.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.IncomeSourceEntry.TABLE_NAME);
             onCreate(db);
         }
     }

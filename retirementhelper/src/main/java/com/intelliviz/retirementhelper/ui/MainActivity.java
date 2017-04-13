@@ -29,6 +29,16 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, PinActivity.class);
                 intent.putExtra(PinActivity.START_REASON, PinActivity.SIGN_IN_PIN);
                 startActivityForResult(intent, PIN_REQUEST);
+            } else {
+                setContentView(R.layout.activity_main);
+                Button mNewUserButton = (Button) findViewById(R.id.new_user_button);
+                mNewUserButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(MainActivity.this, NewUserActivity.class);
+                        startActivity(intent);
+                    }
+                });
             }
         } else {
             setContentView(R.layout.activity_main);

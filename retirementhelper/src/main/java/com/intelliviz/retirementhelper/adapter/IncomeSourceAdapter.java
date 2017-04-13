@@ -51,7 +51,12 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         }
     }
 
-    public void setOnSelectIncomeSource (IncomeFragment.OnSelectIncomeSourceListener listener) {
+    public void swapCursor(Cursor cursor) {
+        mCursor = cursor;
+        notifyDataSetChanged();
+    }
+
+    public void setOnSelectIncomeSourceListener (IncomeFragment.OnSelectIncomeSourceListener listener) {
         mListener = listener;
     }
 
