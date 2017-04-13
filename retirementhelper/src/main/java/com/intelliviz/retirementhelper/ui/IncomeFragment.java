@@ -10,6 +10,14 @@ import android.view.ViewGroup;
 import com.intelliviz.retirementhelper.R;
 
 public class IncomeFragment extends Fragment {
+    public interface OnSelectIncomeSourceListener {
+
+        /**
+         * Callback for when an income source is selected..
+         * @param id The id of the selected income source.
+         */
+        void onSelectIncomeSource(long id);
+    }
 
     public IncomeFragment() {
         // Required empty public constructor

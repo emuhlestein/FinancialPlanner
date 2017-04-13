@@ -265,6 +265,17 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
+            // create the income source table
+            sql = "CREATE TABLE " + RetirementContract.IncomeSourceEntry.TABLE_NAME +
+                    " ( " + RetirementContract.IncomeSourceEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.IncomeSourceEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                    RetirementContract.IncomeSourceEntry.COLUMN_BALANCE + " REAL NOT NULL, " +
+                    RetirementContract.IncomeSourceEntry.COLUMN_INTEREST + " REAL NOT NULL, " +
+                    RetirementContract.IncomeSourceEntry.COLUMN_MONTHLY_INCREASE + " REAL NOT NULL, " +
+                    RetirementContract.IncomeSourceEntry.COLUMN_DATE + " TEXT NOT NULL);";
+
+            db.execSQL(sql);
+
             String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1', '-1');";
             db.execSQL(ROW);
         }
