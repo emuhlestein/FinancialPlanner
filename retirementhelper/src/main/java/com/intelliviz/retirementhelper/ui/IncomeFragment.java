@@ -2,9 +2,13 @@ package com.intelliviz.retirementhelper.ui;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -14,8 +18,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
@@ -25,11 +29,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class IncomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+    private static final int ADD_INCOME_REQUEST = 0;
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
-    @Bind(R.id.gridView) RecyclerView mRecyclerView;
+    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
     @Bind(R.id.emptyView) TextView mEmptyView;
-    @Bind(R.id.progressBar) ProgressBar mProgressBar;
+    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
+    @Bind(R.id.addIncomeTypeFAB) FloatingActionButton mAddIncomeSourceFAB;
     private OnSelectIncomeSourceListener mListener;
 
     public interface OnSelectIncomeSourceListener {
@@ -95,7 +101,25 @@ public class IncomeFragment extends Fragment implements LoaderManager.LoaderCall
         mIncomeSourceAdapter.setOnSelectIncomeSourceListener(mListener);
         getLoaderManager().initLoader(INCOME_TYPE_LOADER, null, this);
 
+        mAddIncomeSourceFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Add new income source", Snackbar.LENGTH_LONG);
+                snackbar.show();
+                Intent intent = new Intent(getContext(), AddIncomeSourceActivity.class);
+                startActivityForResult(intent, ADD_INCOME_REQUEST);
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Bundle bundle = data.getExtras();
+        int value = bundle.getInt("result");
+        Toast.makeText(getContext(), "Got the number: " + value, Toast.LENGTH_LONG).show();
     }
 
     @Override

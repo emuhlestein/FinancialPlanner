@@ -24,7 +24,8 @@
             android:exported="true"
             android:label="my provider" />
 
-        <activity android:name=".ui.PinActivity"></activity>
+        <activity android:name=".ui.PinActivity" />
+        <activity android:name=".ui.AddIncomeSourceActivity"></activity>
     </application>
 
 </manifest>
