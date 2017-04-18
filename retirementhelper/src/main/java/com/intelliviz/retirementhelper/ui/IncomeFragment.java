@@ -2,6 +2,7 @@ package com.intelliviz.retirementhelper.ui;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,9 +31,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class IncomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+    public static final String TAG = IncomeFragment.class.getSimpleName();
     private static final int ADD_INCOME_REQUEST = 0;
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
+    private AlertDialog mAccountTypeDialog;
     @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
     @Bind(R.id.emptyView) TextView mEmptyView;
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
@@ -106,8 +110,24 @@ public class IncomeFragment extends Fragment implements LoaderManager.LoaderCall
             public void onClick(View view) {
                 Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Add new income source", Snackbar.LENGTH_LONG);
                 snackbar.show();
-                Intent intent = new Intent(getContext(), AddIncomeSourceActivity.class);
-                startActivityForResult(intent, ADD_INCOME_REQUEST);
+                //Intent intent = new Intent(getContext(), AddIncomeSourceActivity.class);
+                //startActivityForResult(intent, ADD_INCOME_REQUEST);
+
+                final String[] incomeTypes = getResources().getStringArray(R.array.income_types);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Select an account type");
+                builder.setItems(incomeTypes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int item) {
+                        Toast.makeText(getContext(), "You selected " + incomeTypes[item], Toast.LENGTH_LONG).show();
+                        dialogInterface.dismiss();
+                        Intent intent = new Intent(getContext(), AddIncomeSourceActivity.class);
+                        intent.putExtra(AddIncomeSourceActivity.INCOME_TYPE, item);
+                        startActivityForResult(intent, ADD_INCOME_REQUEST);
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
@@ -117,9 +137,11 @@ public class IncomeFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        /*
         Bundle bundle = data.getExtras();
         int value = bundle.getInt("result");
         Toast.makeText(getContext(), "Got the number: " + value, Toast.LENGTH_LONG).show();
+        */
     }
 
     @Override
