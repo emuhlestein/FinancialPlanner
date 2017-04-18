@@ -30,6 +30,8 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
+
 public class IncomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     public static final String TAG = IncomeFragment.class.getSimpleName();
     private static final int ADD_INCOME_REQUEST = 0;
@@ -135,13 +137,18 @@ public class IncomeFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        /*
-        Bundle bundle = data.getExtras();
-        int value = bundle.getInt("result");
-        Toast.makeText(getContext(), "Got the number: " + value, Toast.LENGTH_LONG).show();
-        */
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+       if(requestCode == ADD_INCOME_REQUEST) {
+           if(resultCode == RESULT_OK) {
+               String incomeSourceType = intent.getStringExtra(AddIncomeSourceActivity.INCOME_TYPE);
+               String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
+               String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
+               String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
+               String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
+
+
+           }
+       }
     }
 
     @Override
