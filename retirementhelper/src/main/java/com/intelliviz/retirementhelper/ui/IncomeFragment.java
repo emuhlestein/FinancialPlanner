@@ -1,6 +1,8 @@
 package com.intelliviz.retirementhelper.ui;
 
 
+import android.content.AsyncQueryHandler;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,13 +28,16 @@ import android.widget.Toast;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.util.RetirementQueryHandler;
+import com.intelliviz.retirementhelper.util.RetirementQueryListener;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
 
-public class IncomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class IncomeFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>, RetirementQueryListener {
     public static final String TAG = IncomeFragment.class.getSimpleName();
     private static final int ADD_INCOME_REQUEST = 0;
     private IncomeSourceAdapter mIncomeSourceAdapter;
@@ -43,6 +48,7 @@ public class IncomeFragment extends Fragment implements LoaderManager.LoaderCall
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.addIncomeTypeFAB) FloatingActionButton mAddIncomeSourceFAB;
     private OnSelectIncomeSourceListener mListener;
+
 
     public interface OnSelectIncomeSourceListener {
 
@@ -56,7 +62,7 @@ public class IncomeFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Loader<Cursor> loader;
-        Uri uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
+        Uri uri = RetirementContract.InstitutionEntry.CONTENT_URI;
         loader = new CursorLoader(getActivity(),
                 uri, null, null, null, null);
         return loader;
@@ -146,7 +152,14 @@ public class IncomeFragment extends Fragment implements LoaderManager.LoaderCall
                String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
                String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
 
+               RetirementQueryHandler queryHandler = new RetirementQueryHandler(getContext());
+               queryHandler.setRetirementQueryListener(this);
 
+               Uri uri = RetirementContract.InstitutionEntry.CONTENT_URI;
+               String[] projection = {RetirementContract.InstitutionEntry.COLUMN_NAME};
+               String selection = RetirementContract.InstitutionEntry.COLUMN_NAME + " = ?";
+               String[] selectionArgs = {instituteName};
+               queryHandler.startQuery(1, intent, uri, projection, selection, selectionArgs, null);
            }
        }
     }
@@ -163,5 +176,69 @@ public class IncomeFragment extends Fragment implements LoaderManager.LoaderCall
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onQueryComplete(int token, Object cookie, Cursor cursor) {
+        if(cursor != null && cursor.moveToFirst()) {
+            // institution exists already; don't add it again
+            // TODO show snackbar message
+        } else {
+            Intent intent = (Intent)cookie;
+            String incomeSourceType = intent.getStringExtra(AddIncomeSourceActivity.INCOME_TYPE);
+            String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
+            String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
+            String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
+            String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
+            ContentValues values = new ContentValues();
+            /*
+            values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
+            values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, instituteName);
+            values.put(RetirementContract.IncomeSourceEntry.COLUMN_BALANCE, balance);
+            values.put(RetirementContract.IncomeSourceEntry.COLUMN_INTEREST, interest);
+            values.put(RetirementContract.IncomeSourceEntry.COLUMN_MONTHLY_INCREASE, monthlyIncrease);
+            values.put(RetirementContract.IncomeSourceEntry.COLUMN_DATE, "TEMP");
+            */
+        }
+    }
+
+
+    static final class QueryHandler extends AsyncQueryHandler {
+
+
+
+        public QueryHandler(Context context) {
+            super(context.getContentResolver());
+        }
+
+        @Override
+        protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+            if(cursor != null && cursor.moveToFirst()) {
+                // income source exists already; don't add it again
+                // TODO show snackbar message
+            } else {
+                Intent intent = (Intent)cookie;
+                String incomeSourceType = intent.getStringExtra(AddIncomeSourceActivity.INCOME_TYPE);
+                String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
+                String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
+                String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
+                String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
+                ContentValues values = new ContentValues();
+                /*
+                values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
+                values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, instituteName);
+                values.put(RetirementContract.IncomeSourceEntry.COLUMN_BALANCE, balance);
+                values.put(RetirementContract.IncomeSourceEntry.COLUMN_INTEREST, interest);
+                values.put(RetirementContract.IncomeSourceEntry.COLUMN_MONTHLY_INCREASE, monthlyIncrease);
+                values.put(RetirementContract.IncomeSourceEntry.COLUMN_DATE, "TEMP");
+                */
+                //QueryHandler queryHandler = new QueryHandler()
+            }
+        }
+
+        @Override
+        protected void onInsertComplete(int token, Object cookie, Uri uri) {
+            super.onInsertComplete(token, cookie, uri);
+        }
     }
 }

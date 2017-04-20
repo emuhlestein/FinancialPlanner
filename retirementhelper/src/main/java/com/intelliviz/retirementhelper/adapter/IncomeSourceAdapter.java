@@ -35,7 +35,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
             return;
         }
 
-        int idIndex = mCursor.getColumnIndex(RetirementContract.IncomeSourceEntry._ID);
+        int idIndex = mCursor.getColumnIndex(RetirementContract.InstitutionEntry._ID);
         if(idIndex != -1) {
             long id = mCursor.getLong(idIndex);
             holder.bindIncomeSource(id);
