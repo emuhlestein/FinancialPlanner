@@ -68,7 +68,7 @@ public class SummaryActivity extends AppCompatActivity {
                         ft.commit();
                         break;
                     case R.id.income_menu:
-                        fragment = IncomeFragment.newInstance();
+                        fragment = IncomeSourceFragment.newInstance();
                         ft = fm.beginTransaction();
                         ft.replace(R.id.content_frame, fragment, INCOME_FRAG_TAG);
                         ft.commit();

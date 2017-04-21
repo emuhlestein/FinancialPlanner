@@ -36,10 +36,12 @@ import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
 
-public class IncomeFragment extends Fragment implements
+public class IncomeSourceFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, RetirementQueryListener {
-    public static final String TAG = IncomeFragment.class.getSimpleName();
-    private static final int ADD_INCOME_REQUEST = 0;
+    public static final String TAG = IncomeSourceFragment.class.getSimpleName();
+    private static final int SAVINGS_REQUEST = 0;
+    private static final int PENSION_REQUEST = 1;
+    private static final int GOV_PENSION_REQUEST = 2;
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
     private AlertDialog mAccountTypeDialog;
@@ -86,12 +88,12 @@ public class IncomeFragment extends Fragment implements
         mIncomeSourceAdapter.swapCursor(null);
     }
 
-    public IncomeFragment() {
+    public IncomeSourceFragment() {
         // Required empty public constructor
     }
 
-    public static IncomeFragment newInstance() {
-        IncomeFragment fragment = new IncomeFragment();
+    public static IncomeSourceFragment newInstance() {
+        IncomeSourceFragment fragment = new IncomeSourceFragment();
         return fragment;
     }
 
@@ -131,7 +133,7 @@ public class IncomeFragment extends Fragment implements
                         dialogInterface.dismiss();
                         Intent intent = new Intent(getContext(), AddIncomeSourceActivity.class);
                         intent.putExtra(AddIncomeSourceActivity.INCOME_TYPE, item);
-                        startActivityForResult(intent, ADD_INCOME_REQUEST);
+                        startActivityForResult(intent, SAVINGS_REQUEST);
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -144,24 +146,29 @@ public class IncomeFragment extends Fragment implements
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-       if(requestCode == ADD_INCOME_REQUEST) {
-           if(resultCode == RESULT_OK) {
-               String incomeSourceType = intent.getStringExtra(AddIncomeSourceActivity.INCOME_TYPE);
-               String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
-               String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
-               String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
-               String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SAVINGS_REQUEST) {
 
-               RetirementQueryHandler queryHandler = new RetirementQueryHandler(getContext());
-               queryHandler.setRetirementQueryListener(this);
+                String incomeSourceType = intent.getStringExtra(AddIncomeSourceActivity.INCOME_TYPE);
+                String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
+                String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
+                String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
+                String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
 
-               Uri uri = RetirementContract.InstitutionEntry.CONTENT_URI;
-               String[] projection = {RetirementContract.InstitutionEntry.COLUMN_NAME};
-               String selection = RetirementContract.InstitutionEntry.COLUMN_NAME + " = ?";
-               String[] selectionArgs = {instituteName};
-               queryHandler.startQuery(1, intent, uri, projection, selection, selectionArgs, null);
-           }
-       }
+                RetirementQueryHandler queryHandler = new RetirementQueryHandler(getContext());
+                queryHandler.setRetirementQueryListener(this);
+
+                Uri uri = RetirementContract.InstitutionEntry.CONTENT_URI;
+                String[] projection = {RetirementContract.InstitutionEntry.COLUMN_NAME};
+                String selection = RetirementContract.InstitutionEntry.COLUMN_NAME + " = ?";
+                String[] selectionArgs = {instituteName};
+                queryHandler.startQuery(1, intent, uri, projection, selection, selectionArgs, null);
+            } else if (requestCode == PENSION_REQUEST) {
+
+            } else if (requestCode == GOV_PENSION_REQUEST) {
+
+            }
+        }
     }
 
     @Override
@@ -190,6 +197,10 @@ public class IncomeFragment extends Fragment implements
             String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
             String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
             String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
+
+            if() {
+
+            }
             ContentValues values = new ContentValues();
             /*
             values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);

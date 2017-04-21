@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -19,10 +20,9 @@ public class AddIncomeSourceActivity extends AppCompatActivity {
     public static final String BALANCE = "balance";
     public static final String INTEREST = "interest";
     public static final String MONTHLY_INCREASE = "monthly_increase";
-    private String mIncomeSourceType;
+    private int mIncomeSourceType;
 
-
-    @Bind(R.id.add_income_source_toolbar) Toolbar mToolbar;
+    private Toolbar mToolbar;
     @Bind(R.id.name_edit_text) EditText mInstituteName;
     @Bind(R.id.balance_text) EditText mBalance;
     @Bind(R.id.annual_interest_text) EditText mAnnualInterest;
@@ -35,27 +35,58 @@ public class AddIncomeSourceActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
-        int incomeType = intent.getIntExtra(INCOME_TYPE, 0);
+        mIncomeSourceType = intent.getIntExtra(INCOME_TYPE, 0);
+        switch(mIncomeSourceType) {
+            case RetirementConstants.INCOME_TYPE_SAVINGS:
+                setContentView(R.layout.activity_add_savings_source);
+                break;
+            case RetirementConstants.INCOME_TYPE_PENSION:
+                setContentView(R.layout.activity_add_pension_source);
+                break;
+            case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                setContentView(R.layout.activity_add_gov_pension_source);
+                break;
+            default:
+                mIncomeSourceType = RetirementConstants.INCOME_TYPE_SAVINGS;
+                setContentView(R.layout.activity_add_savings_source);
+        }
+
+        mToolbar = (Toolbar) findViewById(R.id.add_income_source_toolbar);
 
         setSupportActionBar(mToolbar);
         String []incomeTypes = getResources().getStringArray(R.array.income_types);
-        mIncomeSourceType = incomeTypes[incomeType];
-        mToolbar.setSubtitle(mIncomeSourceType);
+        String incomeSourceType = incomeTypes[mIncomeSourceType];
+        mToolbar.setSubtitle(incomeSourceType);
     }
 
     public void addIncomeSource(View view) {
         Intent returnIntent = new Intent();
 
-        String name = mInstituteName.getText().toString();
-        String balance = mBalance.getText().toString();
-        String interest = mAnnualInterest.getText().toString();
-        String increase = mMonthlyIncrease.getText().toString();
+        EditText instituteName = (EditText) findViewById(R.id.name_edit_text);
+        String name = instituteName.getText().toString();
 
-        returnIntent.putExtra(INCOME_TYPE, mIncomeSourceType);
         returnIntent.putExtra(INSTITUTE_NAME, name);
-        returnIntent.putExtra(BALANCE, balance);
-        returnIntent.putExtra(INTEREST, interest);
-        returnIntent.putExtra(MONTHLY_INCREASE, increase);
+        returnIntent.putExtra(INCOME_TYPE, mIncomeSourceType);
+
+        switch(mIncomeSourceType) {
+            case RetirementConstants.INCOME_TYPE_SAVINGS:
+                EditText balanceEditText = (EditText) findViewById(R.id.balance_text);
+                String balance = balanceEditText.getText().toString();
+                EditText interestEditText = (EditText) findViewById(R.id.annual_interest_text);
+                String interest = interestEditText.getText().toString();
+                EditText monthlyIncreaseEditText = (EditText) findViewById(R.id.monthly_increase_text);
+                String increase = monthlyIncreaseEditText.getText().toString();
+                returnIntent.putExtra(BALANCE, balance);
+                returnIntent.putExtra(INTEREST, interest);
+                returnIntent.putExtra(MONTHLY_INCREASE, increase);
+                break;
+            case RetirementConstants.INCOME_TYPE_PENSION:
+                break;
+            case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                break;
+            default:
+                setResult(Activity.RESULT_CANCELED, returnIntent);
+        }
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.ui.IncomeFragment;
+import com.intelliviz.retirementhelper.ui.IncomeSourceFragment;
 
 /**
  * Created by edm on 4/12/2017.
@@ -16,7 +16,7 @@ import com.intelliviz.retirementhelper.ui.IncomeFragment;
 
 public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapter.IncomeSourceHolder>{
     private Cursor mCursor;
-    private IncomeFragment.OnSelectIncomeSourceListener mListener;
+    private IncomeSourceFragment.OnSelectIncomeSourceListener mListener;
 
     public IncomeSourceAdapter() {
 
@@ -56,7 +56,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         notifyDataSetChanged();
     }
 
-    public void setOnSelectIncomeSourceListener (IncomeFragment.OnSelectIncomeSourceListener listener) {
+    public void setOnSelectIncomeSourceListener (IncomeSourceFragment.OnSelectIncomeSourceListener listener) {
         mListener = listener;
     }
 
