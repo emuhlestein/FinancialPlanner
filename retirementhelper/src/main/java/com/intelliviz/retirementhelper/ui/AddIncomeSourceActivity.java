@@ -67,9 +67,9 @@ public class AddIncomeSourceActivity extends AppCompatActivity {
                 EditText balanceEditText = (EditText) findViewById(R.id.balance_text);
                 EditText interestEditText = (EditText) findViewById(R.id.annual_interest_text);
                 EditText monthlyIncreaseEditText = (EditText) findViewById(R.id.monthly_increase_text);
-                returnIntent.putExtra(BALANCE, balanceEditText.toString());
-                returnIntent.putExtra(INTEREST, interestEditText.toString());
-                returnIntent.putExtra(MONTHLY_INCREASE, monthlyIncreaseEditText.toString());
+                returnIntent.putExtra(BALANCE, balanceEditText.getText().toString());
+                returnIntent.putExtra(INTEREST, interestEditText.getText().toString());
+                returnIntent.putExtra(MONTHLY_INCREASE, monthlyIncreaseEditText.getText().toString());
                 break;
             case RetirementConstants.INCOME_TYPE_PENSION:
                 EditText startAgeEditText = (EditText) findViewById(R.id.start_age_edit_text);

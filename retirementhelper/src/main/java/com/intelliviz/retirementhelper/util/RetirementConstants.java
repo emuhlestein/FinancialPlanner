@@ -8,4 +8,5 @@ public class RetirementConstants {
     public static final int INCOME_TYPE_SAVINGS = 0;
     public static final int INCOME_TYPE_PENSION = 1;
     public static final int INCOME_TYPE_GOV_PENSION = 2; //eg social security
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
 }

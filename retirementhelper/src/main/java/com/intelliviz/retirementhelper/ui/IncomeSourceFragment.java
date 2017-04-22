@@ -16,7 +16,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,6 +33,10 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementQueryHandler;
 import com.intelliviz.retirementhelper.util.RetirementQueryListener;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -73,6 +79,7 @@ public class IncomeSourceFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        int count = cursor.getCount();
         mIncomeSourceAdapter.swapCursor(cursor);
         if (mIncomeSourceAdapter.getItemCount() == 0) {
             mEmptyView.setText(R.string.empty_list);
@@ -125,6 +132,8 @@ public class IncomeSourceFragment extends Fragment implements
                 //startActivityForResult(intent, ADD_INCOME_REQUEST);
 
                 final String[] incomeTypes = getResources().getStringArray(R.array.income_types);
+
+                // TODO wrap in DialogFragment
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Select an account type");
                 builder.setItems(incomeTypes, new DialogInterface.OnClickListener() {
@@ -152,6 +161,9 @@ public class IncomeSourceFragment extends Fragment implements
             }
         });
 
+        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab.setSubtitle("Income Source");
+
         return view;
     }
 
@@ -160,7 +172,7 @@ public class IncomeSourceFragment extends Fragment implements
         if (resultCode == RESULT_OK) {
             if (requestCode == SAVINGS_REQUEST) {
 
-                String incomeSourceType = intent.getStringExtra(AddIncomeSourceActivity.INCOME_TYPE);
+                int incomeSourceType = intent.getIntExtra(AddIncomeSourceActivity.INCOME_TYPE, 0);
                 String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
                 String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
                 String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
@@ -173,12 +185,36 @@ public class IncomeSourceFragment extends Fragment implements
                 String[] projection = {RetirementContract.InstitutionEntry.COLUMN_NAME};
                 String selection = RetirementContract.InstitutionEntry.COLUMN_NAME + " = ?";
                 String[] selectionArgs = {instituteName};
-                queryHandler.startQuery(requestCode, intent, uri, projection, selection, selectionArgs, null);
+                Cursor cursor = getContext().getContentResolver().query(uri, projection, selection, selectionArgs, null);
+                if(cursor == null || !cursor.moveToFirst()) {
+                    // institution does not exist; add it
+                    ContentValues values = new ContentValues();
+                    values.put(RetirementContract.InstitutionEntry.COLUMN_NAME, instituteName);
+                    values.put(RetirementContract.InstitutionEntry.COLUMN_TYPE, incomeSourceType);
+                    uri = getContext().getContentResolver().insert(RetirementContract.InstitutionEntry.CONTENT_URI, values);
+                    String id = uri.getLastPathSegment();
+                    long lid = Long.parseLong(id);
+
+                    float finterest = Float.parseFloat(interest);
+                    float fmonthly_increase = Float.parseFloat(monthlyIncrease);
+
+                    values = new ContentValues();
+                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INSTITUTION_ID, lid);
+                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INTEREST, finterest);
+                    values.put(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION, fmonthly_increase);
+                    uri = getContext().getContentResolver().insert(RetirementContract.SavingsDataEntry.CONTENT_URI, values);
+
+                    DateFormat dateFormat = new SimpleDateFormat(RetirementConstants.DATE_FORMAT);
+                    Date date = new Date();
+                    System.out.println(dateFormat.format(date));
+                }
             } else if (requestCode == PENSION_REQUEST) {
 
             } else if (requestCode == GOV_PENSION_REQUEST) {
 
             }
+
+            getLoaderManager().restartLoader(INCOME_TYPE_LOADER, null, this);
         }
     }
 

@@ -2,19 +2,15 @@ package com.intelliviz.retirementhelper.ui;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.util.UserInfoQueryHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,14 +18,12 @@ import java.text.SimpleDateFormat;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static android.widget.Toast.makeText;
-
 /**
  * Class to manager the registration of a new user.
  * CLass gathers user name (email) and password information.
  * @author Ed Muhlestein
  */
-public class NewUserActivity extends AppCompatActivity implements UserInfoQueryListener {
+public class NewUserActivity extends AppCompatActivity {
     private final static int PIN_REQUEST = 1;
     private String mEmail;
     private String mPassword;
@@ -104,7 +98,8 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
         mEmail = email;
         mPassword = password;
 
-        //updateUserInfo();
+        updateUserInfo();
+
         // Everything checks out; start pin activity to get PIN
         createPIN();
     }
@@ -184,26 +179,18 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
     }
 
     private void updateUserInfo() {
-        UserInfoQueryHandler userInfoQueryHandler =
-                new UserInfoQueryHandler(getContentResolver(), this);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL, mEmail);
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD, mPassword);
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE, mBirthday);
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_NAME, mName);
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PIN, mPin);
-        userInfoQueryHandler.startUpdate(1, null, RetirementContract.PeronsalInfoEntry.CONTENT_URI, values, null, null);
+        getContentResolver().update(RetirementContract.PeronsalInfoEntry.CONTENT_URI, values, null, null);
     }
 
-    private void validateUser() {
-        UserInfoQueryHandler userInfoQueryHandler =
-                new UserInfoQueryHandler(getContentResolver(), this);
-        String selection = RetirementContract.PeronsalInfoEntry.TABLE_NAME + "." +
-                RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL + " = ?";
-        String[] selectionArgs = {mEmail};
-
-        Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(mEmail).build();
-        userInfoQueryHandler.startQuery(1, null, uri, null, selection, selectionArgs, null);
+    private void updatePIN() {
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PIN, mPin);
+        getContentResolver().update(RetirementContract.PeronsalInfoEntry.CONTENT_URI, values, null, null);
     }
 
     @Override
@@ -217,51 +204,12 @@ public class NewUserActivity extends AppCompatActivity implements UserInfoQueryL
                 Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Got pin back from PinActivity: " + pin, Snackbar.LENGTH_LONG);
                 snackbar.show();
                 mPin = pin;
-                updateUserInfo();
+                updatePIN();
+
+                Intent intent = new Intent(this, SummaryActivity.class);
+                startActivity(intent);
+                finish();
             }
         }
-    }
-
-    @Override
-    public void onQueryUserInfo(int token, Object cookie, Cursor cursor) {
-        if(cursor == null || !cursor.moveToFirst()) {
-            // email is valid and does not exist in db; can add it
-            addUserInfo();
-        } else {
-            // email already exists; don't add it.
-            // TODO pop up toast that says email already in use
-        }
-    }
-
-    @Override
-    public void onInsertUserInfo(int token, Object cookie, Uri uri) {
-        String id = uri.getLastPathSegment();
-        if(!id.equals(-1)) {
-            makeText(this, "Successfully add " + mEmail, Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this, SummaryActivity.class);
-            startActivity(intent);
-        }
-    }
-
-    @Override
-    public void onUpdateUserInfo(int token, Object cookie, int rowsUpdated) {
-        if(rowsUpdated == 1) {
-            // Everything checks out; start summary activity
-            Intent intent = new Intent(this, SummaryActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    }
-
-    private void addUserInfo() {
-        UserInfoQueryHandler userInfoQueryHandler =
-                new UserInfoQueryHandler(getContentResolver(), this);
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL, mEmail);
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD, mPassword);
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE, mBirthday);
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_NAME, mName);
-        //Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI.buildUpon().appendPath(mEmail).build();
-        userInfoQueryHandler.startInsert(1, null, RetirementContract.PeronsalInfoEntry.CONTENT_URI, values);
     }
 }

@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 9;
+    private static final int DBASE_VERSION = 11;
     private static final int PERSONALINFO_ID = 101;
     private static final int CATEGORY_LIST = 201;
     private static final int CATEGORY_ID = 202;
@@ -477,8 +477,8 @@ public class RetirementProvider extends ContentProvider {
             sql = "CREATE TABLE " + RetirementContract.SavingsDataEntry.TABLE_NAME +
                     " ( " + RetirementContract.SavingsDataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     RetirementContract.SavingsDataEntry.COLUMN_INSTITUTION_ID + " INTEGER NOT NULL, " +
-                    RetirementContract.SavingsDataEntry.COLUMN_INTEREST + " TEXT NOT NULL, " +
-                    RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION + " TEXT NOT NULL);";
+                    RetirementContract.SavingsDataEntry.COLUMN_INTEREST + " REAL NOT NULL, " +
+                    RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION + " REAL NOT NULL);";
 
             db.execSQL(sql);
 
