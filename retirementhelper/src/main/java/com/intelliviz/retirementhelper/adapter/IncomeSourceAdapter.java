@@ -84,7 +84,9 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
 
         @Override
         public void onClick(View v) {
-
+            if(mListener != null) {
+                mListener.onSelectIncomeSource(0);
+            }
         }
     }
 }
