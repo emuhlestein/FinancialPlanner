@@ -1,7 +1,6 @@
 package com.intelliviz.retirementhelper.ui;
 
 
-import android.content.AsyncQueryHandler;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,6 +18,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,8 +31,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementQueryHandler;
-import com.intelliviz.retirementhelper.util.RetirementQueryListener;
+import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,29 +43,18 @@ import butterknife.ButterKnife;
 import static android.app.Activity.RESULT_OK;
 
 public class IncomeSourceFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor>, RetirementQueryListener {
+        LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
     public static final String TAG = IncomeSourceFragment.class.getSimpleName();
     private static final int SAVINGS_REQUEST = 0;
     private static final int PENSION_REQUEST = 1;
     private static final int GOV_PENSION_REQUEST = 2;
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
-    private AlertDialog mAccountTypeDialog;
     @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
     @Bind(R.id.emptyView) TextView mEmptyView;
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.addIncomeTypeFAB) FloatingActionButton mAddIncomeSourceFAB;
-    private OnSelectIncomeSourceListener mListener;
 
-
-    public interface OnSelectIncomeSourceListener {
-
-        /**
-         * Callback for when an income source is selected..
-         * @param id The id of the selected income source.
-         */
-        void onSelectIncomeSource(long id);
-    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -79,7 +67,6 @@ public class IncomeSourceFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        int count = cursor.getCount();
         mIncomeSourceAdapter.swapCursor(cursor);
         if (mIncomeSourceAdapter.getItemCount() == 0) {
             mEmptyView.setText(R.string.empty_list);
@@ -118,9 +105,12 @@ public class IncomeSourceFragment extends Fragment implements
         ButterKnife.bind(this, view);
 
         mIncomeSourceAdapter = new IncomeSourceAdapter();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mIncomeSourceAdapter);
-        mIncomeSourceAdapter.setOnSelectIncomeSourceListener(mListener);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
+                linearLayoutManager.getOrientation()));
+        mIncomeSourceAdapter.setOnSelectIncomeSourceListener(this);
         getLoaderManager().initLoader(INCOME_TYPE_LOADER, null, this);
 
         mAddIncomeSourceFAB.setOnClickListener(new View.OnClickListener() {
@@ -178,8 +168,8 @@ public class IncomeSourceFragment extends Fragment implements
                 String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
                 String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
 
-                RetirementQueryHandler queryHandler = new RetirementQueryHandler(getContext());
-                queryHandler.setRetirementQueryListener(this);
+                //RetirementQueryHandler queryHandler = new RetirementQueryHandler(getContext());
+                //queryHandler.setRetirementQueryListener(this);
 
                 Uri uri = RetirementContract.InstitutionEntry.CONTENT_URI;
                 String[] projection = {RetirementContract.InstitutionEntry.COLUMN_NAME};
@@ -221,93 +211,18 @@ public class IncomeSourceFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof OnSelectIncomeSourceListener) {
-            mListener = (OnSelectIncomeSourceListener)context;
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override
-    public void onQueryComplete(int token, Object cookie, Cursor cursor) {
-        if(cursor != null && cursor.moveToFirst()) {
-            // institution exists already; don't add it again
-            // TODO show snackbar message
-        } else {
-            Intent intent = (Intent)cookie;
-            String incomeSourceType = intent.getStringExtra(AddIncomeSourceActivity.INCOME_TYPE);
-            String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
-
-            ContentValues values = new ContentValues();
-            values.put(RetirementContract.InstitutionEntry.COLUMN_TYPE, incomeSourceType);
-            values.put(RetirementContract.InstitutionEntry.COLUMN_NAME, instituteName);
-
-            switch(token) {
-                case SAVINGS_REQUEST:
-                    String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
-                    String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
-                    String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
-                    values.put(RetirementContract.InstitutionEntry.COLUMN_TYPE, incomeSourceType);
-                    values.put(RetirementContract.InstitutionEntry.COLUMN_NAME, instituteName);
-                    break;
-                case PENSION_REQUEST:
-                    break;
-                case GOV_PENSION_REQUEST:
-                    break;
-            }
-
-            /*
-            values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
-            values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, instituteName);
-            values.put(RetirementContract.IncomeSourceEntry.COLUMN_BALANCE, balance);
-            values.put(RetirementContract.IncomeSourceEntry.COLUMN_INTEREST, interest);
-            values.put(RetirementContract.IncomeSourceEntry.COLUMN_MONTHLY_INCREASE, monthlyIncrease);
-            values.put(RetirementContract.IncomeSourceEntry.COLUMN_DATE, "TEMP");
-            */
-        }
-    }
-
-
-    static final class QueryHandler extends AsyncQueryHandler {
-
-
-
-        public QueryHandler(Context context) {
-            super(context.getContentResolver());
-        }
-
-        @Override
-        protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-            if(cursor != null && cursor.moveToFirst()) {
-                // income source exists already; don't add it again
-                // TODO show snackbar message
-            } else {
-                Intent intent = (Intent)cookie;
-                String incomeSourceType = intent.getStringExtra(AddIncomeSourceActivity.INCOME_TYPE);
-                String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
-                String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
-                String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
-                String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
-                ContentValues values = new ContentValues();
-                /*
-                values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
-                values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, instituteName);
-                values.put(RetirementContract.IncomeSourceEntry.COLUMN_BALANCE, balance);
-                values.put(RetirementContract.IncomeSourceEntry.COLUMN_INTEREST, interest);
-                values.put(RetirementContract.IncomeSourceEntry.COLUMN_MONTHLY_INCREASE, monthlyIncrease);
-                values.put(RetirementContract.IncomeSourceEntry.COLUMN_DATE, "TEMP");
-                */
-                //QueryHandler queryHandler = new QueryHandler()
-            }
-        }
-
-        @Override
-        protected void onInsertComplete(int token, Object cookie, Uri uri) {
-            super.onInsertComplete(token, cookie, uri);
-        }
+    public void onSelectIncomeSource(long id) {
+        // we have the institute id; being the up the details page
+        // The details page will list current institute data.
+        Intent intent = new Intent(getContext(), IncomeSourceDetailActivity.class);
+        startActivity(intent);
     }
 }
