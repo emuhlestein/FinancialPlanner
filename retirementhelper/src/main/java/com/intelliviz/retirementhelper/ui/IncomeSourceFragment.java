@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementQueryHandler;
 import com.intelliviz.retirementhelper.util.RetirementQueryListener;
 
@@ -133,7 +134,17 @@ public class IncomeSourceFragment extends Fragment implements
                         dialogInterface.dismiss();
                         Intent intent = new Intent(getContext(), AddIncomeSourceActivity.class);
                         intent.putExtra(AddIncomeSourceActivity.INCOME_TYPE, item);
-                        startActivityForResult(intent, SAVINGS_REQUEST);
+                        switch(item) {
+                            case RetirementConstants.INCOME_TYPE_SAVINGS:
+                                startActivityForResult(intent, SAVINGS_REQUEST);
+                                break;
+                            case RetirementConstants.INCOME_TYPE_PENSION:
+                                startActivityForResult(intent, PENSION_REQUEST);
+                                break;
+                            case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                                startActivityForResult(intent, GOV_PENSION_REQUEST);
+                                break;
+                        }
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -162,7 +173,7 @@ public class IncomeSourceFragment extends Fragment implements
                 String[] projection = {RetirementContract.InstitutionEntry.COLUMN_NAME};
                 String selection = RetirementContract.InstitutionEntry.COLUMN_NAME + " = ?";
                 String[] selectionArgs = {instituteName};
-                queryHandler.startQuery(1, intent, uri, projection, selection, selectionArgs, null);
+                queryHandler.startQuery(requestCode, intent, uri, projection, selection, selectionArgs, null);
             } else if (requestCode == PENSION_REQUEST) {
 
             } else if (requestCode == GOV_PENSION_REQUEST) {
@@ -194,14 +205,25 @@ public class IncomeSourceFragment extends Fragment implements
             Intent intent = (Intent)cookie;
             String incomeSourceType = intent.getStringExtra(AddIncomeSourceActivity.INCOME_TYPE);
             String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
-            String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
-            String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
-            String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
 
-            if() {
-
-            }
             ContentValues values = new ContentValues();
+            values.put(RetirementContract.InstitutionEntry.COLUMN_TYPE, incomeSourceType);
+            values.put(RetirementContract.InstitutionEntry.COLUMN_NAME, instituteName);
+
+            switch(token) {
+                case SAVINGS_REQUEST:
+                    String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
+                    String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
+                    String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
+                    values.put(RetirementContract.InstitutionEntry.COLUMN_TYPE, incomeSourceType);
+                    values.put(RetirementContract.InstitutionEntry.COLUMN_NAME, instituteName);
+                    break;
+                case PENSION_REQUEST:
+                    break;
+                case GOV_PENSION_REQUEST:
+                    break;
+            }
+
             /*
             values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
             values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, instituteName);
