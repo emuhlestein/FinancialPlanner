@@ -5,5 +5,5 @@ package com.intelliviz.retirementhelper.util;
  */
 
 public interface SelectIncomeSourceListener {
-    public void onSelectIncomeSource(long id);
+    void onSelectIncomeSource(long id);
 }

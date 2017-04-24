@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -68,7 +69,7 @@ public class SummaryActivity extends AppCompatActivity {
                         ft.commit();
                         break;
                     case R.id.income_menu:
-                        fragment = IncomeSourceFragment.newInstance();
+                        fragment = IncomeSourceListFragment.newInstance();
                         ft = fm.beginTransaction();
                         ft.replace(R.id.content_frame, fragment, INCOME_FRAG_TAG);
                         ft.commit();

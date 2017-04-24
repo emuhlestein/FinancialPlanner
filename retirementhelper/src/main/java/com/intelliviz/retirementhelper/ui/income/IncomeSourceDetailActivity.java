@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.ui;
+package com.intelliviz.retirementhelper.ui.income;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

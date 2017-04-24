@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.ui;
+package com.intelliviz.retirementhelper.ui.income;
 
 
 import android.content.ContentValues;
@@ -42,9 +42,9 @@ import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
 
-public class IncomeSourceFragment extends Fragment implements
+public class IncomeSourceListFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
-    public static final String TAG = IncomeSourceFragment.class.getSimpleName();
+    public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
     private static final int SAVINGS_REQUEST = 0;
     private static final int PENSION_REQUEST = 1;
     private static final int GOV_PENSION_REQUEST = 2;
@@ -83,12 +83,12 @@ public class IncomeSourceFragment extends Fragment implements
         mIncomeSourceAdapter.swapCursor(null);
     }
 
-    public IncomeSourceFragment() {
+    public IncomeSourceListFragment() {
         // Required empty public constructor
     }
 
-    public static IncomeSourceFragment newInstance() {
-        IncomeSourceFragment fragment = new IncomeSourceFragment();
+    public static IncomeSourceListFragment newInstance() {
+        IncomeSourceListFragment fragment = new IncomeSourceListFragment();
         return fragment;
     }
 

@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.ui;
+package com.intelliviz.retirementhelper.ui.income;
 
 import android.app.Activity;
 import android.content.Intent;

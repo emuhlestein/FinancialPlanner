@@ -25,8 +25,8 @@
             android:label="my provider" />
 
         <activity android:name=".ui.PinActivity" />
-        <activity android:name=".ui.AddIncomeSourceActivity" />
-        <activity android:name=".ui.IncomeSourceDetailActivity"></activity>
+        <activity android:name=".ui.income.AddIncomeSourceActivity" />
+        <activity android:name=".ui.income.IncomeSourceDetailActivity"></activity>
     </application>
 
 </manifest>
