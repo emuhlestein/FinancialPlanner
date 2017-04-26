@@ -192,7 +192,7 @@ public class IncomeSourceListFragment extends Fragment implements
                     float fmonthly_increase = Float.parseFloat(monthlyIncrease);
 
                     values = new ContentValues();
-                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INSTITUTION_ID, lid);
+                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID, lid);
                     values.put(RetirementContract.SavingsDataEntry.COLUMN_INTEREST, finterest);
                     values.put(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION, fmonthly_increase);
                     uri = getContext().getContentResolver().insert(RetirementContract.SavingsDataEntry.CONTENT_URI, values);

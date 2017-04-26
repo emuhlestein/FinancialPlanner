@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
+import static android.R.attr.id;
 import static com.intelliviz.retirementhelper.ui.income.AddIncomeSourceActivity.INCOME_TYPE;
 
 /**
@@ -64,11 +65,11 @@ public class IncomeSourceDetailsActivity extends AppCompatActivity {
             }
         } else {
             // need to show view income source fragment
-            fragment = fm.findFragmentByTag(EditIncomeSourceFragment.EDIT_INCOME_FRAG_TAG);
+            fragment = fm.findFragmentByTag(ViewIncomeSourceFragment.VIEW_INCOME_FRAG_TAG);
             if (fragment == null) {
-                fragment = EditIncomeSourceFragment.newInstance();
+                fragment = ViewIncomeSourceFragment.newInstance(id);
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.add(R.id.content_frame, fragment, EditIncomeSourceFragment.EDIT_INCOME_FRAG_TAG);
+                ft.add(R.id.content_frame, fragment, ViewIncomeSourceFragment.VIEW_INCOME_FRAG_TAG);
                 ft.commit();
             }
         }

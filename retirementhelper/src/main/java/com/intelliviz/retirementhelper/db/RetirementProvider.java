@@ -467,7 +467,7 @@ public class RetirementProvider extends ContentProvider {
             // create the pension data table
             sql = "CREATE TABLE " + RetirementContract.PensionDataEntry.TABLE_NAME +
                     " ( " + RetirementContract.PensionDataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.PensionDataEntry.COLUMN_INSTITUTION_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
                     RetirementContract.PensionDataEntry.COLUMN_START_AGE + " TEXT NOT NULL, " +
                     RetirementContract.PensionDataEntry.COLUMN_MONTHLY_BENEFIT + " TEXT NOT NULL);";
 
@@ -476,7 +476,7 @@ public class RetirementProvider extends ContentProvider {
             // create the savings data table
             sql = "CREATE TABLE " + RetirementContract.SavingsDataEntry.TABLE_NAME +
                     " ( " + RetirementContract.SavingsDataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.SavingsDataEntry.COLUMN_INSTITUTION_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
                     RetirementContract.SavingsDataEntry.COLUMN_INTEREST + " REAL NOT NULL, " +
                     RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION + " REAL NOT NULL);";
 
@@ -485,7 +485,7 @@ public class RetirementProvider extends ContentProvider {
             // create the balance table
             sql = "CREATE TABLE " + RetirementContract.BalanceEntry.TABLE_NAME +
                     " ( " + RetirementContract.BalanceEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.BalanceEntry.COLUMN_INSTITUTION_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
                     RetirementContract.BalanceEntry.COLUMN_AMOUNT + " TEXT NOT NULL, " +
                     RetirementContract.BalanceEntry.COLUMN_DATE + " TEXT NOT NULL);";
 

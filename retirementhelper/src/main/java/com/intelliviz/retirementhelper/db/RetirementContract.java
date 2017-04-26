@@ -95,7 +95,7 @@ public class RetirementContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PENSION_DATA;
 
         public static final String TABLE_NAME = PATH_PENSION_DATA;
-        public static final String COLUMN_INSTITUTION_ID = "institution_id";
+        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
         public static final String COLUMN_START_AGE = "start_age";
         public static final String COLUMN_MONTHLY_BENEFIT = "monthly_benefit";
     }
@@ -109,7 +109,7 @@ public class RetirementContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SAVINGS_DATA;
 
         public static final String TABLE_NAME = PATH_SAVINGS_DATA;
-        public static final String COLUMN_INSTITUTION_ID = "institution_id";
+        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
         public static final String COLUMN_INTEREST = "interest";
         public static final String COLUMN_MONTHLY_ADDITION = "monthly_addition";
     }
@@ -123,7 +123,7 @@ public class RetirementContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_BALANCE;
 
         public static final String TABLE_NAME = PATH_BALANCE;
-        public static final String COLUMN_INSTITUTION_ID = "institution_id";
+        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
         public static final String COLUMN_AMOUNT = "amount";
         public static final String COLUMN_DATE = "date";
     }
