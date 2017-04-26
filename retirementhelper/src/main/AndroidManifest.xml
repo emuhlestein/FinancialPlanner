@@ -26,7 +26,7 @@
 
         <activity android:name=".ui.PinActivity" />
         <activity android:name=".ui.income.AddIncomeSourceActivity" />
-        <activity android:name=".ui.income.IncomeSourceDetailActivity"></activity>
+        <activity android:name=".ui.income.IncomeSourceDetailsActivity"></activity>
     </application>
 
 </manifest>

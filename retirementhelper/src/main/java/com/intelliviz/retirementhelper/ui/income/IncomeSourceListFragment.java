@@ -45,6 +45,7 @@ import static android.app.Activity.RESULT_OK;
 public class IncomeSourceListFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
     public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
+    public static final String EXTRA_INCOME_SOURCE_ID = "income source id";
     private static final int SAVINGS_REQUEST = 0;
     private static final int PENSION_REQUEST = 1;
     private static final int GOV_PENSION_REQUEST = 2;
@@ -59,7 +60,7 @@ public class IncomeSourceListFragment extends Fragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Loader<Cursor> loader;
-        Uri uri = RetirementContract.InstitutionEntry.CONTENT_URI;
+        Uri uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
         loader = new CursorLoader(getActivity(),
                 uri, null, null, null, null);
         return loader;
@@ -113,6 +114,7 @@ public class IncomeSourceListFragment extends Fragment implements
         mIncomeSourceAdapter.setOnSelectIncomeSourceListener(this);
         getLoaderManager().initLoader(INCOME_TYPE_LOADER, null, this);
 
+        // The FAB will pop up an activity to allow a new income source to be created.
         mAddIncomeSourceFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,6 +134,7 @@ public class IncomeSourceListFragment extends Fragment implements
                         Toast.makeText(getContext(), "You selected " + incomeTypes[item], Toast.LENGTH_LONG).show();
                         dialogInterface.dismiss();
                         Intent intent = new Intent(getContext(), AddIncomeSourceActivity.class);
+                        intent.putExtra(EXTRA_INCOME_SOURCE_ID, -1);
                         intent.putExtra(AddIncomeSourceActivity.INCOME_TYPE, item);
                         switch(item) {
                             case RetirementConstants.INCOME_TYPE_SAVINGS:
@@ -171,17 +174,17 @@ public class IncomeSourceListFragment extends Fragment implements
                 //RetirementQueryHandler queryHandler = new RetirementQueryHandler(getContext());
                 //queryHandler.setRetirementQueryListener(this);
 
-                Uri uri = RetirementContract.InstitutionEntry.CONTENT_URI;
-                String[] projection = {RetirementContract.InstitutionEntry.COLUMN_NAME};
-                String selection = RetirementContract.InstitutionEntry.COLUMN_NAME + " = ?";
+                Uri uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
+                String[] projection = {RetirementContract.IncomeSourceEntry.COLUMN_NAME};
+                String selection = RetirementContract.IncomeSourceEntry.COLUMN_NAME + " = ?";
                 String[] selectionArgs = {instituteName};
                 Cursor cursor = getContext().getContentResolver().query(uri, projection, selection, selectionArgs, null);
                 if(cursor == null || !cursor.moveToFirst()) {
                     // institution does not exist; add it
                     ContentValues values = new ContentValues();
-                    values.put(RetirementContract.InstitutionEntry.COLUMN_NAME, instituteName);
-                    values.put(RetirementContract.InstitutionEntry.COLUMN_TYPE, incomeSourceType);
-                    uri = getContext().getContentResolver().insert(RetirementContract.InstitutionEntry.CONTENT_URI, values);
+                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, instituteName);
+                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
+                    uri = getContext().getContentResolver().insert(RetirementContract.IncomeSourceEntry.CONTENT_URI, values);
                     String id = uri.getLastPathSegment();
                     long lid = Long.parseLong(id);
 
@@ -220,9 +223,10 @@ public class IncomeSourceListFragment extends Fragment implements
 
     @Override
     public void onSelectIncomeSource(long id) {
-        // we have the institute id; being the up the details page
-        // The details page will list current institute data.
-        Intent intent = new Intent(getContext(), IncomeSourceDetailActivity.class);
+        // we have the income source id; show the the details page.
+        // The details page will list the selected income source data.
+        Intent intent = new Intent(getContext(), IncomeSourceDetailsActivity.class);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
         startActivity(intent);
     }
 }

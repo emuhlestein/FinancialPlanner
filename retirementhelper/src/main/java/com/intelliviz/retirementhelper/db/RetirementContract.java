@@ -17,7 +17,6 @@ public class RetirementContract {
     public static final String PATH_EXPENSE = "expense";
     public static final String PATH_CATEGORY = "category";
     public static final String PATH_INCOME_SOURCE = "income_source";
-    public static final String PATH_INSTITUTION = "institution";
     public static final String PATH_PENSION_DATA = "pension_data";
     public static final String PATH_SAVINGS_DATA = "savings_data";
     public static final String PATH_BALANCE = "balance";
@@ -74,15 +73,15 @@ public class RetirementContract {
         public static final String COLUMN_PARENT_NAME = "parent_name";
     }
 
-    public static final class InstitutionEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INSTITUTION).build();
+    public static final class IncomeSourceEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INCOME_SOURCE).build();
 
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INSTITUTION;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INCOME_SOURCE;
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INSTITUTION;
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INCOME_SOURCE;
 
-        public static final String TABLE_NAME = PATH_INSTITUTION;
+        public static final String TABLE_NAME = PATH_INCOME_SOURCE;
         public static final String COLUMN_TYPE = "income_type";
         public static final String COLUMN_NAME = "name";
     }
