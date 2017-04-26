@@ -102,7 +102,7 @@ public class IncomeSourceListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_income_layout, container, false);
+        View view = inflater.inflate(R.layout.fragment_income_list_layout, container, false);
         ButterKnife.bind(this, view);
 
         mIncomeSourceAdapter = new IncomeSourceAdapter();

@@ -129,15 +129,15 @@ public class NewUserActivity extends AppCompatActivity {
             return false;
         }
 
-        // Validate month
-        if(tokens[0].length() != 2) {
+        // Validate year
+        if(tokens[0].length() != 4) {
             return false;
         }
-        if(!tokens[0].matches("[0-9][0-9]")) {
+        if(!tokens[0].matches("[0-9][0-9][0-9][0-9]")) {
             return false;
         }
 
-        // Validate day
+        // Validate month
         if(tokens[1].length() != 2) {
             return false;
         }
@@ -145,11 +145,11 @@ public class NewUserActivity extends AppCompatActivity {
             return false;
         }
 
-        // Validate year
-        if(tokens[2].length() != 4) {
+        // Validate day
+        if(tokens[2].length() != 2) {
             return false;
         }
-        if(!tokens[2].matches("[0-9][0-9][0-9][0-9]")) {
+        if(!tokens[2].matches("[0-9][0-9]")) {
             return false;
         }
 

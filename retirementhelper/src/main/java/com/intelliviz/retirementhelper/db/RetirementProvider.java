@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 1;
+    private static final int DBASE_VERSION = 2;
     private static final int PERSONALINFO_ID = 101;
     private static final int CATEGORY_LIST = 201;
     private static final int CATEGORY_ID = 202;
@@ -160,6 +160,14 @@ public class RetirementProvider extends ContentProvider {
             case SAVINGS_DATA_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.SavingsDataEntry.TABLE_NAME);
                 break;
+            case BALANCE_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.BalanceEntry.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.BalanceEntry._ID +
+                        "=" + uri.getLastPathSegment());
+                break;
+            case BALANCE_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.BalanceEntry.TABLE_NAME);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -284,6 +292,11 @@ public class RetirementProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
                         RetirementContract.IncomeSourceEntry._ID + "=" + id, null);
+                break;
+            case BALANCE_LIST:
+                id = uri.getLastPathSegment();
+                rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
+                        RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri");

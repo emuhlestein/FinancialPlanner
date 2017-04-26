@@ -4,6 +4,9 @@ package com.intelliviz.retirementhelper.ui.income;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +15,12 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.getSavingsData;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,10 +29,12 @@ public class ViewIncomeSourceFragment extends Fragment {
     public static final String VIEW_INCOME_FRAG_TAG = "view income frag tag";
     private static final String INCOME_SOURCE_ID_PARAM = "income source id";
     private long mIncomeSourceId;
+
+    @Bind(R.id.view_income_source_toolbar) Toolbar mToolbar;
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
     @Bind(R.id.monthly_increase_text_view) TextView mMonthlyIncrease;
-    @Bind(R.id.current_balnce_text_view) TextView mCurrentBalance;
+    @Bind(R.id.current_balance_text_view) TextView mCurrentBalance;
 
     /**
      * Create the ViewIncomeSourceFragment.
@@ -60,6 +68,15 @@ public class ViewIncomeSourceFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_income_source, container, false);
         ButterKnife.bind(this, view);
 
+        AppCompatActivity activity = (AppCompatActivity)getActivity();
+        activity.setSupportActionBar(mToolbar);
+        ActionBar actionBar = activity.getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
+
+        updateUI();
 
         return view;
     }
@@ -75,8 +92,9 @@ public class ViewIncomeSourceFragment extends Fragment {
         int incomeSourceType = cursor.getInt(sourceIncomeNameIndex);
         String name = cursor.getString(sourceIncomeNameIndex);
         mIncomeSourceName.setText(name);
+        setToolbarSubtitle(name);
 
-        cursor = DataBaseUtils.getSavingsData(getContext(), mIncomeSourceId);
+        cursor = getSavingsData(getContext(), mIncomeSourceId);
         if(cursor == null || !cursor.moveToFirst()) {
             return;
         }
@@ -86,5 +104,24 @@ public class ViewIncomeSourceFragment extends Fragment {
         float monthlyIncreate = cursor.getFloat(sourceMonthlyIndex);
         mAnnualInterest.setText(String.valueOf(interest));
         mMonthlyIncrease.setText(String.valueOf(monthlyIncreate));
+
+        cursor = DataBaseUtils.getBalances(getContext(), mIncomeSourceId);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return;
+        }
+        int amountIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
+        int dateIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
+        float amount = cursor.getFloat(amountIndex);
+        String date = cursor.getString(dateIndex);
+        String formattedAmount = SystemUtils.getFormattedCurrency(amount);
+        mCurrentBalance.setText(String.valueOf(formattedAmount));
+    }
+
+    private void setToolbarSubtitle(String subtitle) {
+        AppCompatActivity activity = (AppCompatActivity)getActivity();
+        ActionBar actionBar = activity.getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setSubtitle(subtitle);
+        }
     }
 }

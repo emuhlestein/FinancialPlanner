@@ -1,0 +1,30 @@
+package com.intelliviz.retirementhelper.util;
+
+import java.text.NumberFormat;
+
+/**
+ * Created by edm on 4/26/2017.
+ */
+
+public class SystemUtils {
+    public static String getFormattedCurrency(String value) {
+        String retval = "0.00";
+        NumberFormat nf = NumberFormat.getCurrencyInstance( java.util.Locale.US );
+        float fvalue = Float.parseFloat(value);
+        try{
+            retval = nf.format(fvalue);
+        }catch(Exception e){
+        }
+        return retval;
+    }
+
+    public static String getFormattedCurrency(float value) {
+        String retval = "0.00";
+        NumberFormat nf = NumberFormat.getCurrencyInstance( java.util.Locale.US );
+        try{
+            retval = nf.format(value);
+        }catch(Exception e){
+        }
+        return retval;
+    }
+}
