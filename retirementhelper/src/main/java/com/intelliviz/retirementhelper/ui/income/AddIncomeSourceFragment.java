@@ -108,12 +108,14 @@ public class AddIncomeSourceFragment extends Fragment {
         String interestString = String.valueOf(interest);
 
         cursor = DataBaseUtils.getBalances(getContext(), mIncomeSourceId);
+        String balanceString;
         if(cursor == null || !cursor.moveToFirst()) {
-            return;
+            balanceString = "0.00";
+        } else {
+            int balanceIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
+            float balance = cursor.getFloat(balanceIndex);
+            balanceString = SystemUtils.getFormattedCurrency(balance);
         }
-        int balanceIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
-        float balance = cursor.getFloat(balanceIndex);
-        String balanceString = SystemUtils.getFormattedCurrency(balance);
 
         ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         ab.setSubtitle(incomeSourceTypeString);
@@ -132,13 +134,16 @@ public class AddIncomeSourceFragment extends Fragment {
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
 
-        float balance = Float.parseFloat(mBalance.getText().toString());
+        float balance = SystemUtils.getFloatCurrency(mBalance.getText().toString());
+        //float balance = Float.parseFloat(mBalance.getText().toString());
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
 
-        float interest = Float.parseFloat(mAnnualInterest.getText().toString());
+        //float interest = Float.parseFloat(mAnnualInterest.getText().toString());
+        float interest = SystemUtils.getFloatCurrency(mAnnualInterest.getText().toString());
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, interest);
 
-        float monthlyIncrease = Float.parseFloat(mMonthlyIncrease.getText().toString());
+        //float monthlyIncrease = Float.parseFloat(mMonthlyIncrease.getText().toString());
+        float monthlyIncrease = SystemUtils.getFloatCurrency(mMonthlyIncrease.getText().toString());
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE, monthlyIncrease);
 
         getActivity().setResult(Activity.RESULT_OK, returnIntent);

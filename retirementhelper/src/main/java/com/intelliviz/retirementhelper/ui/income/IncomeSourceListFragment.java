@@ -206,7 +206,9 @@ public class IncomeSourceListFragment extends Fragment implements
                     selectionClause = RetirementContract.IncomeSourceEntry._ID + " = ?";
                     String sid = Long.toString(incomeSourceId);
                     selectionArgs = new String[]{sid};
-                    int rowsUpdated = getContext().getContentResolver().update(RetirementContract.IncomeSourceEntry.CONTENT_URI, values, selectionClause, selectionArgs);
+                    uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
+                    uri = Uri.withAppendedPath(uri, sid);
+                    int rowsUpdated = getContext().getContentResolver().update(uri, values, selectionClause, selectionArgs);
                     if(rowsUpdated != 1) {
                         Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
                     }
@@ -258,7 +260,7 @@ public class IncomeSourceListFragment extends Fragment implements
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
-                        startActivityForResult(intent, GOV_PENSION_REQUEST);
+                        startActivityForResult(intent, SAVINGS_REQUEST);
                         break;
                     case RetirementConstants.INCOME_ACTION_DELETE:
 
