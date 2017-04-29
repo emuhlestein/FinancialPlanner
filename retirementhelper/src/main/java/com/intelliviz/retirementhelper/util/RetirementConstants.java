@@ -15,5 +15,8 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_ID = "income source id";
     public static final String EXTRA_INCOME_SOURCE_NAME = "income source name";
     public static final String EXTRA_INCOME_SOURCE_TYPE = "income source type";
+    public static final String EXTRA_INCOME_SOURCE_BALANCE = "income source balance";
+    public static final String EXTRA_INCOME_SOURCE_MONTHLY_INCREASE = "income source monthly increase";
+    public static final String EXTRA_INCOME_SOURCE_INTEREST = "income source interest";
     public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
 }

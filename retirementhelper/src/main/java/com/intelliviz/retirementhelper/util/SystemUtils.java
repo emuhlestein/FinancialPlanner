@@ -1,5 +1,9 @@
 package com.intelliviz.retirementhelper.util;
 
+import android.content.Context;
+
+import com.intelliviz.retirementhelper.R;
+
 import java.text.NumberFormat;
 
 /**
@@ -26,5 +30,10 @@ public class SystemUtils {
         }catch(Exception e){
         }
         return retval;
+    }
+
+    public static String getIncomeSourceTypeString(Context context, int incomeSourceType) {
+        final String[] incomeTypes = context.getResources().getStringArray(R.array.income_types);
+        return incomeTypes[incomeSourceType];
     }
 }

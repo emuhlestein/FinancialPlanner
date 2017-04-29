@@ -498,7 +498,7 @@ public class RetirementProvider extends ContentProvider {
             sql = "CREATE TABLE " + RetirementContract.BalanceEntry.TABLE_NAME +
                     " ( " + RetirementContract.BalanceEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
-                    RetirementContract.BalanceEntry.COLUMN_AMOUNT + " TEXT NOT NULL, " +
+                    RetirementContract.BalanceEntry.COLUMN_AMOUNT + " REAL NOT NULL, " +
                     RetirementContract.BalanceEntry.COLUMN_DATE + " TEXT NOT NULL);";
 
             db.execSQL(sql);

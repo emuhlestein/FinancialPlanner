@@ -12,13 +12,13 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 public class AddIncomeSourceActivity extends AppCompatActivity {
-    public static final String INCOME_TYPE = "income_type";
-    public static final String INSTITUTE_NAME = "institute_name";
-    public static final String BALANCE = "balance";
-    public static final String INTEREST = "interest";
-    public static final String MONTHLY_INCREASE = "monthly_increase";
-    public static final String MONTHLY_BENEFIT = "monthly_benefit";
-    public static final String START_AGE = "start_age";
+    //public static final String INCOME_TYPE = "income_type";
+    //public static final String INSTITUTE_NAME = "institute_name";
+    //public static final String BALANCE = "balance";
+    //public static final String INTEREST = "interest";
+    //public static final String MONTHLY_INCREASE = "monthly_increase";
+    //public static final String MONTHLY_BENEFIT = "monthly_benefit";
+    //public static final String START_AGE = "start_age";
     private int mIncomeSourceType;
 
     private Toolbar mToolbar;
@@ -29,7 +29,7 @@ public class AddIncomeSourceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_income_source);
 
         Intent intent = getIntent();
-        mIncomeSourceType = intent.getIntExtra(INCOME_TYPE, 0);
+        mIncomeSourceType = 0; //intent.getIntExtra(INCOME_TYPE, 0);
         switch(mIncomeSourceType) {
             case RetirementConstants.INCOME_TYPE_SAVINGS:
                 setContentView(R.layout.activity_add_savings_source);
@@ -59,23 +59,23 @@ public class AddIncomeSourceActivity extends AppCompatActivity {
         EditText instituteName = (EditText) findViewById(R.id.name_edit_text);
         String name = instituteName.getText().toString();
 
-        returnIntent.putExtra(INSTITUTE_NAME, name);
-        returnIntent.putExtra(INCOME_TYPE, mIncomeSourceType);
+        //returnIntent.putExtra(INSTITUTE_NAME, name);
+        //returnIntent.putExtra(INCOME_TYPE, mIncomeSourceType);
 
         switch(mIncomeSourceType) {
             case RetirementConstants.INCOME_TYPE_SAVINGS:
                 EditText balanceEditText = (EditText) findViewById(R.id.balance_text);
                 EditText interestEditText = (EditText) findViewById(R.id.annual_interest_text);
                 EditText monthlyIncreaseEditText = (EditText) findViewById(R.id.monthly_increase_text);
-                returnIntent.putExtra(BALANCE, balanceEditText.getText().toString());
-                returnIntent.putExtra(INTEREST, interestEditText.getText().toString());
-                returnIntent.putExtra(MONTHLY_INCREASE, monthlyIncreaseEditText.getText().toString());
+                //returnIntent.putExtra(BALANCE, balanceEditText.getText().toString());
+                //returnIntent.putExtra(INTEREST, interestEditText.getText().toString());
+                //returnIntent.putExtra(MONTHLY_INCREASE, monthlyIncreaseEditText.getText().toString());
                 break;
             case RetirementConstants.INCOME_TYPE_PENSION:
                 EditText startAgeEditText = (EditText) findViewById(R.id.start_age_edit_text);
                 EditText monthlyBenefitEditText = (EditText) findViewById(R.id.monthly_benefit_text);
-                returnIntent.putExtra(START_AGE, startAgeEditText.toString());
-                returnIntent.putExtra(MONTHLY_BENEFIT, monthlyBenefitEditText.toString());
+                //returnIntent.putExtra(START_AGE, startAgeEditText.toString());
+                //returnIntent.putExtra(MONTHLY_BENEFIT, monthlyBenefitEditText.toString());
                 break;
             case RetirementConstants.INCOME_TYPE_GOV_PENSION:
                 break;

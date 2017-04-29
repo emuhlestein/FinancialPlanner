@@ -165,41 +165,53 @@ public class IncomeSourceListFragment extends Fragment implements
         if (resultCode == RESULT_OK) {
             if (requestCode == SAVINGS_REQUEST) {
 
-                int incomeSourceType = intent.getIntExtra(AddIncomeSourceActivity.INCOME_TYPE, 0);
-                String instituteName = intent.getStringExtra(AddIncomeSourceActivity.INSTITUTE_NAME);
-                String balance = intent.getStringExtra(AddIncomeSourceActivity.BALANCE);
-                String interest = intent.getStringExtra(AddIncomeSourceActivity.INTEREST);
-                String monthlyIncrease = intent.getStringExtra(AddIncomeSourceActivity.MONTHLY_INCREASE);
-
-                //RetirementQueryHandler queryHandler = new RetirementQueryHandler(getContext());
-                //queryHandler.setRetirementQueryListener(this);
+                long incomeSourceId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
+                int incomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, 0);
+                String incomeSourceName = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
+                float balance = intent.getFloatExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, 0);
+                float interest = intent.getFloatExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, 0);
+                float monthlyIncrease = intent.getFloatExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE, 0);
 
                 Uri uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
                 String[] projection = {RetirementContract.IncomeSourceEntry.COLUMN_NAME};
-                String selection = RetirementContract.IncomeSourceEntry.COLUMN_NAME + " = ?";
-                String[] selectionArgs = {instituteName};
-                Cursor cursor = getContext().getContentResolver().query(uri, projection, selection, selectionArgs, null);
+                String selectionClause = RetirementContract.IncomeSourceEntry.COLUMN_NAME + " = ?";
+                String[] selectionArgs = {incomeSourceName};
+                Cursor cursor = getContext().getContentResolver().query(uri, projection, selectionClause, selectionArgs, null);
                 if(cursor == null || !cursor.moveToFirst()) {
                     // institution does not exist; add it
                     ContentValues values = new ContentValues();
-                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, instituteName);
+                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, incomeSourceName);
                     values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
                     uri = getContext().getContentResolver().insert(RetirementContract.IncomeSourceEntry.CONTENT_URI, values);
                     String id = uri.getLastPathSegment();
                     long lid = Long.parseLong(id);
 
-                    float finterest = Float.parseFloat(interest);
-                    float fmonthly_increase = Float.parseFloat(monthlyIncrease);
-
                     values = new ContentValues();
                     values.put(RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID, lid);
-                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INTEREST, finterest);
-                    values.put(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION, fmonthly_increase);
+                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INTEREST, interest);
+                    values.put(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION, monthlyIncrease);
                     uri = getContext().getContentResolver().insert(RetirementContract.SavingsDataEntry.CONTENT_URI, values);
 
                     DateFormat dateFormat = new SimpleDateFormat(RetirementConstants.DATE_FORMAT);
                     Date date = new Date();
                     System.out.println(dateFormat.format(date));
+                    values = new ContentValues();
+                    values.put(RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID, lid);
+                    values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, balance);
+                    values.put(RetirementContract.BalanceEntry.COLUMN_DATE, dateFormat.format(date));
+                    uri = getContext().getContentResolver().insert(RetirementContract.BalanceEntry.CONTENT_URI, values);
+                } else {
+                    ContentValues values = new ContentValues();
+                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, incomeSourceName);
+                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
+
+                    selectionClause = RetirementContract.IncomeSourceEntry._ID + " = ?";
+                    String sid = Long.toString(incomeSourceId);
+                    selectionArgs = new String[]{sid};
+                    int rowsUpdated = getContext().getContentResolver().update(RetirementContract.IncomeSourceEntry.CONTENT_URI, values, selectionClause, selectionArgs);
+                    if(rowsUpdated != 1) {
+                        Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
+                    }
                 }
             } else if (requestCode == PENSION_REQUEST) {
 
@@ -223,11 +235,6 @@ public class IncomeSourceListFragment extends Fragment implements
 
     @Override
     public void onSelectIncomeSource(long id, String name) {
-        // we have the income source id; show the the details page.
-        // The details page will list the selected income source data.
-        //Intent intent = new Intent(getContext(), IncomeSourceDetailsActivity.class);
-        //intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-        //startActivity(intent);
         final long incomeSourceId = id;
         final String incomeSourceName = name;
         // TODO wrap in DialogFragment
@@ -243,7 +250,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 switch(item) {
                     case RetirementConstants.INCOME_ACTION_VIEW:
                         intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-                        intent.putExtra(AddIncomeSourceActivity.INCOME_TYPE, item);
+                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
                         startActivityForResult(intent, SAVINGS_REQUEST);
@@ -251,7 +258,7 @@ public class IncomeSourceListFragment extends Fragment implements
                     case RetirementConstants.INCOME_ACTION_EDIT:
                         intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
-                        intent.putExtra(AddIncomeSourceActivity.INCOME_TYPE, item);
+                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
                         startActivityForResult(intent, GOV_PENSION_REQUEST);
                         break;
