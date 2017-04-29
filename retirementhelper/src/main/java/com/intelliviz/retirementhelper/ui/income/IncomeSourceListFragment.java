@@ -120,8 +120,6 @@ public class IncomeSourceListFragment extends Fragment implements
             public void onClick(View view) {
                 Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Add new income source", Snackbar.LENGTH_LONG);
                 snackbar.show();
-                //Intent intent = new Intent(getContext(), AddIncomeSourceActivity.class);
-                //startActivityForResult(intent, ADD_INCOME_REQUEST);
 
                 final String[] incomeTypes = getResources().getStringArray(R.array.income_types);
 
