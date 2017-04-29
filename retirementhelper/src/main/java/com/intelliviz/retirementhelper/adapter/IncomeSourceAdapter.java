@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
@@ -30,7 +31,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
     public IncomeSourceHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mIncomeTypes = parent.getResources().getStringArray(R.array.income_types);
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.income_source_item_layout, parent, false);
+        View view = inflater.inflate(R.layout.income_source_card, parent, false);
         return new IncomeSourceHolder(view);
     }
 
@@ -79,15 +80,15 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
     public class IncomeSourceHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         private long mId;
-        TextView institutionName;
-        TextView incomeType;
+        TextView incomeSourceNameTextView;
+        TextView incomeTypeTextView;
+        ImageView overflowImage;
 
         public IncomeSourceHolder(View itemView) {
             super(itemView);
-            institutionName = (TextView) itemView.findViewById(R.id.institution_name_text_view);
-            incomeType = (TextView) itemView.findViewById(R.id.income_type_text_view);
-            incomeType.setOnClickListener(this);
-            institutionName.setOnClickListener(this);
+            incomeSourceNameTextView = (TextView) itemView.findViewById(R.id.income_source_name_text_view);
+            incomeTypeTextView = (TextView) itemView.findViewById(R.id.income_source_type_text_view);
+            overflowImage = (ImageView) itemView.findViewById(R.id.overflow_image_view);
         }
 
         public void bindIncomeSource() {
@@ -95,10 +96,10 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
             int nameIndex = mCursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_NAME);
             int typeIndex = mCursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_TYPE);
             if(nameIndex != -1) {
-                institutionName.setText(mCursor.getString(nameIndex));
+                incomeSourceNameTextView.setText(mCursor.getString(nameIndex));
             }
             if(typeIndex != -1) {
-                incomeType.setText(mIncomeTypes[mCursor.getInt(typeIndex)]);
+                incomeTypeTextView.setText(mIncomeTypes[mCursor.getInt(typeIndex)]);
             }
             if(idIndex != -1) {
                 String id = mCursor.getString(idIndex);

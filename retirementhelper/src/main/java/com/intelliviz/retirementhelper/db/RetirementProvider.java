@@ -36,7 +36,6 @@ public class RetirementProvider extends ContentProvider {
     private static final int BALANCE_LIST = 701;
     private static final int BALANCE_ID = 702;
 
-
     private static UriMatcher sUriMatcher;
 
     static {

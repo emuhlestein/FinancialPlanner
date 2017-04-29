@@ -7,4 +7,5 @@
     <color name="startProgress">#3F51B5</color>
     <color name="endProgress">#303F9F</color>
     <color name="centerProgress">#FF4081</color>
+    <color name="toolbarTextColor">#FFFFFF</color>
 </resources>

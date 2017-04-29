@@ -8,6 +8,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -59,6 +62,7 @@ public class ViewIncomeSourceFragment extends Fragment {
         if (getArguments() != null) {
             mIncomeSourceId = getArguments().getLong(INCOME_SOURCE_ID_PARAM);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -79,6 +83,25 @@ public class ViewIncomeSourceFragment extends Fragment {
         updateUI();
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.view_income_source_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                break;
+            case R.id.action_add_balance:
+                break;
+            case R.id.action_edit:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateUI() {
