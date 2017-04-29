@@ -80,6 +80,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
     public class IncomeSourceHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         private long mId;
+        private String mIncomeSourceName;
         TextView incomeSourceNameTextView;
         TextView incomeTypeTextView;
         ImageView overflowImage;
@@ -89,6 +90,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
             incomeSourceNameTextView = (TextView) itemView.findViewById(R.id.income_source_name_text_view);
             incomeTypeTextView = (TextView) itemView.findViewById(R.id.income_source_type_text_view);
             overflowImage = (ImageView) itemView.findViewById(R.id.overflow_image_view);
+            overflowImage.setOnClickListener(this);
         }
 
         public void bindIncomeSource() {
@@ -96,7 +98,8 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
             int nameIndex = mCursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_NAME);
             int typeIndex = mCursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_TYPE);
             if(nameIndex != -1) {
-                incomeSourceNameTextView.setText(mCursor.getString(nameIndex));
+                mIncomeSourceName = mCursor.getString(nameIndex);
+                incomeSourceNameTextView.setText(mIncomeSourceName);
             }
             if(typeIndex != -1) {
                 incomeTypeTextView.setText(mIncomeTypes[mCursor.getInt(typeIndex)]);
@@ -110,7 +113,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         @Override
         public void onClick(View v) {
             if(mListener != null) {
-                mListener.onSelectIncomeSource(mId);
+                mListener.onSelectIncomeSource(mId, mIncomeSourceName);
             }
         }
     }

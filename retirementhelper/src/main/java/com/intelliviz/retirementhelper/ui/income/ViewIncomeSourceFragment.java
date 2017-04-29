@@ -6,11 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -18,6 +14,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
@@ -30,10 +27,8 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.getSavingsData;
  */
 public class ViewIncomeSourceFragment extends Fragment {
     public static final String VIEW_INCOME_FRAG_TAG = "view income frag tag";
-    private static final String INCOME_SOURCE_ID_PARAM = "income source id";
     private long mIncomeSourceId;
 
-    @Bind(R.id.view_income_source_toolbar) Toolbar mToolbar;
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
     @Bind(R.id.monthly_increase_text_view) TextView mMonthlyIncrease;
@@ -47,7 +42,7 @@ public class ViewIncomeSourceFragment extends Fragment {
     public static ViewIncomeSourceFragment newInstance(long incomeSourceId) {
         ViewIncomeSourceFragment fragment = new ViewIncomeSourceFragment();
         Bundle args = new Bundle();
-        args.putLong(INCOME_SOURCE_ID_PARAM, incomeSourceId);
+        args.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, incomeSourceId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,7 +55,7 @@ public class ViewIncomeSourceFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mIncomeSourceId = getArguments().getLong(INCOME_SOURCE_ID_PARAM);
+            mIncomeSourceId = getArguments().getLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID);
         }
         setHasOptionsMenu(true);
     }
@@ -72,36 +67,9 @@ public class ViewIncomeSourceFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_income_source, container, false);
         ButterKnife.bind(this, view);
 
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
-        activity.setSupportActionBar(mToolbar);
-        ActionBar actionBar = activity.getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
-        }
-
         updateUI();
 
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.view_income_source_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case android.R.id.home:
-                getActivity().onBackPressed();
-                break;
-            case R.id.action_add_balance:
-                break;
-            case R.id.action_edit:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void updateUI() {

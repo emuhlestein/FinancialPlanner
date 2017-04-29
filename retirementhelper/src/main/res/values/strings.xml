@@ -21,13 +21,18 @@
     <string name="savings_account">Savings Account</string>
     <string name="private_pension">Private Pension</string>
     <string name="social_security">Social Security</string>
-
-    arrayAdapter.add("Savings Account");
-    arrayAdapter.add("Private Pension");
-    arrayAdapter.add("Social Security");
     <string-array name="income_types">
         <item>@string/savings_account</item>
         <item>@string/private_pension</item>
         <item>@string/social_security</item>
+    </string-array>
+
+    <string name="income_source_view_action">View Details</string>
+    <string name="income_source_edit_action">Edit</string>
+    <string name="income_source_delete_action">Delete</string>
+    <string-array name="income_source_actions">
+        <item>@string/income_source_view_action</item>
+        <item>@string/income_source_edit_action</item>
+        <item>@string/income_source_delete_action</item>
     </string-array>
 </resources>

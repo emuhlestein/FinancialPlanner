@@ -41,11 +41,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 public class IncomeSourceListFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
     public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
-    public static final String EXTRA_INCOME_SOURCE_ID = "income source id";
     private static final int SAVINGS_REQUEST = 0;
     private static final int PENSION_REQUEST = 1;
     private static final int GOV_PENSION_REQUEST = 2;
@@ -133,9 +133,9 @@ public class IncomeSourceListFragment extends Fragment implements
                     public void onClick(DialogInterface dialogInterface, int item) {
                         Toast.makeText(getContext(), "You selected " + incomeTypes[item], Toast.LENGTH_LONG).show();
                         dialogInterface.dismiss();
-                        Intent intent = new Intent(getContext(), AddIncomeSourceActivity.class);
-                        intent.putExtra(EXTRA_INCOME_SOURCE_ID, -1);
-                        intent.putExtra(AddIncomeSourceActivity.INCOME_TYPE, item);
+                        Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
+                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
+                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
                         switch(item) {
                             case RetirementConstants.INCOME_TYPE_SAVINGS:
                                 startActivityForResult(intent, SAVINGS_REQUEST);
@@ -222,11 +222,46 @@ public class IncomeSourceListFragment extends Fragment implements
     }
 
     @Override
-    public void onSelectIncomeSource(long id) {
+    public void onSelectIncomeSource(long id, String name) {
         // we have the income source id; show the the details page.
         // The details page will list the selected income source data.
-        Intent intent = new Intent(getContext(), IncomeSourceDetailsActivity.class);
-        intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-        startActivity(intent);
+        //Intent intent = new Intent(getContext(), IncomeSourceDetailsActivity.class);
+        //intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
+        //startActivity(intent);
+        final long incomeSourceId = id;
+        final String incomeSourceName = name;
+        // TODO wrap in DialogFragment
+        final String[] incomeActions = getResources().getStringArray(R.array.income_source_actions);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setItems(incomeActions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int item) {
+                Toast.makeText(getContext(), "You selected " + incomeActions[item], Toast.LENGTH_LONG).show();
+                dialogInterface.dismiss();
+                Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
+
+                switch(item) {
+                    case RetirementConstants.INCOME_ACTION_VIEW:
+                        intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+                        intent.putExtra(AddIncomeSourceActivity.INCOME_TYPE, item);
+                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
+                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
+                        startActivityForResult(intent, SAVINGS_REQUEST);
+                        break;
+                    case RetirementConstants.INCOME_ACTION_EDIT:
+                        intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
+                        intent.putExtra(AddIncomeSourceActivity.INCOME_TYPE, item);
+                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
+                        startActivityForResult(intent, GOV_PENSION_REQUEST);
+                        break;
+                    case RetirementConstants.INCOME_ACTION_DELETE:
+
+                        break;
+                }
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

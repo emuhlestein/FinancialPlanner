@@ -45,7 +45,7 @@ public class IncomeSourceDetailsActivity extends AppCompatActivity {
                 //setContentView(R.layout.activity_add_savings_source);
         }
 
-        long incomeSourceId = intent.getLongExtra(IncomeSourceListFragment.EXTRA_INCOME_SOURCE_ID, -1);
+        long incomeSourceId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
 
         // if incomeSourceId is -1, this is for adding. If it is not -1, this is for editing,
         // deleting, or viewing.

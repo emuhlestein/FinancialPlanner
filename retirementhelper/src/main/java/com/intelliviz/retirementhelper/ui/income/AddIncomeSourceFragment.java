@@ -9,8 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 
+/**
+ * Activity used for adding and editing income sources
+ *
+ * @author Ed Muhlestein
+ */
 public class AddIncomeSourceFragment extends Fragment {
     public static final String EDIT_INCOME_FRAG_TAG = "edit income frag tag";
     private Toolbar mToolbar;
@@ -20,8 +26,11 @@ public class AddIncomeSourceFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static AddIncomeSourceFragment newInstance() {
+    public static AddIncomeSourceFragment newInstance(long incomeSourceId) {
         AddIncomeSourceFragment fragment = new AddIncomeSourceFragment();
+        Bundle args = new Bundle();
+        args.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+        fragment.setArguments(args);
         return fragment;
     }
 
