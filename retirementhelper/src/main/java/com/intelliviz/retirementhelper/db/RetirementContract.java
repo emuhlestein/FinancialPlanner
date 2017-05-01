@@ -20,6 +20,7 @@ public class RetirementContract {
     public static final String PATH_PENSION_DATA = "pension_data";
     public static final String PATH_SAVINGS_DATA = "savings_data";
     public static final String PATH_BALANCE = "balance";
+    public static final String PATH_TAX_DEFERRED = "tax_deferred";
 
     private RetirementContract() {
     }
@@ -126,5 +127,19 @@ public class RetirementContract {
         public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
         public static final String COLUMN_AMOUNT = "amount";
         public static final String COLUMN_DATE = "date";
+    }
+    public static final class TaxDeferredEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TAX_DEFERRED).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED;
+
+        public static final String TABLE_NAME = PATH_TAX_DEFERRED;
+        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
+        public static final String COLUMN_PENALTY_AMOUNT = "amount";
+        public static final String COLUMN_PENALTY_AGE = "age";
+        public static final String COLUMN_IS_401K = "is_401k";
     }
 }

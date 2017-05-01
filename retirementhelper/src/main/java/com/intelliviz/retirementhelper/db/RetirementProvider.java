@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 2;
+    private static final int DBASE_VERSION = 3;
     private static final int PERSONALINFO_ID = 101;
     private static final int CATEGORY_LIST = 201;
     private static final int CATEGORY_ID = 202;
@@ -35,6 +35,8 @@ public class RetirementProvider extends ContentProvider {
     private static final int SAVINGS_DATA_ID = 602;
     private static final int BALANCE_LIST = 701;
     private static final int BALANCE_ID = 702;
+    private static final int TAX_DEFERRED_LIST = 801;
+    private static final int TAX_DEFERRED_ID = 802;
 
     private static UriMatcher sUriMatcher;
 
@@ -66,6 +68,10 @@ public class RetirementProvider extends ContentProvider {
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_BALANCE, BALANCE_LIST);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_BALANCE + "/#", BALANCE_ID);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_TAX_DEFERRED, TAX_DEFERRED_LIST);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_TAX_DEFERRED + "/#", TAX_DEFERRED_ID);
     }
 
     @Override
@@ -105,6 +111,10 @@ public class RetirementProvider extends ContentProvider {
                 return RetirementContract.BalanceEntry.CONTENT_TYPE;
             case BALANCE_ID:
                 return RetirementContract.BalanceEntry.CONTENT_ITEM_TYPE;
+            case TAX_DEFERRED_LIST:
+                return RetirementContract.TaxDeferredEntry.CONTENT_TYPE;
+            case TAX_DEFERRED_ID:
+                return RetirementContract.TaxDeferredEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -145,7 +155,7 @@ public class RetirementProvider extends ContentProvider {
                 break;
             case PENSION_DATA_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.PensionDataEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.PensionDataEntry._ID +
+                sqLiteQueryBuilder.appendWhere(RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID +
                         "=" + uri.getLastPathSegment());
                 break;
             case PENSION_DATA_LIST:
@@ -153,8 +163,17 @@ public class RetirementProvider extends ContentProvider {
                 break;
             case SAVINGS_DATA_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.SavingsDataEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.SavingsDataEntry._ID +
-                        "=" + uri.getLastPathSegment());
+                if(TextUtils.isEmpty(selection)) {
+                    sqLiteQueryBuilder.appendWhere(RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID +
+                            "=" + uri.getLastPathSegment());
+                }
+                break;
+            case TAX_DEFERRED_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredEntry.TABLE_NAME);
+                if(TextUtils.isEmpty(selection)) {
+                    sqLiteQueryBuilder.appendWhere(RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID +
+                            "=" + uri.getLastPathSegment());
+                }
                 break;
             case SAVINGS_DATA_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.SavingsDataEntry.TABLE_NAME);
@@ -238,6 +257,16 @@ public class RetirementProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
+            case TAX_DEFERRED_LIST:
+                // The second parameter will allow an empty row to be inserted. If it was null, then no row
+                // can be inserted if values is empty.
+                rowId = db.insert(RetirementContract.TaxDeferredEntry.TABLE_NAME, null, values);
+                if (rowId > -1) {
+                    returnUri = ContentUris.withAppendedId(uri, rowId);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
             case BALANCE_LIST:
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
@@ -256,7 +285,7 @@ public class RetirementProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mSqliteHelper.getWritableDatabase();
         int rowsDeleted = 0;
         String id;
@@ -280,17 +309,33 @@ public class RetirementProvider extends ContentProvider {
             case PENSION_DATA_ID:
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.PensionDataEntry.TABLE_NAME,
-                        RetirementContract.IncomeSourceEntry._ID + "=" + id, null);
+                        RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
                 break;
             case SAVINGS_DATA_ID:
-                id = uri.getLastPathSegment();
-                rowsDeleted = db.delete(RetirementContract.SavingsDataEntry.TABLE_NAME,
-                        RetirementContract.IncomeSourceEntry._ID + "=" + id, null);
+                if(TextUtils.isEmpty(selection)) {
+                    id = uri.getLastPathSegment();
+                    rowsDeleted = db.delete(RetirementContract.SavingsDataEntry.TABLE_NAME,
+                            RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
+                } else {
+                    rowsDeleted = db.delete(RetirementContract.SavingsDataEntry.TABLE_NAME,
+                            selection, selectionArgs);
+                }
+
+                break;
+            case TAX_DEFERRED_ID:
+                if(TextUtils.isEmpty(selection)) {
+                    id = uri.getLastPathSegment();
+                    rowsDeleted = db.delete(RetirementContract.TaxDeferredEntry.TABLE_NAME,
+                            RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
+                } else {
+                    rowsDeleted = db.delete(RetirementContract.TaxDeferredEntry.TABLE_NAME,
+                            selection, selectionArgs);
+                }
                 break;
             case BALANCE_ID:
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
-                        RetirementContract.IncomeSourceEntry._ID + "=" + id, null);
+                        RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
                 break;
             case BALANCE_LIST:
                 id = uri.getLastPathSegment();
@@ -368,12 +413,12 @@ public class RetirementProvider extends ContentProvider {
                 if (TextUtils.isEmpty(selection)) {
                     rowsUpdated = db.update(RetirementContract.PensionDataEntry.TABLE_NAME,
                             values,
-                            RetirementContract.PensionDataEntry._ID + "=?",
+                            RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID + "=?",
                             new String[]{id});
                 } else {
                     rowsUpdated = db.update(RetirementContract.PensionDataEntry.TABLE_NAME,
                             values,
-                            RetirementContract.PensionDataEntry._ID + "=" + id
+                            RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
@@ -384,12 +429,28 @@ public class RetirementProvider extends ContentProvider {
                 if (TextUtils.isEmpty(selection)) {
                     rowsUpdated = db.update(RetirementContract.SavingsDataEntry.TABLE_NAME,
                             values,
-                            RetirementContract.SavingsDataEntry._ID + "=?",
+                            RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + "=?",
                             new String[]{id});
                 } else {
                     rowsUpdated = db.update(RetirementContract.SavingsDataEntry.TABLE_NAME,
                             values,
-                            RetirementContract.SavingsDataEntry._ID + "=" + id
+                            RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id
+                                    + " and "
+                                    + selection,
+                            selectionArgs);
+                }
+                break;
+            case TAX_DEFERRED_ID:
+                id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdated = db.update(RetirementContract.TaxDeferredEntry.TABLE_NAME,
+                            values,
+                            RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID + "=?",
+                            new String[]{id});
+                } else {
+                    rowsUpdated = db.update(RetirementContract.TaxDeferredEntry.TABLE_NAME,
+                            values,
+                            RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
@@ -400,12 +461,12 @@ public class RetirementProvider extends ContentProvider {
                 if (TextUtils.isEmpty(selection)) {
                     rowsUpdated = db.update(RetirementContract.BalanceEntry.TABLE_NAME,
                             values,
-                            RetirementContract.BalanceEntry._ID + "=?",
+                            RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + "=?",
                             new String[]{id});
                 } else {
                     rowsUpdated = db.update(RetirementContract.BalanceEntry.TABLE_NAME,
                             values,
-                            RetirementContract.BalanceEntry._ID + "=" + id
+                            RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
@@ -503,6 +564,14 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
+            // create the tax deferred table
+            sql = "CREATE TABLE " + RetirementContract.TaxDeferredEntry.TABLE_NAME +
+                    " ( " + RetirementContract.TaxDeferredEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.TaxDeferredEntry.COLUMN_PENALTY_AMOUNT + " TEXT NOT NULL, " +
+                    RetirementContract.TaxDeferredEntry.COLUMN_PENALTY_AGE + " TEXT NOT NULL, " +
+                    RetirementContract.TaxDeferredEntry.COLUMN_IS_401K + " INTEGER NOT NULL);";
+
             String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1', '90', 'NOW', '-1');";
             db.execSQL(ROW);
         }
@@ -515,6 +584,7 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.IncomeSourceEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PensionDataEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.SavingsDataEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.TaxDeferredEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.BalanceEntry.TABLE_NAME);
 
             onCreate(db);

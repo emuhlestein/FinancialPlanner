@@ -19,10 +19,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="savings_account">Savings Account</string>
+    <string name="tax_deferred_account">Tax Deferred Account</string>
     <string name="private_pension">Private Pension</string>
     <string name="social_security">Social Security</string>
     <string-array name="income_types">
         <item>@string/savings_account</item>
+        <item>@string/tax_deferred_account</item>
         <item>@string/private_pension</item>
         <item>@string/social_security</item>
     </string-array>

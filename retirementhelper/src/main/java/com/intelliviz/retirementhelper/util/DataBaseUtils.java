@@ -29,6 +29,15 @@ public class DataBaseUtils {
         return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
     }
 
+    public static Cursor getTaxDeferred(Context context, long incomeSourceId) {
+        Uri uri = RetirementContract.TaxDeferredEntry.CONTENT_URI;
+        String[] projection = null; // we want all columns
+        String selection = RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID + " = ?";
+        String id = String.valueOf(incomeSourceId);
+        String[] selectionArgs = {id};
+        return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+    }
+
     /**
      * Get the balances for the specified income source id.
      * @param context The context.
@@ -44,4 +53,63 @@ public class DataBaseUtils {
         String sortOrder = RetirementContract.BalanceEntry.COLUMN_DATE + " DESC";
         return context.getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
     }
+
+    public static IncomeSourceData getIncomeSourceData(Context context, long incomeSourceId) {
+        Cursor cursor = getIncomeSource(context, incomeSourceId);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        int nameIndex = cursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_NAME);
+        int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_TYPE);
+        String incomeSourceName = cursor.getString(nameIndex);
+        int incomeSourceType = cursor.getInt(typeIndex);
+        return new IncomeSourceData(incomeSourceName, incomeSourceType);
+    }
+
+    public static SavingsDataData getSavingsDataData(Context context, long incomeSourceId) {
+        Cursor cursor = getSavingsData(context, incomeSourceId);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        int interestIndex = cursor.getColumnIndex(RetirementContract.SavingsDataEntry.COLUMN_INTEREST);
+        int monthlyIncreaseIndex = cursor.getColumnIndex(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION);
+        String interest = cursor.getString(interestIndex);
+        String monthlyIncrease = cursor.getString(monthlyIncreaseIndex);
+        return new SavingsDataData(interest, monthlyIncrease);
+    }
+
+    public static TaxDeferredData getTaxDeferredData(Context context, long incomeSourceId) {
+        Cursor cursor = getTaxDeferred(context, incomeSourceId);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        int amountIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredEntry.COLUMN_PENALTY_AMOUNT);
+        int ageIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredEntry.COLUMN_PENALTY_AGE);
+        int is401kIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredEntry.COLUMN_IS_401K);
+        String amount = cursor.getString(amountIndex);
+        String age = cursor.getString(ageIndex);
+        int is401k = cursor.getInt(is401kIndex);
+        return new TaxDeferredData(amount, age, is401k);
+    }
+
+    public static BalanceData[] getBalanceData(Context context, long incomeSourceId) {
+        Cursor cursor = getBalances(context, incomeSourceId);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+
+        BalanceData bd[] = new BalanceData[cursor.getCount()];
+        int index = 0;
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            int balanceIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
+            int dateIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_DATE);
+            String balance = cursor.getString(balanceIndex);
+            String date = cursor.getString(dateIndex);
+            bd[index++] = new BalanceData(balance, date);
+        }
+
+        return bd;
+    }
+
+
 }
