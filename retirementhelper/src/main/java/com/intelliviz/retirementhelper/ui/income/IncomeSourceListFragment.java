@@ -33,10 +33,6 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -167,6 +163,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 int incomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, 0);
                 String incomeSourceName = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
                 String balance = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
+                String balanceDate = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE);
                 String interest = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
                 String monthlyIncrease = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE);
 
@@ -176,7 +173,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 String[] selectionArgs = {incomeSourceName};
                 Cursor cursor = getContext().getContentResolver().query(uri, projection, selectionClause, selectionArgs, null);
                 if(cursor == null || !cursor.moveToFirst()) {
-                    // institution does not exist; add it
+                    // income source does not exist; add it
                     ContentValues values = new ContentValues();
                     values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, incomeSourceName);
                     values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
@@ -190,13 +187,10 @@ public class IncomeSourceListFragment extends Fragment implements
                     values.put(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION, monthlyIncrease);
                     uri = getContext().getContentResolver().insert(RetirementContract.SavingsDataEntry.CONTENT_URI, values);
 
-                    DateFormat dateFormat = new SimpleDateFormat(RetirementConstants.DATE_FORMAT);
-                    Date date = new Date();
-                    System.out.println(dateFormat.format(date));
                     values = new ContentValues();
                     values.put(RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID, lid);
                     values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, balance);
-                    values.put(RetirementContract.BalanceEntry.COLUMN_DATE, dateFormat.format(date));
+                    values.put(RetirementContract.BalanceEntry.COLUMN_DATE, balanceDate);
                     uri = getContext().getContentResolver().insert(RetirementContract.BalanceEntry.CONTENT_URI, values);
                 } else {
                     String sid = Long.toString(incomeSourceId);
@@ -232,12 +226,12 @@ public class IncomeSourceListFragment extends Fragment implements
 
                     // save balance data
                     values = new ContentValues();
-                    values.put(RetirementContract.BalanceEntry.COLUMN_DATE, monthlyIncrease);
+                    values.put(RetirementContract.BalanceEntry.COLUMN_DATE, balanceDate);
                     values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, balance);
 
-                    selectionClause = RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + " = ?";
+                    selectionClause = RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + " = ?";
                     selectionArgs = new String[]{sid};
-                    uri = RetirementContract.SavingsDataEntry.CONTENT_URI;
+                    uri = RetirementContract.BalanceEntry.CONTENT_URI;
                     uri = Uri.withAppendedPath(uri, sid);
                     rowsUpdated = getContext().getContentResolver().update(uri, values, selectionClause, selectionArgs);
                     if(rowsUpdated != 1) {

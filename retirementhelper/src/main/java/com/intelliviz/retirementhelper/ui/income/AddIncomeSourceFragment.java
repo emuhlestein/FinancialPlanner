@@ -145,12 +145,13 @@ public class AddIncomeSourceFragment extends Fragment {
         Intent returnIntent = new Intent();
 
         String name = mIncomeSourceName.getText().toString();
+        String date = SystemUtils.getTodaysDate();
 
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, mIncomeSourceId);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE, balance);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE, date);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, interest);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE, monthlyIncrease);
 
