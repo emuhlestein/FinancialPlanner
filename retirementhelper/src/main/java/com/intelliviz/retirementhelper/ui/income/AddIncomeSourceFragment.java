@@ -126,6 +126,22 @@ public class AddIncomeSourceFragment extends Fragment {
     }
 
     public void sendIncomeSourceData() {
+        String balance = SystemUtils.getCurrencyValue(mBalance);
+        String interest = mAnnualInterest.getText().toString();
+        String monthlyIncrease = SystemUtils.getCurrencyValue(mMonthlyIncrease);
+        if(!SystemUtils.isValidFloatValue(balance)) {
+            // TODO pop up error message
+            return;
+        }
+        if(!SystemUtils.isValidFloatValue(interest)) {
+            // TODO pop up error message
+            return;
+        }
+        if(!SystemUtils.isValidFloatValue(monthlyIncrease)) {
+            // TODO pop up error message
+            return;
+        }
+
         Intent returnIntent = new Intent();
 
         String name = mIncomeSourceName.getText().toString();
@@ -133,17 +149,9 @@ public class AddIncomeSourceFragment extends Fragment {
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, mIncomeSourceId);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
-
-        float balance = SystemUtils.getFloatCurrency(mBalance.getText().toString());
-        //float balance = Float.parseFloat(mBalance.getText().toString());
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
-
-        //float interest = Float.parseFloat(mAnnualInterest.getText().toString());
-        float interest = SystemUtils.getFloatCurrency(mAnnualInterest.getText().toString());
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE, balance);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, interest);
-
-        //float monthlyIncrease = Float.parseFloat(mMonthlyIncrease.getText().toString());
-        float monthlyIncrease = SystemUtils.getFloatCurrency(mMonthlyIncrease.getText().toString());
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE, monthlyIncrease);
 
         getActivity().setResult(Activity.RESULT_OK, returnIntent);

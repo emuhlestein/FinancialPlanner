@@ -166,9 +166,9 @@ public class IncomeSourceListFragment extends Fragment implements
                 long incomeSourceId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
                 int incomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, 0);
                 String incomeSourceName = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
-                float balance = intent.getFloatExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, 0);
-                float interest = intent.getFloatExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, 0);
-                float monthlyIncrease = intent.getFloatExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE, 0);
+                String balance = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
+                String interest = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
+                String monthlyIncrease = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE);
 
                 Uri uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
                 String[] projection = {RetirementContract.IncomeSourceEntry.COLUMN_NAME};
@@ -199,16 +199,47 @@ public class IncomeSourceListFragment extends Fragment implements
                     values.put(RetirementContract.BalanceEntry.COLUMN_DATE, dateFormat.format(date));
                     uri = getContext().getContentResolver().insert(RetirementContract.BalanceEntry.CONTENT_URI, values);
                 } else {
+                    String sid = Long.toString(incomeSourceId);
+
+                    // save income source data
                     ContentValues values = new ContentValues();
                     values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, incomeSourceName);
                     values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
 
                     selectionClause = RetirementContract.IncomeSourceEntry._ID + " = ?";
-                    String sid = Long.toString(incomeSourceId);
+
                     selectionArgs = new String[]{sid};
                     uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
                     uri = Uri.withAppendedPath(uri, sid);
                     int rowsUpdated = getContext().getContentResolver().update(uri, values, selectionClause, selectionArgs);
+                    if(rowsUpdated != 1) {
+                        Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
+                    }
+
+                    // save savings data data
+                    values = new ContentValues();
+                    values.put(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION, monthlyIncrease);
+                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INTEREST, interest);
+
+                    selectionClause = RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + " = ?";
+                    selectionArgs = new String[]{sid};
+                    uri = RetirementContract.SavingsDataEntry.CONTENT_URI;
+                    uri = Uri.withAppendedPath(uri, sid);
+                    rowsUpdated = getContext().getContentResolver().update(uri, values, selectionClause, selectionArgs);
+                    if(rowsUpdated != 1) {
+                        Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
+                    }
+
+                    // save balance data
+                    values = new ContentValues();
+                    values.put(RetirementContract.BalanceEntry.COLUMN_DATE, monthlyIncrease);
+                    values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, balance);
+
+                    selectionClause = RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + " = ?";
+                    selectionArgs = new String[]{sid};
+                    uri = RetirementContract.SavingsDataEntry.CONTENT_URI;
+                    uri = Uri.withAppendedPath(uri, sid);
+                    rowsUpdated = getContext().getContentResolver().update(uri, values, selectionClause, selectionArgs);
                     if(rowsUpdated != 1) {
                         Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
                     }

@@ -91,10 +91,10 @@ public class ViewIncomeSourceFragment extends Fragment {
         }
         int sourceInterestIndex = cursor.getColumnIndex(RetirementContract.SavingsDataEntry.COLUMN_INTEREST);
         int sourceMonthlyIndex = cursor.getColumnIndex(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION);
-        float interest = cursor.getFloat(sourceInterestIndex);
-        float monthlyIncreate = cursor.getFloat(sourceMonthlyIndex);
+        String interest = cursor.getString(sourceInterestIndex);
+        String monthlyIncrease = cursor.getString(sourceMonthlyIndex);
         mAnnualInterest.setText(String.valueOf(interest));
-        mMonthlyIncrease.setText(String.valueOf(monthlyIncreate));
+        mMonthlyIncrease.setText(String.valueOf(monthlyIncrease));
 
         cursor = DataBaseUtils.getBalances(getContext(), mIncomeSourceId);
         if(cursor == null || !cursor.moveToFirst()) {
@@ -102,7 +102,7 @@ public class ViewIncomeSourceFragment extends Fragment {
         }
         int amountIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
         int dateIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
-        float amount = cursor.getFloat(amountIndex);
+        String amount = cursor.getString(amountIndex);
         String date = cursor.getString(dateIndex);
         String formattedAmount = SystemUtils.getFormattedCurrency(amount);
         mCurrentBalance.setText(String.valueOf(formattedAmount));
