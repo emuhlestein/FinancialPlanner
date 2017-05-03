@@ -43,8 +43,10 @@ public class IncomeSourceListFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
     public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
     private static final int SAVINGS_REQUEST = 0;
-    private static final int PENSION_REQUEST = 1;
-    private static final int GOV_PENSION_REQUEST = 2;
+    private static final int TAX_DEFERRED_REQUEST = 1;
+    private static final int PENSION_REQUEST = 2;
+    private static final int GOV_PENSION_REQUEST = 3;
+
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
     @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
@@ -133,6 +135,9 @@ public class IncomeSourceListFragment extends Fragment implements
                         switch(item) {
                             case RetirementConstants.INCOME_TYPE_SAVINGS:
                                 startActivityForResult(intent, SAVINGS_REQUEST);
+                                break;
+                            case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
+                                startActivityForResult(intent, TAX_DEFERRED_REQUEST);
                                 break;
                             case RetirementConstants.INCOME_TYPE_PENSION:
                                 startActivityForResult(intent, PENSION_REQUEST);
