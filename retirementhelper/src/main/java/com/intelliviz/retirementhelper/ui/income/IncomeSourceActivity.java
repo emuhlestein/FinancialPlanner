@@ -36,13 +36,6 @@ public class IncomeSourceActivity extends AppCompatActivity {
         mIncomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_TYPE_SAVINGS);
         mIncomeSourceAction = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
 
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft;
-        Fragment fragment;
-
-        // TODO currently only supports savings account
-        // TODO need to support other accounts also, like tax deferred
-
         if(mIncomeSourceId == -1) {
             // Add a new income source
             ab.setSubtitle("Add income source");
@@ -51,13 +44,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
                     addSavingsIncomeSourceFragmnet(false);
                     break;
                 case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                    fragment = fm.findFragmentByTag(EditTaxDeferredIncomeFragment.TAXDEF_INCOME_FRAG_TAG);
-                    if (fragment == null) {
-                        fragment = EditTaxDeferredIncomeFragment.newInstance(mIncomeSourceId);
-                        ft = fm.beginTransaction();
-                        ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.TAXDEF_INCOME_FRAG_TAG);
-                        ft.commit();
-                    }
+                    addTaxDeferredIncomeSourceFragmnet(false);
                     break;
             }
         } else {
@@ -67,16 +54,10 @@ public class IncomeSourceActivity extends AppCompatActivity {
                 ab.setSubtitle("Add income source");
                 switch (mIncomeSourceType) {
                     case RetirementConstants.INCOME_TYPE_SAVINGS:
-                        fragment = fm.findFragmentByTag(EditTaxDeferredIncomeFragment.TAXDEF_INCOME_FRAG_TAG);
-                        if (fragment == null) {
-                            fragment = EditTaxDeferredIncomeFragment.newInstance(mIncomeSourceId);
-                            ft = fm.beginTransaction();
-                            ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.TAXDEF_INCOME_FRAG_TAG);
-                            ft.commit();
-                        }
+                        addSavingsIncomeSourceFragmnet(false);
                         break;
                     case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                        addSavingsIncomeSourceFragmnet(false);
+                        addTaxDeferredIncomeSourceFragmnet(false);
                         break;
                 }
             } else {
@@ -84,6 +65,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
                     case RetirementConstants.INCOME_TYPE_SAVINGS:
                         addSavingsIncomeSourceFragmnet(true);
                     case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
+                        addTaxDeferredIncomeSourceFragmnet(true);
                         break;
                 }
             }
@@ -96,19 +78,19 @@ public class IncomeSourceActivity extends AppCompatActivity {
         Fragment fragment;
 
         if (viewMode) {
-            fragment = fm.findFragmentByTag(ViewIncomeSavingsFragment.VIEW_INCOME_FRAG_TAG);
+            fragment = fm.findFragmentByTag(ViewSavingsIncomeFragment.VIEW_SAVINGS_INCOME_FRAG_TAG);
             if (fragment == null) {
-                fragment = ViewIncomeSavingsFragment.newInstance(mIncomeSourceId);
+                fragment = ViewSavingsIncomeFragment.newInstance(mIncomeSourceId);
                 ft = fm.beginTransaction();
-                ft.add(R.id.content_frame, fragment, ViewIncomeSavingsFragment.VIEW_INCOME_FRAG_TAG);
+                ft.add(R.id.content_frame, fragment, ViewSavingsIncomeFragment.VIEW_SAVINGS_INCOME_FRAG_TAG);
                 ft.commit();
             }
         } else {
-            fragment = fm.findFragmentByTag(EditSavingsIncomeFragment.EDIT_INCOME_FRAG_TAG);
+            fragment = fm.findFragmentByTag(EditSavingsIncomeFragment.EDIT_SAVINGS_INCOME_FRAG_TAG);
             if (fragment == null) {
                 fragment = EditSavingsIncomeFragment.newInstance(mIncomeSourceId);
                 ft = fm.beginTransaction();
-                ft.add(R.id.content_frame, fragment, EditSavingsIncomeFragment.EDIT_INCOME_FRAG_TAG);
+                ft.add(R.id.content_frame, fragment, EditSavingsIncomeFragment.EDIT_SAVINGS_INCOME_FRAG_TAG);
                 ft.commit();
             }
         }
@@ -120,19 +102,19 @@ public class IncomeSourceActivity extends AppCompatActivity {
         Fragment fragment;
 
         if (viewMode) {
-            fragment = fm.findFragmentByTag(ViewIncomeSavingsFragment.VIEW_INCOME_FRAG_TAG);
+            fragment = fm.findFragmentByTag(ViewTaxDeferredIncomeFragment.VIEW_TAXDEF_INCOME_FRAG_TAG);
             if (fragment == null) {
-                fragment = ViewIncomeSavingsFragment.newInstance(mIncomeSourceId);
+                fragment = ViewTaxDeferredIncomeFragment.newInstance(mIncomeSourceId);
                 ft = fm.beginTransaction();
-                ft.add(R.id.content_frame, fragment, ViewIncomeSavingsFragment.VIEW_INCOME_FRAG_TAG);
+                ft.add(R.id.content_frame, fragment, ViewTaxDeferredIncomeFragment.VIEW_TAXDEF_INCOME_FRAG_TAG);
                 ft.commit();
             }
         } else {
-            fragment = fm.findFragmentByTag(EditTaxDeferredIncomeFragment.TAXDEF_INCOME_FRAG_TAG);
+            fragment = fm.findFragmentByTag(EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
             if (fragment == null) {
                 fragment = EditTaxDeferredIncomeFragment.newInstance(mIncomeSourceId);
                 ft = fm.beginTransaction();
-                ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.TAXDEF_INCOME_FRAG_TAG);
+                ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
                 ft.commit();
             }
         }

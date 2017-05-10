@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
  * @author Ed Muhlestein
  */
 public class EditTaxDeferredIncomeFragment extends Fragment {
-    public static final String TAXDEF_EDIT_INCOME_FRAG_TAG = "taxdef edit income frag tag";
+    public static final String EDIT_TAXDEF_INCOME_FRAG_TAG = "edit taxdef income frag tag";
     private long mIncomeSourceId;
     private int mIncomeSourceType;
     @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
@@ -65,7 +65,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_tax_deferred_income, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
 
         ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
@@ -150,6 +150,9 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
 
+        String penaltyAmount = mPenaltyAmount.getText().toString();
+        String minimumAge = mPenaltyAge.getText().toString();
+
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, mIncomeSourceId);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
@@ -157,6 +160,8 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE, date);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, interest);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE, monthlyIncrease);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_PENALTY_AMOUNT, penaltyAmount);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MINIMUM_AGE, minimumAge);
 
         getActivity().setResult(Activity.RESULT_OK, returnIntent);
         getActivity().finish();

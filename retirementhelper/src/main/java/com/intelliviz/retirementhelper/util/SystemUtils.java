@@ -1,6 +1,8 @@
 package com.intelliviz.retirementhelper.util;
 
 import android.content.Context;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -19,6 +21,12 @@ import java.util.Locale;
  */
 
 public class SystemUtils {
+    public static void setToolbarSubtitle(AppCompatActivity activity, String subtitle) {
+        ActionBar actionBar = activity.getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setSubtitle(subtitle);
+        }
+    }
     public static boolean isValidFloatValue(String value) {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         Number number = null;

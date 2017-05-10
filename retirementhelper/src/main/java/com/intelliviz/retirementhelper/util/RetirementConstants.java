@@ -19,6 +19,8 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_BALANCE = "income source balance";
     public static final String EXTRA_INCOME_SOURCE_BALANCE_DATE = "income source balance date";
     public static final String EXTRA_INCOME_SOURCE_MONTHLY_INCREASE = "income source monthly increase";
+    public static final String EXTRA_INCOME_SOURCE_MINIMUM_AGE = "income source minimum age";
+    public static final String EXTRA_INCOME_SOURCE_PENALTY_AMOUNT = "income source penalty amount";
     public static final String EXTRA_INCOME_SOURCE_INTEREST = "income source interest";
     public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
 }

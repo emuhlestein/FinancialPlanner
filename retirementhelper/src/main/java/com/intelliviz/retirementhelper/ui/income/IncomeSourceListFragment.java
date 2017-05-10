@@ -1,7 +1,6 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +29,8 @@ import android.widget.Toast;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.IncomeSourceData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 
@@ -37,6 +38,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.saveSavingsData;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 public class IncomeSourceListFragment extends Fragment implements
@@ -49,10 +51,14 @@ public class IncomeSourceListFragment extends Fragment implements
 
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
-    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
-    @Bind(R.id.emptyView) TextView mEmptyView;
-    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
-    @Bind(R.id.addIncomeTypeFAB) FloatingActionButton mAddIncomeSourceFAB;
+    @Bind(R.id.recyclerview)
+    RecyclerView mRecyclerView;
+    @Bind(R.id.emptyView)
+    TextView mEmptyView;
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+    @Bind(R.id.addIncomeTypeFAB)
+    FloatingActionButton mAddIncomeSourceFAB;
 
 
     @Override
@@ -132,7 +138,7 @@ public class IncomeSourceListFragment extends Fragment implements
                         Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
-                        switch(item) {
+                        switch (item) {
                             case RetirementConstants.INCOME_TYPE_SAVINGS:
                                 startActivityForResult(intent, SAVINGS_REQUEST);
                                 break;
@@ -153,7 +159,7 @@ public class IncomeSourceListFragment extends Fragment implements
             }
         });
 
-        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         ab.setSubtitle("Income Source");
 
         return view;
@@ -162,91 +168,49 @@ public class IncomeSourceListFragment extends Fragment implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == SAVINGS_REQUEST) {
+            switch (requestCode) {
+                case SAVINGS_REQUEST:
+                    long incomeSourceId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
+                    int incomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, 0);
+                    String incomeSourceName = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
+                    String balance = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
+                    String balanceDate = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE);
+                    String interest = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
+                    String monthlyIncrease = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE);
+                    IncomeSourceData isd = DataBaseUtils.getIncomeSourceData(getContext(), incomeSourceName);
 
-                long incomeSourceId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
-                int incomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, 0);
-                String incomeSourceName = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
-                String balance = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
-                String balanceDate = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE);
-                String interest = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
-                String monthlyIncrease = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE);
+                    if (isd == null) {
+                        String sid = DataBaseUtils.addIncomeSource(getContext(), incomeSourceType, incomeSourceName);
+                        long id = Long.parseLong(sid);
 
-                Uri uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
-                String[] projection = {RetirementContract.IncomeSourceEntry.COLUMN_NAME};
-                String selectionClause = RetirementContract.IncomeSourceEntry.COLUMN_NAME + " = ?";
-                String[] selectionArgs = {incomeSourceName};
-                Cursor cursor = getContext().getContentResolver().query(uri, projection, selectionClause, selectionArgs, null);
-                if(cursor == null || !cursor.moveToFirst()) {
-                    // income source does not exist; add it
-                    ContentValues values = new ContentValues();
-                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, incomeSourceName);
-                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
-                    uri = getContext().getContentResolver().insert(RetirementContract.IncomeSourceEntry.CONTENT_URI, values);
-                    String id = uri.getLastPathSegment();
-                    long lid = Long.parseLong(id);
+                        String sdid = DataBaseUtils.addSavingsData(getContext(), id, monthlyIncrease, interest);
+                        String bdid = DataBaseUtils.addBalanceData(getContext(), id, balance, balanceDate);
+                    } else {
+                        String sid = Long.toString(incomeSourceId);
 
-                    values = new ContentValues();
-                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID, lid);
-                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INTEREST, interest);
-                    values.put(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION, monthlyIncrease);
-                    uri = getContext().getContentResolver().insert(RetirementContract.SavingsDataEntry.CONTENT_URI, values);
+                        int rowsUpdated = DataBaseUtils.saveIncomeSourceData(getContext(), incomeSourceId, incomeSourceName, incomeSourceType);
+                        if(rowsUpdated != 1) {
+                            // TODO handle error
+                        }
 
-                    values = new ContentValues();
-                    values.put(RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID, lid);
-                    values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, balance);
-                    values.put(RetirementContract.BalanceEntry.COLUMN_DATE, balanceDate);
-                    uri = getContext().getContentResolver().insert(RetirementContract.BalanceEntry.CONTENT_URI, values);
-                } else {
-                    String sid = Long.toString(incomeSourceId);
+                        rowsUpdated = saveSavingsData(getContext(), incomeSourceId, monthlyIncrease, interest);
+                        if(rowsUpdated != 1) {
+                            // TODO handle error
+                        }
 
-                    // save income source data
-                    ContentValues values = new ContentValues();
-                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, incomeSourceName);
-                    values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
-
-                    selectionClause = RetirementContract.IncomeSourceEntry._ID + " = ?";
-
-                    selectionArgs = new String[]{sid};
-                    uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
-                    uri = Uri.withAppendedPath(uri, sid);
-                    int rowsUpdated = getContext().getContentResolver().update(uri, values, selectionClause, selectionArgs);
-                    if(rowsUpdated != 1) {
-                        Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
+                        rowsUpdated = DataBaseUtils.saveBalanceData(getContext(), incomeSourceId, balance, balanceDate);
+                        if(rowsUpdated != 1) {
+                            // TODO handle error
+                        }
                     }
+                    break;
+                case TAX_DEFERRED_REQUEST:
+                    break;
+                case PENSION_REQUEST:
+                    break;
 
-                    // save savings data data
-                    values = new ContentValues();
-                    values.put(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION, monthlyIncrease);
-                    values.put(RetirementContract.SavingsDataEntry.COLUMN_INTEREST, interest);
-
-                    selectionClause = RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + " = ?";
-                    selectionArgs = new String[]{sid};
-                    uri = RetirementContract.SavingsDataEntry.CONTENT_URI;
-                    uri = Uri.withAppendedPath(uri, sid);
-                    rowsUpdated = getContext().getContentResolver().update(uri, values, selectionClause, selectionArgs);
-                    if(rowsUpdated != 1) {
-                        Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
-                    }
-
-                    // save balance data
-                    values = new ContentValues();
-                    values.put(RetirementContract.BalanceEntry.COLUMN_DATE, balanceDate);
-                    values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, balance);
-
-                    selectionClause = RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + " = ?";
-                    selectionArgs = new String[]{sid};
-                    uri = RetirementContract.BalanceEntry.CONTENT_URI;
-                    uri = Uri.withAppendedPath(uri, sid);
-                    rowsUpdated = getContext().getContentResolver().update(uri, values, selectionClause, selectionArgs);
-                    if(rowsUpdated != 1) {
-                        Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
-                    }
-                }
-            } else if (requestCode == PENSION_REQUEST) {
-
-            } else if (requestCode == GOV_PENSION_REQUEST) {
-
+                case GOV_PENSION_REQUEST:
+                    break;
             }
 
             getLoaderManager().restartLoader(INCOME_TYPE_LOADER, null, this);
@@ -277,7 +241,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 dialogInterface.dismiss();
                 Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
 
-                switch(item) {
+                switch (item) {
                     case RetirementConstants.INCOME_ACTION_VIEW:
                         intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);

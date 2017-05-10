@@ -25,8 +25,8 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.getSavingsData;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ViewIncomeSavingsFragment extends Fragment {
-    public static final String VIEW_INCOME_FRAG_TAG = "view income frag tag";
+public class ViewSavingsIncomeFragment extends Fragment {
+    public static final String VIEW_SAVINGS_INCOME_FRAG_TAG = "view savings income frag tag";
     private long mIncomeSourceId;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
@@ -35,19 +35,19 @@ public class ViewIncomeSavingsFragment extends Fragment {
     @Bind(R.id.current_balance_text_view) TextView mCurrentBalance;
 
     /**
-     * Create the ViewIncomeSavingsFragment.
+     * Create the ViewSavingsIncomeFragment.
      * @param incomeSourceId The database table id for selected income source.
-     * @return The ViewIncomeSavingsFragment.
+     * @return The ViewSavingsIncomeFragment.
      */
-    public static ViewIncomeSavingsFragment newInstance(long incomeSourceId) {
-        ViewIncomeSavingsFragment fragment = new ViewIncomeSavingsFragment();
+    public static ViewSavingsIncomeFragment newInstance(long incomeSourceId) {
+        ViewSavingsIncomeFragment fragment = new ViewSavingsIncomeFragment();
         Bundle args = new Bundle();
         args.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, incomeSourceId);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public ViewIncomeSavingsFragment() {
+    public ViewSavingsIncomeFragment() {
         // Required empty public constructor
     }
 
@@ -64,7 +64,7 @@ public class ViewIncomeSavingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_view_income_source, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_savings_income, container, false);
         ButterKnife.bind(this, view);
 
         updateUI();
