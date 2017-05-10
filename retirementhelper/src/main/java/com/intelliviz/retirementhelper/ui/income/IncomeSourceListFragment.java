@@ -38,7 +38,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.saveSavingsData;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 public class IncomeSourceListFragment extends Fragment implements
@@ -170,39 +169,7 @@ public class IncomeSourceListFragment extends Fragment implements
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case SAVINGS_REQUEST:
-                    long incomeSourceId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
-                    int incomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, 0);
-                    String incomeSourceName = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
-                    String balance = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
-                    String balanceDate = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE);
-                    String interest = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
-                    String monthlyIncrease = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE);
-                    IncomeSourceData isd = DataBaseUtils.getIncomeSourceData(getContext(), incomeSourceName);
-
-                    if (isd == null) {
-                        String sid = DataBaseUtils.addIncomeSource(getContext(), incomeSourceType, incomeSourceName);
-                        long id = Long.parseLong(sid);
-
-                        String sdid = DataBaseUtils.addSavingsData(getContext(), id, monthlyIncrease, interest);
-                        String bdid = DataBaseUtils.addBalanceData(getContext(), id, balance, balanceDate);
-                    } else {
-                        String sid = Long.toString(incomeSourceId);
-
-                        int rowsUpdated = DataBaseUtils.saveIncomeSourceData(getContext(), incomeSourceId, incomeSourceName, incomeSourceType);
-                        if(rowsUpdated != 1) {
-                            // TODO handle error
-                        }
-
-                        rowsUpdated = saveSavingsData(getContext(), incomeSourceId, monthlyIncrease, interest);
-                        if(rowsUpdated != 1) {
-                            // TODO handle error
-                        }
-
-                        rowsUpdated = DataBaseUtils.saveBalanceData(getContext(), incomeSourceId, balance, balanceDate);
-                        if(rowsUpdated != 1) {
-                            // TODO handle error
-                        }
-                    }
+                    saveSavingsData(intent);
                     break;
                 case TAX_DEFERRED_REQUEST:
                     break;
@@ -264,5 +231,41 @@ public class IncomeSourceListFragment extends Fragment implements
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void saveSavingsData(Intent intent) {
+        long incomeSourceId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
+        int incomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, 0);
+        String incomeSourceName = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
+        String balance = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
+        String balanceDate = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE);
+        String interest = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
+        String monthlyIncrease = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE);
+        IncomeSourceData isd = DataBaseUtils.getIncomeSourceData(getContext(), incomeSourceName);
+
+        if (isd == null) {
+            String sid = DataBaseUtils.addIncomeSource(getContext(), incomeSourceType, incomeSourceName);
+            long id = Long.parseLong(sid);
+
+            String sdid = DataBaseUtils.addSavingsData(getContext(), id, monthlyIncrease, interest);
+            String bdid = DataBaseUtils.addBalanceData(getContext(), id, balance, balanceDate);
+        } else {
+            String sid = Long.toString(incomeSourceId);
+
+            int rowsUpdated = DataBaseUtils.saveIncomeSourceData(getContext(), incomeSourceId, incomeSourceName, incomeSourceType);
+            if(rowsUpdated != 1) {
+                // TODO handle error
+            }
+
+            rowsUpdated = DataBaseUtils.saveSavingsData(getContext(), incomeSourceId, monthlyIncrease, interest);
+            if(rowsUpdated != 1) {
+                // TODO handle error
+            }
+
+            rowsUpdated = DataBaseUtils.saveBalanceData(getContext(), incomeSourceId, balance, balanceDate);
+            if(rowsUpdated != 1) {
+                // TODO handle error
+            }
+        }
     }
 }
