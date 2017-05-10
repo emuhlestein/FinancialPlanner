@@ -6,7 +6,7 @@ package com.intelliviz.retirementhelper.util;
 
 public class RetirementConstants {
     public static final int INCOME_TYPE_SAVINGS = 0;
-    public static final int INCOME_TYPE_TAX_DEFERRED = 1; // 401(k), Roth IRA
+    public static final int INCOME_TYPE_TAX_DEFERRED = 1; // 401(k)
     public static final int INCOME_TYPE_PENSION = 2;
     public static final int INCOME_TYPE_GOV_PENSION = 3; //eg social security
     public static final String DATE_FORMAT = "yyyy-MM-dd";

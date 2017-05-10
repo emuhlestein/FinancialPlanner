@@ -2,7 +2,6 @@ package com.intelliviz.retirementhelper.ui.income;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -14,35 +13,40 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.IncomeSourceData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SavingsDataData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.util.TaxDeferredData;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Fragment used for adding and editing (savings) income sources.
+ * Fragment used for adding tax deferred income sources.
  *
  * @author Ed Muhlestein
  */
-public class AddIncomeSourceFragment extends Fragment {
-    public static final String EDIT_INCOME_FRAG_TAG = "edit income frag tag";
+public class EditTaxDeferredIncomeFragment extends Fragment {
+    public static final String TAXDEF_EDIT_INCOME_FRAG_TAG = "taxdef edit income frag tag";
     private long mIncomeSourceId;
     private int mIncomeSourceType;
     @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
     @Bind(R.id.balance_text) EditText mBalance;
     @Bind(R.id.annual_interest_text) EditText mAnnualInterest;
     @Bind(R.id.monthly_increase_text) EditText mMonthlyIncrease;
+    @Bind(R.id.penalty_age_text) EditText mPenaltyAge;
+    @Bind(R.id.penalty_amount_text) EditText mPenaltyAmount;
     @Bind(R.id.add_income_source_button) Button mAddIncomeSource;
 
-    public AddIncomeSourceFragment() {
+    public EditTaxDeferredIncomeFragment() {
         // Required empty public constructor
     }
 
-    public static AddIncomeSourceFragment newInstance(long incomeSourceId) {
-        AddIncomeSourceFragment fragment = new AddIncomeSourceFragment();
+    public static EditTaxDeferredIncomeFragment newInstance(long incomeSourceId) {
+        EditTaxDeferredIncomeFragment fragment = new EditTaxDeferredIncomeFragment();
         Bundle args = new Bundle();
         args.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, incomeSourceId);
         fragment.setArguments(args);
@@ -61,13 +65,13 @@ public class AddIncomeSourceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_add_income_source, container, false);
+        View view = inflater.inflate(R.layout.fragment_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
 
         ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
 
         if(mIncomeSourceId == -1) {
-            ab.setSubtitle("Savings");
+            ab.setSubtitle(SystemUtils.getIncomeSourceTypeString(getContext(), RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
         } else {
             updateUI();
         }
@@ -86,40 +90,39 @@ public class AddIncomeSourceFragment extends Fragment {
             return;
         }
 
-        Cursor cursor = DataBaseUtils.getIncomeSource(getContext(), mIncomeSourceId);
-        if(cursor == null || !cursor.moveToFirst()) {
+        IncomeSourceData isd = DataBaseUtils.getIncomeSourceData(getContext(), mIncomeSourceId);
+        if(isd == null) {
             return;
         }
-        int nameIndex = cursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_NAME);
-        int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_TYPE);
-        String incomeSourceName = cursor.getString(nameIndex);
-        mIncomeSourceType = cursor.getInt(typeIndex);
+        mIncomeSourceType = isd.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), mIncomeSourceType);
 
-        cursor = DataBaseUtils.getSavingsData(getContext(), mIncomeSourceId);
-        if(cursor == null || !cursor.moveToFirst()) {
+        SavingsDataData sdd = DataBaseUtils.getSavingsDataData(getContext(), mIncomeSourceId);
+        if(sdd == null) {
             return;
         }
-        int interestIndex = cursor.getColumnIndex(RetirementContract.SavingsDataEntry.COLUMN_INTEREST);
-        int monthlyIncreaseIndex = cursor.getColumnIndex(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION);
-        float interest = cursor.getFloat(interestIndex);
-        float monthlyIncrease = cursor.getFloat(monthlyIncreaseIndex);
-        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(monthlyIncrease);
-        String interestString = String.valueOf(interest);
+        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(sdd.getMonthlyIncrease());
+        String interestString = String.valueOf(sdd.getInterest());
 
-        cursor = DataBaseUtils.getBalances(getContext(), mIncomeSourceId);
+        TaxDeferredData tdd = DataBaseUtils.getTaxDeferredData(getContext(), mIncomeSourceId);
+        if(tdd == null) {
+            return;
+        }
+        String penaltyAge = tdd.getPenaltyAge();
+        String penaltyAmount = tdd.getPenaltyAmount();
+
+        // TODO finish up  bind data to views
         String balanceString;
-        if(cursor == null || !cursor.moveToFirst()) {
+        BalanceData[] bd = DataBaseUtils.getBalanceData(getContext(), mIncomeSourceId);
+        if(bd == null) {
             balanceString = "0.00";
         } else {
-            int balanceIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
-            float balance = cursor.getFloat(balanceIndex);
-            balanceString = SystemUtils.getFormattedCurrency(balance);
+            balanceString = SystemUtils.getFormattedCurrency(bd[0].getBalance());
         }
 
         ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         ab.setSubtitle(incomeSourceTypeString);
-        mIncomeSourceName.setText(incomeSourceName);
+        mIncomeSourceName.setText(isd.getName());
         mBalance.setText(balanceString);
         mAnnualInterest.setText(interestString);
         mMonthlyIncrease.setText(monthlyIncreaseString);

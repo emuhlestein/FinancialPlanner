@@ -10,7 +10,7 @@
         android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_name"
+            android:id="@+id/input_layout_text1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -20,7 +20,7 @@
             android:paddingTop="24dp">
 
             <EditText
-                android:id="@+id/name_edit_text"
+                android:id="@+id/edit_text1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -30,7 +30,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_balance"
+            android:id="@+id/input_layout_birthdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -50,7 +50,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_interest"
+            android:id="@+id/input_layout_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -85,49 +85,6 @@
                 android:layout_marginTop="30dp"
                 android:ems="10"
                 android:hint="Monthly Increase"
-                android:inputType="numberDecimal" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_penalty_age"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:paddingTop="24dp">
-
-            <EditText
-                android:id="@+id/penalty_age_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:ems="10"
-                android:hint="Minimum Withdraw Age"
-                android:text="59.5"
-                android:enabled="false"
-                android:inputType="number" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_penalty_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp">
-
-            <EditText
-                android:id="@+id/penalty_amount_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:ems="10"
-                android:hint="Early Withdraw Penalty"
-                android:text="10%"
-                android:enabled="false"
                 android:inputType="numberDecimal" />
         </android.support.design.widget.TextInputLayout>
 

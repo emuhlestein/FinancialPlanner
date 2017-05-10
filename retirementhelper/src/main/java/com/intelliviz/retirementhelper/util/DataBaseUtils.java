@@ -1,16 +1,52 @@
 package com.intelliviz.retirementhelper.util;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.db.RetirementContract;
+
+import static java.security.AccessController.getContext;
 
 /**
  * Created by edm on 4/25/2017.
  */
 
 public class DataBaseUtils {
+    public static int saveIncomeSource(long incomeSourceId, int incomeSourceType, String incomeSourceName) {
+        String sid = Long.toString(incomeSourceId);
+
+        // save income source data
+        /*
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, incomeSourceName);
+        values.put(RetirementContract.IncomeSourceEntry.COLUMN_TYPE, incomeSourceType);
+
+        String[] projection = {RetirementContract.IncomeSourceEntry.COLUMN_NAME};
+        String selectionClause = RetirementContract.IncomeSourceEntry.COLUMN_NAME + " = ?";
+        String[] selectionArgs = {incomeSourceName};
+        String selectionClause = RetirementContract.IncomeSourceEntry._ID + " = ?";
+
+        selectionArgs = new String[]{sid};
+        uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        int rowsUpdated = getContext().getContentResolver().update(uri, values, selectionClause, selectionArgs);
+        if(rowsUpdated != 1) {
+            Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
+        }
+        */
+    }
+
+    public static void saveSavingsData() {
+
+    }
+
+    public static void saveBalanceData() {
+
+    }
+
     public static Cursor getIncomeSource(Context context, long incomeSourceId) {
         Uri uri = RetirementContract.IncomeSourceEntry.CONTENT_URI;
         String[] projection = null; // we want all columns

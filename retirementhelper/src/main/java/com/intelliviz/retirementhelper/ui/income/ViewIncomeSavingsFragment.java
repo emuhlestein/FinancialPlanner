@@ -25,7 +25,7 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.getSavingsData;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ViewIncomeSourceFragment extends Fragment {
+public class ViewIncomeSavingsFragment extends Fragment {
     public static final String VIEW_INCOME_FRAG_TAG = "view income frag tag";
     private long mIncomeSourceId;
 
@@ -35,19 +35,19 @@ public class ViewIncomeSourceFragment extends Fragment {
     @Bind(R.id.current_balance_text_view) TextView mCurrentBalance;
 
     /**
-     * Create the ViewIncomeSourceFragment.
+     * Create the ViewIncomeSavingsFragment.
      * @param incomeSourceId The database table id for selected income source.
-     * @return The ViewIncomeSourceFragment.
+     * @return The ViewIncomeSavingsFragment.
      */
-    public static ViewIncomeSourceFragment newInstance(long incomeSourceId) {
-        ViewIncomeSourceFragment fragment = new ViewIncomeSourceFragment();
+    public static ViewIncomeSavingsFragment newInstance(long incomeSourceId) {
+        ViewIncomeSavingsFragment fragment = new ViewIncomeSavingsFragment();
         Bundle args = new Bundle();
         args.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, incomeSourceId);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public ViewIncomeSourceFragment() {
+    public ViewIncomeSavingsFragment() {
         // Required empty public constructor
     }
 
