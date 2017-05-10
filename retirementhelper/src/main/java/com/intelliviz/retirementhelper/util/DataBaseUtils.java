@@ -1,14 +1,10 @@
 package com.intelliviz.retirementhelper.util;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.db.RetirementContract;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by edm on 4/25/2017.
@@ -37,6 +33,7 @@ public class DataBaseUtils {
             Toast.makeText(getContext(), "Error updating " + incomeSourceName, Toast.LENGTH_LONG).show();
         }
         */
+        return 0;
     }
 
     public static void saveSavingsData() {
