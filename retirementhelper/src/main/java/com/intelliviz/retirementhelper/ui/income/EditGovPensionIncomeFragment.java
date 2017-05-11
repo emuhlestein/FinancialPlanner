@@ -12,10 +12,10 @@ import com.intelliviz.retirementhelper.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PensionIncomeFragment extends Fragment {
+public class EditGovPensionIncomeFragment extends Fragment {
 
 
-    public PensionIncomeFragment() {
+    public EditGovPensionIncomeFragment() {
         // Required empty public constructor
     }
 
@@ -24,7 +24,7 @@ public class PensionIncomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pension_income, container, false);
+        return inflater.inflate(R.layout.fragment_gov_pension_income, container, false);
     }
 
 }
