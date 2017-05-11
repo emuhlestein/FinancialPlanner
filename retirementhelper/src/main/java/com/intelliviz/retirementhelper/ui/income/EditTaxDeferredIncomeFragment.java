@@ -126,6 +126,8 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         mBalance.setText(balanceString);
         mAnnualInterest.setText(interestString);
         mMonthlyIncrease.setText(monthlyIncreaseString);
+        mPenaltyAge.setText(penaltyAge);
+        mPenaltyAmount.setText(penaltyAmount);
     }
 
     public void sendIncomeSourceData() {
