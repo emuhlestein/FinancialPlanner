@@ -21,6 +21,8 @@ public class RetirementContract {
     public static final String PATH_SAVINGS_DATA = "savings_data";
     public static final String PATH_BALANCE = "balance";
     public static final String PATH_TAX_DEFERRED = "tax_deferred";
+    public static final String PATH_GOV_PENSION = "gov_pension";
+
 
     private RetirementContract() {
     }
@@ -98,6 +100,20 @@ public class RetirementContract {
         public static final String TABLE_NAME = PATH_PENSION_DATA;
         public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
         public static final String COLUMN_START_AGE = "start_age";
+        public static final String COLUMN_MONTHLY_BENEFIT = "monthly_benefit";
+    }
+
+    public static final class GovPensionDataEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GOV_PENSION).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GOV_PENSION;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GOV_PENSION;
+
+        public static final String TABLE_NAME = PATH_GOV_PENSION;
+        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
+        public static final String COLUMN_MIN_AGE = "min_age";
         public static final String COLUMN_MONTHLY_BENEFIT = "monthly_benefit";
     }
 
