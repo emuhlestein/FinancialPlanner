@@ -8,12 +8,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
+
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class EditPensionIncomeFragment extends Fragment {
 
+
+    public static EditPensionIncomeFragment newInstance(long incomeSourceId) {
+        EditPensionIncomeFragment fragment = new EditPensionIncomeFragment();
+        Bundle args = new Bundle();
+        args.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public EditPensionIncomeFragment() {
         // Required empty public constructor
@@ -24,7 +35,9 @@ public class EditPensionIncomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_pension_income, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit_pension_income, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
 }

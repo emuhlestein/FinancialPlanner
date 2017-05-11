@@ -38,6 +38,34 @@ public class DataBaseUtils {
         return uri.getLastPathSegment();
     }
 
+    public static String addTaxDeferredData(Context context, long incomeSourceId, String minimumAge, String penaltyAmount, int is401k) {
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID, incomeSourceId);
+        values.put(RetirementContract.TaxDeferredEntry.COLUMN_PENALTY_AGE, minimumAge);
+        values.put(RetirementContract.TaxDeferredEntry.COLUMN_PENALTY_AMOUNT, penaltyAmount);
+        values.put(RetirementContract.TaxDeferredEntry.COLUMN_IS_401K, is401k);
+        Uri uri = context.getContentResolver().insert(RetirementContract.TaxDeferredEntry.CONTENT_URI, values);
+        return uri.getLastPathSegment();
+    }
+
+    public static String addGovernmentPensionData(Context context, long incomeSourceId, String monthlyAmount, String minimumAge) {
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.GovPensionDataEntry.COLUMN_INCOME_SOURCE_ID, incomeSourceId);
+        values.put(RetirementContract.GovPensionDataEntry.COLUMN_MONTHLY_BENEFIT, monthlyAmount);
+        values.put(RetirementContract.GovPensionDataEntry.COLUMN_MIN_AGE, minimumAge);
+        Uri uri = context.getContentResolver().insert(RetirementContract.GovPensionDataEntry.CONTENT_URI, values);
+        return uri.getLastPathSegment();
+    }
+
+    public static String addPensionData(Context context, long incomeSourceId, String monthlyAmount, String startAge) {
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID, incomeSourceId);
+        values.put(RetirementContract.PensionDataEntry.COLUMN_MONTHLY_BENEFIT, monthlyAmount);
+        values.put(RetirementContract.PensionDataEntry.COLUMN_START_AGE, startAge);
+        Uri uri = context.getContentResolver().insert(RetirementContract.PensionDataEntry.CONTENT_URI, values);
+        return uri.getLastPathSegment();
+    }
+
     public static int saveIncomeSourceData(Context context, long incomeSourceId, String incomeSourceName, int incomeSourceType) {
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.IncomeSourceEntry.COLUMN_NAME, incomeSourceName);
@@ -75,6 +103,22 @@ public class DataBaseUtils {
         Uri uri = RetirementContract.BalanceEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
         return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
+    }
+
+    public static int saveTaxDeferredData(Context context, long incomeSourceId, String minimumAge, String penaltyAmount, int is401k) {
+        /*
+        ContentValues values  = new ContentValues();
+        values.put(RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION, monthlyIncrease);
+        values.put(RetirementContract.SavingsDataEntry.COLUMN_INTEREST, annualInterest);
+
+        String sid = String.valueOf(incomeSourceId);
+        String selectionClause = RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + " = ?";
+        String[] selectionArgs = new String[]{sid};
+        Uri uri = RetirementContract.SavingsDataEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
+        */
+        return 0;
     }
 
     public static Cursor getIncomeSource(Context context, long incomeSourceId) {
