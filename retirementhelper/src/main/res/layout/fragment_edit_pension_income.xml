@@ -60,7 +60,7 @@
             android:paddingTop="24dp">
 
             <EditText
-                android:id="@+id/_monthly_amount_text"
+                android:id="@+id/monthly_amount_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -68,7 +68,6 @@
                 android:hint="Monthly Amount"
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
-
 
         <Button
             android:id="@+id/add_income_source_button"

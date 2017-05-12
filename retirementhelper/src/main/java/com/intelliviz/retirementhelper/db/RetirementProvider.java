@@ -21,24 +21,25 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 4;
+    private static final int DBASE_VERSION = 1;
     private static final int PERSONALINFO_ID = 101;
     private static final int CATEGORY_LIST = 201;
     private static final int CATEGORY_ID = 202;
     private static final int EXPENSE_LIST = 301;
     private static final int EXPENSE_ID = 302;
-    private static final int INCOME_SOURCE_LIST = 401;
-    private static final int INCOME_SOURCE_ID = 402;
-    private static final int PENSION_DATA_LIST = 501;
-    private static final int PENSION_DATA_ID = 502;
-    private static final int GOV_PENSION_DATA_LIST = 601;
-    private static final int GOV_PENSION_DATA_ID = 602;
-    private static final int SAVINGS_DATA_LIST = 701;
-    private static final int SAVINGS_DATA_ID = 702;
-    private static final int BALANCE_LIST = 801;
-    private static final int BALANCE_ID = 802;
-    private static final int TAX_DEFERRED_LIST = 901;
-    private static final int TAX_DEFERRED_ID = 902;
+    private static final int INCOME_TYPE_LIST = 401;
+    private static final int INCOME_TYPE_ID = 402;
+    private static final int SAVINGS_INCOME_LIST = 501;
+    private static final int SAVINGS_INCOME_ID = 502;
+    private static final int TAX_DEFERRED_INCOME_LIST = 601;
+    private static final int TAX_DEFERRED_INCOME_ID = 602;
+    private static final int PENSION_INCOME_LIST = 701;
+    private static final int PENSION_INCOME_ID = 702;
+    private static final int GOV_PENSION_INCOME_LIST = 801;
+    private static final int GOV_PENSION_INCOME_ID = 802;
+    private static final int BALANCE_LIST = 901;
+    private static final int BALANCE_ID = 902;
+
 
     private static UriMatcher sUriMatcher;
 
@@ -55,29 +56,29 @@ public class RetirementProvider extends ContentProvider {
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_EXPENSE + "/#", EXPENSE_ID);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_INCOME_SOURCE, INCOME_SOURCE_LIST);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_INCOME_TYPE, INCOME_TYPE_LIST);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_INCOME_SOURCE + "/#", INCOME_SOURCE_ID);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_INCOME_TYPE + "/#", INCOME_TYPE_ID);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PENSION_DATA, PENSION_DATA_LIST);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_SAVINGS_INCOME, SAVINGS_INCOME_LIST);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PENSION_DATA + "/#", PENSION_DATA_ID);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_SAVINGS_INCOME + "/#", SAVINGS_INCOME_ID);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_GOV_PENSION, GOV_PENSION_DATA_LIST);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_TAX_DEFERRED_INCOME, TAX_DEFERRED_INCOME_LIST);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_GOV_PENSION + "/#", GOV_PENSION_DATA_ID);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_TAX_DEFERRED_INCOME + "/#", TAX_DEFERRED_INCOME_ID);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_SAVINGS_DATA, SAVINGS_DATA_LIST);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PENSION_INCOME, PENSION_INCOME_LIST);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_SAVINGS_DATA + "/#", SAVINGS_DATA_ID);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PENSION_INCOME + "/#", PENSION_INCOME_ID);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_GOV_PENSION_INCOME, GOV_PENSION_INCOME_LIST);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_GOV_PENSION_INCOME + "/#", GOV_PENSION_INCOME_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_BALANCE, BALANCE_LIST);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_BALANCE + "/#", BALANCE_ID);
-
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_TAX_DEFERRED, TAX_DEFERRED_LIST);
-
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_TAX_DEFERRED + "/#", TAX_DEFERRED_ID);
     }
 
     @Override
@@ -101,30 +102,30 @@ public class RetirementProvider extends ContentProvider {
                 return RetirementContract.CategoryEntry.CONTENT_TYPE;
             case CATEGORY_ID:
                 return RetirementContract.CategoryEntry.CONTENT_ITEM_TYPE;
-            case INCOME_SOURCE_LIST:
-                return RetirementContract.IncomeSourceEntry.CONTENT_TYPE;
-            case INCOME_SOURCE_ID:
-                return RetirementContract.IncomeSourceEntry.CONTENT_ITEM_TYPE;
-            case PENSION_DATA_LIST:
-                return RetirementContract.PensionDataEntry.CONTENT_TYPE;
-            case PENSION_DATA_ID:
-                return RetirementContract.PensionDataEntry.CONTENT_ITEM_TYPE;
-            case GOV_PENSION_DATA_LIST:
-                return RetirementContract.GovPensionDataEntry.CONTENT_TYPE;
-            case GOV_PENSION_DATA_ID:
-                return RetirementContract.GovPensionDataEntry.CONTENT_ITEM_TYPE;
-            case SAVINGS_DATA_LIST:
-                return RetirementContract.SavingsDataEntry.CONTENT_TYPE;
-            case SAVINGS_DATA_ID:
-                return RetirementContract.SavingsDataEntry.CONTENT_ITEM_TYPE;
+            case INCOME_TYPE_LIST:
+                return RetirementContract.IncomeTypeEntry.CONTENT_TYPE;
+            case INCOME_TYPE_ID:
+                return RetirementContract.IncomeTypeEntry.CONTENT_ITEM_TYPE;
+            case SAVINGS_INCOME_LIST:
+                return RetirementContract.SavingsIncomeEntry.CONTENT_TYPE;
+            case SAVINGS_INCOME_ID:
+                return RetirementContract.SavingsIncomeEntry.CONTENT_ITEM_TYPE;
+            case PENSION_INCOME_LIST:
+                return RetirementContract.PensionIncomeEntry.CONTENT_TYPE;
+            case PENSION_INCOME_ID:
+                return RetirementContract.PensionIncomeEntry.CONTENT_ITEM_TYPE;
+            case GOV_PENSION_INCOME_LIST:
+                return RetirementContract.GovPensionIncomeEntry.CONTENT_TYPE;
+            case GOV_PENSION_INCOME_ID:
+                return RetirementContract.GovPensionIncomeEntry.CONTENT_ITEM_TYPE;
             case BALANCE_LIST:
                 return RetirementContract.BalanceEntry.CONTENT_TYPE;
             case BALANCE_ID:
                 return RetirementContract.BalanceEntry.CONTENT_ITEM_TYPE;
-            case TAX_DEFERRED_LIST:
-                return RetirementContract.TaxDeferredEntry.CONTENT_TYPE;
-            case TAX_DEFERRED_ID:
-                return RetirementContract.TaxDeferredEntry.CONTENT_ITEM_TYPE;
+            case TAX_DEFERRED_INCOME_LIST:
+                return RetirementContract.TaxDeferredIncomeEntry.CONTENT_TYPE;
+            case TAX_DEFERRED_INCOME_ID:
+                return RetirementContract.TaxDeferredIncomeEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -155,46 +156,47 @@ public class RetirementProvider extends ContentProvider {
             case EXPENSE_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.ExpenseEntery.TABLE_NAME);
                 break;
-            case INCOME_SOURCE_ID:
-                sqLiteQueryBuilder.setTables(RetirementContract.IncomeSourceEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.IncomeSourceEntry._ID +
+            case INCOME_TYPE_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.IncomeTypeEntry.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.IncomeTypeEntry._ID +
                         "=" + uri.getLastPathSegment());
                 break;
-            case INCOME_SOURCE_LIST:
-                sqLiteQueryBuilder.setTables(RetirementContract.IncomeSourceEntry.TABLE_NAME);
+            case INCOME_TYPE_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.IncomeTypeEntry.TABLE_NAME);
                 break;
-            case PENSION_DATA_ID:
-                sqLiteQueryBuilder.setTables(RetirementContract.PensionDataEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID +
+            case SAVINGS_INCOME_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.SavingsIncomeEntry.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.SavingsIncomeEntry._ID +
                         "=" + uri.getLastPathSegment());
                 break;
-            case PENSION_DATA_LIST:
-                sqLiteQueryBuilder.setTables(RetirementContract.PensionDataEntry.TABLE_NAME);
+            case SAVINGS_INCOME_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.SavingsIncomeEntry.TABLE_NAME);
                 break;
-            case GOV_PENSION_DATA_ID:
-                sqLiteQueryBuilder.setTables(RetirementContract.GovPensionDataEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.GovPensionDataEntry.COLUMN_INCOME_SOURCE_ID +
-                        "=" + uri.getLastPathSegment());
-                break;
-            case GOV_PENSION_DATA_LIST:
-                sqLiteQueryBuilder.setTables(RetirementContract.GovPensionDataEntry.TABLE_NAME);
-                break;
-            case SAVINGS_DATA_ID:
-                sqLiteQueryBuilder.setTables(RetirementContract.SavingsDataEntry.TABLE_NAME);
+            case TAX_DEFERRED_INCOME_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
                 if(TextUtils.isEmpty(selection)) {
-                    sqLiteQueryBuilder.appendWhere(RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID +
+                    sqLiteQueryBuilder.appendWhere(RetirementContract.TaxDeferredIncomeEntry._ID +
                             "=" + uri.getLastPathSegment());
                 }
                 break;
-            case TAX_DEFERRED_ID:
-                sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredEntry.TABLE_NAME);
-                if(TextUtils.isEmpty(selection)) {
-                    sqLiteQueryBuilder.appendWhere(RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID +
-                            "=" + uri.getLastPathSegment());
-                }
+            case TAX_DEFERRED_INCOME_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
                 break;
-            case SAVINGS_DATA_LIST:
-                sqLiteQueryBuilder.setTables(RetirementContract.SavingsDataEntry.TABLE_NAME);
+            case PENSION_INCOME_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.PensionIncomeEntry.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.PensionIncomeEntry._ID +
+                        "=" + uri.getLastPathSegment());
+                break;
+            case PENSION_INCOME_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.PensionIncomeEntry.TABLE_NAME);
+                break;
+            case GOV_PENSION_INCOME_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.GovPensionIncomeEntry.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.GovPensionIncomeEntry._ID +
+                        "=" + uri.getLastPathSegment());
+                break;
+            case GOV_PENSION_INCOME_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.GovPensionIncomeEntry.TABLE_NAME);
                 break;
             case BALANCE_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.BalanceEntry.TABLE_NAME);
@@ -245,50 +247,50 @@ public class RetirementProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
-            case INCOME_SOURCE_LIST:
+            case INCOME_TYPE_LIST:
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
-                rowId = db.insert(RetirementContract.IncomeSourceEntry.TABLE_NAME, null, values);
+                rowId = db.insert(RetirementContract.IncomeTypeEntry.TABLE_NAME, null, values);
                 if (rowId > -1) {
                     returnUri = ContentUris.withAppendedId(uri, rowId);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
-            case PENSION_DATA_LIST:
+            case SAVINGS_INCOME_LIST:
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
-                rowId = db.insert(RetirementContract.PensionDataEntry.TABLE_NAME, null, values);
+                rowId = db.insert(RetirementContract.SavingsIncomeEntry.TABLE_NAME, null, values);
                 if (rowId > -1) {
                     returnUri = ContentUris.withAppendedId(uri, rowId);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
-            case GOV_PENSION_DATA_LIST:
+            case TAX_DEFERRED_INCOME_LIST:
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
-                rowId = db.insert(RetirementContract.GovPensionDataEntry.TABLE_NAME, null, values);
+                rowId = db.insert(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME, null, values);
                 if (rowId > -1) {
                     returnUri = ContentUris.withAppendedId(uri, rowId);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
-            case SAVINGS_DATA_LIST:
+            case PENSION_INCOME_LIST:
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
-                rowId = db.insert(RetirementContract.SavingsDataEntry.TABLE_NAME, null, values);
+                rowId = db.insert(RetirementContract.PensionIncomeEntry.TABLE_NAME, null, values);
                 if (rowId > -1) {
                     returnUri = ContentUris.withAppendedId(uri, rowId);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
-            case TAX_DEFERRED_LIST:
+            case GOV_PENSION_INCOME_LIST:
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
-                rowId = db.insert(RetirementContract.TaxDeferredEntry.TABLE_NAME, null, values);
+                rowId = db.insert(RetirementContract.GovPensionIncomeEntry.TABLE_NAME, null, values);
                 if (rowId > -1) {
                     returnUri = ContentUris.withAppendedId(uri, rowId);
                 } else {
@@ -329,51 +331,46 @@ public class RetirementProvider extends ContentProvider {
                 rowsDeleted = db.delete(RetirementContract.ExpenseEntery.TABLE_NAME,
                         RetirementContract.ExpenseEntery._ID + "=" + id, null);
                 break;
-            case INCOME_SOURCE_ID:
+            case INCOME_TYPE_ID:
                 id = uri.getLastPathSegment();
-                rowsDeleted = db.delete(RetirementContract.IncomeSourceEntry.TABLE_NAME,
-                        RetirementContract.IncomeSourceEntry._ID + "=" + id, null);
+                rowsDeleted = db.delete(RetirementContract.IncomeTypeEntry.TABLE_NAME,
+                        RetirementContract.IncomeTypeEntry._ID + "=" + id, null);
                 break;
-            case PENSION_DATA_ID:
+            case SAVINGS_INCOME_ID:
                 id = uri.getLastPathSegment();
-                rowsDeleted = db.delete(RetirementContract.PensionDataEntry.TABLE_NAME,
-                        RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
+                rowsDeleted = db.delete(RetirementContract.SavingsIncomeEntry.TABLE_NAME,
+                        RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id, null);
                 break;
-            case GOV_PENSION_DATA_ID:
-                id = uri.getLastPathSegment();
-                rowsDeleted = db.delete(RetirementContract.GovPensionDataEntry.TABLE_NAME,
-                        RetirementContract.GovPensionDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
-                break;
-            case SAVINGS_DATA_ID:
+            case TAX_DEFERRED_INCOME_ID:
                 if(TextUtils.isEmpty(selection)) {
                     id = uri.getLastPathSegment();
-                    rowsDeleted = db.delete(RetirementContract.SavingsDataEntry.TABLE_NAME,
-                            RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
+                    rowsDeleted = db.delete(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME,
+                            RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id, null);
                 } else {
-                    rowsDeleted = db.delete(RetirementContract.SavingsDataEntry.TABLE_NAME,
+                    rowsDeleted = db.delete(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME,
                             selection, selectionArgs);
                 }
+                break;
+            case PENSION_INCOME_ID:
+                id = uri.getLastPathSegment();
+                rowsDeleted = db.delete(RetirementContract.PensionIncomeEntry.TABLE_NAME,
+                        RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id, null);
+                break;
+            case GOV_PENSION_INCOME_ID:
+                id = uri.getLastPathSegment();
+                rowsDeleted = db.delete(RetirementContract.GovPensionIncomeEntry.TABLE_NAME,
+                        RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id, null);
+                break;
 
-                break;
-            case TAX_DEFERRED_ID:
-                if(TextUtils.isEmpty(selection)) {
-                    id = uri.getLastPathSegment();
-                    rowsDeleted = db.delete(RetirementContract.TaxDeferredEntry.TABLE_NAME,
-                            RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
-                } else {
-                    rowsDeleted = db.delete(RetirementContract.TaxDeferredEntry.TABLE_NAME,
-                            selection, selectionArgs);
-                }
-                break;
             case BALANCE_ID:
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
-                        RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
+                        RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + "=" + id, null);
                 break;
             case BALANCE_LIST:
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
-                        RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + "=" + id, null);
+                        RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + "=" + id, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
@@ -425,97 +422,98 @@ public class RetirementProvider extends ContentProvider {
                             selectionArgs);
                 }
                 break;
-            case INCOME_SOURCE_ID:
+            case INCOME_TYPE_ID:
                 id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = db.update(RetirementContract.IncomeSourceEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.IncomeTypeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.IncomeSourceEntry._ID + "=?",
+                            RetirementContract.IncomeTypeEntry._ID + "=?",
                             new String[]{id});
                 } else {
-                    rowsUpdated = db.update(RetirementContract.IncomeSourceEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.IncomeTypeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.IncomeSourceEntry._ID + "=" + id
+                            RetirementContract.IncomeTypeEntry._ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
                 }
                 break;
-            case PENSION_DATA_ID:
+            case SAVINGS_INCOME_ID:
                 id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = db.update(RetirementContract.PensionDataEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.SavingsIncomeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID + "=?",
+                            RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + "=?",
                             new String[]{id});
                 } else {
-                    rowsUpdated = db.update(RetirementContract.PensionDataEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.SavingsIncomeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id
+                            RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
                 }
                 break;
-            case GOV_PENSION_DATA_ID:
+            case TAX_DEFERRED_INCOME_ID:
                 id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = db.update(RetirementContract.GovPensionDataEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.GovPensionDataEntry.COLUMN_INCOME_SOURCE_ID + "=?",
+                            RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + "=?",
                             new String[]{id});
                 } else {
-                    rowsUpdated = db.update(RetirementContract.GovPensionDataEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.GovPensionDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id
+                            RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
                 }
                 break;
-            case SAVINGS_DATA_ID:
+            case PENSION_INCOME_ID:
                 id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = db.update(RetirementContract.SavingsDataEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.PensionIncomeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + "=?",
+                            RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID + "=?",
                             new String[]{id});
                 } else {
-                    rowsUpdated = db.update(RetirementContract.SavingsDataEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.PensionIncomeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + "=" + id
+                            RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
                 }
                 break;
-            case TAX_DEFERRED_ID:
+            case GOV_PENSION_INCOME_ID:
                 id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = db.update(RetirementContract.TaxDeferredEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.GovPensionIncomeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID + "=?",
+                            RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + "=?",
                             new String[]{id});
                 } else {
-                    rowsUpdated = db.update(RetirementContract.TaxDeferredEntry.TABLE_NAME,
+                    rowsUpdated = db.update(RetirementContract.GovPensionIncomeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID + "=" + id
+                            RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
                 }
                 break;
+
             case BALANCE_ID:
                 id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsUpdated = db.update(RetirementContract.BalanceEntry.TABLE_NAME,
                             values,
-                            RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + "=?",
+                            RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + "=?",
                             new String[]{id});
                 } else {
                     rowsUpdated = db.update(RetirementContract.BalanceEntry.TABLE_NAME,
                             values,
-                            RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + "=" + id
+                            RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
@@ -577,58 +575,59 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
-            // create the income source table
-            sql = "CREATE TABLE " + RetirementContract.IncomeSourceEntry.TABLE_NAME +
-                    " ( " + RetirementContract.IncomeSourceEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.IncomeSourceEntry.COLUMN_TYPE + " INTEGER NOT NULL, " +
-                    RetirementContract.IncomeSourceEntry.COLUMN_NAME + " TEXT NOT NULL);";
-
-
-            db.execSQL(sql);
-
-            // create the pension data table
-            sql = "CREATE TABLE " + RetirementContract.PensionDataEntry.TABLE_NAME +
-                    " ( " + RetirementContract.PensionDataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.PensionDataEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
-                    RetirementContract.PensionDataEntry.COLUMN_START_AGE + " TEXT NOT NULL, " +
-                    RetirementContract.PensionDataEntry.COLUMN_MONTHLY_BENEFIT + " TEXT NOT NULL);";
+            // create the income type table
+            sql = "CREATE TABLE " + RetirementContract.IncomeTypeEntry.TABLE_NAME +
+                    " ( " + RetirementContract.IncomeTypeEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.IncomeTypeEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                    RetirementContract.IncomeTypeEntry.COLUMN_TYPE + " INTEGER NOT NULL);";
 
             db.execSQL(sql);
 
-            // create the gov pension data table
-            sql = "CREATE TABLE " + RetirementContract.GovPensionDataEntry.TABLE_NAME +
-                    " ( " + RetirementContract.GovPensionDataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.GovPensionDataEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
-                    RetirementContract.GovPensionDataEntry.COLUMN_MIN_AGE + " TEXT NOT NULL, " +
-                    RetirementContract.GovPensionDataEntry.COLUMN_MONTHLY_BENEFIT + " TEXT NOT NULL);";
+            // create the savings income table
+            sql = "CREATE TABLE " + RetirementContract.SavingsIncomeEntry.TABLE_NAME +
+                    " ( " + RetirementContract.SavingsIncomeEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD + " TEXT NOT NULL, " +
+                    RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST + " TEXT NOT NULL);";
 
             db.execSQL(sql);
 
-            // create the savings data table
-            sql = "CREATE TABLE " + RetirementContract.SavingsDataEntry.TABLE_NAME +
-                    " ( " + RetirementContract.SavingsDataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.SavingsDataEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
-                    RetirementContract.SavingsDataEntry.COLUMN_INTEREST + " TEXT NOT NULL, " +
-                    RetirementContract.SavingsDataEntry.COLUMN_MONTHLY_ADDITION + " TEXT NOT NULL);";
+            // create the tax deferred income table
+            sql = "CREATE TABLE " + RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME +
+                    " ( " + RetirementContract.TaxDeferredIncomeEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST + " TEXT NOT NULL, " +
+                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD + " TEXT NOT NULL, " +
+                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE + " TEXT NOT NULL, " +
+                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY + " TEXT NOT NULL, " +
+                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K + " INTEGER NOT NULL);";
+
+            db.execSQL(sql);
+
+            // create the pension income table
+            sql = "CREATE TABLE " + RetirementContract.PensionIncomeEntry.TABLE_NAME +
+                    " ( " + RetirementContract.PensionIncomeEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.PensionIncomeEntry.COLUMN_START_AGE + " TEXT NOT NULL, " +
+                    RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT + " TEXT NOT NULL);";
+
+            db.execSQL(sql);
+
+            // create the gov pension income table
+            sql = "CREATE TABLE " + RetirementContract.GovPensionIncomeEntry.TABLE_NAME +
+                    " ( " + RetirementContract.GovPensionIncomeEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE + " TEXT NOT NULL, " +
+                    RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT + " TEXT NOT NULL);";
 
             db.execSQL(sql);
 
             // create the balance table
             sql = "CREATE TABLE " + RetirementContract.BalanceEntry.TABLE_NAME +
                     " ( " + RetirementContract.BalanceEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.BalanceEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
+                    RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " INTEGER NOT NULL, " +
                     RetirementContract.BalanceEntry.COLUMN_AMOUNT + " TEXT NOT NULL, " +
                     RetirementContract.BalanceEntry.COLUMN_DATE + " TEXT NOT NULL);";
-
-            db.execSQL(sql);
-
-            // create the tax deferred table
-            sql = "CREATE TABLE " + RetirementContract.TaxDeferredEntry.TABLE_NAME +
-                    " ( " + RetirementContract.TaxDeferredEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.TaxDeferredEntry.COLUMN_INCOME_SOURCE_ID + " INTEGER NOT NULL, " +
-                    RetirementContract.TaxDeferredEntry.COLUMN_PENALTY_AMOUNT + " TEXT NOT NULL, " +
-                    RetirementContract.TaxDeferredEntry.COLUMN_PENALTY_AGE + " TEXT NOT NULL, " +
-                    RetirementContract.TaxDeferredEntry.COLUMN_IS_401K + " INTEGER NOT NULL);";
 
             db.execSQL(sql);
 
@@ -641,11 +640,11 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PeronsalInfoEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.CategoryEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.ExpenseEntery.TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.IncomeSourceEntry.TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PensionDataEntry.TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.GovPensionDataEntry.TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.SavingsDataEntry.TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.TaxDeferredEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.IncomeTypeEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.SavingsIncomeEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PensionIncomeEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.GovPensionIncomeEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.BalanceEntry.TABLE_NAME);
 
             onCreate(db);

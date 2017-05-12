@@ -16,13 +16,12 @@ public class RetirementContract {
     public static final String PATH_PERSONALINFO = "personalinfo";
     public static final String PATH_EXPENSE = "expense";
     public static final String PATH_CATEGORY = "category";
-    public static final String PATH_INCOME_SOURCE = "income_source";
-    public static final String PATH_PENSION_DATA = "pension_data";
-    public static final String PATH_SAVINGS_DATA = "savings_data";
+    public static final String PATH_INCOME_TYPE = "income_type";
+    public static final String PATH_SAVINGS_INCOME = "savings_income";
+    public static final String PATH_TAX_DEFERRED_INCOME = "tax_deferred_income";
+    public static final String PATH_PENSION_INCOME = "pension_income";
+    public static final String PATH_GOV_PENSION_INCOME = "gov_pension_income";
     public static final String PATH_BALANCE = "balance";
-    public static final String PATH_TAX_DEFERRED = "tax_deferred";
-    public static final String PATH_GOV_PENSION = "gov_pension";
-
 
     private RetirementContract() {
     }
@@ -76,59 +75,76 @@ public class RetirementContract {
         public static final String COLUMN_PARENT_NAME = "parent_name";
     }
 
-    public static final class IncomeSourceEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INCOME_SOURCE).build();
+    public static final class IncomeTypeEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INCOME_TYPE).build();
 
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INCOME_SOURCE;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INCOME_TYPE;
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INCOME_SOURCE;
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INCOME_TYPE;
 
-        public static final String TABLE_NAME = PATH_INCOME_SOURCE;
-        public static final String COLUMN_TYPE = "income_type";
+        public static final String TABLE_NAME = PATH_INCOME_TYPE;
         public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_TYPE = "type";
     }
 
-    public static final class PensionDataEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PENSION_DATA).build();
+    public static final class SavingsIncomeEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SAVINGS_INCOME).build();
 
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PENSION_DATA;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SAVINGS_INCOME;
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PENSION_DATA;
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SAVINGS_INCOME;
 
-        public static final String TABLE_NAME = PATH_PENSION_DATA;
-        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
-        public static final String COLUMN_START_AGE = "start_age";
-        public static final String COLUMN_MONTHLY_BENEFIT = "monthly_benefit";
-    }
-
-    public static final class GovPensionDataEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GOV_PENSION).build();
-
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GOV_PENSION;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GOV_PENSION;
-
-        public static final String TABLE_NAME = PATH_GOV_PENSION;
-        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
-        public static final String COLUMN_MIN_AGE = "min_age";
-        public static final String COLUMN_MONTHLY_BENEFIT = "monthly_benefit";
-    }
-
-    public static final class SavingsDataEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SAVINGS_DATA).build();
-
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SAVINGS_DATA;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SAVINGS_DATA;
-
-        public static final String TABLE_NAME = PATH_SAVINGS_DATA;
-        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
+        public static final String TABLE_NAME = PATH_SAVINGS_INCOME;
+        public static final String COLUMN_INCOME_TYPE_ID = "income_type_id";
         public static final String COLUMN_INTEREST = "interest";
-        public static final String COLUMN_MONTHLY_ADDITION = "monthly_addition";
+        public static final String COLUMN_MONTH_ADD = "month_add";
+    }
+
+    public static final class TaxDeferredIncomeEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TAX_DEFERRED_INCOME).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED_INCOME;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED_INCOME;
+
+        public static final String TABLE_NAME = PATH_TAX_DEFERRED_INCOME;
+        public static final String COLUMN_INCOME_TYPE_ID = "income_type_id";
+        public static final String COLUMN_INTEREST = "interest";
+        public static final String COLUMN_MONTH_ADD = "month_add";
+        public static final String COLUMN_PENALTY = "penalty";
+        public static final String COLUMN_MIN_AGE = "min_age";
+        public static final String COLUMN_IS_401K = "is_401k";
+    }
+
+    public static final class PensionIncomeEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PENSION_INCOME).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PENSION_INCOME;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PENSION_INCOME;
+
+        public static final String TABLE_NAME = PATH_PENSION_INCOME;
+        public static final String COLUMN_INCOME_TYPE_ID = "income_type_id";
+        public static final String COLUMN_START_AGE = "start_age";
+        public static final String COLUMN_MONTH_BENEFIT = "month_benefit";
+    }
+
+    public static final class GovPensionIncomeEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GOV_PENSION_INCOME).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GOV_PENSION_INCOME;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GOV_PENSION_INCOME;
+
+        public static final String TABLE_NAME = PATH_GOV_PENSION_INCOME;
+        public static final String COLUMN_INCOME_TYPE_ID = "income_type_id";
+        public static final String COLUMN_MIN_AGE = "min_age";
+        public static final String COLUMN_MONTH_BENEFIT = "month_benefit";
     }
 
     public static final class BalanceEntry implements BaseColumns {
@@ -140,22 +156,8 @@ public class RetirementContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_BALANCE;
 
         public static final String TABLE_NAME = PATH_BALANCE;
-        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
+        public static final String COLUMN_INCOME_TYPE_ID = "income_type_id";
         public static final String COLUMN_AMOUNT = "amount";
         public static final String COLUMN_DATE = "date";
-    }
-    public static final class TaxDeferredEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TAX_DEFERRED).build();
-
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED;
-
-        public static final String TABLE_NAME = PATH_TAX_DEFERRED;
-        public static final String COLUMN_INCOME_SOURCE_ID = "income_source_id";
-        public static final String COLUMN_PENALTY_AMOUNT = "amount";
-        public static final String COLUMN_PENALTY_AGE = "age";
-        public static final String COLUMN_IS_401K = "is_401k";
     }
 }

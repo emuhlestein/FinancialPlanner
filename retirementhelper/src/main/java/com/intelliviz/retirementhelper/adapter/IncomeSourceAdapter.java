@@ -94,9 +94,9 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         }
 
         public void bindIncomeSource() {
-            int idIndex = mCursor.getColumnIndex(RetirementContract.IncomeSourceEntry._ID);
-            int nameIndex = mCursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_NAME);
-            int typeIndex = mCursor.getColumnIndex(RetirementContract.IncomeSourceEntry.COLUMN_TYPE);
+            int idIndex = mCursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID);
+            int nameIndex = mCursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
+            int typeIndex = mCursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
             if(nameIndex != -1) {
                 mIncomeSourceName = mCursor.getString(nameIndex);
                 incomeSourceNameTextView.setText(mIncomeSourceName);
