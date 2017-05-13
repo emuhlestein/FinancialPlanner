@@ -54,15 +54,10 @@ public class IncomeSourceListFragment extends Fragment implements
 
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
-    @Bind(R.id.recyclerview)
-    RecyclerView mRecyclerView;
-    @Bind(R.id.emptyView)
-    TextView mEmptyView;
-    @Bind(R.id.coordinatorLayout)
-    CoordinatorLayout mCoordinatorLayout;
-    @Bind(R.id.addIncomeTypeFAB)
-    FloatingActionButton mAddIncomeSourceFAB;
-
+    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
+    @Bind(R.id.emptyView) TextView mEmptyView;
+    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
+    @Bind(R.id.addIncomeTypeFAB) FloatingActionButton mAddIncomeSourceFAB;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -374,5 +369,4 @@ public class IncomeSourceListFragment extends Fragment implements
             }
         }
     }
-
 }
