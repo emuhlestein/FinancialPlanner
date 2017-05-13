@@ -84,11 +84,11 @@ public class DataBaseUtils {
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST, annualInterest);
 
         String sid = String.valueOf(incomeId);
-        String selectionClause = RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
-        String[] selectionArgs = new String[]{sid};
+        //String selectionClause = RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
+        //String[] selectionArgs = new String[]{sid};
         Uri uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
+        return context.getContentResolver().update(uri, values, null, null);
     }
 
     public static Cursor getSavingsIncome(Context context, long incomeId) {

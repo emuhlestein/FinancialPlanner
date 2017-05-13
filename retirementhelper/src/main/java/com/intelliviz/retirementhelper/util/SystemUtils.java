@@ -105,13 +105,24 @@ public class SystemUtils {
 
     public static String getFormattedCurrency(String value) {
         String retval = "0.00";
-        NumberFormat nf = NumberFormat.getCurrencyInstance( java.util.Locale.US );
+        NumberFormat nf = NumberFormat.getInstance( java.util.Locale.US );
+        try {
+            Number number = nf.parse(value);
+            double dvalue = number.doubleValue();
+            nf = NumberFormat.getCurrencyInstance(java.util.Locale.US);
+            String s = nf.format(dvalue);
+            return s;
+        } catch (ParseException e) {
+            return null;
+        }
+        /*
         float fvalue = Float.parseFloat(value);
         try{
             retval = nf.format(fvalue);
         }catch(Exception e){
         }
         return retval;
+        */
     }
 
     public static String getFormattedCurrency(float value) {

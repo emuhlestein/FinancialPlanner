@@ -451,15 +451,11 @@ public class RetirementProvider extends ContentProvider {
                 if (TextUtils.isEmpty(selection)) {
                     rowsUpdated = db.update(RetirementContract.SavingsIncomeEntry.TABLE_NAME,
                             values,
-                            RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + "=?",
+                            RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?",
                             new String[]{id});
                 } else {
                     rowsUpdated = db.update(RetirementContract.SavingsIncomeEntry.TABLE_NAME,
-                            values,
-                            RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id
-                                    + " and "
-                                    + selection,
-                            selectionArgs);
+                            values, selection, selectionArgs);
                 }
                 break;
             case TAX_DEFERRED_INCOME_ID:

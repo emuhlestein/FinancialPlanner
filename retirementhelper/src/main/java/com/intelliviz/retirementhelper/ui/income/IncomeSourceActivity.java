@@ -64,6 +64,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
                 switch (mIncomeSourceType) {
                     case RetirementConstants.INCOME_TYPE_SAVINGS:
                         addSavingsIncomeSourceFragmnet(true);
+                        break;
                     case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
                         addTaxDeferredIncomeSourceFragmnet(true);
                         break;

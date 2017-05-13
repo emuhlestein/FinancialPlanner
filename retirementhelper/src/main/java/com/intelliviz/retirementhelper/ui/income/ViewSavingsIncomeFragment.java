@@ -3,7 +3,6 @@ package com.intelliviz.retirementhelper.ui.income;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,24 +76,17 @@ public class ViewSavingsIncomeFragment extends Fragment {
         }
 
         mIncomeSourceName.setText(sid.getName());
-        setToolbarSubtitle("JUNK");
-        mAnnualInterest.setText(String.valueOf(sid.getInterest()));
-        mMonthlyIncrease.setText(String.valueOf(sid.getMonthlyIncrease()));
+        String subTitle = SystemUtils.getIncomeSourceTypeString(getContext(), sid.getType());
+        SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), subTitle);
+        mAnnualInterest.setText(String.valueOf(sid.getInterest())+"%");
+        mMonthlyIncrease.setText("$"+String.valueOf(sid.getMonthlyIncrease()));
 
         BalanceData[] bd = DataBaseUtils.getBalanceData(getContext(), mIncomeId);
-        if(bd == null) {
-            return;
+        String formattedAmount = "$0.00";
+        if(bd != null) {
+            formattedAmount = SystemUtils.getFormattedCurrency(bd[0].getBalance());
         }
 
-        String formattedAmount = SystemUtils.getFormattedCurrency(bd[0].getBalance());
         mCurrentBalance.setText(String.valueOf(formattedAmount));
-    }
-
-    private void setToolbarSubtitle(String subtitle) {
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
-        ActionBar actionBar = activity.getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setSubtitle(subtitle);
-        }
     }
 }

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.BalanceData;
@@ -75,6 +76,34 @@ public class EditSavingsIncomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sendIncomeSourceData();
+            }
+        });
+
+        mBalance.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    TextView textView = (TextView)v;
+                    String formattedString = SystemUtils.getFormattedCurrency(textView.getText().toString());
+                    if(formattedString == null) {
+                        formattedString = "Invalid Number: " + textView.getText().toString();
+                    }
+                    mBalance.setText(formattedString);
+                }
+            }
+        });
+
+        mMonthlyIncrease.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    TextView textView = (TextView)v;
+                    String formattedString = SystemUtils.getFormattedCurrency(textView.getText().toString());
+                    if(formattedString == null) {
+                        formattedString = "Invalid Number: " + textView.getText().toString();
+                    }
+                    mMonthlyIncrease.setText(formattedString);
+                }
             }
         });
 
