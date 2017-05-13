@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.IncomeTypeData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -65,7 +67,7 @@ public class IncomeSourceListFragment extends Fragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Loader<Cursor> loader;
-        Uri uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         loader = new CursorLoader(getActivity(),
                 uri, null, null, null, null);
         return loader;
@@ -199,42 +201,46 @@ public class IncomeSourceListFragment extends Fragment implements
     }
 
     @Override
-    public void onSelectIncomeSource(long id, String name) {
+    public void onSelectIncomeSource(long id, String name, boolean showMenu) {
         final long incomeSourceId = id;
         final String incomeSourceName = name;
-        // TODO wrap in DialogFragment
-        final String[] incomeActions = getResources().getStringArray(R.array.income_source_actions);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setItems(incomeActions, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int item) {
-                Toast.makeText(getContext(), "You selected " + incomeActions[item], Toast.LENGTH_LONG).show();
-                dialogInterface.dismiss();
-                Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
+        if(showMenu) {
 
-                switch (item) {
-                    case RetirementConstants.INCOME_ACTION_VIEW:
-                        intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
-                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
-                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
-                        startActivityForResult(intent, SAVINGS_REQUEST);
-                        break;
-                    case RetirementConstants.INCOME_ACTION_EDIT:
-                        intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
-                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
-                        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
-                        startActivityForResult(intent, SAVINGS_REQUEST);
-                        break;
-                    case RetirementConstants.INCOME_ACTION_DELETE:
+            // TODO wrap in DialogFragment
+            final String[] incomeActions = getResources().getStringArray(R.array.income_source_actions);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setItems(incomeActions, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int item) {
+                    Toast.makeText(getContext(), "You selected " + incomeActions[item], Toast.LENGTH_LONG).show();
+                    dialogInterface.dismiss();
+                    Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
 
-                        break;
+                    switch (item) {
+                        case 0: // TODO EDIT
+                            intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+                            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
+                            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
+                            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
+                            startActivityForResult(intent, SAVINGS_REQUEST);
+                            break;
+                        case 1: // TODO DELETE
+                            int rowsDeleted = DataBaseUtils.deleteBalance(getContext(), incomeSourceId);
+                            Log.d(TAG, "Rows Deleted: " + rowsDeleted);
+                            break;
+                    }
                 }
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        } else {
+            Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
+            intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_ACTION_VIEW);
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
+            startActivityForResult(intent, SAVINGS_REQUEST);
+        }
     }
 
     private void saveSavingsIncomeData(Intent intent) {
@@ -266,9 +272,14 @@ public class IncomeSourceListFragment extends Fragment implements
                 // TODO handle error
             }
 
-            rowsUpdated = DataBaseUtils.saveBalanceData(getContext(), incomeTypeId, balance, balanceDate);
-            if(rowsUpdated != 1) {
-                // TODO handle error
+            BalanceData[] bd = DataBaseUtils.getBalanceData(getContext(), incomeTypeId);
+            if(bd == null) {
+                DataBaseUtils.addBalanceData(getContext(), incomeTypeId, balance, balanceDate);
+            } else {
+                rowsUpdated = DataBaseUtils.saveBalanceData(getContext(), incomeTypeId, balance, balanceDate);
+                if(rowsUpdated != 1) {
+                    // TODO handle error
+                }
             }
         }
     }
@@ -363,4 +374,5 @@ public class IncomeSourceListFragment extends Fragment implements
             }
         }
     }
+
 }

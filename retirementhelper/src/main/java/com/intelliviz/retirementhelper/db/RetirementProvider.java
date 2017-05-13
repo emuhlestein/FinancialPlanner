@@ -364,13 +364,21 @@ public class RetirementProvider extends ContentProvider {
 
             case BALANCE_ID:
                 id = uri.getLastPathSegment();
-                rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
-                        RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + "=" + id, null);
+                if (TextUtils.isEmpty(selection)) {
+                    rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
+                            RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " = ?", new String[]{id});
+                } else {
+                    rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME, selection, selectionArgs);
+                }
                 break;
             case BALANCE_LIST:
                 id = uri.getLastPathSegment();
-                rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
-                        RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + "=" + id, null);
+                if (TextUtils.isEmpty(selection)) {
+                    rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME, selection, selectionArgs);
+                } else {
+                    rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
+                            RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " = ?", new String[]{id});
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri");

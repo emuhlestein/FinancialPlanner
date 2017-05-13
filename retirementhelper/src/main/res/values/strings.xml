@@ -33,7 +33,6 @@
     <string name="income_source_edit_action">Edit</string>
     <string name="income_source_delete_action">Delete</string>
     <string-array name="income_source_actions">
-        <item>@string/income_source_view_action</item>
         <item>@string/income_source_edit_action</item>
         <item>@string/income_source_delete_action</item>
     </string-array>

@@ -339,4 +339,11 @@ public class DataBaseUtils {
 
         return bd;
     }
+
+    public static int deleteBalance(Context context, long incomeId) {
+        String sid = String.valueOf(incomeId);
+        Uri uri = RetirementContract.BalanceEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        return context.getContentResolver().delete(uri, null, null);
+    }
 }

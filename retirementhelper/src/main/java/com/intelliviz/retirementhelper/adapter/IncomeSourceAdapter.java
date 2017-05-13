@@ -3,10 +3,10 @@ package com.intelliviz.retirementhelper.adapter;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
@@ -17,8 +17,7 @@ import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
  * Created by edm on 4/12/2017.
  */
 
-public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapter.IncomeSourceHolder>
-        implements RecyclerView.OnItemTouchListener{
+public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapter.IncomeSourceHolder> {
     private Cursor mCursor;
     private SelectIncomeSourceListener mListener;
     private String[] mIncomeTypes;
@@ -62,21 +61,6 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         mListener = listener;
     }
 
-    @Override
-    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
-    }
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-    }
-
     public class IncomeSourceHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         private long mId;
@@ -91,6 +75,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
             incomeTypeTextView = (TextView) itemView.findViewById(R.id.income_source_type_text_view);
             overflowImage = (ImageView) itemView.findViewById(R.id.overflow_image_view);
             overflowImage.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         public void bindIncomeSource() {
@@ -113,7 +98,11 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         @Override
         public void onClick(View v) {
             if(mListener != null) {
-                mListener.onSelectIncomeSource(mId, mIncomeSourceName);
+                if(v instanceof LinearLayout) {
+                    mListener.onSelectIncomeSource(mId, mIncomeSourceName, false);
+                } else {
+                    mListener.onSelectIncomeSource(mId, mIncomeSourceName, true);
+                }
             }
         }
     }
