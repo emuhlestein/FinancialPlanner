@@ -12,6 +12,46 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
  */
 
 public class DataBaseUtils {
+
+    public static int saveRetirementParms(Context context, String startAge, String endAge, int withdrawMode, String withdrawPercent, int includeInflation, String inflationAmount) {
+        ContentValues values  = new ContentValues();
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE, startAge);
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, endAge);
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, withdrawMode);
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_PERCENT, withdrawPercent);
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_INC_INFLATION, includeInflation);
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_INFL_AMOUNT, inflationAmount);
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+        return context.getContentResolver().update(uri, values, null, null);
+    }
+
+    public static Cursor getRetirementParms(Context context) {
+        Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
+        String[] projection = null; // we want all columns
+        return context.getContentResolver().query(uri, projection, null, null, null);
+    }
+
+    public static RetirementParmsData getRetirementParmsData(Context context) {
+        Cursor cursor = getRetirementParms(context);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        int startAgeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE);
+        int endAgeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE);
+        int withdrawModeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE);
+        int withdrawPercentIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_PERCENT);
+        int includeInflationIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_INC_INFLATION);
+        int inflationAmountIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_INFL_AMOUNT);
+
+        String startAge = cursor.getString(startAgeIndex);
+        String endAge = cursor.getString(endAgeIndex);
+        int withdrawMode = cursor.getInt(withdrawModeIndex);
+        String withdrawPercent = cursor.getString(withdrawPercentIndex);
+        int includeInflation = cursor.getInt(includeInflationIndex);
+        String inflationAmount = cursor.getString(inflationAmountIndex);
+        return new RetirementParmsData(startAge, endAge, withdrawMode, withdrawPercent, includeInflation, inflationAmount);
+    }
+
     //
     // Methods for IncomeType table
     //

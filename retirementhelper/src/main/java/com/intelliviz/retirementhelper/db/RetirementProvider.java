@@ -21,8 +21,9 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 1;
+    private static final int DBASE_VERSION = 2;
     private static final int PERSONALINFO_ID = 101;
+    private static final int RETIREMENT_PARMS_ID = 102;
     private static final int CATEGORY_LIST = 201;
     private static final int CATEGORY_ID = 202;
     private static final int EXPENSE_LIST = 301;
@@ -40,13 +41,14 @@ public class RetirementProvider extends ContentProvider {
     private static final int BALANCE_LIST = 901;
     private static final int BALANCE_ID = 902;
 
-
     private static UriMatcher sUriMatcher;
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO, PERSONALINFO_ID);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_RETIREMENT_PARMS, RETIREMENT_PARMS_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_CATEGORY, CATEGORY_LIST);
 
@@ -94,6 +96,8 @@ public class RetirementProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)) {
             case PERSONALINFO_ID:
                 return RetirementContract.PeronsalInfoEntry.CONTENT_ITEM_TYPE;
+            case RETIREMENT_PARMS_ID:
+                return RetirementContract.RetirementParmsEntry.CONTENT_ITEM_TYPE;
             case EXPENSE_LIST:
                 return RetirementContract.ExpenseEntery.CONTENT_TYPE;
             case EXPENSE_ID:
@@ -139,6 +143,9 @@ public class RetirementProvider extends ContentProvider {
             case PERSONALINFO_ID:
                 // get the personal info table, there should be only one.
                 sqLiteQueryBuilder.setTables(RetirementContract.PeronsalInfoEntry.TABLE_NAME);
+                break;
+            case RETIREMENT_PARMS_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.RetirementParmsEntry.TABLE_NAME);
                 break;
             case CATEGORY_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.CategoryEntry.TABLE_NAME);
@@ -398,6 +405,10 @@ public class RetirementProvider extends ContentProvider {
                 rowsUpdated = db.update(RetirementContract.PeronsalInfoEntry.TABLE_NAME,
                         values, null, null);
                 break;
+            case RETIREMENT_PARMS_ID:
+                rowsUpdated = db.update(RetirementContract.RetirementParmsEntry.TABLE_NAME,
+                        values, null, null);
+                break;
             case CATEGORY_ID:
                 id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
@@ -560,6 +571,18 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
+            // create the retirement parms table
+            sql = "CREATE TABLE " + RetirementContract.RetirementParmsEntry.TABLE_NAME +
+                    " ( " + RetirementContract.RetirementParmsEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.RetirementParmsEntry.COLUMN_START_AGE + " TEXT NOT NULL, " +
+                    RetirementContract.RetirementParmsEntry.COLUMN_END_AGE + " TEXT NOT NULL, " +
+                    RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE + " INTEGER NOT NULL, " +
+                    RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_PERCENT + " TEXT NOT NULL, " +
+                    RetirementContract.RetirementParmsEntry.COLUMN_INC_INFLATION + " TEXT NOT NULL, " +
+                    RetirementContract.RetirementParmsEntry.COLUMN_INFL_AMOUNT + " TEXT NOT NULL);";
+
+            db.execSQL(sql);
+
             // create the category table
             sql = "CREATE TABLE " + RetirementContract.CategoryEntry.TABLE_NAME +
                     " ( " + RetirementContract.CategoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -637,11 +660,14 @@ public class RetirementProvider extends ContentProvider {
 
             String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1', '90', 'NOW', '-1');";
             db.execSQL(ROW);
+            ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('62', '90', '0', '0', '0', '0');";
+            db.execSQL(ROW);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PeronsalInfoEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.RetirementParmsEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.CategoryEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.ExpenseEntery.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.IncomeTypeEntry.TABLE_NAME);

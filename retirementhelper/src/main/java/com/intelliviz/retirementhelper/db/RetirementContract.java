@@ -14,6 +14,7 @@ public class RetirementContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String PATH_PERSONALINFO = "personalinfo";
+    public static final String PATH_RETIREMENT_PARMS = "retirement_parms";
     public static final String PATH_EXPENSE = "expense";
     public static final String PATH_CATEGORY = "category";
     public static final String PATH_INCOME_TYPE = "income_type";
@@ -43,7 +44,23 @@ public class RetirementContract {
         public static final String COLUMN_PIN = "pin";
         public static final String COLUMN_DEATH_AGE = "death_age";
         public static final String COLUMN_START_AGE = "start_age";
+    }
 
+    public static final class RetirementParmsEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_RETIREMENT_PARMS).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RETIREMENT_PARMS;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RETIREMENT_PARMS;
+
+        public static final String TABLE_NAME = PATH_RETIREMENT_PARMS;
+        public static final String COLUMN_START_AGE = "start_age";
+        public static final String COLUMN_END_AGE = "end_age";
+        public static final String COLUMN_INC_INFLATION = "include_inflation";
+        public static final String COLUMN_INFL_AMOUNT = "infl_amount";
+        public static final String COLUMN_WITHDRAW_MODE = "withdraw_mode";
+        public static final String COLUMN_WITHDRAW_PERCENT = "withdraw_percent";
     }
 
     public static final class ExpenseEntery implements BaseColumns {

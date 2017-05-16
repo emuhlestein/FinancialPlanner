@@ -19,6 +19,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class SummaryActivity extends AppCompatActivity {
+    private static final String DIALOG_RETIRE_PARMS = "reitre_parms";
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String EXPENSES_FRAG_TAG = "expenses frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";
@@ -92,6 +93,19 @@ public class SummaryActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.personal_info_item:
+                FragmentManager fm = getSupportFragmentManager();
+                RetirementParmsDialog dialog =  RetirementParmsDialog.newInstance("58", "90");
+                dialog.show(fm, DIALOG_RETIRE_PARMS);
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
