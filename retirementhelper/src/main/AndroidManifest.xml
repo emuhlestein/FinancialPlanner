@@ -17,6 +17,9 @@
         </activity>
         <activity android:name=".ui.NewUserActivity" />
         <activity android:name=".ui.SummaryActivity" />
+        <activity
+            android:name=".ui.RetirementParmsDialog"
+            android:theme="@style/RetireDialog"/>
 
         <provider
             android:name=".db.RetirementProvider"

@@ -660,7 +660,7 @@ public class RetirementProvider extends ContentProvider {
 
             String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1', '90', 'NOW', '-1');";
             db.execSQL(ROW);
-            ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('62', '90', '0', '0', '0', '0');";
+            ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '62', '90', '0', '0', '0', '0');";
             db.execSQL(ROW);
         }
 

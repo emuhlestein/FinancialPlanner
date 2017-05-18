@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -25,6 +26,7 @@ public class SummaryActivity extends AppCompatActivity {
     private static final String INCOME_FRAG_TAG = "income frag tag";
     private static final String TAXES_FRAG_TAG = "taxes frag tag";
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
+    private static final int REQUEST_RETIRE_PARMS = 0;
     @Bind(R.id.summary_toolbar) Toolbar mToolbar;
     @Bind(R.id.bottom_navigation) BottomNavigationView mBottonNavigation;
 
@@ -99,9 +101,8 @@ public class SummaryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.personal_info_item:
-                FragmentManager fm = getSupportFragmentManager();
-                RetirementParmsDialog dialog =  RetirementParmsDialog.newInstance("58", "90");
-                dialog.show(fm, DIALOG_RETIRE_PARMS);
+                Intent intent = new Intent(this, RetirementParmsDialog.class);
+                startActivityForResult(intent, REQUEST_RETIRE_PARMS);
                 break;
 
         }

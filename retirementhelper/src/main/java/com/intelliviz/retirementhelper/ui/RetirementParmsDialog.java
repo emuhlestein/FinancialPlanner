@@ -3,11 +3,8 @@ package com.intelliviz.retirementhelper.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -26,7 +23,7 @@ import butterknife.ButterKnife;
  * Created by edm on 5/15/2017.
  */
 
-public class RetirementParmsDialog extends DialogFragment implements View.OnClickListener{
+public class RetirementParmsDialog extends AppCompatActivity implements View.OnClickListener{
     private static final String ARG_START_AGE = "start date";
     private static final String ARG_END_AGE = "end date";
 
@@ -41,29 +38,29 @@ public class RetirementParmsDialog extends DialogFragment implements View.OnClic
     @Bind(R.id.withdraw_mode_radio_group) RadioGroup mWithdrawModeRadioGroup;
     @Bind(R.id.retirement_parms_ok) Button mOk;
 
-    public static RetirementParmsDialog newInstance(String startAge, String endAge) {
-        Bundle args = new Bundle();
-        args.putString(ARG_START_AGE, startAge);
-        args.putString(ARG_END_AGE, endAge);
-
+    public static RetirementParmsDialog newInstance() {
         RetirementParmsDialog fragment = new RetirementParmsDialog();
-        fragment.setArguments(args);
         return fragment;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_edit_gov_pension_income, container, false);
-        ButterKnife.bind(this, view);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_dialog_retire_parms);
+        ButterKnife.bind(this);
 
         mZeroBalanceButton.setOnClickListener(this);
         mNoReduceButton.setOnClickListener(this);
         mWithdrawPercentButton.setOnClickListener(this);
 
-        updateUI();
+        mOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendIncomeSourceData();
+            }
+        });
 
-        return view;
+        updateUI();
     }
 
     @Override
@@ -76,7 +73,7 @@ public class RetirementParmsDialog extends DialogFragment implements View.OnClic
     }
 
     private void updateUI() {
-        RetirementParmsData rpd = DataBaseUtils.getRetirementParmsData(getContext());
+        RetirementParmsData rpd = DataBaseUtils.getRetirementParmsData(this);
         if(rpd == null) {
             return;
         }
@@ -98,7 +95,7 @@ public class RetirementParmsDialog extends DialogFragment implements View.OnClic
         }
 
         mWithdrawPercent.setText(rpd.getWithdrawPercent());
-        mIncludeInflationCheckBox.setSelected(rpd.getIncludeInflation() == 1 ? true : false);
+        mIncludeInflationCheckBox.setSelected(rpd.getIncludeInflation() == 1);
         mInflationAmountEditText.setText(rpd.getInflationAmount());
     }
 
@@ -145,8 +142,7 @@ public class RetirementParmsDialog extends DialogFragment implements View.OnClic
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIRE_PARMS_INCLUDE_INFLAT, inludeInflation);
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIRE_PARMS_INFLAT_AMOUNT, inflationAmount);
 
-        getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        getActivity().finish();
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
-
 }
