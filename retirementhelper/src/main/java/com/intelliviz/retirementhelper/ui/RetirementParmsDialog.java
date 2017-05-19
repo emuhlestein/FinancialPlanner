@@ -37,6 +37,7 @@ public class RetirementParmsDialog extends AppCompatActivity implements View.OnC
     @Bind(R.id.inflation_amount_edit_text) EditText mInflationAmountEditText;
     @Bind(R.id.withdraw_mode_radio_group) RadioGroup mWithdrawModeRadioGroup;
     @Bind(R.id.retirement_parms_ok) Button mOk;
+    @Bind(R.id.retirement_parms_cancel) Button mCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +48,22 @@ public class RetirementParmsDialog extends AppCompatActivity implements View.OnC
         mZeroBalanceButton.setOnClickListener(this);
         mNoReduceButton.setOnClickListener(this);
         mWithdrawPercentButton.setOnClickListener(this);
+        mWithdrawPercent.setEnabled(false);
 
         mOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendIncomeSourceData();
+            }
+        });
+
+        mCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent returnIntent = new Intent();
+
+                setResult(Activity.RESULT_CANCELED, returnIntent);
+                finish();
             }
         });
 
@@ -61,9 +73,12 @@ public class RetirementParmsDialog extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.withdraw_percent_button) {
-            mInflationAmountEditText.setEnabled(true);
+            if (v instanceof RadioButton) {
+                RadioButton rb = (RadioButton) v;
+                mWithdrawPercent.setEnabled(rb.isChecked());
+            }
         } else {
-            mInflationAmountEditText.setEnabled(false);
+            mWithdrawPercent.setEnabled(false);
         }
     }
 
