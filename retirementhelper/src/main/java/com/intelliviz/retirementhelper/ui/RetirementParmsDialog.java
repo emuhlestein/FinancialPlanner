@@ -38,11 +38,6 @@ public class RetirementParmsDialog extends AppCompatActivity implements View.OnC
     @Bind(R.id.withdraw_mode_radio_group) RadioGroup mWithdrawModeRadioGroup;
     @Bind(R.id.retirement_parms_ok) Button mOk;
 
-    public static RetirementParmsDialog newInstance() {
-        RetirementParmsDialog fragment = new RetirementParmsDialog();
-        return fragment;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
