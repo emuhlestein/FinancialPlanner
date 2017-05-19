@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:style="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,12 +9,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="1"
         android:text="Retirement Parameters"
-        android:textSize="22sp"/>
-    <View android:id="@+id/divider"
-        android:background="@drawable/separator"
+        android:textSize="22sp" />
+
+    <View
+        android:id="@+id/divider"
         android:layout_width="fill_parent"
-        android:layout_height="1dp"/>
+        android:layout_height="1dp"
+        android:background="@drawable/separator" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -29,9 +33,7 @@
 
         <EditText
             android:id="@+id/start_age_edit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp" />
+            style="@style/PositiveNumber"/>
     </LinearLayout>
 
     <LinearLayout
@@ -47,33 +49,34 @@
 
         <EditText
             android:id="@+id/end_age_edit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp" />
+            style="@style/PositiveNumber"/>
     </LinearLayout>
 
     <RadioGroup
         android:id="@+id/withdraw_mode_radio_group"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <RadioButton
             android:id="@+id/zero_balance_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Zero Balance by End Age"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/no_reduce_button"
-            android:text="No principle reduction"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="No principle reduction"
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/withdraw_percent_button"
-            android:text="Withdraw Percentage"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Withdraw Percentage"
+            android:textSize="16sp" />
     </RadioGroup>
 
     <LinearLayout
@@ -89,16 +92,14 @@
 
         <EditText
             android:id="@+id/withdraw_percent_edit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp" />
+            style="@style/PositiveNumber"/>
     </LinearLayout>
 
     <CheckBox
         android:id="@+id/apply_inflation_checkbox"
-        android:text="Apply Inflation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="Apply Inflation" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -113,18 +114,34 @@
 
         <EditText
             android:id="@+id/inflation_amount_edit_text"
-            android:text="Inflation Amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp" />
+            style="@style/PositiveNumber" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/retirement_parms_ok"
-        android:text="Ok"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/separator" />
 
-    </Button>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/retirement_parms_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/retirement_parms_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ok" />
+    </LinearLayout>
 
 </LinearLayout>
