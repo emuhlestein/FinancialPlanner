@@ -12,7 +12,49 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
  */
 
 public class DataBaseUtils {
+    //
+    // Methods for personal info table
+    //
 
+    public static int savePersonalInfo(Context context, PersonalInfoData pid) {
+        ContentValues values  = new ContentValues();
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_NAME, pid.getName());
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE, pid.getBirthdate());
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL, pid.getEmail());
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD, pid.getPassword());
+        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PIN, pid.getPIN());
+        Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI;
+        return context.getContentResolver().update(uri, values, null, null);
+    }
+
+    public static PersonalInfoData getPersonalInfoData(Context context) {
+        Cursor cursor = getPersonalInfo(context);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        int nameIndex = cursor.getColumnIndex(RetirementContract.PeronsalInfoEntry.COLUMN_NAME);
+        int birthdateIndex = cursor.getColumnIndex(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE);
+        int emailIndex = cursor.getColumnIndex(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL);
+        int passwordIndex = cursor.getColumnIndex(RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD);
+        int pinIndex = cursor.getColumnIndex(RetirementContract.PeronsalInfoEntry.COLUMN_PIN);
+
+        String name = cursor.getString(nameIndex);
+        String birthdate = cursor.getString(birthdateIndex);
+        String email = cursor.getString(emailIndex);
+        String password = cursor.getString(passwordIndex);
+        String pin = cursor.getString(pinIndex);
+        return new PersonalInfoData(name, birthdate, email, pin, password);
+    }
+
+    public static Cursor getPersonalInfo(Context context) {
+        Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI;
+        String[] projection = null; // we want all columns
+        return context.getContentResolver().query(uri, projection, null, null, null);
+    }
+
+    //
+    // Methods for retirement options table
+    //
     public static int saveRetirementOptions(Context context, RetirementOptionsData rod) {
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE, rod.getStartAge());

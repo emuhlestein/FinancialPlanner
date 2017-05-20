@@ -48,7 +48,8 @@
 
         <EditText
             android:id="@+id/birthdate_edit_text"
-            style="@style/PositiveNumber" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
@@ -64,7 +65,9 @@
 
         <TextView
             android:id="@+id/email_edit_text"
-            style="@style/PositiveNumber" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="8dp"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

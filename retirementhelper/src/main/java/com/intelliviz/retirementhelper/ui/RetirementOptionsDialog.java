@@ -39,7 +39,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_dialog_retire_parms);
+        setContentView(R.layout.activity_dialog_retire_parms);
         ButterKnife.bind(this);
 
         mZeroBalanceButton.setOnClickListener(this);
@@ -54,9 +54,6 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
             }
         });
 
-        Intent intent = getIntent();
-        RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA);
-
         mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +64,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
             }
         });
 
-        updateUI(rod);
+        updateUI();
     }
 
     @Override
@@ -82,7 +79,11 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         }
     }
 
-    private void updateUI(RetirementOptionsData rod) {
+    private void updateUI() {
+        Intent intent = getIntent();
+        RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA);
+
+        // TODO add check in case rod is null
         mStartAgeEditText.setText(rod.getStartAge());
         mEndAgeEditText.setText(rod.getEndAge());
         int mode = rod.getWithdrawMode();

@@ -6,5 +6,10 @@
         android:orderInCategory="100"
         android:title="Personal Info"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/retirement_options_item"
+        android:orderInCategory="200"
+        android:title="Retirement Options"
+        app:showAsAction="never" />
 
 </menu>

@@ -10,13 +10,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.util.PersonalInfoData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class PersonalInfoDialog extends AppCompatActivity {
+    private String mPassword;
+    private String mPIN;
+    private String mEmail;
     @Bind(R.id.name_edit_text) EditText mNameEditText;
     @Bind(R.id.birthdate_edit_text) EditText mBirthDateateEditText;
     @Bind(R.id.email_edit_text) TextView mEmailTextView;
@@ -39,9 +42,6 @@ public class PersonalInfoDialog extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-        RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-
         mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,9 +50,51 @@ public class PersonalInfoDialog extends AppCompatActivity {
                 finish();
             }
         });
+
+        mChangeEmailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        mChangePasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        mChangePinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        updateUI();
+    }
+
+    private void updateUI() {
+
+        Intent intent = getIntent();
+        PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+        mNameEditText.setText(pid.getName());
+        mBirthDateateEditText.setText(pid.getBirthdate());
+        mEmailTextView.setText(pid.getEmail());
+
+        mPassword = pid.getPassword();
+        mPIN = pid.getPIN();
+        mEmail = pid.getEmail();
     }
 
     private void sendIncomeSourceData() {
+        String name = mNameEditText.getText().toString();
+        String birthdate = mBirthDateateEditText.getText().toString();
+        // TODO need to validate birth date
 
+        PersonalInfoData pid = new PersonalInfoData(name, birthdate, mEmail, mPIN, mPassword);
+
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 }

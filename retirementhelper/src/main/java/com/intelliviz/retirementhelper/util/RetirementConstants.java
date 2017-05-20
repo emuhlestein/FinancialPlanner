@@ -31,13 +31,6 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_INTEREST = "income source interest";
     public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
 
-    public static final String EXTRA_RETIRE_PARMS_START_AGE = "retire parms start age";
-    public static final String EXTRA_RETIRE_PARMS_END_AGE = "retire parms end age";
-    public static final String EXTRA_RETIRE_PARMS_WITHDRAW_MODE = "retire parms withdraw mode";
-    public static final String EXTRA_RETIRE_PARMS_WITHDRAW_PERCENT = "retire parms percent";
-    public static final String EXTRA_RETIRE_PARMS_INCLUDE_INFLAT = "retire parms include inflation";
-    public static final String EXTRA_RETIRE_PARMS_INFLAT_AMOUNT = "retire parms inflate amount";
-    public static final String DEFAULT_START_AGE = "62";
-    public static final String DEFAULT_END_AGE = "90";
     public static final String EXTRA_RETIRMENTOPTIONSDATA = "retirementoptionsdata";
+    public static final String EXTRA_PERSONALINFODATA = "personalinfodata";
 }

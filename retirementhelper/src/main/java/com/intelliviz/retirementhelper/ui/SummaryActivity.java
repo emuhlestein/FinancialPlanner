@@ -16,11 +16,14 @@ import android.view.MenuItem;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.PersonalInfoData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.getRetirementOptionsData;
 
 public class SummaryActivity extends AppCompatActivity {
     private static final String DIALOG_RETIRE_OPTIONS = "reitre_options";
@@ -30,6 +33,7 @@ public class SummaryActivity extends AppCompatActivity {
     private static final String TAXES_FRAG_TAG = "taxes frag tag";
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
     private static final int REQUEST_RETIRE_OPTIONS = 0;
+    private static final int REQUEST_PERSONAL_INFO = 1;
     @Bind(R.id.summary_toolbar) Toolbar mToolbar;
     @Bind(R.id.bottom_navigation) BottomNavigationView mBottonNavigation;
 
@@ -61,7 +65,7 @@ public class SummaryActivity extends AppCompatActivity {
                 FragmentManager fm = getSupportFragmentManager();
                 Fragment fragment = null;
                 FragmentTransaction ft = null;
-                switch(item.getItemId()) {
+                switch (item.getItemId()) {
                     case R.id.home_menu:
                         fragment = SummaryFragment.newInstance();
                         ft = fm.beginTransaction();
@@ -102,32 +106,49 @@ public class SummaryActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.personal_info_item:
-                Intent intent = new Intent(this, RetirementOptionsDialog.class);
-                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
-                if(rod != null) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.retirement_options_item:
+                intent = new Intent(this, RetirementOptionsDialog.class);
+                RetirementOptionsData rod = getRetirementOptionsData(this);
+                if (rod != null) {
                     intent.putExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA, rod);
                 }
                 startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 break;
-
+            case R.id.personal_info_item:
+                intent = new Intent(this, PersonalInfoDialog.class);
+                PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(this);
+                if (pid != null) {
+                    intent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
+                }
+                startActivityForResult(intent, REQUEST_PERSONAL_INFO);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if(requestCode == REQUEST_RETIRE_OPTIONS) {
-            if(resultCode == RESULT_OK) {
-                RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA);
-                DataBaseUtils.saveRetirementOptions(this, rod);
-            }
+        switch (requestCode) {
+            case REQUEST_RETIRE_OPTIONS:
+                if (resultCode == RESULT_OK) {
+                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA);
+                    DataBaseUtils.saveRetirementOptions(this, rod);
+                }
+                break;
+            case REQUEST_PERSONAL_INFO:
+                if (resultCode == RESULT_OK) {
+                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+                    DataBaseUtils.savePersonalInfo(this, pid);
+                }
+                break;
         }
     }
 
     /**
      * This will add the option menu to the toolbar.
+     *
      * @param menu The menu.
      * @return If true, menu will be created.
      */

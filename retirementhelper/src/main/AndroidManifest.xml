@@ -19,7 +19,7 @@
         <activity android:name=".ui.SummaryActivity" />
         <activity
             android:name=".ui.RetirementOptionsDialog"
-            android:theme="@style/RetireDialog"/>
+            android:theme="@style/RetireDialog" />
 
         <provider
             android:name=".db.RetirementProvider"
@@ -28,7 +28,9 @@
             android:label="my provider" />
 
         <activity android:name=".ui.PinActivity" />
-        <activity android:name=".ui.income.IncomeSourceActivity"></activity>
+        <activity android:name=".ui.income.IncomeSourceActivity" />
+        <activity android:name=".ui.PersonalInfoDialog" />
+        <activity android:name=".ui.EnterDateDialog"></activity>
     </application>
 
 </manifest>
