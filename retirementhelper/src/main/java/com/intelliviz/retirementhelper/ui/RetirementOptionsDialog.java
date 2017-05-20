@@ -23,9 +23,7 @@ import butterknife.ButterKnife;
  * Created by edm on 5/15/2017.
  */
 
-public class RetirementParmsDialog extends AppCompatActivity implements View.OnClickListener{
-    private static final String ARG_START_AGE = "start date";
-    private static final String ARG_END_AGE = "end date";
+public class RetirementOptionsDialog extends AppCompatActivity implements View.OnClickListener{
 
     @Bind(R.id.start_age_edit_text) EditText mStartAgeEditText;
     @Bind(R.id.end_age_edit_text) EditText mEndAgeEditText;

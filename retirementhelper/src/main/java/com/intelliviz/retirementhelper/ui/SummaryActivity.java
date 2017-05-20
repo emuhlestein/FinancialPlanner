@@ -101,7 +101,7 @@ public class SummaryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.personal_info_item:
-                Intent intent = new Intent(this, RetirementParmsDialog.class);
+                Intent intent = new Intent(this, RetirementOptionsDialog.class);
                 startActivityForResult(intent, REQUEST_RETIRE_PARMS);
                 break;
 
