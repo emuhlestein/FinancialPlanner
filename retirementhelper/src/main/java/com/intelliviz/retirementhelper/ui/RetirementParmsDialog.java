@@ -14,7 +14,7 @@ import android.widget.RadioGroup;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementParmsData;
+import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -83,7 +83,7 @@ public class RetirementParmsDialog extends AppCompatActivity implements View.OnC
     }
 
     private void updateUI() {
-        RetirementParmsData rpd = DataBaseUtils.getRetirementParmsData(this);
+        RetirementOptionsData rpd = DataBaseUtils.getRetirementParmsData(this);
         if(rpd == null) {
             return;
         }

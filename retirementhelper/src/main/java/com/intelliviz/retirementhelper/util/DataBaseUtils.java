@@ -31,7 +31,7 @@ public class DataBaseUtils {
         return context.getContentResolver().query(uri, projection, null, null, null);
     }
 
-    public static RetirementParmsData getRetirementParmsData(Context context) {
+    public static RetirementOptionsData getRetirementParmsData(Context context) {
         Cursor cursor = getRetirementParms(context);
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
@@ -49,7 +49,7 @@ public class DataBaseUtils {
         String withdrawPercent = cursor.getString(withdrawPercentIndex);
         int includeInflation = cursor.getInt(includeInflationIndex);
         String inflationAmount = cursor.getString(inflationAmountIndex);
-        return new RetirementParmsData(startAge, endAge, withdrawMode, withdrawPercent, includeInflation, inflationAmount);
+        return new RetirementOptionsData(startAge, endAge, withdrawMode, withdrawPercent, includeInflation, inflationAmount);
     }
 
     //
