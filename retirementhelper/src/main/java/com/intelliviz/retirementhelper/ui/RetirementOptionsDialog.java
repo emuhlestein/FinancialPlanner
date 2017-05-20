@@ -12,7 +12,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 
@@ -55,6 +54,9 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
             }
         });
 
+        Intent intent = getIntent();
+        RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA);
+
         mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,7 +67,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
             }
         });
 
-        updateUI();
+        updateUI(rod);
     }
 
     @Override
@@ -80,14 +82,10 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         }
     }
 
-    private void updateUI() {
-        RetirementOptionsData rpd = DataBaseUtils.getRetirementParmsData(this);
-        if(rpd == null) {
-            return;
-        }
-        mStartAgeEditText.setText(rpd.getStartAge());
-        mEndAgeEditText.setText(rpd.getEndAge());
-        int mode = rpd.getWithdrawMode();
+    private void updateUI(RetirementOptionsData rod) {
+        mStartAgeEditText.setText(rod.getStartAge());
+        mEndAgeEditText.setText(rod.getEndAge());
+        int mode = rod.getWithdrawMode();
         switch(mode) {
             case RetirementConstants.WITHDRAW_MODE_ZERO_PRI:
                 mWithdrawModeRadioGroup.check(mZeroBalanceButton.getId());
@@ -102,9 +100,9 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
                 mWithdrawModeRadioGroup.check(mZeroBalanceButton.getId());
         }
 
-        mWithdrawPercent.setText(rpd.getWithdrawPercent());
-        mIncludeInflationCheckBox.setSelected(rpd.getIncludeInflation() == 1);
-        mInflationAmountEditText.setText(rpd.getInflationAmount());
+        mWithdrawPercent.setText(rod.getWithdrawPercent());
+        mIncludeInflationCheckBox.setSelected(rod.getIncludeInflation() == 1);
+        mInflationAmountEditText.setText(rod.getInflationAmount());
     }
 
     private void sendIncomeSourceData() {
@@ -130,26 +128,18 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
             withdrawPercent = mWithdrawPercent.getText().toString();
         }
 
-        int inludeInflation;
         String inflationAmount;
-        if(mIncludeInflationCheckBox.isChecked()) {
-            inludeInflation = 1;
+        int includeInflation = mIncludeInflationCheckBox.isChecked() ? 1 : 0;
+        if(includeInflation == 1) {
             inflationAmount = mInflationAmountEditText.getText().toString();
         } else {
-            inludeInflation = 0;
             inflationAmount = "0";
         }
 
+        RetirementOptionsData rod = new RetirementOptionsData(startAge, endAge, withdrawMode, withdrawPercent, includeInflation, inflationAmount);
 
         Intent returnIntent = new Intent();
-
-        returnIntent.putExtra(RetirementConstants.EXTRA_RETIRE_PARMS_START_AGE, startAge);
-        returnIntent.putExtra(RetirementConstants.EXTRA_RETIRE_PARMS_END_AGE, endAge);
-        returnIntent.putExtra(RetirementConstants.EXTRA_RETIRE_PARMS_WITHDRAW_MODE, withdrawMode);
-        returnIntent.putExtra(RetirementConstants.EXTRA_RETIRE_PARMS_WITHDRAW_PERCENT, withdrawPercent);
-        returnIntent.putExtra(RetirementConstants.EXTRA_RETIRE_PARMS_INCLUDE_INFLAT, inludeInflation);
-        returnIntent.putExtra(RetirementConstants.EXTRA_RETIRE_PARMS_INFLAT_AMOUNT, inflationAmount);
-
+        returnIntent.putExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA, rod);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }

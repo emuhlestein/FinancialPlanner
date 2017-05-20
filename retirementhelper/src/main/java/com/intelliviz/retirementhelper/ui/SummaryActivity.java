@@ -15,18 +15,21 @@ import android.view.MenuItem;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class SummaryActivity extends AppCompatActivity {
-    private static final String DIALOG_RETIRE_PARMS = "reitre_parms";
+    private static final String DIALOG_RETIRE_OPTIONS = "reitre_options";
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String EXPENSES_FRAG_TAG = "expenses frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";
     private static final String TAXES_FRAG_TAG = "taxes frag tag";
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
-    private static final int REQUEST_RETIRE_PARMS = 0;
+    private static final int REQUEST_RETIRE_OPTIONS = 0;
     @Bind(R.id.summary_toolbar) Toolbar mToolbar;
     @Bind(R.id.bottom_navigation) BottomNavigationView mBottonNavigation;
 
@@ -102,11 +105,25 @@ public class SummaryActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.personal_info_item:
                 Intent intent = new Intent(this, RetirementOptionsDialog.class);
-                startActivityForResult(intent, REQUEST_RETIRE_PARMS);
+                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+                if(rod != null) {
+                    intent.putExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA, rod);
+                }
+                startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 break;
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if(requestCode == REQUEST_RETIRE_OPTIONS) {
+            if(resultCode == RESULT_OK) {
+                RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA);
+                DataBaseUtils.saveRetirementOptions(this, rod);
+            }
+        }
     }
 
     /**

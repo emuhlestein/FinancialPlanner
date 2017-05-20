@@ -13,7 +13,19 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 
 public class DataBaseUtils {
 
-    public static int saveRetirementParms(Context context, String startAge, String endAge, int withdrawMode, String withdrawPercent, int includeInflation, String inflationAmount) {
+    public static int saveRetirementOptions(Context context, RetirementOptionsData rod) {
+        ContentValues values  = new ContentValues();
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE, rod.getStartAge());
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, rod.getEndAge());
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, rod.getWithdrawMode());
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_PERCENT, rod.getWithdrawPercent());
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_INC_INFLATION, rod.getIncludeInflation());
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_INFL_AMOUNT, rod.getInflationAmount());
+        Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
+        return context.getContentResolver().update(uri, values, null, null);
+    }
+
+    public static int saveRetirementOptions(Context context, String startAge, String endAge, int withdrawMode, String withdrawPercent, int includeInflation, String inflationAmount) {
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE, startAge);
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, endAge);
@@ -21,18 +33,18 @@ public class DataBaseUtils {
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_PERCENT, withdrawPercent);
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_INC_INFLATION, includeInflation);
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_INFL_AMOUNT, inflationAmount);
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+        Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
         return context.getContentResolver().update(uri, values, null, null);
     }
 
-    public static Cursor getRetirementParms(Context context) {
+    public static Cursor getRetirementOptions(Context context) {
         Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
         String[] projection = null; // we want all columns
         return context.getContentResolver().query(uri, projection, null, null, null);
     }
 
-    public static RetirementOptionsData getRetirementParmsData(Context context) {
-        Cursor cursor = getRetirementParms(context);
+    public static RetirementOptionsData getRetirementOptionsData(Context context) {
+        Cursor cursor = getRetirementOptions(context);
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
         }

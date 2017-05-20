@@ -23,7 +23,7 @@ public class RetirementProvider extends ContentProvider {
     private static final String DBASE_NAME = "retirement";
     private static final int DBASE_VERSION = 2;
     private static final int PERSONALINFO_ID = 101;
-    private static final int RETIREMENT_PARMS_ID = 102;
+    private static final int RETIREMENT_OPTIONS_ID = 102;
     private static final int CATEGORY_LIST = 201;
     private static final int CATEGORY_ID = 202;
     private static final int EXPENSE_LIST = 301;
@@ -48,7 +48,7 @@ public class RetirementProvider extends ContentProvider {
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO, PERSONALINFO_ID);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_RETIREMENT_PARMS, RETIREMENT_PARMS_ID);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_RETIREMENT_PARMS, RETIREMENT_OPTIONS_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_CATEGORY, CATEGORY_LIST);
 
@@ -96,7 +96,7 @@ public class RetirementProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)) {
             case PERSONALINFO_ID:
                 return RetirementContract.PeronsalInfoEntry.CONTENT_ITEM_TYPE;
-            case RETIREMENT_PARMS_ID:
+            case RETIREMENT_OPTIONS_ID:
                 return RetirementContract.RetirementParmsEntry.CONTENT_ITEM_TYPE;
             case EXPENSE_LIST:
                 return RetirementContract.ExpenseEntery.CONTENT_TYPE;
@@ -144,7 +144,7 @@ public class RetirementProvider extends ContentProvider {
                 // get the personal info table, there should be only one.
                 sqLiteQueryBuilder.setTables(RetirementContract.PeronsalInfoEntry.TABLE_NAME);
                 break;
-            case RETIREMENT_PARMS_ID:
+            case RETIREMENT_OPTIONS_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.RetirementParmsEntry.TABLE_NAME);
                 break;
             case CATEGORY_ID:
@@ -405,7 +405,7 @@ public class RetirementProvider extends ContentProvider {
                 rowsUpdated = db.update(RetirementContract.PeronsalInfoEntry.TABLE_NAME,
                         values, null, null);
                 break;
-            case RETIREMENT_PARMS_ID:
+            case RETIREMENT_OPTIONS_ID:
                 rowsUpdated = db.update(RetirementContract.RetirementParmsEntry.TABLE_NAME,
                         values, null, null);
                 break;
