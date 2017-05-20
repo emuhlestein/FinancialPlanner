@@ -32,7 +32,7 @@
 
         <EditText
             android:id="@+id/start_age_edit_text"
-            style="@style/PositiveNumber"/>
+            style="@style/ThreeDigitPositiveNumber"/>
     </LinearLayout>
 
     <LinearLayout
@@ -48,7 +48,7 @@
 
         <EditText
             android:id="@+id/end_age_edit_text"
-            style="@style/PositiveNumber"/>
+            style="@style/ThreeDigitPositiveNumber"/>
     </LinearLayout>
 
     <RadioGroup
@@ -91,7 +91,7 @@
 
         <EditText
             android:id="@+id/withdraw_percent_edit_text"
-            style="@style/PositiveNumber"/>
+            style="@style/ThreeDigitPositiveNumber"/>
     </LinearLayout>
 
     <CheckBox
@@ -113,7 +113,7 @@
 
         <EditText
             android:id="@+id/inflation_amount_edit_text"
-            style="@style/PositiveNumber" />
+            style="@style/ThreeDigitPositiveNumber" />
     </LinearLayout>
 
     <View

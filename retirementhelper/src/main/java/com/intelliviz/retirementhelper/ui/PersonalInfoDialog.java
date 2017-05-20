@@ -3,6 +3,8 @@ package com.intelliviz.retirementhelper.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.PersonalInfoData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,6 +23,8 @@ public class PersonalInfoDialog extends AppCompatActivity {
     private String mPassword;
     private String mPIN;
     private String mEmail;
+    private PersonalInfoData mPID;
+    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.name_edit_text) EditText mNameEditText;
     @Bind(R.id.birthdate_edit_text) EditText mBirthDateateEditText;
     @Bind(R.id.email_edit_text) TextView mEmailTextView;
@@ -38,7 +43,7 @@ public class PersonalInfoDialog extends AppCompatActivity {
         mOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendIncomeSourceData();
+                sendData();
             }
         });
 
@@ -69,6 +74,9 @@ public class PersonalInfoDialog extends AppCompatActivity {
             }
         });
 
+        Intent intent = getIntent();
+        mPID = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+
         updateUI();
     }
 
@@ -85,12 +93,21 @@ public class PersonalInfoDialog extends AppCompatActivity {
         mEmail = pid.getEmail();
     }
 
-    private void sendIncomeSourceData() {
+    private void sendData() {
         String name = mNameEditText.getText().toString();
-        String birthdate = mBirthDateateEditText.getText().toString();
+        String birthday = mBirthDateateEditText.getText().toString();
         // TODO need to validate birth date
+        if(!SystemUtils.validateBirthday(birthday)) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Birthday is not valid.", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return;
+        } else {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Birthday is valid.", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
 
-        PersonalInfoData pid = new PersonalInfoData(name, birthdate, mEmail, mPIN, mPassword);
+
+        PersonalInfoData pid = new PersonalInfoData(name, birthday, mEmail, mPIN, mPassword);
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);

@@ -21,6 +21,48 @@ import java.util.Locale;
  */
 
 public class SystemUtils {
+    public static boolean validateBirthday(String birthdate) {
+        String[] tokens = birthdate.split("-");
+        if(tokens.length != 3) {
+            return false;
+        }
+
+        // Validate year
+        if(tokens[0].length() != 4) {
+            return false;
+        }
+        if(!tokens[0].matches("[0-9][0-9][0-9][0-9]")) {
+            return false;
+        }
+
+        // Validate month
+        if(tokens[1].length() != 2) {
+            return false;
+        }
+        if(!tokens[1].matches("[0-9][0-9]")) {
+            return false;
+        }
+
+        // Validate day
+        if(tokens[2].length() != 2) {
+            return false;
+        }
+        if(!tokens[2].matches("[0-9][0-9]")) {
+            return false;
+        }
+
+        String date = tokens[0]+"-"+tokens[1]+"-"+tokens[2];
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            dateFormat.setLenient(false);
+            dateFormat.parse(date);
+        } catch(ParseException e) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static void setToolbarSubtitle(AppCompatActivity activity, String subtitle) {
         ActionBar actionBar = activity.getSupportActionBar();
         if(actionBar != null) {

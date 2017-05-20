@@ -30,7 +30,6 @@
         <activity android:name=".ui.PinActivity" />
         <activity android:name=".ui.income.IncomeSourceActivity" />
         <activity android:name=".ui.PersonalInfoDialog" />
-        <activity android:name=".ui.EnterDateDialog"></activity>
     </application>
 
 </manifest>

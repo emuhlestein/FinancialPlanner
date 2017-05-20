@@ -11,9 +11,7 @@ import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.RetirementContract;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -66,7 +64,7 @@ public class NewUserActivity extends AppCompatActivity {
             snackbar.show();
         }
 
-        if(!validateBirthday(birthday)) {
+        if(!SystemUtils.validateBirthday(birthday)) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Birthdate is not valid.", Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
@@ -123,46 +121,6 @@ public class NewUserActivity extends AppCompatActivity {
         }
     }
 
-    private boolean validateBirthday(String birthdate) {
-        String[] tokens = birthdate.split("-");
-        if(tokens.length != 3) {
-            return false;
-        }
-
-        // Validate year
-        if(tokens[0].length() != 4) {
-            return false;
-        }
-        if(!tokens[0].matches("[0-9][0-9][0-9][0-9]")) {
-            return false;
-        }
-
-        // Validate month
-        if(tokens[1].length() != 2) {
-            return false;
-        }
-        if(!tokens[1].matches("[0-9][0-9]")) {
-            return false;
-        }
-
-        // Validate day
-        if(tokens[2].length() != 2) {
-            return false;
-        }
-        if(!tokens[2].matches("[0-9][0-9]")) {
-            return false;
-        }
-
-        String date = tokens[2]+"-"+tokens[0]+"-"+tokens[1];
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            dateFormat.parse(date);
-        } catch(ParseException e) {
-            return false;
-        }
-
-        return true;
-    }
 
     /**
      * Passwords must match and must be valid.
