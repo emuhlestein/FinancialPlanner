@@ -145,6 +145,9 @@ public class SummaryActivity extends AppCompatActivity {
                     DataBaseUtils.savePersonalInfo(this, pid);
                 }
                 break;
+            default:
+                // needed to call the fragment onActivityResult
+                super.onActivityResult(requestCode, resultCode, intent);
         }
     }
 
