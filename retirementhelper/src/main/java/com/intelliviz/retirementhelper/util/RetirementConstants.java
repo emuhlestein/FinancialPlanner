@@ -34,4 +34,11 @@ public class RetirementConstants {
     public static final String EXTRA_RETIRMENTOPTIONSDATA = "retirementoptionsdata";
     public static final String EXTRA_PERSONALINFODATA = "personalinfodata";
     public static final String EXTRA_DATEDATA = "datedata";
+
+    public static final int REQUEST_RETIRE_OPTIONS = 0;
+    public static final int REQUEST_PERSONAL_INFO = 1;
+    public static final int REQUEST_SAVINGS = 2;
+    public static final int REQUEST_TAX_DEFERRED = 3;
+    public static final int REQUEST_PENSION = 4;
+    public static final int REQUEST_GOV_PENSION = 5;
 }

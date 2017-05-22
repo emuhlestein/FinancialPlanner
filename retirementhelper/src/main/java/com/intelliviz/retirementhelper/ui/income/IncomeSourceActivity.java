@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.ui.income;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -71,6 +72,11 @@ public class IncomeSourceActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 
     private void addSavingsIncomeSourceFragmnet(boolean viewMode) {

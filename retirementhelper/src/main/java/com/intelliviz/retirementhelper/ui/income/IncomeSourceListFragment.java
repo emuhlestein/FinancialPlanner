@@ -43,14 +43,15 @@ import static android.R.attr.id;
 import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.addSavingsIncome;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_GOV_PENSION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PENSION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SAVINGS;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_TAX_DEFERRED;
 
 public class IncomeSourceListFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
     public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
-    private static final int SAVINGS_REQUEST = 0;
-    private static final int TAX_DEFERRED_REQUEST = 1;
-    private static final int PENSION_REQUEST = 2;
-    private static final int GOV_PENSION_REQUEST = 3;
+
 
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
@@ -138,16 +139,16 @@ public class IncomeSourceListFragment extends Fragment implements
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
                         switch (item) {
                             case RetirementConstants.INCOME_TYPE_SAVINGS:
-                                startActivityForResult(intent, SAVINGS_REQUEST);
+                                startActivityForResult(intent, RetirementConstants.REQUEST_SAVINGS);
                                 break;
                             case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                                startActivityForResult(intent, TAX_DEFERRED_REQUEST);
+                                startActivityForResult(intent, RetirementConstants.REQUEST_TAX_DEFERRED, null);
                                 break;
                             case RetirementConstants.INCOME_TYPE_PENSION:
-                                startActivityForResult(intent, PENSION_REQUEST);
+                                startActivityForResult(intent, RetirementConstants.REQUEST_PENSION);
                                 break;
                             case RetirementConstants.INCOME_TYPE_GOV_PENSION:
-                                startActivityForResult(intent, GOV_PENSION_REQUEST);
+                                startActivityForResult(intent, RetirementConstants.REQUEST_GOV_PENSION);
                                 break;
                         }
                     }
@@ -167,16 +168,16 @@ public class IncomeSourceListFragment extends Fragment implements
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case SAVINGS_REQUEST:
+                case REQUEST_SAVINGS:
                     saveSavingsIncomeData(intent);
                     break;
-                case TAX_DEFERRED_REQUEST:
+                case REQUEST_TAX_DEFERRED:
                     saveTaxDeferredData(intent);
                     break;
-                case PENSION_REQUEST:
+                case REQUEST_PENSION:
                     savePensionData(intent);
                     break;
-                case GOV_PENSION_REQUEST:
+                case REQUEST_GOV_PENSION:
                     saveGovPensionData(intent);
                     break;
             }
@@ -217,7 +218,7 @@ public class IncomeSourceListFragment extends Fragment implements
                             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
                             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
                             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
-                            startActivityForResult(intent, SAVINGS_REQUEST);
+                            startActivityForResult(intent, REQUEST_SAVINGS);
                             break;
                         case 1: // TODO DELETE
                             int rowsDeleted = DataBaseUtils.deleteBalance(getContext(), incomeSourceId);
@@ -234,7 +235,7 @@ public class IncomeSourceListFragment extends Fragment implements
             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_ACTION_VIEW);
             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
-            startActivityForResult(intent, SAVINGS_REQUEST);
+            startActivityForResult(intent, REQUEST_SAVINGS);
         }
     }
 

@@ -24,6 +24,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.getRetirementOptionsData;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 public class SummaryActivity extends AppCompatActivity {
     private static final String DIALOG_RETIRE_OPTIONS = "reitre_options";
@@ -32,8 +34,7 @@ public class SummaryActivity extends AppCompatActivity {
     private static final String INCOME_FRAG_TAG = "income frag tag";
     private static final String TAXES_FRAG_TAG = "taxes frag tag";
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
-    private static final int REQUEST_RETIRE_OPTIONS = 0;
-    private static final int REQUEST_PERSONAL_INFO = 1;
+
     @Bind(R.id.summary_toolbar) Toolbar mToolbar;
     @Bind(R.id.bottom_navigation) BottomNavigationView mBottonNavigation;
 
@@ -130,6 +131,7 @@ public class SummaryActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
         switch (requestCode) {
             case REQUEST_RETIRE_OPTIONS:
                 if (resultCode == RESULT_OK) {
