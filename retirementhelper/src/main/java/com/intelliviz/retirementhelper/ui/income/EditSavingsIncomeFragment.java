@@ -15,10 +15,11 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.BalanceData;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,6 +31,7 @@ import butterknife.ButterKnife;
  */
 public class EditSavingsIncomeFragment extends Fragment {
     public static final String EDIT_SAVINGS_INCOME_FRAG_TAG = "edit savings income frag tag";
+    private static final String EXTRA_INTENT = "extra intent";
     private SavingsIncomeData mSID;
     @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
     @Bind(R.id.balance_text) EditText mBalance;
@@ -41,10 +43,10 @@ public class EditSavingsIncomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static EditSavingsIncomeFragment newInstance(SavingsIncomeData sid) {
+    public static EditSavingsIncomeFragment newInstance(Intent intent) {
         EditSavingsIncomeFragment fragment = new EditSavingsIncomeFragment();
         Bundle args = new Bundle();
-        args.putParcelable(RetirementConstants.EXTRA_INCOME_SAVINGS, sid);
+        args.putParcelable(EXTRA_INTENT, intent);
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,7 +55,8 @@ public class EditSavingsIncomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mSID = getArguments().getParcelable(RetirementConstants.EXTRA_INCOME_SAVINGS);
+            Intent intent = getArguments().getParcelable(EXTRA_INTENT);
+            mSID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_SAVINGS);
         }
     }
 
@@ -119,11 +122,11 @@ public class EditSavingsIncomeFragment extends Fragment {
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
 
         String balanceString;
-        BalanceData[] bd = DataBaseUtils.getBalanceData(getContext(), mSID.getId());
+        List<BalanceData> bd =  mSID.getBalanceDataList();
         if(bd == null) {
             balanceString = "0.00";
         } else {
-            balanceString = SystemUtils.getFormattedCurrency(bd[0].getBalance());
+            balanceString = SystemUtils.getFormattedCurrency(bd.get(0).getBalance());
         }
 
         String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mSID.getMonthlyIncrease());
@@ -158,10 +161,11 @@ public class EditSavingsIncomeFragment extends Fragment {
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
 
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE, date);
+        //returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
+        //returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE, date);
 
         SavingsIncomeData sid = new SavingsIncomeData(mSID.getId(), name, mSID.getType(), interest, monthlyIncrease);
+        sid.addBalance(new BalanceData(balance, date));
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SAVINGS, sid);
 
         getActivity().setResult(Activity.RESULT_OK, returnIntent);

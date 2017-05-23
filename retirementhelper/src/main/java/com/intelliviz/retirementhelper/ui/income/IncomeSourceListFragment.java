@@ -30,7 +30,6 @@ import android.widget.Toast;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SavingsIncomeData;
@@ -214,8 +213,9 @@ public class IncomeSourceListFragment extends Fragment implements
 
                     switch (item) {
                         case 0: // TODO EDIT
+                            SavingsIncomeData sid = DataBaseUtils.getSavingsIncomeData(getContext(), incomeSourceId);
                             intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-                            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
+                            intent.putExtra(RetirementConstants.EXTRA_INCOME_SAVINGS, sid);
                             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, item);
                             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
                             startActivityForResult(intent, REQUEST_SAVINGS);
@@ -230,9 +230,11 @@ public class IncomeSourceListFragment extends Fragment implements
             AlertDialog dialog = builder.create();
             dialog.show();
         } else {
+            SavingsIncomeData sid = DataBaseUtils.getSavingsIncomeData(getContext(), incomeSourceId);
             Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SAVINGS, sid);
             intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_ACTION_VIEW);
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, sid.getType());
             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, incomeSourceName);
             intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
             startActivityForResult(intent, REQUEST_SAVINGS);
@@ -249,7 +251,7 @@ public class IncomeSourceListFragment extends Fragment implements
             String bdid = DataBaseUtils.addBalanceData(getContext(), id, balance, balanceDate);
         } else {
             DataBaseUtils.saveSavingsIncomeData(getContext(), sid);
-
+/*
             BalanceData[] bd = DataBaseUtils.getBalanceData(getContext(), sid.getId());
             if(bd == null) {
                 DataBaseUtils.addBalanceData(getContext(), sid.getId(), balance, balanceDate);
@@ -259,6 +261,7 @@ public class IncomeSourceListFragment extends Fragment implements
                     // TODO handle error
                 }
             }
+*/
         }
     }
 

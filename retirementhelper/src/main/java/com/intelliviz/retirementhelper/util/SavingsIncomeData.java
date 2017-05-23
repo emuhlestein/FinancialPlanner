@@ -3,6 +3,9 @@ package com.intelliviz.retirementhelper.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by edm on 5/1/2017.
  */
@@ -10,6 +13,7 @@ import android.os.Parcelable;
 public class SavingsIncomeData extends IncomeTypeData {
     private String mInterest;
     private String mMonthlyIncrease;
+    private List<BalanceData> mBalanceDataList = new ArrayList<>();
 
     public SavingsIncomeData() {
         super();
@@ -35,6 +39,14 @@ public class SavingsIncomeData extends IncomeTypeData {
         return mMonthlyIncrease;
     }
 
+    public void addBalance(BalanceData bd) {
+        mBalanceDataList.add(bd);
+    }
+
+    public List<BalanceData> getBalanceDataList() {
+        return mBalanceDataList;
+    }
+
     public SavingsIncomeData(Parcel in) {
         readFromParcel(in);
     }
@@ -49,6 +61,7 @@ public class SavingsIncomeData extends IncomeTypeData {
         super.writeToParcel(dest, flags);
         dest.writeString(mInterest);
         dest.writeString(mMonthlyIncrease);
+        dest.writeTypedList(mBalanceDataList);
     }
 
     @Override
@@ -56,6 +69,7 @@ public class SavingsIncomeData extends IncomeTypeData {
         super.readFromParcel(in);
         mInterest = in.readString();
         mMonthlyIncrease = in.readString();
+        in.readTypedList(mBalanceDataList, BalanceData.CREATOR);
     }
 
     public static final Parcelable.Creator<SavingsIncomeData> CREATOR = new Parcelable.Creator<SavingsIncomeData>()

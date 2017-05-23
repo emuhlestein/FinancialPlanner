@@ -7,6 +7,8 @@ import android.net.Uri;
 
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
+import java.util.List;
+
 /**
  * Created by edm on 4/25/2017.
  */
@@ -179,7 +181,12 @@ public class DataBaseUtils {
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD, sid.getMonthlyIncrease());
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST, sid.getInterest());
         Uri uri = context.getContentResolver().insert(RetirementContract.SavingsIncomeEntry.CONTENT_URI, values);
-        return uri.getLastPathSegment();
+
+        List<BalanceData> balanceDataList = sid.getBalanceDataList();
+        for(BalanceData bd : balanceDataList) {
+            addBalanceData(context, sid.getId(), bd.getBalance(), bd.getDate());
+        }
+        return "";
     }
 
     public static int saveSavingsIncomeData(Context context, SavingsIncomeData sid) {
@@ -191,15 +198,22 @@ public class DataBaseUtils {
         String id = String.valueOf(sid.getId());
         Uri uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, id);
-        return context.getContentResolver().update(uri, values, null, null);
+        context.getContentResolver().update(uri, values, null, null);
+        List<BalanceData> balanceDataList = sid.getBalanceDataList();
+        for(BalanceData bd : balanceDataList) {
+            saveBalanceData(context, sid.getId(), bd.getBalance(), bd.getDate());
+        }
+
+        return 0;
     }
 
     public static Cursor getSavingsIncome(Context context, long incomeId) {
-        Uri uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
         String[] projection = null; // we want all columns
         String selection = RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
         String id = String.valueOf(incomeId);
         String[] selectionArgs = {id};
+        Uri uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, id);
         return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
     }
 
@@ -216,7 +230,14 @@ public class DataBaseUtils {
         int monthAddIndex = cursor.getColumnIndex(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD);
         String interest = cursor.getString(interestIndex);
         String monthAdd = cursor.getString(monthAddIndex);
-        return new SavingsIncomeData(incomeId, idh.name, idh.type, interest, monthAdd);
+        SavingsIncomeData sid = new SavingsIncomeData(incomeId, idh.name, idh.type, interest, monthAdd);
+
+        BalanceData[] bds = getBalanceData(context, incomeId);
+        for(BalanceData bd : bds) {
+            sid.addBalance(bd);
+        }
+
+        return sid;
     }
 
     //

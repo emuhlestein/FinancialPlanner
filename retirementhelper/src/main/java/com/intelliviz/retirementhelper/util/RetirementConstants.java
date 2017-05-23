@@ -10,9 +10,11 @@ public class RetirementConstants {
     public static final int INCOME_TYPE_PENSION = 2;
     public static final int INCOME_TYPE_GOV_PENSION = 3; //eg social security
     public static final String DATE_FORMAT = "yyyy-MM-dd";
-    public static final int INCOME_ACTION_VIEW = 0;
-    public static final int INCOME_ACTION_EDIT = 1;
-    public static final int INCOME_ACTION_DELETE = 2;
+
+    public static final int INCOME_ACTION_ADD = 0;
+    public static final int INCOME_ACTION_VIEW = 1;
+    public static final int INCOME_ACTION_EDIT = 2;
+    public static final int INCOME_ACTION_DELETE = 3;
 
     // principle reduction mode
     public static final int WITHDRAW_MODE_ZERO_PRI = 0; // zero principle  by end age
