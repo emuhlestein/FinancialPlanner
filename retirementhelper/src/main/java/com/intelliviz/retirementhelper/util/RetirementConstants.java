@@ -31,6 +31,8 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_INTEREST = "income source interest";
     public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
 
+    public static final String EXTRA_INCOME_SAVINGS = "extra income savings";
+
     public static final String EXTRA_RETIRMENTOPTIONSDATA = "retirementoptionsdata";
     public static final String EXTRA_PERSONALINFODATA = "personalinfodata";
     public static final String EXTRA_DATEDATA = "datedata";

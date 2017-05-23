@@ -1,30 +1,73 @@
 package com.intelliviz.retirementhelper.util;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by edm on 5/1/2017.
  */
 
 public class SavingsIncomeData extends IncomeTypeData {
-    private final String name;
-    private final String interest;
-    private final String monthlyIncrease;
+    private String mInterest;
+    private String mMonthlyIncrease;
 
-    public SavingsIncomeData(String name, int type, String interest, String monthlyIncrease) {
-        super(name, type);
-        this.name = name;
-        this.interest = interest;
-        this.monthlyIncrease = monthlyIncrease;
+    public SavingsIncomeData() {
+        super();
     }
 
-    public String getName() {
-        return name;
+    public SavingsIncomeData(long id, String name, int type) {
+        super(id);
+        mInterest = "0";
+        mMonthlyIncrease = "0";
+    }
+
+    public SavingsIncomeData(long id, String name, int type, String interest, String monthlyIncrease) {
+        super(id, name, type);
+        mInterest = interest;
+        mMonthlyIncrease = monthlyIncrease;
     }
 
     public String getInterest() {
-        return interest;
+        return mInterest;
     }
 
     public String getMonthlyIncrease() {
-        return monthlyIncrease;
+        return mMonthlyIncrease;
     }
+
+    public SavingsIncomeData(Parcel in) {
+        readFromParcel(in);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeString(mInterest);
+        dest.writeString(mMonthlyIncrease);
+    }
+
+    @Override
+    public void readFromParcel(Parcel in) {
+        super.readFromParcel(in);
+        mInterest = in.readString();
+        mMonthlyIncrease = in.readString();
+    }
+
+    public static final Parcelable.Creator<SavingsIncomeData> CREATOR = new Parcelable.Creator<SavingsIncomeData>()
+    {
+        @Override
+        public SavingsIncomeData createFromParcel(Parcel in) {
+            return new SavingsIncomeData(in);
+        }
+
+        @Override
+        public SavingsIncomeData[] newArray(int size) {
+            return new SavingsIncomeData[size];
+        }
+    };
 }

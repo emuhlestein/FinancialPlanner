@@ -109,20 +109,24 @@ public class DataBaseUtils {
     //
     // Methods for IncomeType table
     //
-    public static String addIncomeType(Context context, String name, int type) {
+    public static String addIncomeType(Context context, IncomeType incomeType) {
         ContentValues values = new ContentValues();
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, name);
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, type);
+        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
+        values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, incomeType.getType());
         Uri uri = context.getContentResolver().insert(RetirementContract.IncomeTypeEntry.CONTENT_URI, values);
-        return uri.getLastPathSegment();
+        if(uri == null) {
+            return null;
+        } else {
+            return uri.getLastPathSegment();
+        }
     }
 
-    public static int saveIncomeType(Context context, long incomeId, String name, int type) {
+    public static int saveIncomeType(Context context, IncomeType incomeType) {
         ContentValues values  = new ContentValues();
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, name);
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, type);
+        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
+        values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, incomeType.getType());
 
-        String sid = String.valueOf(incomeId);
+        String sid = String.valueOf(incomeType.getId());
         String selectionClause = RetirementContract.IncomeTypeEntry._ID + " = ?";
         String[] selectionArgs = new String[]{sid};
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
@@ -147,7 +151,7 @@ public class DataBaseUtils {
         return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
     }
 
-    public static IncomeTypeData getIncomeTypeData(Context context, long incomeId) {
+    private static IncomeDataHelper getIncomeTypeData(Context context, long incomeId) {
         Cursor cursor = getIncomeType(context, incomeId);
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
@@ -156,32 +160,37 @@ public class DataBaseUtils {
         int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
         String name = cursor.getString(nameIndex);
         int type = cursor.getInt(typeIndex);
-        return new IncomeTypeData(name, type);
+        return new IncomeDataHelper(name, type);
     }
 
     //
     // Methods for SavingsIncome table
     //
 
-    public static String addSavingsIncome(Context context, long incomeId, String monthlyAdd, String annualInterest) {
+    public static String addSavingsIncome(Context context, SavingsIncomeData sid) {
+        String id = addIncomeType(context, sid);
+        if(id == null) {
+            return null;
+        }
+
+        long incomeId = Long.parseLong(id);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
-        values.put(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD, monthlyAdd);
-        values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST, annualInterest);
+        values.put(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD, sid.getMonthlyIncrease());
+        values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST, sid.getInterest());
         Uri uri = context.getContentResolver().insert(RetirementContract.SavingsIncomeEntry.CONTENT_URI, values);
         return uri.getLastPathSegment();
     }
 
-    public static int saveSavingsIncomeData(Context context, long incomeId, String monthlyIncrease, String annualInterest) {
+    public static int saveSavingsIncomeData(Context context, SavingsIncomeData sid) {
+        saveIncomeType(context, sid);
         ContentValues values  = new ContentValues();
-        values.put(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD, monthlyIncrease);
-        values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST, annualInterest);
+        values.put(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD, sid.getMonthlyIncrease());
+        values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST, sid.getInterest());
 
-        String sid = String.valueOf(incomeId);
-        //String selectionClause = RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
-        //String[] selectionArgs = new String[]{sid};
+        String id = String.valueOf(sid.getId());
         Uri uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
+        uri = Uri.withAppendedPath(uri, id);
         return context.getContentResolver().update(uri, values, null, null);
     }
 
@@ -195,8 +204,8 @@ public class DataBaseUtils {
     }
 
     public static SavingsIncomeData getSavingsIncomeData(Context context, long incomeId) {
-        IncomeTypeData itd = getIncomeTypeData(context, incomeId);
-        if(itd == null) {
+        IncomeDataHelper idh = getIncomeTypeData(context, incomeId);
+        if(idh == null) {
             return null;
         }
         Cursor cursor = getSavingsIncome(context, incomeId);
@@ -207,7 +216,7 @@ public class DataBaseUtils {
         int monthAddIndex = cursor.getColumnIndex(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD);
         String interest = cursor.getString(interestIndex);
         String monthAdd = cursor.getString(monthAddIndex);
-        return new SavingsIncomeData(itd.getName(), itd.getType(), interest, monthAdd);
+        return new SavingsIncomeData(incomeId, idh.name, idh.type, interest, monthAdd);
     }
 
     //
@@ -254,8 +263,8 @@ public class DataBaseUtils {
     }
 
     public static TaxDeferredIncomeData getTaxDeferredIncomeData(Context context, long incomeId) {
-        IncomeTypeData itd = getIncomeTypeData(context, incomeId);
-        if(itd == null) {
+        IncomeDataHelper idh = getIncomeTypeData(context, incomeId);
+        if(idh == null) {
             return null;
         }
 
@@ -273,7 +282,7 @@ public class DataBaseUtils {
         String monthAdd = cursor.getString(monthAddIndex);
         String penalty = cursor.getString(penaltyIndex);
         int is401k = cursor.getInt(is401kIndex);
-        return new TaxDeferredIncomeData(itd.getName(), itd.getType(), minAge, interest, monthAdd, penalty, is401k);
+        return new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, is401k);
     }
 
     //
@@ -312,8 +321,8 @@ public class DataBaseUtils {
     }
 
     public static PensionIncomeData getPensionIncomeData(Context context, long incomeId) {
-        IncomeTypeData itd = getIncomeTypeData(context, incomeId);
-        if(itd == null) {
+        IncomeDataHelper idh = getIncomeTypeData(context, incomeId);
+        if(idh == null) {
             return null;
         }
         Cursor cursor = getPensionIncome(context, incomeId);
@@ -324,7 +333,7 @@ public class DataBaseUtils {
         int monthlyBenefitIndex = cursor.getColumnIndex(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT);
         String startAge = cursor.getString(startAgeIndex);
         String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
-        return new PensionIncomeData(itd.getName(), itd.getType(), startAge, monthlyBenefit);
+        return new PensionIncomeData(incomeId, idh.name, idh.type, startAge, monthlyBenefit);
     }
 
     //
@@ -363,8 +372,8 @@ public class DataBaseUtils {
     }
 
     public static GovPensionIncomeData getGovPensionIncomeData(Context context, long incomeId) {
-        IncomeTypeData itd = getIncomeTypeData(context, incomeId);
-        if(itd == null) {
+        IncomeDataHelper idh = getIncomeTypeData(context, incomeId);
+        if(idh == null) {
             return null;
         }
 
@@ -376,7 +385,7 @@ public class DataBaseUtils {
         int monthlyBenefitIndex = cursor.getColumnIndex(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT);
         String startAge = cursor.getString(minAgeIndex);
         String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
-        return new GovPensionIncomeData(itd.getName(), itd.getType(), startAge, monthlyBenefit);
+        return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, monthlyBenefit);
     }
 
     //
@@ -439,5 +448,14 @@ public class DataBaseUtils {
         Uri uri = RetirementContract.BalanceEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
         return context.getContentResolver().delete(uri, null, null);
+    }
+
+    static class IncomeDataHelper {
+        public String name;
+        public int type;
+        public IncomeDataHelper(String name, int type) {
+            this.name = name;
+            this.type = type;
+        }
     }
 }

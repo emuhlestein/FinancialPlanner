@@ -144,6 +144,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
 
         String penaltyAmount = mPenaltyAmount.getText().toString();
         String minimumAge = mPenaltyAge.getText().toString();
+        //TaxDeferredIncomeData tdis = new TaxDeferredIncomeData(name, mIncomeType, minimumAge, interest, monthlyIncrease, penaltyAmount, 1);
 
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, mIncomeTypeId);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);

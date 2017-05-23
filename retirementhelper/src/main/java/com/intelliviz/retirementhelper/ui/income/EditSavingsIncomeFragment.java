@@ -30,8 +30,7 @@ import butterknife.ButterKnife;
  */
 public class EditSavingsIncomeFragment extends Fragment {
     public static final String EDIT_SAVINGS_INCOME_FRAG_TAG = "edit savings income frag tag";
-    private long mIncomeTypeId;
-    private int mIncomeType;
+    private SavingsIncomeData mSID;
     @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
     @Bind(R.id.balance_text) EditText mBalance;
     @Bind(R.id.annual_interest_text) EditText mAnnualInterest;
@@ -42,10 +41,10 @@ public class EditSavingsIncomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static EditSavingsIncomeFragment newInstance(long incomeSourceId) {
+    public static EditSavingsIncomeFragment newInstance(SavingsIncomeData sid) {
         EditSavingsIncomeFragment fragment = new EditSavingsIncomeFragment();
         Bundle args = new Bundle();
-        args.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+        args.putParcelable(RetirementConstants.EXTRA_INCOME_SAVINGS, sid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,7 +53,7 @@ public class EditSavingsIncomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mIncomeTypeId = getArguments().getLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID);
+            mSID = getArguments().getParcelable(RetirementConstants.EXTRA_INCOME_SAVINGS);
         }
     }
 
@@ -67,7 +66,7 @@ public class EditSavingsIncomeFragment extends Fragment {
 
         ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
 
-        if(mIncomeTypeId == -1) {
+        if(mSID.getId() == -1) {
             ab.setSubtitle("Savings");
         } else {
             updateUI();
@@ -111,29 +110,24 @@ public class EditSavingsIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
-        if(mIncomeTypeId == -1) {
+        if(mSID.getId() == -1) {
             return;
         }
 
-        SavingsIncomeData sid = DataBaseUtils.getSavingsIncomeData(getContext(), mIncomeTypeId);
-        if(sid == null) {
-            return;
-        }
-
-        String incomeSourceName = sid.getName();
-        mIncomeType = sid.getType();
-        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), mIncomeType);
+        String incomeSourceName = mSID.getName();
+        int type = mSID.getType();
+        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
 
         String balanceString;
-        BalanceData[] bd = DataBaseUtils.getBalanceData(getContext(), mIncomeTypeId);
+        BalanceData[] bd = DataBaseUtils.getBalanceData(getContext(), mSID.getId());
         if(bd == null) {
             balanceString = "0.00";
         } else {
             balanceString = SystemUtils.getFormattedCurrency(bd[0].getBalance());
         }
 
-        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(sid.getMonthlyIncrease());
-        String interestString = String.valueOf(sid.getInterest());
+        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mSID.getMonthlyIncrease());
+        String interestString = String.valueOf(mSID.getInterest());
 
         SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), incomeSourceTypeString);
         mIncomeSourceName.setText(incomeSourceName);
@@ -164,13 +158,11 @@ public class EditSavingsIncomeFragment extends Fragment {
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
 
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, mIncomeTypeId);
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, mIncomeType);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE, date);
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, interest);
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_INCREASE, monthlyIncrease);
+
+        SavingsIncomeData sid = new SavingsIncomeData(mSID.getId(), name, mSID.getType(), interest, monthlyIncrease);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SAVINGS, sid);
 
         getActivity().setResult(Activity.RESULT_OK, returnIntent);
         getActivity().finish();

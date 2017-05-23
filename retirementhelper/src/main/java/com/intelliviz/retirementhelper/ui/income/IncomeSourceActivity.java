@@ -11,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SavingsIncomeData;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,7 +32,6 @@ public class IncomeSourceActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         ActionBar ab = getSupportActionBar();
-
 
         Intent intent = getIntent();
         mIncomeSourceId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
@@ -95,7 +96,13 @@ public class IncomeSourceActivity extends AppCompatActivity {
         } else {
             fragment = fm.findFragmentByTag(EditSavingsIncomeFragment.EDIT_SAVINGS_INCOME_FRAG_TAG);
             if (fragment == null) {
-                fragment = EditSavingsIncomeFragment.newInstance(mIncomeSourceId);
+                SavingsIncomeData sid = null;
+                if(mIncomeSourceId == -1) {
+                    sid = new SavingsIncomeData(mIncomeSourceId, "", RetirementConstants.INCOME_TYPE_SAVINGS);
+                } else {
+                    sid = DataBaseUtils.getSavingsIncomeData(this, mIncomeSourceId);
+                }
+                fragment = EditSavingsIncomeFragment.newInstance(sid);
                 ft = fm.beginTransaction();
                 ft.add(R.id.content_frame, fragment, EditSavingsIncomeFragment.EDIT_SAVINGS_INCOME_FRAG_TAG);
                 ft.commit();
