@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 3;
+    private static final int DBASE_VERSION = 4;
     private static final int PERSONALINFO_ID = 101;
     private static final int RETIREMENT_OPTIONS_ID = 102;
     private static final int CATEGORY_LIST = 201;
@@ -40,6 +40,8 @@ public class RetirementProvider extends ContentProvider {
     private static final int GOV_PENSION_INCOME_ID = 802;
     private static final int BALANCE_LIST = 901;
     private static final int BALANCE_ID = 902;
+    private static final int MILESTONE_LIST = 1001;
+    private static final int MILESTONE_ID = 1002;
 
     private static UriMatcher sUriMatcher;
 
@@ -81,6 +83,10 @@ public class RetirementProvider extends ContentProvider {
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_BALANCE, BALANCE_LIST);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_BALANCE + "/#", BALANCE_ID);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE, MILESTONE_LIST);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE + "/#", MILESTONE_ID);
     }
 
     @Override
@@ -110,6 +116,10 @@ public class RetirementProvider extends ContentProvider {
                 return RetirementContract.IncomeTypeEntry.CONTENT_TYPE;
             case INCOME_TYPE_ID:
                 return RetirementContract.IncomeTypeEntry.CONTENT_ITEM_TYPE;
+            case MILESTONE_LIST:
+                return RetirementContract.MileStoneEntry.CONTENT_TYPE;
+            case MILESTONE_ID:
+                return RetirementContract.MileStoneEntry.CONTENT_ITEM_TYPE;
             case SAVINGS_INCOME_LIST:
                 return RetirementContract.SavingsIncomeEntry.CONTENT_TYPE;
             case SAVINGS_INCOME_ID:
@@ -213,6 +223,14 @@ public class RetirementProvider extends ContentProvider {
             case BALANCE_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.BalanceEntry.TABLE_NAME);
                 break;
+            case MILESTONE_ID:
+                sqLiteQueryBuilder.setTables(RetirementContract.MileStoneEntry.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(RetirementContract.MileStoneEntry._ID +
+                        "=" + uri.getLastPathSegment());
+                break;
+            case MILESTONE_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.MileStoneEntry.TABLE_NAME);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -314,6 +332,16 @@ public class RetirementProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
+            case MILESTONE_LIST:
+                // The second parameter will allow an empty row to be inserted. If it was null, then no row
+                // can be inserted if values is empty.
+                rowId = db.insert(RetirementContract.MileStoneEntry.TABLE_NAME, null, values);
+                if (rowId > -1) {
+                    returnUri = ContentUris.withAppendedId(uri, rowId);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri.toString());
         }
@@ -385,6 +413,24 @@ public class RetirementProvider extends ContentProvider {
                 } else {
                     rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
                             RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " = ?", new String[]{id});
+                }
+                break;
+            case MILESTONE_ID:
+                id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsDeleted = db.delete(RetirementContract.MileStoneEntry.TABLE_NAME,
+                            RetirementContract.MileStoneEntry._ID + " = ?", new String[]{id});
+                } else {
+                    rowsDeleted = db.delete(RetirementContract.MileStoneEntry.TABLE_NAME, selection, selectionArgs);
+                }
+                break;
+            case MILESTONE_LIST:
+                id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsDeleted = db.delete(RetirementContract.MileStoneEntry.TABLE_NAME, selection, selectionArgs);
+                } else {
+                    rowsDeleted = db.delete(RetirementContract.MileStoneEntry.TABLE_NAME,
+                            RetirementContract.MileStoneEntry._ID + " = ?", new String[]{id});
                 }
                 break;
             default:
@@ -534,6 +580,22 @@ public class RetirementProvider extends ContentProvider {
                             selectionArgs);
                 }
                 break;
+            case MILESTONE_ID:
+                id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdated = db.update(RetirementContract.MileStoneEntry.TABLE_NAME,
+                            values,
+                            RetirementContract.MileStoneEntry._ID + "=?",
+                            new String[]{id});
+                } else {
+                    rowsUpdated = db.update(RetirementContract.MileStoneEntry.TABLE_NAME,
+                            values,
+                            RetirementContract.MileStoneEntry._ID + "=" + id
+                                    + " and "
+                                    + selection,
+                            selectionArgs);
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -656,9 +718,23 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
+            // create the milestone table
+            sql = "CREATE TABLE " + RetirementContract.MileStoneEntry.TABLE_NAME +
+                    " ( " + RetirementContract.MileStoneEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.MileStoneEntry.COLUMN_AGE + " TEXT NOT NULL);";
+
+            db.execSQL(sql);
+
             String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1', '-1');";
             db.execSQL(ROW);
             ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '62', '90', '0', '0', '0', '0');";
+            db.execSQL(ROW);
+
+            ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('62');";
+            db.execSQL(ROW);
+            ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('65');";
+            db.execSQL(ROW);
+            ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('70');";
             db.execSQL(ROW);
         }
 
@@ -674,6 +750,7 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PensionIncomeEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.GovPensionIncomeEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.BalanceEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.MileStoneEntry.TABLE_NAME);
 
             onCreate(db);
         }

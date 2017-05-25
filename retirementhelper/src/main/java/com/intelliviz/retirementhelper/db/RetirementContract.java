@@ -23,6 +23,7 @@ public class RetirementContract {
     public static final String PATH_PENSION_INCOME = "pension_income";
     public static final String PATH_GOV_PENSION_INCOME = "gov_pension_income";
     public static final String PATH_BALANCE = "balance";
+    public static final String PATH_MILESTONE = "milestone";
 
     private RetirementContract() {
     }
@@ -174,5 +175,17 @@ public class RetirementContract {
         public static final String COLUMN_INCOME_TYPE_ID = "income_type_id";
         public static final String COLUMN_AMOUNT = "amount";
         public static final String COLUMN_DATE = "date";
+    }
+
+    public static final class MileStoneEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MILESTONE).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MILESTONE;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MILESTONE;
+
+        public static final String TABLE_NAME = PATH_BALANCE;
+        public static final String COLUMN_AGE = "age";
     }
 }
