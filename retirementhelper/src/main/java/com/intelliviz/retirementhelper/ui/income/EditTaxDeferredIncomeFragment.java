@@ -121,9 +121,9 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     }
 
     public void sendIncomeSourceData() {
-        String balance = SystemUtils.getCurrencyValue(mBalance);
+        String balance = ""; // TODO SystemUtils.getCurrencyValue(mBalance);
         String interest = mAnnualInterest.getText().toString();
-        String monthlyIncrease = SystemUtils.getCurrencyValue(mMonthlyIncrease);
+        String monthlyIncrease = ""; // TODO SystemUtils.getCurrencyValue(mMonthlyIncrease);
         if(!SystemUtils.isValidFloatValue(balance)) {
             // TODO pop up error message
             return;

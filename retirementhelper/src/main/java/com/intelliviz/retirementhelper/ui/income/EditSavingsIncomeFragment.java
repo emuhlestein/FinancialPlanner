@@ -86,7 +86,10 @@ public class EditSavingsIncomeFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus) {
                     TextView textView = (TextView)v;
-                    String formattedString = SystemUtils.getFormattedCurrency(textView.getText().toString());
+                    String formattedString;
+                    String str = textView.getText().toString();
+                    String value = SystemUtils.convertCurrencyToNumber(str);
+                    formattedString = SystemUtils.getFormattedCurrency(value);
                     if(formattedString == null) {
                         formattedString = "Invalid Number: " + textView.getText().toString();
                     }
@@ -100,7 +103,10 @@ public class EditSavingsIncomeFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus) {
                     TextView textView = (TextView)v;
-                    String formattedString = SystemUtils.getFormattedCurrency(textView.getText().toString());
+                    String formattedString;
+                    String str = textView.getText().toString();
+                    String value = SystemUtils.convertCurrencyToNumber(str);
+                    formattedString = SystemUtils.getFormattedCurrency(value);
                     if(formattedString == null) {
                         formattedString = "Invalid Number: " + textView.getText().toString();
                     }
@@ -140,10 +146,10 @@ public class EditSavingsIncomeFragment extends Fragment {
     }
 
     public void sendIncomeSourceData() {
-        String balance = SystemUtils.getCurrencyValue(mBalance);
+        String balance = SystemUtils.convertCurrencyToNumber(mBalance.getText().toString());
         String interest = mAnnualInterest.getText().toString();
-        String monthlyIncrease = SystemUtils.getCurrencyValue(mMonthlyIncrease);
-        if(!SystemUtils.isValidFloatValue(balance)) {
+        String monthlyIncrease = SystemUtils.convertCurrencyToNumber(mMonthlyIncrease.getText().toString());
+        if(balance == null) {
             // TODO pop up error message
             return;
         }
@@ -151,7 +157,7 @@ public class EditSavingsIncomeFragment extends Fragment {
             // TODO pop up error message
             return;
         }
-        if(!SystemUtils.isValidFloatValue(monthlyIncrease)) {
+        if(monthlyIncrease == null) {
             // TODO pop up error message
             return;
         }
@@ -160,9 +166,6 @@ public class EditSavingsIncomeFragment extends Fragment {
 
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
-
-        //returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
-        //returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE_DATE, date);
 
         SavingsIncomeData sid = new SavingsIncomeData(mSID.getId(), name, mSID.getType(), interest, monthlyIncrease);
         sid.addBalance(new BalanceData(balance, date));

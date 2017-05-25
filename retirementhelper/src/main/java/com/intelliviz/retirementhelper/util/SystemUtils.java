@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
 
@@ -71,7 +70,7 @@ public class SystemUtils {
     }
     public static boolean isValidFloatValue(String value) {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-        Number number = null;
+        Number number;
         try {
             number = nf.parse(value);
             if(number instanceof Float || number instanceof Double || number instanceof Long || number instanceof Integer) {
@@ -81,12 +80,6 @@ public class SystemUtils {
             return false;
         }
         return false;
-    }
-
-    public static String getCurrencyValue(EditText view) {
-        String value = view.getText().toString();
-        value = value.replace("$", "");
-        return value;
     }
 
     public static String getTodaysDate() {
@@ -146,7 +139,6 @@ public class SystemUtils {
     }
 
     public static String getFormattedCurrency(String value) {
-        String retval = "0.00";
         NumberFormat nf = NumberFormat.getInstance( java.util.Locale.US );
         try {
             Number number = nf.parse(value);
@@ -157,28 +149,77 @@ public class SystemUtils {
         } catch (ParseException e) {
             return null;
         }
-        /*
-        float fvalue = Float.parseFloat(value);
-        try{
-            retval = nf.format(fvalue);
-        }catch(Exception e){
-        }
-        return retval;
-        */
-    }
-
-    public static String getFormattedCurrency(float value) {
-        String retval = "0.00";
-        NumberFormat nf = NumberFormat.getCurrencyInstance( java.util.Locale.US );
-        try{
-            retval = nf.format(value);
-        }catch(Exception e){
-        }
-        return retval;
     }
 
     public static String getIncomeSourceTypeString(Context context, int incomeSourceType) {
         final String[] incomeTypes = context.getResources().getStringArray(R.array.income_types);
         return incomeTypes[incomeSourceType];
+    }
+
+    public static AgeData getAge(String birthdate) {
+        String[] birthTokens = birthdate.split("-");
+
+        int birthYear = Integer.parseInt(birthTokens[0]);
+        int birthMonth = Integer.parseInt(birthTokens[1]);
+        int birthDay = Integer.parseInt(birthTokens[2]);
+
+        String today = SystemUtils.getTodaysDate();
+
+        String[] nowTokens = today.split("-");
+
+        int nowYear = Integer.parseInt(nowTokens[0]);
+        int nowMonth = Integer.parseInt(nowTokens[1]);
+        int nowDay = Integer.parseInt(nowTokens[2]);
+
+        int years = nowYear - birthYear;
+
+        int monthDiff = nowMonth - birthMonth;
+        if(monthDiff < 0) {
+            years--;
+        } else if(monthDiff == 0) {
+            int dayDiff = nowDay - birthDay;
+            if(dayDiff < 0) {
+                years--;
+            }
+        }
+
+        int months = nowMonth - birthMonth;
+        if(months < 0) {
+            months += 12;
+        }
+        int dayDiff = nowDay - birthDay;
+        if(dayDiff < 0) {
+            months--;
+        }
+
+        return new AgeData(years, months);
+    }
+
+    /**
+     * Convert a currency value to a number. Try parsing the value as a number first.
+     * If this fails, thy parsing as currency. If this fails, return null.
+     * @param value The currency value to convert.
+     * @return A string with the number value.
+     */
+    public static String convertCurrencyToNumber(String value) {
+        NumberFormat nf = NumberFormat.getInstance( java.util.Locale.US );
+        Number number;
+        try {
+            // try to parse a number
+            number = nf.parse(value);
+            return number.toString();
+        } catch (ParseException e) {
+            // ignore exception
+        }
+
+        // could not parse number; parse a currency. If this fails, input is invalid.
+        nf = NumberFormat.getCurrencyInstance(java.util.Locale.US);
+        try {
+            number = nf.parse(value);
+            return number.toString();
+        } catch (ParseException e) {
+
+        }
+        return null; // failed to convert
     }
 }

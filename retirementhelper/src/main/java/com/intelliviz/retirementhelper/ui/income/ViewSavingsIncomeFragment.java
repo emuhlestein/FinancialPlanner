@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.BalanceData;
+import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -34,6 +35,7 @@ public class ViewSavingsIncomeFragment extends Fragment {
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
     @Bind(R.id.monthly_increase_text_view) TextView mMonthlyIncrease;
     @Bind(R.id.current_balance_text_view) TextView mCurrentBalance;
+    @Bind(R.id.monthly_amount_text_view) TextView mMonthlyAmount;
 
     public static ViewSavingsIncomeFragment newInstance(Intent intent) {
         ViewSavingsIncomeFragment fragment = new ViewSavingsIncomeFragment();
@@ -89,5 +91,10 @@ public class ViewSavingsIncomeFragment extends Fragment {
         }
 
         mCurrentBalance.setText(String.valueOf(formattedAmount));
+
+        String monthlyAmount = BenefitHelper.getMonthlyBenefit(getContext(), mSID);
+        formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
+
+        mMonthlyAmount.setText(formattedAmount);
     }
 }

@@ -100,7 +100,7 @@ public class EditPensionIncomeFragment extends Fragment {
     public void sendIncomeSourceData() {
         String name = mIncomeSourceName.getText().toString();
         String age = mMinAge.getText().toString();
-        String amount = SystemUtils.getCurrencyValue(mMonthlyAmount);
+        String amount = ""; // TODO SystemUtils.getCurrencyValue(mMonthlyAmount);
         if(!SystemUtils.isValidFloatValue(amount)) {
             // TODO pop up error message
             return;
