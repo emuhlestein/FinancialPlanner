@@ -4,7 +4,10 @@ import android.content.Context;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.SystemUtils.getAge;
 
 /**
  * Created by edm on 5/23/2017.
@@ -29,7 +32,7 @@ public class BenefitHelper {
     private static String getMonthlyBenefitFromSavings(Context context, SavingsIncomeData sid) {
         PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(context);
         String birthdate = pid.getBirthdate();
-        AgeData age = SystemUtils.getAge(birthdate);
+        AgeData age = getAge(birthdate);
 
         RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(context);
         String strEndAge = rod.getEndAge();
@@ -60,5 +63,23 @@ public class BenefitHelper {
                 break;
         }
         return monthlyBenefit.toString();
+    }
+
+    public static List<String> getMilestones(Context context) {
+        List<String> milestones = DataBaseUtils.getMilestoneData(context);
+        PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(context);
+        AgeData ageData = SystemUtils.getAge(pid.getBirthdate());
+
+        int year = ageData.getYear();
+        int month = ageData.getMonth();
+
+        float fyear = year + month / 12.0f;
+
+        String ageNow = Float.toString(fyear);
+        milestones.add(ageNow);
+        milestones.add("67.666");
+        Collections.sort(milestones);
+
+        return milestones;
     }
 }
