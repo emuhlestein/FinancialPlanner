@@ -436,6 +436,11 @@ public class RetirementProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
+
+        if(rowsDeleted > 0) {
+            notifyChanges(uri);
+        }
+
         return rowsDeleted;
     }
 
@@ -730,11 +735,11 @@ public class RetirementProvider extends ContentProvider {
             ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '62', '90', '0', '0', '0', '0');";
             db.execSQL(ROW);
 
-            ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('62');";
+            ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('0', '62');";
             db.execSQL(ROW);
-            ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('65');";
+            ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('1', '65');";
             db.execSQL(ROW);
-            ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('70');";
+            ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('2', '70');";
             db.execSQL(ROW);
         }
 

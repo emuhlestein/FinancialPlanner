@@ -185,7 +185,7 @@ public class RetirementContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MILESTONE;
 
-        public static final String TABLE_NAME = PATH_BALANCE;
+        public static final String TABLE_NAME = PATH_MILESTONE;
         public static final String COLUMN_AGE = "age";
     }
 }

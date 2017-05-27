@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
@@ -20,12 +21,15 @@
             android:id="@+id/name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
@@ -38,17 +42,16 @@
             android:id="@+id/annual_interest_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="%"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
+
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
@@ -61,12 +64,15 @@
             android:id="@+id/monthly_increase_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
@@ -79,12 +85,15 @@
             android:id="@+id/current_balance_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
@@ -97,12 +106,15 @@
             android:id="@+id/minimum_age_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
@@ -115,6 +127,34 @@
             android:id="@+id/penalty_amount_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/separator" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Monthly Amount:"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/monthly_amount_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:layout_weight="1"
+            android:textSize="22sp" />
     </LinearLayout>
 </LinearLayout>

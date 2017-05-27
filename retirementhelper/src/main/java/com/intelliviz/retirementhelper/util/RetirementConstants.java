@@ -24,16 +24,11 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_ID = "income source id";
     public static final String EXTRA_INCOME_SOURCE_NAME = "income source name";
     public static final String EXTRA_INCOME_SOURCE_TYPE = "income source type";
-    public static final String EXTRA_INCOME_SOURCE_BALANCE = "income source balance";
-    public static final String EXTRA_INCOME_SOURCE_BALANCE_DATE = "income source balance date";
-    public static final String EXTRA_INCOME_SOURCE_MONTHLY_INCREASE = "income source monthly increase";
     public static final String EXTRA_INCOME_SOURCE_MONTHLY_BENEFIT = "income source monthly benefit";
     public static final String EXTRA_INCOME_SOURCE_MINIMUM_AGE = "income source minimum age";
-    public static final String EXTRA_INCOME_SOURCE_PENALTY_AMOUNT = "income source penalty amount";
-    public static final String EXTRA_INCOME_SOURCE_INTEREST = "income source interest";
     public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
 
-    public static final String EXTRA_INCOME_SAVINGS = "extra income savings";
+    public static final String EXTRA_INCOME_DATA = "extra income data";
 
     public static final String EXTRA_RETIRMENTOPTIONSDATA = "retirementoptionsdata";
     public static final String EXTRA_PERSONALINFODATA = "personalinfodata";

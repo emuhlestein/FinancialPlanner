@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -184,7 +185,7 @@ public class DataBaseUtils {
 
         List<BalanceData> balanceDataList = sid.getBalanceDataList();
         for(BalanceData bd : balanceDataList) {
-            addBalanceData(context, sid.getId(), bd.getBalance(), bd.getDate());
+            addBalanceData(context, incomeId, bd.getBalance(), bd.getDate());
         }
         return "";
     }
@@ -233,45 +234,76 @@ public class DataBaseUtils {
         SavingsIncomeData sid = new SavingsIncomeData(incomeId, idh.name, idh.type, interest, monthAdd);
 
         BalanceData[] bds = getBalanceData(context, incomeId);
-        for(BalanceData bd : bds) {
-            sid.addBalance(bd);
+        if(bds != null) {
+            for (BalanceData bd : bds) {
+                sid.addBalance(bd);
+            }
         }
 
         return sid;
+    }
+
+    public static int deleteSavingsIncome(Context context, long incomeId) {
+        String sid = String.valueOf(incomeId);
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        uri = RetirementContract.BalanceEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+
+        return numRowsDeleted; // TODO return succeed or fail flag
     }
 
     //
     // Methods for TaxDeferredIncome table
     //
 
-    public static String addTaxDeferredIncome(Context context, long incomeId, String minimumAge,
-                                              String interest, String monthlyAdd, String penalty, int is401k) {
+    public static String addTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid) {
+        String id = addIncomeType(context, tdid);
+        if(id == null) {
+            return null;
+        }
+
+        long incomeId = Long.parseLong(id);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE, minimumAge);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST, interest);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD, monthlyAdd);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY, penalty);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K, is401k);
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE, tdid.getMinimumAge());
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST, tdid.getInterest());
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD, tdid.getMonthAddition());
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY, tdid.getPenalty());
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K, tdid.getIs401k());
         Uri uri = context.getContentResolver().insert(RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI, values);
-        return uri.getLastPathSegment();
+
+        List<BalanceData> balanceDataList = tdid.getBalanceDataList();
+        for(BalanceData bd : balanceDataList) {
+            addBalanceData(context, incomeId, bd.getBalance(), bd.getDate());
+        }
+        return "";
     }
 
-    public static int saveTaxDeferredData(Context context, long incomeId, String minimumAge,
-                                          String interest, String monthlyAdd, String penalty, int is401k) {
+    public static int saveTaxDeferredData(Context context, TaxDeferredIncomeData tdid) {
+        saveIncomeType(context, tdid);
         ContentValues values = new ContentValues();
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE, minimumAge);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST, interest);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD, monthlyAdd);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY, penalty);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K, is401k);
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE, tdid.getMinimumAge());
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST, tdid.getInterest());
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD, tdid.getMonthAddition());
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY, tdid.getPenalty());
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K, tdid.getIs401k());
 
-        String sid = String.valueOf(incomeId);
-        String selectionClause = RetirementContract.TaxDeferredIncomeEntry._ID + " = ?";
-        String[] selectionArgs = new String[]{sid};
+        String id = String.valueOf(tdid.getId());
         Uri uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
+        uri = Uri.withAppendedPath(uri, id);
+        context.getContentResolver().update(uri, values, null, null);
+        List<BalanceData> balanceDataList = tdid.getBalanceDataList();
+        for(BalanceData bd : balanceDataList) {
+            saveBalanceData(context, tdid.getId(), bd.getBalance(), bd.getDate());
+        }
+
+        return 0;
     }
 
     public static Cursor getTaxDeferredIncome(Context context, long incomeId) {
@@ -303,7 +335,30 @@ public class DataBaseUtils {
         String monthAdd = cursor.getString(monthAddIndex);
         String penalty = cursor.getString(penaltyIndex);
         int is401k = cursor.getInt(is401kIndex);
-        return new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, is401k);
+        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, is401k);
+
+        BalanceData[] bds = getBalanceData(context, incomeId);
+        if(bds != null) {
+            for (BalanceData bd : bds) {
+                tdid.addBalance(bd);
+            }
+        }
+        return tdid;
+    }
+
+    public static int deleteTaxDeferredIncome(Context context, long incomeId) {
+        String sid = String.valueOf(incomeId);
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        uri = RetirementContract.BalanceEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+
+        return numRowsDeleted; // TODO return succeed or fail flag
     }
 
     //
@@ -478,5 +533,25 @@ public class DataBaseUtils {
             this.name = name;
             this.type = type;
         }
+    }
+
+    public static List<String> getMilestoneData(Context context) {
+        Cursor cursor = getMilestones(context);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        List<String> milestones = new ArrayList<>();
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            int ageIndex = cursor.getColumnIndex(RetirementContract.MileStoneEntry.COLUMN_AGE);
+            String age = cursor.getString(ageIndex);
+            milestones.add(age);
+        }
+        return milestones;
+    }
+
+    public static Cursor getMilestones(Context context) {
+        Uri uri = RetirementContract.MileStoneEntry.CONTENT_URI;
+        String[] projection = null; // we want all columns
+        return context.getContentResolver().query(uri, projection, null, null, null);
     }
 }

@@ -3,6 +3,9 @@ package com.intelliviz.retirementhelper.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by edm on 5/1/2017.
  */
@@ -13,6 +16,15 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
     private String mMonthAdd;
     private String mPenalty;
     private int mIs401k;
+    private List<BalanceData> mBalanceDataList = new ArrayList<>();
+
+    public TaxDeferredIncomeData() {
+        super();
+    }
+
+    public TaxDeferredIncomeData(int type) {
+        super(type);
+    }
 
     public TaxDeferredIncomeData(long id, String name, int type, String minimumAge, String interest, String monthlyAdd, String penalty, int is401k) {
         super(id, name, type);
@@ -39,6 +51,14 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
         return mPenalty;
     }
 
+    public void addBalance(BalanceData bd) {
+        mBalanceDataList.add(bd);
+    }
+
+    public List<BalanceData> getBalanceDataList() {
+        return mBalanceDataList;
+    }
+
     public int getIs401k() {
         return mIs401k;
     }
@@ -60,6 +80,7 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
         dest.writeString(mMonthAdd);
         dest.writeString(mPenalty);
         dest.writeInt(mIs401k);
+        dest.writeTypedList(mBalanceDataList);
     }
 
     @Override
@@ -70,6 +91,7 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
         mMonthAdd = in.readString();
         mPenalty = in.readString();
         mIs401k = in.readInt();
+        in.readTypedList(mBalanceDataList, BalanceData.CREATOR);
     }
 
     public static final Parcelable.Creator<TaxDeferredIncomeData> CREATOR = new Parcelable.Creator<TaxDeferredIncomeData>()

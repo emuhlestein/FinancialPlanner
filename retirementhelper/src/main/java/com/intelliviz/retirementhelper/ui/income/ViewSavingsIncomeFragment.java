@@ -28,7 +28,6 @@ import butterknife.ButterKnife;
 public class ViewSavingsIncomeFragment extends Fragment {
     public static final String VIEW_SAVINGS_INCOME_FRAG_TAG = "view savings income frag tag";
     private static final String EXTRA_INTENT = "extra intent";
-    private long mIncomeId;
     private SavingsIncomeData mSID;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
@@ -54,7 +53,9 @@ public class ViewSavingsIncomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mSID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_SAVINGS);
+            if(intent != null) {
+                mSID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            }
 
         }
         setHasOptionsMenu(true);
@@ -66,27 +67,24 @@ public class ViewSavingsIncomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_savings_income, container, false);
         ButterKnife.bind(this, view);
-
         updateUI();
-
         return view;
     }
 
     private void updateUI() {
-        SavingsIncomeData sid = mSID; //DataBaseUtils.getSavingsIncomeData(getContext(), mIncomeId);
-        if(sid == null) {
+        if(mSID == null) {
             return;
         }
 
-        mIncomeSourceName.setText(sid.getName());
-        String subTitle = SystemUtils.getIncomeSourceTypeString(getContext(), sid.getType());
+        mIncomeSourceName.setText(mSID.getName());
+        String subTitle = SystemUtils.getIncomeSourceTypeString(getContext(), mSID.getType());
         SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), subTitle);
-        mAnnualInterest.setText(String.valueOf(sid.getInterest())+"%");
-        mMonthlyIncrease.setText("$"+String.valueOf(sid.getMonthlyIncrease()));
+        mAnnualInterest.setText(mSID.getInterest()+"%");
+        mMonthlyIncrease.setText(SystemUtils.getFormattedCurrency(mSID.getMonthlyIncrease()));
 
         List<BalanceData> bd = mSID.getBalanceDataList(); //getBalanceData(getContext(), mIncomeId);
         String formattedAmount = "$0.00";
-        if(bd != null) {
+        if(bd != null && !bd.isEmpty()) {
             formattedAmount = SystemUtils.getFormattedCurrency(bd.get(0).getBalance());
         }
 
@@ -96,5 +94,10 @@ public class ViewSavingsIncomeFragment extends Fragment {
         formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
 
         mMonthlyAmount.setText(formattedAmount);
+
+        List<String> milestones = BenefitHelper.getMilestones(getContext());
+        if(milestones == null) {
+
+        }
     }
 }

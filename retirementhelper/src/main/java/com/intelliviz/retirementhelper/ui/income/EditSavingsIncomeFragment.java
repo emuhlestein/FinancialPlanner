@@ -3,6 +3,8 @@ package com.intelliviz.retirementhelper.ui.income;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +26,8 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
+
 /**
  * Fragment used for adding and editing (savings) income sources.
  *
@@ -33,6 +37,7 @@ public class EditSavingsIncomeFragment extends Fragment {
     public static final String EDIT_SAVINGS_INCOME_FRAG_TAG = "edit savings income frag tag";
     private static final String EXTRA_INTENT = "extra intent";
     private SavingsIncomeData mSID;
+    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
     @Bind(R.id.balance_text) EditText mBalance;
     @Bind(R.id.annual_interest_text) EditText mAnnualInterest;
@@ -56,7 +61,7 @@ public class EditSavingsIncomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mSID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_SAVINGS);
+            mSID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
         }
     }
 
@@ -88,12 +93,11 @@ public class EditSavingsIncomeFragment extends Fragment {
                     TextView textView = (TextView)v;
                     String formattedString;
                     String str = textView.getText().toString();
-                    String value = SystemUtils.convertCurrencyToNumber(str);
+                    String value = getFloatValue(str);
                     formattedString = SystemUtils.getFormattedCurrency(value);
-                    if(formattedString == null) {
-                        formattedString = "Invalid Number: " + textView.getText().toString();
+                    if(formattedString != null) {
+                        mBalance.setText(formattedString);
                     }
-                    mBalance.setText(formattedString);
                 }
             }
         });
@@ -105,12 +109,27 @@ public class EditSavingsIncomeFragment extends Fragment {
                     TextView textView = (TextView)v;
                     String formattedString;
                     String str = textView.getText().toString();
-                    String value = SystemUtils.convertCurrencyToNumber(str);
+                    String value = getFloatValue(str);
                     formattedString = SystemUtils.getFormattedCurrency(value);
-                    if(formattedString == null) {
-                        formattedString = "Invalid Number: " + textView.getText().toString();
+                    if(formattedString != null) {
+                        mMonthlyIncrease.setText(formattedString);
                     }
-                    mMonthlyIncrease.setText(formattedString);
+                }
+            }
+        });
+
+        mAnnualInterest.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    TextView textView = (TextView)v;
+                    String interest = textView.getText().toString();
+                    interest = SystemUtils.getFloatValue(interest);
+                    if(interest != null) {
+                        mAnnualInterest.setText(interest + "%");
+                    } else {
+                        mAnnualInterest.setText("");
+                    }
                 }
             }
         });
@@ -146,19 +165,25 @@ public class EditSavingsIncomeFragment extends Fragment {
     }
 
     public void sendIncomeSourceData() {
-        String balance = SystemUtils.convertCurrencyToNumber(mBalance.getText().toString());
-        String interest = mAnnualInterest.getText().toString();
-        String monthlyIncrease = SystemUtils.convertCurrencyToNumber(mMonthlyIncrease.getText().toString());
+        String balance = SystemUtils.getFloatValue(mBalance.getText().toString());
         if(balance == null) {
-            // TODO pop up error message
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Balance value is not valid " + balance, Snackbar.LENGTH_LONG);
+            snackbar.show();
             return;
         }
-        if(!SystemUtils.isValidFloatValue(interest)) {
-            // TODO pop up error message
+
+        String interest = mAnnualInterest.getText().toString();
+        interest = SystemUtils.getFloatValue(interest);
+        if(interest == null) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Interest value is not valid " + interest, Snackbar.LENGTH_LONG);
+            snackbar.show();
             return;
         }
+
+        String monthlyIncrease = SystemUtils.getFloatValue(mMonthlyIncrease.getText().toString());
         if(monthlyIncrease == null) {
-            // TODO pop up error message
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Monthly increase value is not valid " + monthlyIncrease, Snackbar.LENGTH_LONG);
+            snackbar.show();
             return;
         }
 
@@ -169,7 +194,7 @@ public class EditSavingsIncomeFragment extends Fragment {
 
         SavingsIncomeData sid = new SavingsIncomeData(mSID.getId(), name, mSID.getType(), interest, monthlyIncrease);
         sid.addBalance(new BalanceData(balance, date));
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SAVINGS, sid);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_DATA, sid);
 
         getActivity().setResult(Activity.RESULT_OK, returnIntent);
         getActivity().finish();

@@ -82,6 +82,22 @@ public class SystemUtils {
         return false;
     }
 
+    /*
+    public static String getFloatValue(String value) {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+        Number number;
+        try {
+            number = nf.parse(value);
+            if(number instanceof Float || number instanceof Double || number instanceof Long || number instanceof Integer) {
+                return number.toString();
+            }
+        } catch (ParseException e) {
+            return null;
+        }
+        return null;
+    }
+    */
+
     public static String getTodaysDate() {
         Date date = Calendar.getInstance().getTime();
         SimpleDateFormat sdf = new SimpleDateFormat(RetirementConstants.DATE_FORMAT);
@@ -139,6 +155,9 @@ public class SystemUtils {
     }
 
     public static String getFormattedCurrency(String value) {
+        if(value == null || value.isEmpty()) {
+            return null;
+        }
         NumberFormat nf = NumberFormat.getInstance( java.util.Locale.US );
         try {
             Number number = nf.parse(value);
@@ -197,11 +216,14 @@ public class SystemUtils {
 
     /**
      * Convert a currency value to a number. Try parsing the value as a number first.
-     * If this fails, thy parsing as currency. If this fails, return null.
+     * If this fails, try parsing as currency. If this fails, return null.
      * @param value The currency value to convert.
      * @return A string with the number value.
      */
-    public static String convertCurrencyToNumber(String value) {
+    public static String getFloatValue(String value) {
+        if(value == null || value.isEmpty()) {
+            return null;
+        }
         NumberFormat nf = NumberFormat.getInstance( java.util.Locale.US );
         Number number;
         try {

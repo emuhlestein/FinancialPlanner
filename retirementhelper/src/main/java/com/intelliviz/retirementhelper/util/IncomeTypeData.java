@@ -15,6 +15,10 @@ public abstract class IncomeTypeData implements IncomeType {
         this(-1, "", 0);
     }
 
+    public IncomeTypeData(int type) {
+        this(-1, "", type);
+    }
+
     public IncomeTypeData(long id) {
         this(id, "", 0);
     }

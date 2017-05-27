@@ -19,6 +19,10 @@ public class SavingsIncomeData extends IncomeTypeData {
         super();
     }
 
+    public SavingsIncomeData(int type) {
+        super(type);
+    }
+
     public SavingsIncomeData(long id, String name, int type) {
         super(id);
         mInterest = "0";

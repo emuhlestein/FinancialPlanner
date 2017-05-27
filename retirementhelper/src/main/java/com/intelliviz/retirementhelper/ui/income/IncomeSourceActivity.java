@@ -16,9 +16,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class IncomeSourceActivity extends AppCompatActivity {
-    //private long mIncomeSourceId;
-    private int mIncomeSourceType;
-    private int mIncomeSourceAction;
     @Bind(R.id.income_source_toolbar) Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +28,8 @@ public class IncomeSourceActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
 
         Intent intent = getIntent();
-        //mIncomeSourceId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
-        mIncomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_TYPE_SAVINGS);
-        mIncomeSourceAction = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
+        int mIncomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_TYPE_SAVINGS);
+        int mIncomeSourceAction = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
 
         if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_ADD) {
             // Add a new income source
@@ -43,7 +39,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
                     addSavingsIncomeSourceFragment(false, intent);
                     break;
                 case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                    addTaxDeferredIncomeSourceFragmnet(false);
+                    addTaxDeferredIncomeSourceFragmnet(false, intent);
                     break;
             }
         } else {
@@ -56,7 +52,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
                         addSavingsIncomeSourceFragment(false, intent);
                         break;
                     case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                        addTaxDeferredIncomeSourceFragmnet(false);
+                        addTaxDeferredIncomeSourceFragmnet(false, intent);
                         break;
                 }
             } else {
@@ -65,7 +61,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
                         addSavingsIncomeSourceFragment(true, intent);
                         break;
                     case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                        addTaxDeferredIncomeSourceFragmnet(true);
+                        addTaxDeferredIncomeSourceFragmnet(true, intent);
                         break;
                 }
             }
@@ -88,14 +84,6 @@ public class IncomeSourceActivity extends AppCompatActivity {
         } else {
             fragment = fm.findFragmentByTag(EditSavingsIncomeFragment.EDIT_SAVINGS_INCOME_FRAG_TAG);
             if (fragment == null) {
-                /*
-                SavingsIncomeData sid = null;
-                if(mIncomeSourceId == -1) {
-                    sid = new SavingsIncomeData(mIncomeSourceId, "", RetirementConstants.INCOME_TYPE_SAVINGS);
-                } else {
-                    sid = DataBaseUtils.getSavingsIncomeData(this, mIncomeSourceId);
-                }
-                */
                 fragment = EditSavingsIncomeFragment.newInstance(intent);
                 ft = fm.beginTransaction();
                 ft.add(R.id.content_frame, fragment, EditSavingsIncomeFragment.EDIT_SAVINGS_INCOME_FRAG_TAG);
@@ -104,7 +92,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
         }
     }
 
-    private void addTaxDeferredIncomeSourceFragmnet(boolean viewMode) {
+    private void addTaxDeferredIncomeSourceFragmnet(boolean viewMode, Intent intent) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft;
         Fragment fragment;
@@ -112,7 +100,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
         if (viewMode) {
             fragment = fm.findFragmentByTag(ViewTaxDeferredIncomeFragment.VIEW_TAXDEF_INCOME_FRAG_TAG);
             if (fragment == null) {
-                //fragment = ViewTaxDeferredIncomeFragment.newInstance(mIncomeSourceId);
+                fragment = ViewTaxDeferredIncomeFragment.newInstance(intent);
                 ft = fm.beginTransaction();
                 ft.add(R.id.content_frame, fragment, ViewTaxDeferredIncomeFragment.VIEW_TAXDEF_INCOME_FRAG_TAG);
                 ft.commit();
@@ -120,7 +108,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
         } else {
             fragment = fm.findFragmentByTag(EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
             if (fragment == null) {
-                //fragment = EditTaxDeferredIncomeFragment.newInstance(mIncomeSourceId);
+                fragment = EditTaxDeferredIncomeFragment.newInstance(intent);
                 ft = fm.beginTransaction();
                 ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
                 ft.commit();

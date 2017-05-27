@@ -64,6 +64,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
     public class IncomeSourceHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         private long mId;
+        private int mIncomeType;
         private String mIncomeSourceName;
         TextView incomeSourceNameTextView;
         TextView incomeTypeTextView;
@@ -87,7 +88,8 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
                 incomeSourceNameTextView.setText(mIncomeSourceName);
             }
             if(typeIndex != -1) {
-                incomeTypeTextView.setText(mIncomeTypes[mCursor.getInt(typeIndex)]);
+                mIncomeType = mCursor.getInt(typeIndex);
+                incomeTypeTextView.setText(mIncomeTypes[mIncomeType]);
             }
             if(idIndex != -1) {
                 String id = mCursor.getString(idIndex);
@@ -99,9 +101,9 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         public void onClick(View v) {
             if(mListener != null) {
                 if(v instanceof LinearLayout) {
-                    mListener.onSelectIncomeSource(mId, mIncomeSourceName, false);
+                    mListener.onSelectIncomeSource(mId, mIncomeType, false);
                 } else {
-                    mListener.onSelectIncomeSource(mId, mIncomeSourceName, true);
+                    mListener.onSelectIncomeSource(mId, mIncomeType, true);
                 }
             }
         }
