@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
+import com.intelliviz.retirementhelper.util.MilestoneData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
@@ -91,7 +92,12 @@ public class ViewTaxDeferredIncomeFragment extends Fragment {
 
         mCurrentBalance.setText(String.valueOf(formattedAmount));
 
-        String monthlyAmount = BenefitHelper.getMonthlyBenefit(getContext(), mTDID);
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID);
+        String monthlyAmount = "0.00";
+        if(!milestones.isEmpty()) {
+            monthlyAmount = milestones.get(0).getAmount();
+        }
+         //BenefitHelper.getMonthlyBenefit(getContext(), mTDID);
         formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
 
         mMonthlyAmount.setText(formattedAmount);

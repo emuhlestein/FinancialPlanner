@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
+import com.intelliviz.retirementhelper.util.MilestoneData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -90,14 +91,10 @@ public class ViewSavingsIncomeFragment extends Fragment {
 
         mCurrentBalance.setText(String.valueOf(formattedAmount));
 
-        String monthlyAmount = BenefitHelper.getMonthlyBenefit(getContext(), mSID);
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID);
+        String monthlyAmount = milestones.get(0).getAmount();
         formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
 
         mMonthlyAmount.setText(formattedAmount);
-
-        List<String> milestones = BenefitHelper.getMilestones(getContext());
-        if(milestones == null) {
-
-        }
     }
 }
