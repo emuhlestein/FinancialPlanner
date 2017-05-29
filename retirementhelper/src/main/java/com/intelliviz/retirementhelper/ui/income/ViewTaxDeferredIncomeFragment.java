@@ -6,15 +6,23 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
+import com.intelliviz.retirementhelper.ui.RetirementOptionsDialog;
 import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.MilestoneData;
+import com.intelliviz.retirementhelper.util.PersonalInfoData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
 
@@ -24,6 +32,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.content.Intent.EXTRA_INTENT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 
 public class ViewTaxDeferredIncomeFragment extends Fragment {
@@ -58,6 +68,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
             mTDID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -68,6 +79,35 @@ public class ViewTaxDeferredIncomeFragment extends Fragment {
         ButterKnife.bind(this, view);
         updateUI();
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.summary_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.retirement_options_item:
+                intent = new Intent(getContext(), RetirementOptionsDialog.class);
+                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(getContext());
+                if (rod != null) {
+                    intent.putExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA, rod);
+                }
+                startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
+                break;
+            case R.id.personal_info_item:
+                intent = new Intent(getContext(), PersonalInfoDialog.class);
+                PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(getContext());
+                if (pid != null) {
+                    intent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
+                }
+                startActivityForResult(intent, REQUEST_PERSONAL_INFO);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateUI() {
