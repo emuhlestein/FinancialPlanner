@@ -244,4 +244,15 @@ public class SystemUtils {
         }
         return null; // failed to convert
     }
+
+    public static String getFormattedAge(AgeData ageData) {
+        String year = Integer.toString(ageData.getYear());
+        String month = Integer.toString(ageData.getMonth());
+        StringBuilder sb = new StringBuilder();
+        sb.append(year);
+        sb.append("y ");
+        sb.append(month);
+        sb.append("m");
+        return sb.toString();
+    }
 }

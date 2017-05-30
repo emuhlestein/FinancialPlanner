@@ -72,5 +72,12 @@
             android:gravity="end"
             android:textSize="22sp" />
     </LinearLayout>
+    <TextView
+        android:id="@+id/info_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
+        android:textSize="22sp" />
 
 </LinearLayout>

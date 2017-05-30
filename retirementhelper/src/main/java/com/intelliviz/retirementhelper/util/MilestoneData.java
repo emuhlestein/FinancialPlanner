@@ -11,11 +11,20 @@ public class MilestoneData implements Parcelable {
     private AgeData mAge;
     private String mAmount;
     private String mBalance;
+    private int mIncludesPenalty;
 
     public MilestoneData(AgeData age, String amount, String balance) {
         mAge = age;
         mAmount = amount;
         mBalance = balance;
+        mIncludesPenalty = 0;
+    }
+
+    public MilestoneData(AgeData age, String amount, String balance, boolean includesPenalty) {
+        mAge = age;
+        mAmount = amount;
+        mBalance = balance;
+        mIncludesPenalty = includesPenalty ? 1 : 0;
     }
 
     public MilestoneData(Parcel in) {
@@ -34,6 +43,10 @@ public class MilestoneData implements Parcelable {
         return mBalance;
     }
 
+    public int getIncludesPenalty() {
+        return mIncludesPenalty;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -44,12 +57,14 @@ public class MilestoneData implements Parcelable {
         dest.writeParcelable(mAge, flags);
         dest.writeString(mAmount);
         dest.writeString(mBalance);
+        dest.writeInt(mIncludesPenalty);
     }
 
     public void readFromParcel(Parcel in) {
-        in.readParcelable(AgeData.class.getClassLoader());
+        mAge = in.readParcelable(AgeData.class.getClassLoader());
         mAmount = in.readString();
         mBalance = in.readString();
+        mIncludesPenalty = in.readInt();
     }
 
     public static final Parcelable.Creator<MilestoneData> CREATOR = new Parcelable.Creator<MilestoneData>()

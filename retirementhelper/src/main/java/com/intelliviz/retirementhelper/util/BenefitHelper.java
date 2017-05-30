@@ -41,10 +41,10 @@ public class BenefitHelper {
 
             for(int i = 0; i < milestones.size(); i++) {
                 MilestoneData msd = milestones.get(i);
-                if (msd.getAge().onOrBefore(minAge)) {
+                if (msd.getAge().isBefore(minAge)) {
                     String amount = msd.getAmount();
                     double damount = Double.parseDouble(amount) * percent;
-                    MilestoneData newMsd = new MilestoneData(msd.getAge(), Double.toString(damount), msd.getBalance());
+                    MilestoneData newMsd = new MilestoneData(msd.getAge(), Double.toString(damount), msd.getBalance(), true);
                     milestones.set(i, newMsd);
                 }
             }
@@ -57,9 +57,10 @@ public class BenefitHelper {
         List<MilestoneData> milestones = new ArrayList<>();
         AgeData refAge = null;
         double monthlyAmount = 0;
+        double newBalance = 0;
         for(int i = 0; i < ages.size(); i++) {
             if(i == 0) {
-                double newBalance = getBalance(balance, 0, interest, monthlyIncrease);
+                newBalance = getBalance(balance, 0, interest, monthlyIncrease);
                 monthlyAmount = getMonthlyAmountFromBalance(newBalance, interest);
                 milestones.add(new MilestoneData(ages.get(0), Double.toString(monthlyAmount), Double.toString(newBalance)));
                 refAge = ages.get(0);
@@ -67,7 +68,7 @@ public class BenefitHelper {
                 AgeData age = ages.get(i);
                 AgeData diffAge = age.subtract(refAge);
                 int numMonths = diffAge.getNumberOfMonths();
-                double newBalance = getBalance(balance, numMonths, interest, monthlyIncrease);
+                newBalance = getBalance(newBalance, numMonths, interest, monthlyIncrease);
                 monthlyAmount = getMonthlyAmountFromBalance(newBalance, interest);
                 milestones.add(new MilestoneData(age, Double.toString(monthlyAmount), Double.toString(newBalance)));
                 refAge = age;

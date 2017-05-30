@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
+import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
 import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
 import com.intelliviz.retirementhelper.ui.RetirementOptionsDialog;
 import com.intelliviz.retirementhelper.util.BalanceData;
@@ -151,6 +151,8 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
 
     @Override
     public void onSelectMilestoneListener(MilestoneData msd) {
-        Log.d("edm", "HERE");
+        Intent intent = new Intent(getContext(), MilestoneDetailsDialog.class);
+        intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, msd);
+        startActivity(intent);
     }
 }

@@ -33,11 +33,11 @@ public class AgeData implements Parcelable {
      * @param age
      * @return
      */
-    public boolean onOrBefore(AgeData age) {
+    public boolean isBefore(AgeData age) {
         if(mYear < age.getYear()) {
             return true;
         } else if(mYear == age.getYear()) {
-            if(mMonth <= age.getMonth() ) {
+            if(mMonth < age.getMonth() ) {
                 return true;
             } else {
                 return false;
