@@ -29,29 +29,20 @@ public class BenefitHelper {
 
     private static List<MilestoneData> getMilestonesFromTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid) {
         List<BalanceData> bd = tdid.getBalanceDataList();
-        List<MilestoneData> milestones = getMilestones(context, Double.parseDouble(bd.get(0).getBalance()),
+        List<MilestoneData> milestones = getMilestonesNew(context, Double.parseDouble(bd.get(0).getBalance()),
                 Double.parseDouble(tdid.getInterest()),
-                Double.parseDouble(tdid.getMonthAddition()));
-        if(tdid.getIs401k() == 1) {
-            AgeData minAge = new AgeData(tdid.getMinimumAge());
-            String penalty = tdid.getPenalty();
-            double dpenalty = Double.parseDouble(penalty);
-            double percent = 100 - dpenalty;
-            percent = percent / 100;
-
-            for(int i = 0; i < milestones.size(); i++) {
-                MilestoneData msd = milestones.get(i);
-                if (msd.getAge().isBefore(minAge)) {
-                    String amount = msd.getAmount();
-                    double damount = Double.parseDouble(amount) * percent;
-                    MilestoneData newMsd = new MilestoneData(msd.getAge(), Double.toString(damount), msd.getBalance(), true);
-                    milestones.set(i, newMsd);
-                }
-            }
-        }
+                Double.parseDouble(tdid.getMonthAddition()), Double.parseDouble(tdid.getPenalty()), tdid.getMinimumAge());
         return milestones;
     }
 
+    /**
+     * Calculate the milestones based on balance decrease; ie living off the interest.
+     * @param context
+     * @param balance
+     * @param interest
+     * @param monthlyIncrease
+     * @return
+     */
     private static List<MilestoneData> getMilestones(Context context, double balance, double interest, double monthlyIncrease) {
         List<AgeData> ages = getMilestoneAges(context);
         List<MilestoneData> milestones = new ArrayList<>();
@@ -76,6 +67,60 @@ public class BenefitHelper {
         }
 
         return milestones;
+    }
+
+    private static List<MilestoneData> getMilestonesNew(Context context, double balance, double interest, double monthlyIncrease, double penalty, String minAge) {
+        List<MilestoneData> milestones = new ArrayList<>();
+        List<AgeData> ages = getMilestoneAges(context);
+        if(ages.isEmpty()) {
+            return milestones;
+        }
+        AgeData minimumAge = new AgeData(minAge);
+        List<Double> balances = getBalances(context, balance, interest, monthlyIncrease);
+
+        for(int i = 0; i < ages.size(); i++) {
+            double newBalance = balances.get(i);
+            double monthlyAmount = getMonthlyAmountFromBalance(newBalance, interest);
+            boolean penaltyApplies = false;
+            if (ages.get(i).isBefore(minimumAge)) {
+                double percent = 100 - penalty;
+                percent = percent / 100;
+                monthlyAmount = monthlyAmount * percent;
+                penaltyApplies = true;
+            }
+
+            milestones.add(new MilestoneData(ages.get(i), Double.toString(monthlyAmount), Double.toString(newBalance), penaltyApplies));
+        }
+        return milestones;
+    }
+
+    /**
+     * Get the balances for each milestone.
+     * @param context The activity context.
+     * @param balance The beginning balance.
+     * @param interest The annual interest rate.
+     * @param monthlyIncrease The monthly increase.
+     * @return The list of balances.
+     */
+    private static List<Double> getBalances(Context context, double balance, double interest, double monthlyIncrease) {
+        List<AgeData> ages = getMilestoneAges(context);
+        List<Double> balances = new ArrayList<>();
+        if(ages.isEmpty()) {
+            return balances;
+        }
+        AgeData refAge = ages.get(0);
+        double newBalance = balance;
+        balances.add(newBalance);
+        for (int i = 1; i < ages.size(); i++) {
+            AgeData age = ages.get(i);
+            AgeData diffAge = age.subtract(refAge);
+            int numMonths = diffAge.getNumberOfMonths();
+            newBalance = getBalance(newBalance, numMonths, interest, monthlyIncrease);
+            balances.add(newBalance);
+            refAge = age;
+        }
+
+        return balances;
     }
 
     public static List<AgeData> getMilestoneAges(Context context) {
