@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
 import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
 import com.intelliviz.retirementhelper.ui.RetirementOptionsDialog;
 import com.intelliviz.retirementhelper.util.BalanceData;
@@ -23,6 +28,7 @@ import com.intelliviz.retirementhelper.util.MilestoneData;
 import com.intelliviz.retirementhelper.util.PersonalInfoData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsData;
+import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
 
@@ -36,9 +42,10 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_P
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 
-public class ViewTaxDeferredIncomeFragment extends Fragment {
+public class ViewTaxDeferredIncomeFragment extends Fragment implements SelectionMilestoneListener {
     public static final String VIEW_TAXDEF_INCOME_FRAG_TAG = "view taxdef income frag tag";
     private TaxDeferredIncomeData mTDID;
+    private MilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
@@ -46,8 +53,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment {
     @Bind(R.id.current_balance_text_view) TextView mCurrentBalance;
     @Bind(R.id.minimum_age_text_view) TextView mMinimumAge;
     @Bind(R.id.penalty_amount_text_view) TextView mPenaltyAmount;
-    @Bind(R.id.monthly_amount_text_view) TextView mMonthlyAmount;
-
+    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
 
     public ViewTaxDeferredIncomeFragment() {
         // Required empty public constructor
@@ -77,6 +83,16 @@ public class ViewTaxDeferredIncomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
+
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID);
+        mMilestoneAdapter = new MilestoneAdapter(milestones);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setAdapter(mMilestoneAdapter);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
+                linearLayoutManager.getOrientation()));
+        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
+
         updateUI();
         return view;
     }
@@ -131,15 +147,10 @@ public class ViewTaxDeferredIncomeFragment extends Fragment {
         }
 
         mCurrentBalance.setText(String.valueOf(formattedAmount));
+    }
 
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID);
-        String monthlyAmount = "0.00";
-        if(!milestones.isEmpty()) {
-            monthlyAmount = milestones.get(0).getAmount();
-        }
-         //BenefitHelper.getMonthlyBenefit(getContext(), mTDID);
-        formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
-
-        mMonthlyAmount.setText(formattedAmount);
+    @Override
+    public void onSelectMilestoneListener(MilestoneData msd) {
+        Log.d("edm", "HERE");
     }
 }

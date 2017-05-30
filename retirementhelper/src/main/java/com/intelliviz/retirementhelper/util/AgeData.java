@@ -59,6 +59,10 @@ public class AgeData {
         }
     }
 
+    public float getAge() {
+        return (float)(mYear + mMonth / 12.0);
+    }
+
     public int getNumberOfMonths() {
         return mYear * 12 + mMonth;
     }

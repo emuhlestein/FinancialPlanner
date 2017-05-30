@@ -44,7 +44,7 @@ public class BenefitHelper {
                 if (msd.getAge().onOrBefore(minAge)) {
                     String amount = msd.getAmount();
                     double damount = Double.parseDouble(amount) * percent;
-                    MilestoneData newMsd = new MilestoneData(msd.getAge(), Double.toString(damount));
+                    MilestoneData newMsd = new MilestoneData(msd.getAge(), Double.toString(damount), msd.getBalance());
                     milestones.set(i, newMsd);
                 }
             }
@@ -61,15 +61,15 @@ public class BenefitHelper {
             if(i == 0) {
                 double newBalance = getBalance(balance, 0, interest, monthlyIncrease);
                 monthlyAmount = getMonthlyAmountFromBalance(newBalance, interest);
-                milestones.add(new MilestoneData(ages.get(0), Double.toString(monthlyAmount)));
+                milestones.add(new MilestoneData(ages.get(0), Double.toString(monthlyAmount), Double.toString(newBalance)));
                 refAge = ages.get(0);
             } else {
                 AgeData age = ages.get(i);
-                age = age.subtract(refAge);
-                int numMonths = age.getNumberOfMonths();
+                AgeData diffAge = age.subtract(refAge);
+                int numMonths = diffAge.getNumberOfMonths();
                 double newBalance = getBalance(balance, numMonths, interest, monthlyIncrease);
                 monthlyAmount = getMonthlyAmountFromBalance(newBalance, interest);
-                milestones.add(new MilestoneData(ages.get(0), Double.toString(monthlyAmount)));
+                milestones.add(new MilestoneData(age, Double.toString(monthlyAmount), Double.toString(newBalance)));
                 refAge = age;
             }
         }

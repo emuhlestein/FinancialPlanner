@@ -136,25 +136,8 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="@drawable/separator" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16sp"
-        android:layout_marginRight="16sp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Monthly Amount:"
-            android:textSize="22sp" />
-
-        <TextView
-            android:id="@+id/monthly_amount_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:layout_weight="1"
-            android:textSize="22sp" />
-    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 </LinearLayout>
