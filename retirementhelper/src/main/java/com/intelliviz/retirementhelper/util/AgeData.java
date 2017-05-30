@@ -1,12 +1,15 @@
 package com.intelliviz.retirementhelper.util;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by edm on 5/23/2017.
  */
 
-public class AgeData {
-    private final int mYear;
-    private final int mMonth;
+public class AgeData implements Parcelable {
+    private int mYear;
+    private int mMonth;
 
     public AgeData() {
         mYear = 0;
@@ -74,4 +77,38 @@ public class AgeData {
     public int getMonth() {
         return mMonth;
     }
+
+    public AgeData(Parcel in) {
+        readFromParcel(in);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mYear);
+        dest.writeInt(mMonth);
+    }
+
+    public void readFromParcel(Parcel in) {
+        mYear = in.readInt();
+        mMonth = in.readInt();
+    }
+
+    public static final Parcelable.Creator<AgeData> CREATOR = new Parcelable.Creator<AgeData>()
+    {
+        @Override
+        public AgeData createFromParcel(Parcel in) {
+            return new AgeData(in);
+        }
+
+        @Override
+        public AgeData[] newArray(int size) {
+            return new AgeData[size];
+        }
+    };
 }

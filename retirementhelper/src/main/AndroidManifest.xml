@@ -30,7 +30,8 @@
         <activity android:name=".ui.PinActivity" />
         <activity android:name=".ui.income.IncomeSourceActivity" />
         <activity android:name=".ui.PersonalInfoDialog" />
-        <activity android:name=".ui.MileStoneActivity"></activity>
+        <activity android:name=".ui.MileStoneActivity" />
+        <activity android:name=".ui.MilestoneDetailsDialog"></activity>
     </application>
 
 </manifest>
