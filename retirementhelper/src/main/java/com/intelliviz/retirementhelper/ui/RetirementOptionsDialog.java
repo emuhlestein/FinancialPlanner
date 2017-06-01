@@ -81,7 +81,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
 
     private void updateUI() {
         Intent intent = getIntent();
-        RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA);
+        RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
 
         // TODO add check in case rod is null
         mStartAgeEditText.setText(rod.getStartAge());
@@ -96,10 +96,13 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
                 break;
             case RetirementConstants.WITHDRAW_MODE_PERCENT:
                 mWithdrawModeRadioGroup.check(mWithdrawPercentButton.getId());
+                mWithdrawPercent.setEnabled(true);
                 break;
             default:
                 mWithdrawModeRadioGroup.check(mZeroBalanceButton.getId());
         }
+
+       ;
 
         mWithdrawPercent.setText(rod.getWithdrawPercent());
         mIncludeInflationCheckBox.setSelected(rod.getIncludeInflation() == 1);
@@ -140,7 +143,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         RetirementOptionsData rod = new RetirementOptionsData(startAge, endAge, withdrawMode, withdrawPercent, includeInflation, inflationAmount);
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA, rod);
+        returnIntent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }

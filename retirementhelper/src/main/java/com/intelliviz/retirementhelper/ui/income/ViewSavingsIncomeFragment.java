@@ -15,6 +15,7 @@ import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.MilestoneData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -30,6 +31,7 @@ public class ViewSavingsIncomeFragment extends Fragment {
     public static final String VIEW_SAVINGS_INCOME_FRAG_TAG = "view savings income frag tag";
     private static final String EXTRA_INTENT = "extra intent";
     private SavingsIncomeData mSID;
+    private RetirementOptionsData mROD;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
@@ -56,6 +58,7 @@ public class ViewSavingsIncomeFragment extends Fragment {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
             if(intent != null) {
                 mSID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+                mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
             }
 
         }
@@ -91,8 +94,8 @@ public class ViewSavingsIncomeFragment extends Fragment {
 
         mCurrentBalance.setText(String.valueOf(formattedAmount));
 
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID);
-        String monthlyAmount = milestones.get(0).getAmount();
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
+        String monthlyAmount = milestones.get(0).getMonthlyAmount();
         formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
 
         mMonthlyAmount.setText(formattedAmount);

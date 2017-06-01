@@ -31,6 +31,7 @@ import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
@@ -43,6 +44,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SAVINGS;
@@ -248,11 +250,14 @@ public class IncomeSourceListFragment extends Fragment implements
             dialog.show();
         } else {
             Intent intent;
+            RetirementOptionsData rod;
             switch(incomeSourceType) {
                 case RetirementConstants.INCOME_TYPE_SAVINGS:
                     SavingsIncomeData sid = DataBaseUtils.getSavingsIncomeData(getContext(), incomeSourceId);
+                    rod = DataBaseUtils.getRetirementOptionsData(getContext());
                     intent = new Intent(getContext(), IncomeSourceActivity.class);
                     intent.putExtra(EXTRA_INCOME_DATA, sid);
+                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                     intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
                     intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, sid.getType());
                     intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
@@ -260,8 +265,10 @@ public class IncomeSourceListFragment extends Fragment implements
                     break;
                 case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
                     TaxDeferredIncomeData tdid = DataBaseUtils.getTaxDeferredIncomeData(getContext(), incomeSourceId);
+                    rod = DataBaseUtils.getRetirementOptionsData(getContext());
                     intent = new Intent(getContext(), IncomeSourceActivity.class);
                     intent.putExtra(EXTRA_INCOME_DATA, tdid);
+                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                     intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
                     intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, tdid.getType());
                     intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);

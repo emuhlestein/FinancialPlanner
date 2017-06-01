@@ -45,6 +45,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_R
 public class ViewTaxDeferredIncomeFragment extends Fragment implements SelectionMilestoneListener {
     public static final String VIEW_TAXDEF_INCOME_FRAG_TAG = "view taxdef income frag tag";
     private TaxDeferredIncomeData mTDID;
+    private RetirementOptionsData mROD;
     private MilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
@@ -73,6 +74,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
             mTDID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
         }
         setHasOptionsMenu(true);
     }
@@ -84,7 +86,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         View view = inflater.inflate(R.layout.fragment_view_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
 
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID);
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
         mMilestoneAdapter = new MilestoneAdapter(milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -110,7 +112,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
                 intent = new Intent(getContext(), RetirementOptionsDialog.class);
                 RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(getContext());
                 if (rod != null) {
-                    intent.putExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA, rod);
+                    intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
                 }
                 startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 break;

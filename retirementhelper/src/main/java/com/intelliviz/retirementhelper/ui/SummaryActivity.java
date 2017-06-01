@@ -113,7 +113,7 @@ public class SummaryActivity extends AppCompatActivity {
                 intent = new Intent(this, RetirementOptionsDialog.class);
                 RetirementOptionsData rod = getRetirementOptionsData(this);
                 if (rod != null) {
-                    intent.putExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA, rod);
+                    intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
                 }
                 startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 break;
@@ -135,7 +135,7 @@ public class SummaryActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_RETIRE_OPTIONS:
                 if (resultCode == RESULT_OK) {
-                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIRMENTOPTIONSDATA);
+                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
                     DataBaseUtils.saveRetirementOptions(this, rod);
                 }
                 break;

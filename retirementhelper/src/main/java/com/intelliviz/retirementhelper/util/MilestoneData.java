@@ -3,48 +3,62 @@ package com.intelliviz.retirementhelper.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by edm on 5/29/2017.
  */
 
 public class MilestoneData implements Parcelable {
-    private AgeData mAge;
-    private String mAmount;
-    private String mBalance;
-    private int mIncludesPenalty;
+    private AgeData mStartAge;
+    private AgeData mEndAge;
+    private String mMonthlyAmount;
+    private String mStartBalance;
+    private String mPenaltyAmount;
+    private int mLengthOfRetirement; // in months
+    private List<Double> mMonthlyBalances = new ArrayList<>(); // monthly balances
 
-    public MilestoneData(AgeData age, String amount, String balance) {
-        mAge = age;
-        mAmount = amount;
-        mBalance = balance;
-        mIncludesPenalty = 0;
-    }
-
-    public MilestoneData(AgeData age, String amount, String balance, boolean includesPenalty) {
-        mAge = age;
-        mAmount = amount;
-        mBalance = balance;
-        mIncludesPenalty = includesPenalty ? 1 : 0;
+    public MilestoneData(AgeData startAge, AgeData endAge, String amount, String balance, String penaltyAmount, int numMonths, List<Double> monthlyBalances) {
+        mStartAge = startAge;
+        mEndAge = endAge;
+        mMonthlyAmount = amount;
+        mStartBalance = balance;
+        mPenaltyAmount = penaltyAmount;
+        mLengthOfRetirement = numMonths;
+        mMonthlyBalances = monthlyBalances;
     }
 
     public MilestoneData(Parcel in) {
         readFromParcel(in);
     }
 
-    public AgeData getAge() {
-        return mAge;
+    public AgeData getStartAge() {
+        return mStartAge;
     }
 
-    public String getAmount() {
-        return mAmount;
+    public AgeData getEndAge() {
+        return mEndAge;
     }
 
-    public String getBalance() {
-        return mBalance;
+    public String getMonthlyAmount() {
+        return mMonthlyAmount;
     }
 
-    public int getIncludesPenalty() {
-        return mIncludesPenalty;
+    public String getStartBalance() {
+        return mStartBalance;
+    }
+
+    public String getPenaltyAmount() {
+        return mPenaltyAmount;
+    }
+
+    public int getLengthOfRetirement() {
+        return mLengthOfRetirement;
+    }
+
+    public List<Double> getMonthlyBalances() {
+        return mMonthlyBalances;
     }
 
     @Override
@@ -54,17 +68,23 @@ public class MilestoneData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(mAge, flags);
-        dest.writeString(mAmount);
-        dest.writeString(mBalance);
-        dest.writeInt(mIncludesPenalty);
+        dest.writeParcelable(mStartAge, flags);
+        dest.writeParcelable(mEndAge, flags);
+        dest.writeString(mMonthlyAmount);
+        dest.writeString(mStartBalance);
+        dest.writeString(mPenaltyAmount);
+        dest.writeInt(mLengthOfRetirement);
+        dest.writeList(mMonthlyBalances);
     }
 
     public void readFromParcel(Parcel in) {
-        mAge = in.readParcelable(AgeData.class.getClassLoader());
-        mAmount = in.readString();
-        mBalance = in.readString();
-        mIncludesPenalty = in.readInt();
+        mStartAge = in.readParcelable(AgeData.class.getClassLoader());
+        mEndAge = in.readParcelable(AgeData.class.getClassLoader());
+        mMonthlyAmount = in.readString();
+        mStartBalance = in.readString();
+        mPenaltyAmount = in.readString();
+        mLengthOfRetirement = in.readInt();
+        in.readList(mMonthlyBalances, Double.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<MilestoneData> CREATOR = new Parcelable.Creator<MilestoneData>()

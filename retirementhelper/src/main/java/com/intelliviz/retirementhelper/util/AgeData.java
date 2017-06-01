@@ -82,6 +82,15 @@ public class AgeData implements Parcelable {
         readFromParcel(in);
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Integer.toString(mYear));
+        sb.append("y ");
+        sb.append(Integer.toString(mMonth));
+        sb.append("m");
+        return sb.toString();
+    }
+
     @Override
     public int describeContents() {
         return 0;
