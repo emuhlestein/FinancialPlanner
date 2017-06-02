@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -93,9 +94,14 @@ public class SummaryActivity extends BaseActivity {
             }
         });
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+    }
 /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
 
         switch (requestCode) {
             case REQUEST_RETIRE_OPTIONS:
@@ -114,6 +120,7 @@ public class SummaryActivity extends BaseActivity {
                 // needed to call the fragment onActivityResult
                 super.onActivityResult(requestCode, resultCode, intent);
         }
+
     }
     */
 }

@@ -32,7 +32,6 @@
         <activity android:name=".ui.PersonalInfoDialog" />
         <activity android:name=".ui.MileStoneActivity" />
         <activity android:name=".ui.MilestoneDetailsDialog" />
-        <activity android:name=".ui.BaseActivity"></activity>
     </application>
 
 </manifest>

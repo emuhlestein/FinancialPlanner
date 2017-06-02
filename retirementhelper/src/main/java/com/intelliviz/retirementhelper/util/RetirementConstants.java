@@ -40,4 +40,5 @@ public class RetirementConstants {
     public static final int REQUEST_TAX_DEFERRED = 3;
     public static final int REQUEST_PENSION = 4;
     public static final int REQUEST_GOV_PENSION = 5;
+    public static final int REQUEST_INCOME_MENU = 6;
 }

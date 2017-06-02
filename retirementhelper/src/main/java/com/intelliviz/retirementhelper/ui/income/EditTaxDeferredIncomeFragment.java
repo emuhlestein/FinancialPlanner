@@ -1,6 +1,6 @@
 package com.intelliviz.retirementhelper.ui.income;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -37,6 +37,8 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 public class EditTaxDeferredIncomeFragment extends Fragment {
     public static final String EDIT_TAXDEF_INCOME_FRAG_TAG = "edit taxdef income frag tag";
     private TaxDeferredIncomeData mTDI;
+    private EditTaxDeferredIncomeListener mListener;
+
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
     @Bind(R.id.balance_text) EditText mBalance;
@@ -45,6 +47,11 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     @Bind(R.id.penalty_age_text) EditText mPenaltyAge;
     @Bind(R.id.penalty_amount_text) EditText mPenaltyAmount;
     @Bind(R.id.add_income_source_button) Button mAddIncomeSource;
+
+
+    public interface EditTaxDeferredIncomeListener {
+        void onEditTaxDeferredIncome(TaxDeferredIncomeData tdid);
+    }
 
     public EditTaxDeferredIncomeFragment() {
         // Required empty public constructor
@@ -155,6 +162,22 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof EditTaxDeferredIncomeListener) {
+            mListener = (EditTaxDeferredIncomeListener) context;
+        } else {
+            throw new ClassCastException("Activity must implement EditTaxDeferredIncomeListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     private void updateUI() {
         if(mTDI.getId() == -1) {
             return;
@@ -229,7 +252,10 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         tdid.addBalance(new BalanceData(balance, date));
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_DATA, tdid);
 
-        getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        getActivity().finish();
+        //getActivity().setResult(Activity.RESULT_OK, returnIntent);
+        //getActivity().finish();
+        if(mListener != null) {
+            mListener.onEditTaxDeferredIncome(tdid);
+        }
     }
 }

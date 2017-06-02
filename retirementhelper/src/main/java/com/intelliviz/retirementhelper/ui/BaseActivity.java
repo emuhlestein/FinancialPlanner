@@ -15,7 +15,7 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.getRetirementOp
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -55,6 +55,13 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+    }
+
+
+    /*
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
         switch (requestCode) {
             case REQUEST_RETIRE_OPTIONS:
@@ -74,4 +81,5 @@ public class BaseActivity extends AppCompatActivity {
                 super.onActivityResult(requestCode, resultCode, intent);
         }
     }
+    */
 }
