@@ -56,10 +56,8 @@ public class RetirementContract {
         public static final String TABLE_NAME = PATH_RETIREMENT_PARMS;
         public static final String COLUMN_START_AGE = "start_age";
         public static final String COLUMN_END_AGE = "end_age";
-        public static final String COLUMN_INC_INFLATION = "include_inflation";
-        public static final String COLUMN_INFL_AMOUNT = "infl_amount";
         public static final String COLUMN_WITHDRAW_MODE = "withdraw_mode";
-        public static final String COLUMN_WITHDRAW_PERCENT = "withdraw_percent";
+        public static final String COLUMN_WITHDRAW_AMOUNT = "withdraw_amount";
     }
 
     public static final class ExpenseEntery implements BaseColumns {

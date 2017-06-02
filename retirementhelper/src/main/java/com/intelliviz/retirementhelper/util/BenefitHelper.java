@@ -5,6 +5,8 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_AMOUNT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
 import static java.lang.Double.parseDouble;
 
 /**
@@ -96,13 +98,13 @@ public class BenefitHelper {
      */
     private static List<MilestoneData> getMilestonesNoPrincipleReduction(Context context, TaxDeferredIncomeData tdid, RetirementOptionsData rod) {
         List<BalanceData> bd = tdid.getBalanceDataList();
-        double balance = parseDouble(bd.get(0).getBalance());
-        double interest = parseDouble(tdid.getInterest());
+        double startBalance = parseDouble(bd.get(0).getBalance());
+        double interestRate = parseDouble(tdid.getInterest());
         double monthlyAddition = Double.parseDouble(tdid.getMonthAddition());
         double penalty = Double.parseDouble(tdid.getPenalty());
         String minAge = tdid.getMinimumAge();
         String endAge = rod.getEndAge();
-        double withdrawPercent = Double.parseDouble(rod.getWithdrawPercent());
+        double withdrawAmount = Double.parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
         List<AgeData> ages = getMilestoneAges(context);
         if(ages.isEmpty()) {
@@ -111,44 +113,62 @@ public class BenefitHelper {
         AgeData minimumAge = new AgeData(minAge);
         AgeData endOfLifeAge = new AgeData(endAge);
 
-        List<Double> balances = getMilestoneBalances(ages, balance, interest, monthlyAddition);
-
+        List<Double> milestoneBalances = getMilestoneBalances(ages, startBalance, interestRate, monthlyAddition);
+/*
         for(int i = 0; i < ages.size(); i++) {
             AgeData mileStoneAge = ages.get(i);
             double milestoneBalance = balances.get(i);
             MilestoneData milestoneData = getMonthlyBalances(mileStoneAge, endOfLifeAge,
-                    milestoneBalance, interest, withdrawPercent, penalty, minimumAge);
+                    milestoneBalance, monthlyInterest, withdrawPercent, penalty, minimumAge);
+            milestones.add(milestoneData);
+        }
+*/
+
+        milestones = getMilestones(endOfLifeAge, minimumAge, interestRate, penalty, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
+        return milestones;
+    }
+
+    private static List<MilestoneData> getMilestones(AgeData endOfLifeAge, AgeData minimumAge,
+                                                     double interestRate, double penalty, int withdrawMode, double withdrawAmount,
+                                                     List<AgeData> ages, List<Double> milestoneBalances) {
+
+        List<MilestoneData> milestones = new ArrayList<>();
+
+        for(int i = 0; i < ages.size(); i++) {
+            AgeData startAge = ages.get(i);
+            if(!startAge.isBefore(minimumAge)) {
+                penalty = 0;
+            }
+            double startBalance = milestoneBalances.get(i);
+            double monthlyAmount = getMonthlyAmount(startBalance, withdrawMode, withdrawAmount);
+            MilestoneData milestoneData = getMonthlyBalances(startAge, endOfLifeAge, minimumAge,
+                    startBalance, interestRate, monthlyAmount, penalty);
             milestones.add(milestoneData);
         }
         return milestones;
     }
 
-    private static MilestoneData getMonthlyBalances(AgeData startAge, AgeData endAge,
-                                                    double startBalance, double monthlyInterest, double initialWithdrawInterest,
-                                                    double penalty, AgeData minimumAge) {
+    private static MilestoneData getMonthlyBalances(AgeData startAge, AgeData endAge, AgeData minimumAge,
+                                                    double startBalance, double interestRate, double monthlyAmount,
+                                                    double penalty) {
         AgeData age = endAge.subtract(startAge);
         int numMonthsInRetirement = age.getNumberOfMonths();
         double newBalance = startBalance;
-        double monthInterest = monthlyInterest / 1200;
-        double widthDrawInterest = initialWithdrawInterest / 1200;
+        double monthlyInterest = interestRate / 1200;
+
         List<Double> balances = new ArrayList<>();
-        double monthlyAmount = newBalance * widthDrawInterest;
         for(int mon = 0; mon < numMonthsInRetirement; mon++) {
             if(newBalance <= 0) {
                 break;
             }
 
             newBalance = newBalance - monthlyAmount;
-            double monthIncrease = newBalance * monthInterest;
-            newBalance = newBalance + monthIncrease;
+            double monthlyIncrease = newBalance * monthlyInterest;
+            newBalance = newBalance + monthlyIncrease;
             balances.add(newBalance);
         }
 
-        String penaltyAmount = "0.0";
-        if(startAge.isBefore(minimumAge)) {
-            penaltyAmount = Double.toString(penalty);
-        }
-        return new MilestoneData(startAge, endAge, Double.toString(monthlyAmount), Double.toString(startBalance), penaltyAmount, numMonthsInRetirement, balances);
+        return new MilestoneData(startAge, endAge, minimumAge, monthlyAmount, startBalance, penalty, balances);
     }
 
     /**
@@ -203,6 +223,21 @@ public class BenefitHelper {
     private static double getBalance(double balance, double interest, double monthlyIncrease) {
         double interestEarned = getMonthlyAmountFromBalance(balance, interest);
         return monthlyIncrease + interestEarned + balance;
+    }
+
+    private static double getMonthlyAmount(double balance, int withdrawMode, double withdrawAmount) {
+        double monthlyAmount;
+        switch(withdrawMode) {
+            case WITHDRAW_MODE_AMOUNT:
+                monthlyAmount = withdrawAmount;
+                break;
+            case WITHDRAW_MODE_PERCENT:
+                monthlyAmount = getMonthlyAmountFromBalance(balance, withdrawAmount);
+                break;
+            default:
+                monthlyAmount = withdrawAmount;
+        }
+        return monthlyAmount;
     }
 
     /**

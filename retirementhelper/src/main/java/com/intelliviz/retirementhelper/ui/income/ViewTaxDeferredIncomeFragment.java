@@ -9,9 +9,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,13 +16,9 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
 import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
-import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
-import com.intelliviz.retirementhelper.ui.RetirementOptionsDialog;
 import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.MilestoneData;
-import com.intelliviz.retirementhelper.util.PersonalInfoData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
@@ -38,8 +31,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.content.Intent.EXTRA_INTENT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 
 public class ViewTaxDeferredIncomeFragment extends Fragment implements SelectionMilestoneListener {
@@ -99,11 +90,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         return view;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.summary_menu, menu);
-    }
-
+/*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
@@ -127,6 +114,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         }
         return super.onOptionsItemSelected(item);
     }
+    */
 
     private void updateUI() {
         if(mTDID == null) {

@@ -38,4 +38,9 @@
         <item name="android:maxLength">4</item>
     </style>
 
+    <style name="FiveDigitPositiveNumber" parent="ThreeDigitPositiveNumber">
+        <item name="android:maxLength">5</item>
+        <item name="android:minEms">4</item>
+    </style>
+
 </resources>

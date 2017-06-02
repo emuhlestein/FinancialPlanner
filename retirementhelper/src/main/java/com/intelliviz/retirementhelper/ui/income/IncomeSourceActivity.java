@@ -6,16 +6,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.ui.BaseActivity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class IncomeSourceActivity extends AppCompatActivity {
+public class IncomeSourceActivity extends BaseActivity {
     @Bind(R.id.income_source_toolbar) Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 4;
+    private static final int DBASE_VERSION = 5;
     private static final int PERSONALINFO_ID = 101;
     private static final int RETIREMENT_OPTIONS_ID = 102;
     private static final int CATEGORY_LIST = 201;
@@ -642,9 +642,7 @@ public class RetirementProvider extends ContentProvider {
                     RetirementContract.RetirementParmsEntry.COLUMN_START_AGE + " TEXT NOT NULL, " +
                     RetirementContract.RetirementParmsEntry.COLUMN_END_AGE + " TEXT NOT NULL, " +
                     RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE + " INTEGER NOT NULL, " +
-                    RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_PERCENT + " TEXT NOT NULL, " +
-                    RetirementContract.RetirementParmsEntry.COLUMN_INC_INFLATION + " TEXT NOT NULL, " +
-                    RetirementContract.RetirementParmsEntry.COLUMN_INFL_AMOUNT + " TEXT NOT NULL);";
+                    RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT + " TEXT NOT NULL);";
 
             db.execSQL(sql);
 
@@ -732,7 +730,7 @@ public class RetirementProvider extends ContentProvider {
 
             String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1', '-1');";
             db.execSQL(ROW);
-            ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '62', '90', '0', '0', '0', '0');";
+            ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '62', '90', '0', '0');";
             db.execSQL(ROW);
 
             ROW = "INSERT INTO " + RetirementContract.MileStoneEntry.TABLE_NAME + " Values ('0', '62');";

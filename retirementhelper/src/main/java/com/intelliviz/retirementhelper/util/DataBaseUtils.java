@@ -63,21 +63,17 @@ public class DataBaseUtils {
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE, rod.getStartAge());
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, rod.getEndAge());
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, rod.getWithdrawMode());
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_PERCENT, rod.getWithdrawPercent());
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_INC_INFLATION, rod.getIncludeInflation());
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_INFL_AMOUNT, rod.getInflationAmount());
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT, rod.getWithdrawAmount());
         Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
         return context.getContentResolver().update(uri, values, null, null);
     }
 
-    public static int saveRetirementOptions(Context context, String startAge, String endAge, int withdrawMode, String withdrawPercent, int includeInflation, String inflationAmount) {
+    public static int saveRetirementOptions(Context context, String startAge, String endAge, int withdrawMode, String withdrawAmount) {
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE, startAge);
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, endAge);
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, withdrawMode);
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_PERCENT, withdrawPercent);
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_INC_INFLATION, includeInflation);
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_INFL_AMOUNT, inflationAmount);
+        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT, withdrawAmount);
         Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
         return context.getContentResolver().update(uri, values, null, null);
     }
@@ -96,17 +92,13 @@ public class DataBaseUtils {
         int startAgeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE);
         int endAgeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE);
         int withdrawModeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE);
-        int withdrawPercentIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_PERCENT);
-        int includeInflationIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_INC_INFLATION);
-        int inflationAmountIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_INFL_AMOUNT);
+        int withdrawAmountIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT);
 
         String startAge = cursor.getString(startAgeIndex);
         String endAge = cursor.getString(endAgeIndex);
         int withdrawMode = cursor.getInt(withdrawModeIndex);
-        String withdrawPercent = cursor.getString(withdrawPercentIndex);
-        int includeInflation = cursor.getInt(includeInflationIndex);
-        String inflationAmount = cursor.getString(inflationAmountIndex);
-        return new RetirementOptionsData(startAge, endAge, withdrawMode, withdrawPercent, includeInflation, inflationAmount);
+        String withdrawAmount = cursor.getString(withdrawAmountIndex);
+        return new RetirementOptionsData(startAge, endAge, withdrawMode, withdrawAmount);
     }
 
     //

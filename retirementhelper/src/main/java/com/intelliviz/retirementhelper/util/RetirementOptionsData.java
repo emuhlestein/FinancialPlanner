@@ -11,17 +11,13 @@ public class RetirementOptionsData implements Parcelable {
     private final String mStartAge;
     private final String mEndAge;
     private final int mWithdrawMode;
-    private final String mWithdrawPercent;
-    private final int mIncludeInflation;
-    private final String mInflationAmount;
+    private final String mWithdrawAmount;
 
-    public RetirementOptionsData(String startAge, String endAge, int withdrawMode, String withdrawPercent, int includeInflation, String inflationAmount) {
+    public RetirementOptionsData(String startAge, String endAge, int withdrawMode, String withdrawAmount) {
         mStartAge = startAge;
         mEndAge = endAge;
         mWithdrawMode = withdrawMode;
-        mWithdrawPercent = withdrawPercent;
-        mIncludeInflation = includeInflation;
-        mInflationAmount = inflationAmount;
+        mWithdrawAmount = withdrawAmount;
     }
 
     public String getStartAge() {
@@ -36,25 +32,15 @@ public class RetirementOptionsData implements Parcelable {
         return mWithdrawMode;
     }
 
-    public String getWithdrawPercent() {
-        return mWithdrawPercent;
-    }
-
-    public int getIncludeInflation() {
-        return mIncludeInflation;
-    }
-
-    public String getInflationAmount() {
-        return mInflationAmount;
+    public String getWithdrawAmount() {
+        return mWithdrawAmount;
     }
 
     public RetirementOptionsData(Parcel in) {
         mStartAge = in.readString();
         mEndAge = in.readString();
         mWithdrawMode = in.readInt();
-        mWithdrawPercent = in.readString();
-        mIncludeInflation = in.readInt();
-        mInflationAmount = in.readString();
+        mWithdrawAmount = in.readString();
     }
 
     @Override
@@ -67,9 +53,7 @@ public class RetirementOptionsData implements Parcelable {
         dest.writeString(mStartAge);
         dest.writeString(mEndAge);
         dest.writeInt(mWithdrawMode);
-        dest.writeString(mWithdrawPercent);
-        dest.writeInt(mIncludeInflation);
-        dest.writeString(mInflationAmount);
+        dest.writeString(mWithdrawAmount);
     }
 
     public static final Creator<RetirementOptionsData> CREATOR = new Creator<RetirementOptionsData>() {

@@ -154,6 +154,17 @@ public class SystemUtils {
         return retval;
     }
 
+    public static String getFormattedCurrency(Double value) {
+        if (value == null) {
+            return null;
+        }
+        Number number = value;
+        double dvalue = number.doubleValue();
+        NumberFormat nf = NumberFormat.getCurrencyInstance(java.util.Locale.US);
+        String s = nf.format(dvalue);
+        return s;
+    }
+
     public static String getFormattedCurrency(String value) {
         if(value == null || value.isEmpty()) {
             return null;

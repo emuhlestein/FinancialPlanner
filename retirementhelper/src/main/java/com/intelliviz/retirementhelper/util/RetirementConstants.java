@@ -17,9 +17,8 @@ public class RetirementConstants {
     public static final int INCOME_ACTION_DELETE = 3;
 
     // principle reduction mode
-    public static final int WITHDRAW_MODE_ZERO_PRI = 0; // zero principle  by end age
-    public static final int WITHDRAW_MODE_NO_REDUC = 1; // no principle reduction
-    public static final int WITHDRAW_MODE_PERCENT = 2; // percentage of principle
+    public static final int WITHDRAW_MODE_AMOUNT = 0; // dollar amount
+    public static final int WITHDRAW_MODE_PERCENT = 1; // percentage of principle
 
     public static final String EXTRA_INCOME_SOURCE_ID = "income source id";
     public static final String EXTRA_INCOME_SOURCE_NAME = "income source name";

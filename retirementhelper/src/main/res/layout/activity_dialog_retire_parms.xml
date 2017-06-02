@@ -57,17 +57,10 @@
         android:layout_height="wrap_content">
 
         <RadioButton
-            android:id="@+id/zero_balance_button"
+            android:id="@+id/withdraw_amount_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Zero Balance by End Age"
-            android:textSize="16sp" />
-
-        <RadioButton
-            android:id="@+id/no_reduce_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No principle reduction"
+            android:text="Withdraw Amount"
             android:textSize="16sp" />
 
         <RadioButton
@@ -84,6 +77,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/amount_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Withdraw Percentage"
@@ -91,29 +85,7 @@
 
         <EditText
             android:id="@+id/withdraw_percent_edit_text"
-            style="@style/ThreeDigitPositiveNumber"/>
-    </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/apply_inflation_checkbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Apply Inflation" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Inflation Amount"
-            android:textSize="22sp" />
-
-        <EditText
-            android:id="@+id/inflation_amount_edit_text"
-            style="@style/ThreeDigitPositiveNumber" />
+            style="@style/FiveDigitPositiveNumber"/>
     </LinearLayout>
 
     <View

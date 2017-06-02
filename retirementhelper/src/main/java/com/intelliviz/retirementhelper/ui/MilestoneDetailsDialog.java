@@ -39,7 +39,7 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
         MilestoneData msd = intent.getParcelableExtra(RetirementConstants.EXTRA_MILESTONEDATA);
         mAge.setText(SystemUtils.getFormattedAge(msd.getStartAge()));
         String formattedCurrency = SystemUtils.getFormattedCurrency(msd.getMonthlyAmount());
-        double penaltyAmount = Double.parseDouble(msd.getPenaltyAmount());
+        double penaltyAmount = msd.getPenaltyAmount();
         if(penaltyAmount > 0) {
             sb.append("*");
             sb.append(msd.getPenaltyAmount());

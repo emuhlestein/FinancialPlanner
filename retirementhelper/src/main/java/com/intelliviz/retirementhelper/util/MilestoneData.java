@@ -13,19 +13,17 @@ import java.util.List;
 public class MilestoneData implements Parcelable {
     private AgeData mStartAge;
     private AgeData mEndAge;
-    private String mMonthlyAmount;
-    private String mStartBalance;
-    private String mPenaltyAmount;
-    private int mLengthOfRetirement; // in months
+    private double mMonthlyAmount;
+    private double mStartBalance;
+    private double mPenaltyAmount;
     private List<Double> mMonthlyBalances = new ArrayList<>(); // monthly balances
 
-    public MilestoneData(AgeData startAge, AgeData endAge, String amount, String balance, String penaltyAmount, int numMonths, List<Double> monthlyBalances) {
+    public MilestoneData(AgeData startAge, AgeData endAge, AgeData minimumAge, double amount, double balance, double penaltyAmount, List<Double> monthlyBalances) {
         mStartAge = startAge;
         mEndAge = endAge;
         mMonthlyAmount = amount;
         mStartBalance = balance;
         mPenaltyAmount = penaltyAmount;
-        mLengthOfRetirement = numMonths;
         mMonthlyBalances = monthlyBalances;
     }
 
@@ -41,20 +39,22 @@ public class MilestoneData implements Parcelable {
         return mEndAge;
     }
 
-    public String getMonthlyAmount() {
+    public double getMonthlyAmount() {
         return mMonthlyAmount;
     }
 
-    public String getStartBalance() {
+    public double getStartBalance() {
         return mStartBalance;
     }
 
-    public String getPenaltyAmount() {
+    public double getPenaltyAmount() {
         return mPenaltyAmount;
     }
 
+
     public int getLengthOfRetirement() {
-        return mLengthOfRetirement;
+        AgeData ageData = mEndAge.subtract(mStartAge);
+        return ageData.getNumberOfMonths();
     }
 
     public List<Double> getMonthlyBalances() {
@@ -70,20 +70,18 @@ public class MilestoneData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(mStartAge, flags);
         dest.writeParcelable(mEndAge, flags);
-        dest.writeString(mMonthlyAmount);
-        dest.writeString(mStartBalance);
-        dest.writeString(mPenaltyAmount);
-        dest.writeInt(mLengthOfRetirement);
+        dest.writeDouble(mMonthlyAmount);
+        dest.writeDouble(mStartBalance);
+        dest.writeDouble(mPenaltyAmount);
         dest.writeList(mMonthlyBalances);
     }
 
     public void readFromParcel(Parcel in) {
         mStartAge = in.readParcelable(AgeData.class.getClassLoader());
         mEndAge = in.readParcelable(AgeData.class.getClassLoader());
-        mMonthlyAmount = in.readString();
-        mStartBalance = in.readString();
-        mPenaltyAmount = in.readString();
-        mLengthOfRetirement = in.readInt();
+        mMonthlyAmount = in.readDouble();
+        mStartBalance = in.readDouble();
+        mPenaltyAmount = in.readDouble();
         in.readList(mMonthlyBalances, Double.class.getClassLoader());
     }
 
