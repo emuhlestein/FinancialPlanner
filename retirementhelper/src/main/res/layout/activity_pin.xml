@@ -12,8 +12,8 @@
         android:layout_marginBottom="24dp"
         android:layout_marginTop="12dp"
         android:gravity="center"
-        android:text="Retirement Helper"
-        android:textSize="22dp" />
+        android:text="@string/retirement_helper"
+        android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,8 +49,8 @@
         android:layout_marginTop="12dp"
         android:gravity="center"
         android:layout_marginBottom="24dp"
-        android:text="Enter your PIN"
-        android:textSize="22dp" />
+        android:text="@string/enter_your_pin"
+        android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,21 +63,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="1" />
+            android:text="@string/pin_1" />
 
         <Button
             android:id="@+id/pin_2_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="2" />
+            android:text="@string/pin_2" />
 
         <Button
             android:id="@+id/pin_3_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="3" />
+            android:text="@string/pin_3" />
     </LinearLayout>
 
     <LinearLayout
@@ -91,21 +91,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="4" />
+            android:text="@string/pin_4" />
 
         <Button
             android:id="@+id/pin_5_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="5" />
+            android:text="@string/pin_5" />
 
         <Button
             android:id="@+id/pin_6_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="6" />
+            android:text="@string/pin_6" />
     </LinearLayout>
 
     <LinearLayout
@@ -119,21 +119,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="7" />
+            android:text="@string/pin_7" />
 
         <Button
             android:id="@+id/pin_8_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="8" />
+            android:text="@string/pin_8" />
 
         <Button
             android:id="@+id/pin_9_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="9" />
+            android:text="@string/pin_9" />
     </LinearLayout>
 
     <LinearLayout
@@ -146,21 +146,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="" />
+            android:text="@string/pin_null" />
 
         <Button
             android:id="@+id/pin_0_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="0" />
+            android:text="@string/pin_0" />
 
         <Button
             android:id="@+id/pin_x_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickPinButton"
-            android:text="x" />
+            android:text="@string/pin_x" />
     </LinearLayout>
 </LinearLayout>
 

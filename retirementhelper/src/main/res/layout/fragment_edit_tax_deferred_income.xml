@@ -2,7 +2,6 @@
 <android.support.design.widget.CoordinatorLayout
     android:id="@+id/coordinatorLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -32,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Name of Institution"
+                android:hint="@string/name_of_institution"
                 android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
 
@@ -52,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Balance"
+                android:hint="@string/balance"
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
 
@@ -72,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Annual Interest"
+                android:hint="@string/annual_interest"
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
 
@@ -91,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Monthly Increase"
+                android:hint="@string/monthly_increase"
                 android:inputType="numberDecimal" />
         </android.support.design.widget.TextInputLayout>
 
@@ -111,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Minimum Withdraw Age"
+                android:hint="@string/minimum_withdraw_age"
                 android:text="59.5"
                 android:enabled="false"
                 android:inputType="number" />
@@ -132,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Early Withdraw Penalty"
+                android:hint="@string/early_withdraw_penalty"
                 android:text="10%"
                 android:enabled="false"
                 android:inputType="numberDecimal" />
@@ -148,7 +147,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:onClick="addIncomeSource"
-            android:text="Add Income Source" />
+            android:text="@string/save_income_source" />
     </LinearLayout>
 
 </LinearLayout>

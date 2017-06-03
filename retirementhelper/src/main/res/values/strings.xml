@@ -48,7 +48,7 @@
     <string name="final_balance">Final Balance:</string>
     <string name="length_of_retirement">Length of retirement:</string>
     <string name="funds_will_last">Funds will last:</string>
-    <string name="name_hint">Name</string>
+    <string name="name_hint">Name:</string>
     <string name="birthdate_format">Birthdate (yyyy-MM-dd)</string>
     <string name="personal_info">Personal Info</string>
     <string name="name">Name</string>
@@ -57,6 +57,29 @@
     <string name="change_password">Change Password</string>
     <string name="change_email">Change Email</string>
     <string name="change_pin">Change PIN</string>
+    <string name="enter_your_pin">Enter your PIN</string>
+    <string name="pin_1">1</string>
+    <string name="pin_2">2</string>
+    <string name="pin_3">3</string>
+    <string name="pin_4">4</string>
+    <string name="pin_5">5</string>
+    <string name="pin_6">6</string>
+    <string name="pin_7">7</string>
+    <string name="pin_8">8</string>
+    <string name="pin_9">9</string>
+    <string name="pin_0">0</string>
+    <string name="pin_null" />
+    <string name="pin_x">x</string>
+    <string name="name_of_institution">Name of Institution:</string>
+    <string name="balance">Balance:</string>
+    <string name="annual_interest">Annual Interest:</string>
+    <string name="monthly_increase">Monthly Increase:</string>
+    <string name="minimum_withdraw_age">Minimum Withdraw Age:</string>
+    <string name="early_withdraw_penalty">Early Withdraw Penalty:</string>
+    <string name="save_income_source">Save Income Source</string>
+    <string name="current_balance">Current Balance:</string>
+    <string name="minimum_age">Minimum Age:</string>
+    <string name="penalty_amount">Penalty Amount:</string>
     <string-array name="income_source_actions">
         <item>@string/income_source_edit_action</item>
         <item>@string/income_source_delete_action</item>
