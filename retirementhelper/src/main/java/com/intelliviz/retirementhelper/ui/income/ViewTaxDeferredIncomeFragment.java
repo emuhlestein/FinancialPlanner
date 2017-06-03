@@ -78,7 +78,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         ButterKnife.bind(this, view);
 
         List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
-        mMilestoneAdapter = new MilestoneAdapter(milestones);
+        mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);

@@ -51,7 +51,6 @@ public class MilestoneData implements Parcelable {
         return mPenaltyAmount;
     }
 
-
     public int getLengthOfRetirement() {
         AgeData ageData = mEndAge.subtract(mStartAge);
         return ageData.getNumberOfMonths();
@@ -59,6 +58,15 @@ public class MilestoneData implements Parcelable {
 
     public List<Double> getMonthlyBalances() {
         return mMonthlyBalances;
+    }
+
+    public double getEndingBalance() {
+        int index = mMonthlyBalances.size() - 1;
+        if(index >= 0) {
+            return mMonthlyBalances.get(index);
+        } else {
+            return 0;
+        }
     }
 
     @Override

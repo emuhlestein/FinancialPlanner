@@ -1,9 +1,11 @@
 package com.intelliviz.retirementhelper.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
@@ -20,8 +22,10 @@ import java.util.List;
 public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.MilestoneHolder> {
     private List<MilestoneData> mMilestones;
     private SelectionMilestoneListener mListener;
+    private Context mContext;
 
-    public MilestoneAdapter(List<MilestoneData> milestones) {
+    public MilestoneAdapter(Context context, List<MilestoneData> milestones) {
+        mContext = context;
         mMilestones = milestones;
     }
 
@@ -55,10 +59,12 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.Mile
             implements View.OnClickListener {
         private TextView mMilestoneTextView;
         private TextView mMonthlyAmountTextView;
+        private LinearLayout mLinearLayout;
         private MilestoneData mMSD;
 
         public MilestoneHolder(View itemView) {
             super(itemView);
+            mLinearLayout = (LinearLayout) itemView.findViewById(R.id.milestone_item_layout);
             mMilestoneTextView = (TextView) itemView.findViewById(R.id.milestone_text_view);
             mMonthlyAmountTextView = (TextView) itemView.findViewById(R.id.monthly_amount_text_view);
             itemView.setOnClickListener(this);
@@ -66,6 +72,31 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.Mile
 
         public void bindMilestone(int position) {
             mMSD = mMilestones.get(position);
+
+            final int sdk = android.os.Build.VERSION.SDK_INT;
+            double annualAmount = mMSD.getMonthlyAmount() * 12;
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                if(mMSD.getEndingBalance() < 0) {
+                    mLinearLayout.setBackgroundDrawable( mContext.getResources().getDrawable(R.drawable.red_ripple_effect) );
+                } else {
+                    if(mMSD.getEndingBalance() < annualAmount) {
+                        mLinearLayout.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
+                    } else {
+                        mLinearLayout.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
+                    }
+                }
+            } else {
+                if(mMSD.getEndingBalance() < 0) {
+                    mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.red_ripple_effect));
+                } else {
+                    if(mMSD.getEndingBalance() < annualAmount) {
+                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
+                    } else {
+                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
+                    }
+                }
+            }
+
             String formattedCurrency = SystemUtils.getFormattedCurrency(mMSD.getMonthlyAmount());
             mMilestoneTextView.setText(SystemUtils.getFormattedAge(mMSD.getStartAge()));
             mMonthlyAmountTextView.setText(formattedCurrency);

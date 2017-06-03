@@ -61,8 +61,7 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
         AgeData age = new AgeData(years, months);
         mFundsDuration.setText(age.toString());
 
-        int index = balances.size() - 1;
-        String finalBalance = Double.toString(balances.get(index));
+        String finalBalance = Double.toString(msd.getEndingBalance());
         mStartBalance.setText(SystemUtils.getFormattedCurrency(msd.getStartBalance()));
         mFinalBalance.setText(SystemUtils.getFormattedCurrency(finalBalance));
     }
