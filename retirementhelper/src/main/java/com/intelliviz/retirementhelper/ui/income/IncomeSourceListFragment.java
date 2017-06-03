@@ -1,9 +1,11 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +33,7 @@ import android.widget.Toast;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
@@ -52,6 +56,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_AC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_VIEW;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_INCOME_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PENSION;
@@ -71,6 +76,25 @@ public class IncomeSourceListFragment extends Fragment implements
     @Bind(R.id.emptyView) TextView mEmptyView;
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.addIncomeTypeFAB) FloatingActionButton mAddIncomeSourceFAB;
+
+    /**
+     * Receive changes to weather data: min temp, max temp, and image id.
+     */
+    private BroadcastReceiver mTaxDeferreReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+            long incomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+            int incomeSourceType = intent.getIntExtra(EXTRA_INCOME_SOURCE_TYPE, -1);
+            TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
+            int action = intent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, -1);
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+            newIntent.putExtra(EXTRA_INCOME_DATA, tdid);
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+            startActivityForResult(newIntent, REQUEST_TAX_DEFERRED);
+        }
+    };
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -218,6 +242,18 @@ public class IncomeSourceListFragment extends Fragment implements
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver();
+    }
+
+    @Override
     public void onSelectIncomeSource(long id, int type, boolean showMenu) {
         final long incomeSourceId = id;
         final int incomeSourceType = type;
@@ -254,6 +290,16 @@ public class IncomeSourceListFragment extends Fragment implements
                     break;
             }
         }
+    }
+
+    private void registerReceiver() {
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getActivity());
+        IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mTaxDeferreReceiver, filter);
+    }
+
+    private void unregisterReceiver() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTaxDeferreReceiver);
     }
 
     private void saveSavingsIncomeData(Intent intent) {
@@ -300,12 +346,19 @@ public class IncomeSourceListFragment extends Fragment implements
                 break;
             case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
                 if(action == INCOME_ACTION_EDIT) {
+                    /*
                     TaxDeferredIncomeData tdid = DataBaseUtils.getTaxDeferredIncomeData(getContext(), incomeSourceId);
                     intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
                     intent.putExtra(EXTRA_INCOME_DATA, tdid);
                     intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
                     intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
                     startActivityForResult(intent, REQUEST_TAX_DEFERRED);
+                    */
+                    Intent localIntent = new Intent(getContext(), TaxDeferredIntentService.class);
+                    localIntent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+                    localIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
+                    localIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
+                    getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     FragmentManager fm = getActivity().getSupportFragmentManager();
                     YesNoDialog dialog = YesNoDialog.newInstance(incomeSourceId);

@@ -31,6 +31,10 @@
         <activity android:name=".ui.income.IncomeSourceActivity" />
         <activity android:name=".ui.PersonalInfoDialog" />
         <activity android:name=".ui.MilestoneDetailsDialog" />
+
+        <service
+            android:name=".services.TaxDeferredIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

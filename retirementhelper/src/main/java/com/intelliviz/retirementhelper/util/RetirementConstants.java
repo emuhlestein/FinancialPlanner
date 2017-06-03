@@ -42,4 +42,6 @@ public class RetirementConstants {
     public static final int REQUEST_GOV_PENSION = 5;
     public static final int REQUEST_INCOME_MENU = 6;
     public static final int REQUEST_YES_NO = 7;
+
+    public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";
 }
