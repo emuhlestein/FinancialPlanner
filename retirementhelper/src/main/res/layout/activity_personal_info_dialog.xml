@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout android:id="@+id/coordinatorLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:text="Personasl Info"
+            android:text="@string/personal_info"
             android:textSize="22sp" />
 
         <View
@@ -35,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name"
+                android:text="@string/name"
                 android:textSize="22sp" />
 
             <EditText
@@ -51,7 +50,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Birth Date"
+                android:text="@string/birth_date"
                 android:textSize="22sp"/>
 
             <EditText
@@ -69,7 +68,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Email"
+                android:text="@string/email"
                 android:textSize="22sp" />
 
             <TextView
@@ -90,21 +89,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Change Password" />
+                android:text="@string/change_password" />
 
             <Button
                 android:id="@+id/change_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Change Email" />
+                android:text="@string/change_email" />
 
             <Button
                 android:id="@+id/change_pin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Change PIN" />
+                android:text="@string/change_pin" />
         </LinearLayout>
 
         <View
@@ -124,14 +123,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Cancel" />
+                android:text="@string/cancel" />
 
             <Button
                 android:id="@+id/personal_info_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Ok" />
+                android:text="@string/ok" />
         </LinearLayout>
 
     </LinearLayout>

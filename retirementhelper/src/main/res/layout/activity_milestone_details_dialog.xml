@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,12 +16,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start Age:"
+            android:text="@string/start_age"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/milestone_age_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
@@ -39,12 +38,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Amount:"
+            android:text="@string/monthly_amount"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/monthly_amount_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
@@ -61,12 +60,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start Balance:"
+            android:text="@string/start_balance"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/start_balance_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
@@ -82,12 +81,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Final Balance:"
+            android:text="@string/final_balance"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/final_balance_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
@@ -103,12 +102,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Length of retirement:"
+            android:text="@string/length_of_retirement"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/retire_length_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
@@ -124,12 +123,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Funds will last:"
+            android:text="@string/funds_will_last"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/money_last_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"

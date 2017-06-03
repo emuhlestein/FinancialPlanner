@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/retirement_label"
-        android:text="Retirement Helper"
+        android:text="@string/retirement_helper"
         android:textSize="36sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
         android:layout_centerHorizontal="true"/>
 
     <Button
-        android:text="Register New User"
+        android:text="@string/register_new_user"
         android:textSize="22sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * Dialog for gathering user-selected retirement options.
  * Created by edm on 5/15/2017.
  */
 
@@ -35,7 +36,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     @Bind(R.id.retirement_parms_ok) Button mOk;
     @Bind(R.id.retirement_parms_cancel) Button mCancel;
     @OnClick(R.id.retirement_parms_ok) void onClickOk() {
-        sendIncomeSourceData();
+        sendData();
     }
     @OnClick(R.id.retirement_parms_cancel) void onClickCancel() {
         Intent returnIntent = new Intent();
@@ -52,24 +53,6 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
 
         mWithdrawAmountButton.setOnClickListener(this);
         mWithdrawPercentButton.setOnClickListener(this);
-/*
-        mOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendIncomeSourceData();
-            }
-        });
-
-        mCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent returnIntent = new Intent();
-
-                setResult(Activity.RESULT_CANCELED, returnIntent);
-                finish();
-            }
-        });
-*/
 
         updateUI();
     }
@@ -77,12 +60,15 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.withdraw_percent_button) {
-            mAmountTextView.setText("Percent Amount");
+            mAmountTextView.setText(R.string.percent_amount);
         } else {
-            mAmountTextView.setText("Dollar Amount");
+            mAmountTextView.setText(R.string.dollar_amount);
         }
     }
 
+    /**
+     * Update the UI.
+     */
     private void updateUI() {
         Intent intent = getIntent();
         RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
@@ -94,21 +80,24 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         switch(mode) {
             case RetirementConstants.WITHDRAW_MODE_AMOUNT:
                 mWithdrawModeRadioGroup.check(mWithdrawAmountButton.getId());
-                mAmountTextView.setText("Dollar Amount");
+                mAmountTextView.setText(R.string.dollar_amount);
                 break;
             case RetirementConstants.WITHDRAW_MODE_PERCENT:
                 mWithdrawModeRadioGroup.check(mWithdrawPercentButton.getId());
-                mAmountTextView.setText("Percent Amount");
+                mAmountTextView.setText(R.string.percent_amount);
                 break;
             default:
                 mWithdrawModeRadioGroup.check(mWithdrawAmountButton.getId());
-                mAmountTextView.setText("Dollar Amount");
+                mAmountTextView.setText(R.string.dollar_amount);
         }
 
         mWithdrawAmount.setText(rod.getWithdrawAmount());
     }
 
-    private void sendIncomeSourceData() {
+    /**
+     * Send the data to the interested party.
+     */
+    private void sendData() {
         String startAge = mStartAgeEditText.getText().toString();
         String endAge = mEndAgeEditText.getText().toString();
         int withdrawMode;

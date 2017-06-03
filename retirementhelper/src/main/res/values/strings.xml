@@ -32,6 +32,31 @@
     <string name="income_source_view_action">View Details</string>
     <string name="income_source_edit_action">Edit</string>
     <string name="income_source_delete_action">Delete</string>
+    <string name="retirement_options">Retirement Options</string>
+    <string name="start_age">Start Age:</string>
+    <string name="end_age">End Age:</string>
+    <string name="withdraw_amount">Withdraw Amount:</string>
+    <string name="withdraw_percentage">Withdraw Percentage:</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+    <string name="dollar_amount">Dollar Amount:</string>
+    <string name="percent_amount">Percent:</string>
+    <string name="retirement_helper">Retirement Helper</string>
+    <string name="register_new_user">Register New User</string>
+    <string name="monthly_amount">Monthly Amount:</string>
+    <string name="start_balance">Start Balance:</string>
+    <string name="final_balance">Final Balance:</string>
+    <string name="length_of_retirement">Length of retirement:</string>
+    <string name="funds_will_last">Funds will last:</string>
+    <string name="name_hint">Name</string>
+    <string name="birthdate_format">Birthdate (yyyy-MM-dd)</string>
+    <string name="personal_info">Personal Info</string>
+    <string name="name">Name</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="email">Email</string>
+    <string name="change_password">Change Password</string>
+    <string name="change_email">Change Email</string>
+    <string name="change_pin">Change PIN</string>
     <string-array name="income_source_actions">
         <item>@string/income_source_edit_action</item>
         <item>@string/income_source_delete_action</item>
