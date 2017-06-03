@@ -84,4 +84,7 @@
         <item>@string/income_source_edit_action</item>
         <item>@string/income_source_delete_action</item>
     </string-array>
+    <string name="penalty_applies">penalty applies before minimum age is reached.</string>
+    <string name="insufficient_funds">You do not have sufficient funds for the monthly amount desired.</string>
+
 </resources>

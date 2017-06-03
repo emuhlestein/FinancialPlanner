@@ -54,36 +54,6 @@ public class IncomeSourceListMenuFragment extends DialogFragment {
                 Toast.makeText(getContext(), "You selected " + incomeActions[item], Toast.LENGTH_LONG).show();
                 dialogInterface.dismiss();
                 sendResult(Activity.RESULT_OK, item);
-                /*
-                Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
-
-                switch(mIncomeSourceType) {
-                    case RetirementConstants.INCOME_TYPE_SAVINGS:
-                        if(item == MENU_EDIT) {
-                            SavingsIncomeData sid = DataBaseUtils.getSavingsIncomeData(getContext(), mIncomeSourceId);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceId);
-                            intent.putExtra(EXTRA_INCOME_DATA, sid);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
-                            startActivityForResult(intent, REQUEST_SAVINGS);
-                        } else if(item == MENU_DELETE) {
-                            int rowsDeleted = DataBaseUtils.deleteSavingsIncome(getContext(), mIncomeSourceId);
-                        }
-                        break;
-                    case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                        if(item == MENU_EDIT) {
-                            TaxDeferredIncomeData tdid = DataBaseUtils.getTaxDeferredIncomeData(getContext(), mIncomeSourceId);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceId);
-                            intent.putExtra(EXTRA_INCOME_DATA, tdid);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
-                            startActivityForResult(intent, REQUEST_TAX_DEFERRED);
-                        } else if(item == MENU_DELETE) {
-                            int rowsDeleted = DataBaseUtils.deleteTaxDeferredIncome(getContext(), mIncomeSourceId);
-                        }
-                        break;
-                }
-                */
             }
         });
         return builder.create();

@@ -222,53 +222,10 @@ public class IncomeSourceListFragment extends Fragment implements
         final long incomeSourceId = id;
         final int incomeSourceType = type;
         if(showMenu) {
-
             FragmentManager fm = getActivity().getSupportFragmentManager();
             IncomeSourceListMenuFragment dialog = IncomeSourceListMenuFragment.newInstance(id, type);
             dialog.setTargetFragment(IncomeSourceListFragment.this, REQUEST_INCOME_MENU);
             dialog.show(fm, DIALOG_MENU);
-/*
-            // TODO wrap in DialogFragment
-            final String[] incomeActions = getResources().getStringArray(R.array.income_source_actions);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setItems(incomeActions, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int item) {
-                    Toast.makeText(getContext(), "You selected " + incomeActions[item], Toast.LENGTH_LONG).show();
-                    dialogInterface.dismiss();
-                    Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
-
-                    switch(incomeSourceType) {
-                        case INCOME_TYPE_SAVINGS:
-                        if(item == MENU_EDIT) {
-                            SavingsIncomeData sid = DataBaseUtils.getSavingsIncomeData(getContext(), incomeSourceId);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-                            intent.putExtra(EXTRA_INCOME_DATA, sid);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
-                            startActivityForResult(intent, REQUEST_SAVINGS);
-                        } else if(item == MENU_DELETE) {
-                            int rowsDeleted = DataBaseUtils.deleteSavingsIncome(getContext(), incomeSourceId);
-                        }
-                        break;
-                        case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                        if(item == MENU_EDIT) {
-                            TaxDeferredIncomeData tdid = DataBaseUtils.getTaxDeferredIncomeData(getContext(), incomeSourceId);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-                            intent.putExtra(EXTRA_INCOME_DATA, tdid);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
-                            intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
-                            startActivityForResult(intent, REQUEST_TAX_DEFERRED);
-                        } else if(item == MENU_DELETE) {
-                            int rowsDeleted = DataBaseUtils.deleteTaxDeferredIncome(getContext(), incomeSourceId);
-                        }
-                        break;
-                    }
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-            */
         } else {
             Intent intent;
             RetirementOptionsData rod;

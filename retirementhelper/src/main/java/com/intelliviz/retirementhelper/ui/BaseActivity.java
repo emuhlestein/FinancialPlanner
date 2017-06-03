@@ -57,29 +57,4 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
     }
-
-
-    /*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-
-        switch (requestCode) {
-            case REQUEST_RETIRE_OPTIONS:
-                if (resultCode == RESULT_OK) {
-                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                    DataBaseUtils.saveRetirementOptions(this, rod);
-                }
-                break;
-            case REQUEST_PERSONAL_INFO:
-                if (resultCode == RESULT_OK) {
-                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-                    DataBaseUtils.savePersonalInfo(this, pid);
-                }
-                break;
-            default:
-                // needed to call the fragment onActivityResult
-                super.onActivityResult(requestCode, resultCode, intent);
-        }
-    }
-    */
 }
