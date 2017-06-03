@@ -44,10 +44,26 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
             sb.append("*");
             sb.append(msd.getPenaltyAmount());
             sb.append("% ");
-            sb.append("penalty applies before minimum age is reached");
+            sb.append("penalty applies before minimum age is reached.");
+
+            double monthlyAmount = msd.getMonthlyAmount();
+            double monthlyPenalty = monthlyAmount * penaltyAmount / 100.0;
+            monthlyAmount = monthlyAmount - monthlyPenalty;
+            formattedCurrency = SystemUtils.getFormattedCurrency(monthlyAmount);
             formattedCurrency = formattedCurrency + "*";
-            mInfoText.setText(sb.toString());
         }
+
+        String finalBalance = Double.toString(msd.getEndingBalance());
+        finalBalance = SystemUtils.getFormattedCurrency(finalBalance);
+        if(msd.getEndingBalance() < 0) {
+            finalBalance = "$0.00**";
+            if(sb.length() > 0) {
+                sb.append("\n");
+            }
+            sb.append("**");
+            sb.append("You do not have sufficient funds for the monthly amount desired.");
+        }
+        mInfoText.setText(sb.toString());
         mMonthlyAmount.setText(formattedCurrency);
         AgeData endAge = msd.getEndAge();
         AgeData startAge = msd.getStartAge();
@@ -61,8 +77,7 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
         AgeData age = new AgeData(years, months);
         mFundsDuration.setText(age.toString());
 
-        String finalBalance = Double.toString(msd.getEndingBalance());
         mStartBalance.setText(SystemUtils.getFormattedCurrency(msd.getStartBalance()));
-        mFinalBalance.setText(SystemUtils.getFormattedCurrency(finalBalance));
+        mFinalBalance.setText(finalBalance);
     }
 }

@@ -97,9 +97,18 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.Mile
                 }
             }
 
-            String formattedCurrency = SystemUtils.getFormattedCurrency(mMSD.getMonthlyAmount());
-            mMilestoneTextView.setText(SystemUtils.getFormattedAge(mMSD.getStartAge()));
+            double monthlyAmount = mMSD.getMonthlyAmount();
+            String formattedCurrency = SystemUtils.getFormattedCurrency(monthlyAmount);
+            double penalty = mMSD.getPenaltyAmount();
+            if(penalty > 0) {
+                double monthlyPenalty = monthlyAmount * penalty / 100.0;
+                monthlyAmount = monthlyAmount - monthlyPenalty;
+                formattedCurrency = SystemUtils.getFormattedCurrency(monthlyAmount);
+                formattedCurrency = formattedCurrency + "*";
+            }
+
             mMonthlyAmountTextView.setText(formattedCurrency);
+            mMilestoneTextView.setText(SystemUtils.getFormattedAge(mMSD.getStartAge()));
         }
 
         @Override

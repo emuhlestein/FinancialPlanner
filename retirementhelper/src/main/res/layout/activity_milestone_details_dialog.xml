@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Milestone Age"
+            android:text="Start Age:"
             android:textSize="22sp" />
 
         <TextView
@@ -39,7 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Amount"
+            android:text="Monthly Amount:"
             android:textSize="22sp" />
 
         <TextView
@@ -61,7 +61,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start Balance"
+            android:text="Start Balance:"
             android:textSize="22sp" />
 
         <TextView
@@ -82,7 +82,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Final Balance"
+            android:text="Final Balance:"
             android:textSize="22sp" />
 
         <TextView
@@ -124,7 +124,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Funds will last"
+            android:text="Funds will last:"
             android:textSize="22sp" />
 
         <TextView
@@ -135,6 +135,11 @@
             android:gravity="end"
             android:textSize="22sp" />
     </LinearLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/separator" />
     <TextView
         android:id="@+id/info_text_view"
         android:layout_width="match_parent"
