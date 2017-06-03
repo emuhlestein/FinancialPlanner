@@ -1,6 +1,7 @@
 package com.intelliviz.retirementhelper.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +15,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
 
 /**
  * Created by edm on 4/26/2017.
@@ -265,5 +271,26 @@ public class SystemUtils {
         sb.append(month);
         sb.append("m");
         return sb.toString();
+    }
+
+    public static Intent initTaxDeferredIntent(Intent intent, long incomeSourceId, int incomeSourceType, int action, TaxDeferredIncomeData tdid) {
+        intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+        if(tdid != null) {
+            intent.putExtra(EXTRA_INCOME_DATA, tdid);
+        }
+        intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+        return intent;
+    }
+
+    public static void initTaxDeferredIntent(Intent srcIntent, Intent dstIntent) {
+        long incomeSourceId = srcIntent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+        int incomeSourceType = srcIntent.getIntExtra(EXTRA_INCOME_SOURCE_TYPE, -1);
+        TaxDeferredIncomeData tdid = srcIntent.getParcelableExtra(EXTRA_INCOME_DATA);
+        int action = srcIntent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, -1);
+        dstIntent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+        dstIntent.putExtra(EXTRA_INCOME_DATA, tdid);
+        dstIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
+        dstIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
     }
 }

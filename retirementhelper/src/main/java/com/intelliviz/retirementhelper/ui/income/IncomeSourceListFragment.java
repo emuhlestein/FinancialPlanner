@@ -41,6 +41,7 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
 
 import butterknife.Bind;
@@ -92,6 +93,7 @@ public class IncomeSourceListFragment extends Fragment implements
             newIntent.putExtra(EXTRA_INCOME_DATA, tdid);
             newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
             newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+            SystemUtils.initTaxDeferredIntent(intent, newIntent);
             startActivityForResult(newIntent, REQUEST_TAX_DEFERRED);
         }
     };
@@ -355,9 +357,12 @@ public class IncomeSourceListFragment extends Fragment implements
                     startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                     */
                     Intent localIntent = new Intent(getContext(), TaxDeferredIntentService.class);
+                    /*
                     localIntent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
                     localIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
                     localIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
+                    */
+                    SystemUtils.initTaxDeferredIntent(localIntent, incomeSourceId, incomeSourceType, INCOME_ACTION_EDIT, null);
                     getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     FragmentManager fm = getActivity().getSupportFragmentManager();
