@@ -31,6 +31,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
+import com.intelliviz.retirementhelper.ui.YesNoDialog;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsData;
@@ -56,11 +57,13 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_I
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SAVINGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
 
 public class IncomeSourceListFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
     public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
     private static final String DIALOG_MENU = "DialogIncomeMenu";
+    private static final String DIALOG_YES_NO = "DialogYesNo";
 
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
@@ -194,6 +197,9 @@ public class IncomeSourceListFragment extends Fragment implements
                     break;
                 case REQUEST_INCOME_MENU:
                     onHandleAction(intent);
+                    break;
+                case REQUEST_YES_NO:
+                    onHandleYesNo(intent);
                     break;
             }
 
@@ -344,9 +350,23 @@ public class IncomeSourceListFragment extends Fragment implements
                     intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
                     startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                 } else if(action == INCOME_ACTION_DELETE) {
-                    int rowsDeleted = DataBaseUtils.deleteTaxDeferredIncome(getContext(), incomeSourceId);
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    YesNoDialog dialog = YesNoDialog.newInstance(incomeSourceId);
+                    dialog.setTargetFragment(IncomeSourceListFragment.this, REQUEST_YES_NO);
+                    dialog.show(fm, DIALOG_YES_NO);
+
                 }
                 break;
+        }
+    }
+
+    private void onHandleYesNo(Intent intent) {
+        int action = intent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, -1);
+        if(action == INCOME_ACTION_DELETE) {
+            long incomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+            if(incomeSourceId != -1) {
+                int rowsDeleted = DataBaseUtils.deleteTaxDeferredIncome(getContext(), incomeSourceId);
+            }
         }
     }
 
