@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "com.intelliviz.retirementhelper"
-        minSdkVersion 21
-        targetSdkVersion 25
+        minSdkVersion 17
+        targetSdkVersion 17
         versionCode 1
         versionName "1.0"
 

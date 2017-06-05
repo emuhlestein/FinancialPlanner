@@ -10,9 +10,7 @@
         android:id="@+id/income_source_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
-        android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
@@ -21,7 +19,6 @@
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:layout_weight="1"
-        android:layout_below="@id/income_source_toolbar"/>
+        android:layout_weight="1" />
 
 </LinearLayout>
