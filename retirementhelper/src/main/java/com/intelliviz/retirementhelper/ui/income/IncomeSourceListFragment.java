@@ -79,7 +79,7 @@ public class IncomeSourceListFragment extends Fragment implements
     @Bind(R.id.addIncomeTypeFAB) FloatingActionButton mAddIncomeSourceFAB;
 
     /**
-     * Receive changes to weather data: min temp, max temp, and image id.
+     * Receive changes to tax deferred data.
      */
     private BroadcastReceiver mTaxDeferreReceiver = new BroadcastReceiver() {
         @Override

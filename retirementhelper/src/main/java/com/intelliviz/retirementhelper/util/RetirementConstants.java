@@ -44,4 +44,13 @@ public class RetirementConstants {
     public static final int REQUEST_YES_NO = 7;
 
     public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";
+    public static final String LOCAL_RETIRE_OPTIONS = "retireOptionsBroadcast";
+    public static final String LOCAL_RETIRE_OPTIONS_DIALOG = "retireOptionsDialogBroadcast";
+
+    public static final String EXTRA_DB_ACTION = "db action";
+    public static final String EXTRA_DB_DATA = "db data";
+    public static final int SERVICE_DB_INSERT = 0;
+    public static final int SERVICE_DB_QUERY = 1;
+    public static final int SERVICE_DB_UPDATE = 2;
+    public static final int SERVICE_DB_DELETE = 3;
 }

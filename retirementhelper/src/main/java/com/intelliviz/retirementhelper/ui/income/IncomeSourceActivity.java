@@ -6,28 +6,25 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.ui.BaseActivity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class IncomeSourceActivity extends BaseActivity implements EditTaxDeferredIncomeFragment.EditTaxDeferredIncomeListener {
-    @Bind(R.id.income_source_toolbar) Toolbar mToolbar;
+public class IncomeSourceActivity extends AppCompatActivity implements EditTaxDeferredIncomeFragment.EditTaxDeferredIncomeListener {
+    //@Bind(R.id.income_source_toolbar) Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_income_source);
         ButterKnife.bind(this);
 
-        setSupportActionBar(mToolbar);
+        //setSupportActionBar(mToolbar);
 
-        ActionBar ab = getSupportActionBar();
+        //ActionBar ab = getSupportActionBar();
 
         Intent intent = getIntent();
         int mIncomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_TYPE_SAVINGS);
@@ -35,7 +32,7 @@ public class IncomeSourceActivity extends BaseActivity implements EditTaxDeferre
 
         if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_ADD) {
             // Add a new income source
-            ab.setSubtitle("Add income source");
+            //ab.setSubtitle("Add income source");
             switch (mIncomeSourceType) {
                 case RetirementConstants.INCOME_TYPE_SAVINGS:
                     addSavingsIncomeSourceFragment(false, intent);
@@ -48,7 +45,7 @@ public class IncomeSourceActivity extends BaseActivity implements EditTaxDeferre
             // View or edit an income source
 
             if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_EDIT) {
-                ab.setSubtitle("Add income source");
+                //ab.setSubtitle("Add income source");
                 switch (mIncomeSourceType) {
                     case RetirementConstants.INCOME_TYPE_SAVINGS:
                         addSavingsIncomeSourceFragment(false, intent);

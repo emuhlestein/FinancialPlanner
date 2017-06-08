@@ -34,7 +34,10 @@
 
         <service
             android:name=".services.TaxDeferredIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
+        <service
+            android:name=".services.RetirementOptionsService"
+            android:exported="false" />
     </application>
 
 </manifest>

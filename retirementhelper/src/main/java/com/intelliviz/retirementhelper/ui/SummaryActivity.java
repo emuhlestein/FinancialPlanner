@@ -1,13 +1,12 @@
 package com.intelliviz.retirementhelper.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -17,7 +16,7 @@ import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class SummaryActivity extends BaseActivity {
+public class SummaryActivity extends AppCompatActivity {
     private static final String DIALOG_RETIRE_OPTIONS = "reitre_options";
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String EXPENSES_FRAG_TAG = "expenses frag tag";
@@ -35,10 +34,9 @@ public class SummaryActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-
-        ActionBar ab = getSupportActionBar();
-        ab.setSubtitle("Summary");
-
+        mToolbar.showOverflowMenu();
+        mToolbar.setSubtitle("Summary");
+        //mToolbar.inflateMenu(R.menu.summary_menu);
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment;
 
@@ -94,33 +92,11 @@ public class SummaryActivity extends BaseActivity {
             }
         });
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-    }
 /*
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-
-        switch (requestCode) {
-            case REQUEST_RETIRE_OPTIONS:
-                if (resultCode == RESULT_OK) {
-                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                    DataBaseUtils.saveRetirementOptions(this, rod);
-                }
-                break;
-            case REQUEST_PERSONAL_INFO:
-                if (resultCode == RESULT_OK) {
-                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-                    DataBaseUtils.savePersonalInfo(this, pid);
-                }
-                break;
-            default:
-                // needed to call the fragment onActivityResult
-                super.onActivityResult(requestCode, resultCode, intent);
-        }
-
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.summary_menu, menu);
+        return true;
     }
     */
 }

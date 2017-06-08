@@ -8,7 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -16,9 +20,13 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
 import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
+import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
+import com.intelliviz.retirementhelper.ui.RetirementOptionsDialog;
 import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.MilestoneData;
+import com.intelliviz.retirementhelper.util.PersonalInfoData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
@@ -30,14 +38,18 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Intent.EXTRA_INTENT;
-
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 public class ViewTaxDeferredIncomeFragment extends Fragment implements SelectionMilestoneListener {
     public static final String VIEW_TAXDEF_INCOME_FRAG_TAG = "view taxdef income frag tag";
     private TaxDeferredIncomeData mTDID;
     private RetirementOptionsData mROD;
     private MilestoneAdapter mMilestoneAdapter;
+    private List<MilestoneData> mMilestones;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
@@ -46,6 +58,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
     @Bind(R.id.minimum_age_text_view) TextView mMinimumAge;
     @Bind(R.id.penalty_amount_text_view) TextView mPenaltyAmount;
     @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
+    @Bind(R.id.view_tax_defered_toolbar) Toolbar mToolbar;
 
     public ViewTaxDeferredIncomeFragment() {
         // Required empty public constructor
@@ -64,10 +77,9 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mTDID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            mTDID = intent.getParcelableExtra(EXTRA_INCOME_DATA);
             mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
         }
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -77,8 +89,8 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         View view = inflater.inflate(R.layout.fragment_view_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
 
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
-        mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
+        mMilestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
+        mMilestoneAdapter = new MilestoneAdapter(getContext(), mMilestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);
@@ -86,11 +98,19 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
                 linearLayoutManager.getOrientation()));
         mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
+        setHasOptionsMenu(true);
+
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+
         updateUI();
         return view;
     }
 
-/*
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.summary_menu, menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
@@ -102,6 +122,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
                     intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
                 }
                 startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
+
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(getContext(), PersonalInfoDialog.class);
@@ -114,7 +135,6 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         }
         return super.onOptionsItemSelected(item);
     }
-    */
 
     private void updateUI() {
         if(mTDID == null) {
@@ -125,7 +145,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         String subTitle = SystemUtils.getIncomeSourceTypeString(getContext(), mTDID.getType());
         SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), subTitle);
         mAnnualInterest.setText(mTDID.getInterest()+"%");
-        // TODO getMonthAddition vs getMonthlyIncrease in SID
+        // TODO getMonthAddition vs getMonthlyIncrease in SID - spelling consistency
         mMonthlyIncrease.setText(SystemUtils.getFormattedCurrency(mTDID.getMonthAddition()));
         mMinimumAge.setText(mTDID.getMinimumAge());
         mPenaltyAmount.setText(mTDID.getPenalty() +"%");
@@ -144,5 +164,28 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         Intent intent = new Intent(getContext(), MilestoneDetailsDialog.class);
         intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, msd);
         startActivity(intent);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch (requestCode) {
+            case REQUEST_RETIRE_OPTIONS:
+                if (resultCode == RESULT_OK) {
+                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                    DataBaseUtils.saveRetirementOptions(getContext(), rod);
+                    mROD = rod;
+                    List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
+                    mMilestoneAdapter.update(milestones);
+                }
+                break;
+            case REQUEST_PERSONAL_INFO:
+                if (resultCode == RESULT_OK) {
+                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+                    DataBaseUtils.savePersonalInfo(getContext(), pid);
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, intent);
+        }
     }
 }

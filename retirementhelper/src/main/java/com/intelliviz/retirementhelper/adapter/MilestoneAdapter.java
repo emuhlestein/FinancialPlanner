@@ -51,6 +51,13 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.Mile
         }
     }
 
+    public void update(List<MilestoneData> milestones) {
+        mMilestones.clear();
+        mMilestones.addAll(milestones);
+        notifyDataSetChanged();
+
+    }
+
     public void setOnSelectionMilestoneListener (SelectionMilestoneListener listener) {
         mListener = listener;
     }
