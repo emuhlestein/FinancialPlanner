@@ -1,11 +1,14 @@
 package com.intelliviz.retirementhelper.ui.income;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,6 +32,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.content.Intent.EXTRA_INTENT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -39,7 +44,6 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 public class EditTaxDeferredIncomeFragment extends Fragment {
     public static final String EDIT_TAXDEF_INCOME_FRAG_TAG = "edit taxdef income frag tag";
     private TaxDeferredIncomeData mTDI;
-    private EditTaxDeferredIncomeListener mListener;
 
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
@@ -51,11 +55,12 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     @Bind(R.id.add_income_source_button) Button mAddIncomeSource;
     @Bind(R.id.view_tax_defered_toolbar) Toolbar mToolbar;
 
-
-    // TODO need to remove interface
-    public interface EditTaxDeferredIncomeListener {
-        void onEditTaxDeferredIncome(TaxDeferredIncomeData tdid);
-    }
+    private BroadcastReceiver mTaxDeferredReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_DB_DATA);
+        }
+    };
 
     public EditTaxDeferredIncomeFragment() {
         // Required empty public constructor
@@ -167,25 +172,33 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver();
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof EditTaxDeferredIncomeListener) {
-            mListener = (EditTaxDeferredIncomeListener) context;
-        } else {
-            throw new ClassCastException("Activity must implement EditTaxDeferredIncomeListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     private void updateUI() {
         if(mTDI.getId() == -1) {
             return;
         }
+
+        // TODO clean up strings
 
         String incomeSourceName = mTDI.getName();
         int type = mTDI.getType();
@@ -246,8 +259,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
             return;
         }
 
-        Intent returnIntent = new Intent();
-
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
 
@@ -255,23 +266,22 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(mTDI.getId(), name, mTDI.getType(), minimumAge, interest, monthlyIncrease, penaltyAmount, 1);
         tdid.addBalance(new BalanceData(balance, date));
         updateTDID(tdid);
-        //returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_DATA, tdid);
-
-        //getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        //getActivity().finish();
-        // TODO
-        /*
-        if(mListener != null) {
-            mListener.onEditTaxDeferredIncome(tdid);
-        }
-        */
     }
 
     private void updateTDID(TaxDeferredIncomeData tdid) {
         Intent intent = new Intent(getContext(), TaxDeferredIntentService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_ID, tdid.getId());
-        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, tdid);
+        intent.putExtra(EXTRA_DB_DATA, tdid);
         intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         getActivity().startService(intent);
+    }
+
+    private void registerReceiver() {
+        IntentFilter filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mTaxDeferredReceiver, filter);
+    }
+
+    private void unregisterReceiver() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTaxDeferredReceiver);
     }
 }

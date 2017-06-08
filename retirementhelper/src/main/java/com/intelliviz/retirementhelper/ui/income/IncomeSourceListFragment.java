@@ -41,13 +41,16 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
@@ -64,6 +67,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_P
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SAVINGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 
 public class IncomeSourceListFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
@@ -78,22 +82,17 @@ public class IncomeSourceListFragment extends Fragment implements
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.addIncomeTypeFAB) FloatingActionButton mAddIncomeSourceFAB;
 
-    /**
-     * Receive changes to tax deferred data.
-     */
-    private BroadcastReceiver mTaxDeferreReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mTaxDeferredReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_DB_DATA);
+            RetirementOptionsData rod = intent.getParcelableExtra(EXTRA_DB_EXTRA_DATA);
             Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
-            long incomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
-            int incomeSourceType = intent.getIntExtra(EXTRA_INCOME_SOURCE_TYPE, -1);
-            TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
-            int action = intent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, -1);
-            newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, tdid.getId());
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, tdid.getType());
             newIntent.putExtra(EXTRA_INCOME_DATA, tdid);
-            newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
-            newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
-            SystemUtils.initTaxDeferredIntent(intent, newIntent);
+            newIntent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
             startActivityForResult(newIntent, REQUEST_TAX_DEFERRED);
         }
     };
@@ -295,13 +294,12 @@ public class IncomeSourceListFragment extends Fragment implements
     }
 
     private void registerReceiver() {
-        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getActivity());
         IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mTaxDeferreReceiver, filter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mTaxDeferredReceiver, filter);
     }
 
     private void unregisterReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTaxDeferreReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTaxDeferredReceiver);
     }
 
     private void saveSavingsIncomeData(Intent intent) {
@@ -357,12 +355,14 @@ public class IncomeSourceListFragment extends Fragment implements
                     startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                     */
                     Intent localIntent = new Intent(getContext(), TaxDeferredIntentService.class);
+                    localIntent.putExtra(EXTRA_DB_ID, incomeSourceId);
+                    localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
                     /*
                     localIntent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
                     localIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
                     localIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
                     */
-                    SystemUtils.initTaxDeferredIntent(localIntent, incomeSourceId, incomeSourceType, INCOME_ACTION_EDIT, null);
+                    //SystemUtils.initTaxDeferredIntent(localIntent, incomeSourceId, incomeSourceType, INCOME_ACTION_QUERY, null);
                     getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     FragmentManager fm = getActivity().getSupportFragmentManager();
