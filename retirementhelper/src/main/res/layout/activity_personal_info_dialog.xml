@@ -39,7 +39,9 @@
 
             <EditText
                 android:id="@+id/name_edit_text"
-                style="@style/ThreeDigitPositiveNumber" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minEms="20" />
         </LinearLayout>
 
         <LinearLayout
