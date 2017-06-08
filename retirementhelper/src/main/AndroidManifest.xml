@@ -38,6 +38,9 @@
         <service
             android:name=".services.RetirementOptionsService"
             android:exported="false" />
+        <service
+            android:name=".services.PersonalDataService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
+import com.intelliviz.retirementhelper.services.PersonalDataService;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
 import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
@@ -69,7 +70,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
     private BroadcastReceiver mRetirementOptionsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int rowsUpdated = intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
+            intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
             List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
             mMilestoneAdapter.update(milestones);
         }
@@ -173,6 +174,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         mIncomeSourceName.setText(mTDID.getName());
         String subTitle = SystemUtils.getIncomeSourceTypeString(getContext(), mTDID.getType());
         SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), subTitle);
+        // TODO deal with % sign here and below
         mAnnualInterest.setText(mTDID.getInterest()+"%");
         // TODO getMonthAddition vs getMonthlyIncrease in SID - spelling consistency
         mMonthlyIncrease.setText(SystemUtils.getFormattedCurrency(mTDID.getMonthAddition()));
@@ -208,7 +210,8 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
                     PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-                    DataBaseUtils.savePersonalInfo(getContext(), pid);
+                    updatePID(pid);
+                    //DataBaseUtils.savePersonalInfo(getContext(), pid);
                 }
                 break;
             default:
@@ -228,6 +231,13 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
     private void updateROD(RetirementOptionsData rod) {
         Intent intent = new Intent(getContext(), RetirementOptionsService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        getActivity().startService(intent);
+    }
+
+    private void updatePID(PersonalInfoData pid) {
+        Intent intent = new Intent(getContext(), PersonalDataService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, pid);
         intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         getActivity().startService(intent);
     }
