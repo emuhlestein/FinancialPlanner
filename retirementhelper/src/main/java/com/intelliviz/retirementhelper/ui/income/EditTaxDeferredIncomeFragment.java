@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.util.BalanceData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -47,8 +49,10 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     @Bind(R.id.penalty_age_text) EditText mPenaltyAge;
     @Bind(R.id.penalty_amount_text) EditText mPenaltyAmount;
     @Bind(R.id.add_income_source_button) Button mAddIncomeSource;
+    @Bind(R.id.view_tax_defered_toolbar) Toolbar mToolbar;
 
 
+    // TODO need to remove interface
     public interface EditTaxDeferredIncomeListener {
         void onEditTaxDeferredIncome(TaxDeferredIncomeData tdid);
     }
@@ -81,10 +85,10 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
 
-        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
 
         if(mTDI.getId() == -1) {
-            ab.setSubtitle(SystemUtils.getIncomeSourceTypeString(getContext(), RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
+            mToolbar.setSubtitle(SystemUtils.getIncomeSourceTypeString(getContext(), RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
         } else {
             updateUI();
         }
@@ -250,12 +254,24 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         String minimumAge = mPenaltyAge.getText().toString();
         TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(mTDI.getId(), name, mTDI.getType(), minimumAge, interest, monthlyIncrease, penaltyAmount, 1);
         tdid.addBalance(new BalanceData(balance, date));
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_DATA, tdid);
+        updateTDID(tdid);
+        //returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_DATA, tdid);
 
         //getActivity().setResult(Activity.RESULT_OK, returnIntent);
         //getActivity().finish();
+        // TODO
+        /*
         if(mListener != null) {
             mListener.onEditTaxDeferredIncome(tdid);
         }
+        */
+    }
+
+    private void updateTDID(TaxDeferredIncomeData tdid) {
+        Intent intent = new Intent(getContext(), TaxDeferredIntentService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ID, tdid.getId());
+        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, tdid);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        getActivity().startService(intent);
     }
 }

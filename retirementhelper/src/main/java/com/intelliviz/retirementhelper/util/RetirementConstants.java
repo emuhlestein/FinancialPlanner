@@ -49,6 +49,7 @@ public class RetirementConstants {
 
     public static final String EXTRA_DB_DATA = "db data";
     public static final String EXTRA_DB_ROWS_UPDATED = "rows updated";
+    public static final String EXTRA_DB_ID = "db id";
     public static final String EXTRA_DB_ACTION = "db action";
     public static final int SERVICE_DB_INSERT = 0;
     public static final int SERVICE_DB_QUERY = 1;
