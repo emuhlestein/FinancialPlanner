@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.ui.income;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,11 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
 
 import butterknife.ButterKnife;
 
-public class IncomeSourceActivity extends AppCompatActivity implements EditTaxDeferredIncomeFragment.EditTaxDeferredIncomeListener {
+public class IncomeSourceActivity extends AppCompatActivity {
     //@Bind(R.id.income_source_toolbar) Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,13 +116,5 @@ public class IncomeSourceActivity extends AppCompatActivity implements EditTaxDe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-    }
-
-    @Override
-    public void onEditTaxDeferredIncome(TaxDeferredIncomeData tdid) {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_DATA, tdid);
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
     }
 }

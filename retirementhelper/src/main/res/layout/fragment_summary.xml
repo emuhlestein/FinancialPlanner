@@ -4,184 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="16sp"
+    android:layout_marginRight="16sp"
+    android:orientation="vertical"
     tools:context="com.intelliviz.retirementhelper.ui.SummaryActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Current Monthly"
-            android:textStyle="bold"
-            android:textSize="22sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:text="Expenses:"
-                android:textSize="22sp" />
-
-            <!-- Linear layout is to allow textview to be pushed to right -->
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/current_monthly_expenses"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:text="$5,0000.00"
-                    android:textSize="22sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Income:"
-                android:textSize="22sp" />
-
-            <!-- Linear layout is to allow textview to be pushed to right -->
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/current_monthly_income"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="22sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Difference"
-                android:textSize="22sp" />
-
-            <!-- Linear layout is to allow textview to be pushed to right -->
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/current_difference"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="22sp" />
-            </LinearLayout>
-        </LinearLayout>
+            android:text="@string/current_balance"
+            android:textSize="22sp"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/current_balance_text_view"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Retirement Monthly"
-            android:textStyle="bold"
-            android:textSize="22sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Expenses:"
-                android:textSize="22sp" />
-
-            <!-- Linear layout is to allow textview to be pushed to right -->
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/retire_monthly_expenses"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="22sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Income:"
-                android:textSize="22sp" />
-
-            <!-- Linear layout is to allow textview to be pushed to right -->
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/retire_monthly_income"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="22sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Difference"
-                android:textSize="22sp" />
-
-            <!-- Linear layout is to allow textview to be pushed to right -->
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/retire_difference"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="22sp" />
-            </LinearLayout>
-        </LinearLayout>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/separator" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

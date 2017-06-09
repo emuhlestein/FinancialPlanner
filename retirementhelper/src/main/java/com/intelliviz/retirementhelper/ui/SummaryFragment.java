@@ -4,18 +4,21 @@ package com.intelliviz.retirementhelper.ui;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class SummaryFragment extends Fragment {
-    private ActionBarDrawerToggle mDrawerToggle;
+    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
+    @Bind(R.id.current_balance_text_view) TextView mBalanceTextView;
 
     public SummaryFragment() {
         // Required empty public constructor
