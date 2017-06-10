@@ -62,14 +62,14 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.Mile
         mListener = listener;
     }
 
-    public class MilestoneHolder extends RecyclerView.ViewHolder
+    class MilestoneHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         private TextView mMilestoneTextView;
         private TextView mMonthlyAmountTextView;
         private LinearLayout mLinearLayout;
         private MilestoneData mMSD;
 
-        public MilestoneHolder(View itemView) {
+        private MilestoneHolder(View itemView) {
             super(itemView);
             mLinearLayout = (LinearLayout) itemView.findViewById(R.id.milestone_item_layout);
             mMilestoneTextView = (TextView) itemView.findViewById(R.id.milestone_text_view);
@@ -77,7 +77,7 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.Mile
             itemView.setOnClickListener(this);
         }
 
-        public void bindMilestone(int position) {
+        private void bindMilestone(int position) {
             mMSD = mMilestones.get(position);
 
             final int sdk = android.os.Build.VERSION.SDK_INT;
