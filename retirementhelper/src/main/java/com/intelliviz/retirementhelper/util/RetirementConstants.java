@@ -43,6 +43,7 @@ public class RetirementConstants {
     public static final int REQUEST_INCOME_MENU = 6;
     public static final int REQUEST_YES_NO = 7;
 
+    public static final String LOCAL_SAVINGS = "savingsDataBroadcast";
     public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";
     public static final String LOCAL_PENSION = "retireOptionsBroadcast";
     public static final String LOCAL_RETIRE_OPTIONS = "retireOptionsBroadcast";
