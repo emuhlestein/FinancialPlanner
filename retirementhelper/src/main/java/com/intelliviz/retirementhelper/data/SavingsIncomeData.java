@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.util;
+package com.intelliviz.retirementhelper.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -35,6 +35,26 @@ public class SavingsIncomeData extends IncomeTypeData {
         mMonthlyIncrease = monthlyIncrease;
     }
 
+    @Override
+    public boolean hasABalance() {
+        return true;
+    }
+
+    @Override
+    public double getBalance() {
+        if(mBalanceDataList.isEmpty()) {
+            return 0;
+        } else {
+            return mBalanceDataList.get(0).getBalance();
+        }
+    }
+
+    @Override
+    public double getMonthlyBenefit(double withdrawalRate) {
+        double monthlyInterest = withdrawalRate / 1200.0;
+        return getBalance() * monthlyInterest;
+    }
+
     public String getInterest() {
         return mInterest;
     }
@@ -51,7 +71,7 @@ public class SavingsIncomeData extends IncomeTypeData {
         return mBalanceDataList;
     }
 
-    public SavingsIncomeData(Parcel in) {
+    private SavingsIncomeData(Parcel in) {
         readFromParcel(in);
     }
 

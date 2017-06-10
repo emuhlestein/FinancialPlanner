@@ -5,6 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.intelliviz.retirementhelper.data.BalanceData;
+import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
+import com.intelliviz.retirementhelper.data.IncomeType;
+import com.intelliviz.retirementhelper.data.PensionIncomeData;
+import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
 import java.util.ArrayList;
@@ -15,6 +22,7 @@ import java.util.List;
  */
 
 public class DataBaseUtils {
+
     //
     // Methods for personal info table
     //
@@ -51,8 +59,7 @@ public class DataBaseUtils {
 
     public static Cursor getPersonalInfo(Context context) {
         Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI;
-        String[] projection = null; // we want all columns
-        return context.getContentResolver().query(uri, projection, null, null, null);
+        return context.getContentResolver().query(uri, null, null, null, null);
     }
 
     //
@@ -78,10 +85,9 @@ public class DataBaseUtils {
         return context.getContentResolver().update(uri, values, null, null);
     }
 
-    public static Cursor getRetirementOptions(Context context) {
+    private static Cursor getRetirementOptions(Context context) {
         Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
-        String[] projection = null; // we want all columns
-        return context.getContentResolver().query(uri, projection, null, null, null);
+        return context.getContentResolver().query(uri, null, null, null, null);
     }
 
     public static RetirementOptionsData getRetirementOptionsData(Context context) {
@@ -131,22 +137,25 @@ public class DataBaseUtils {
 
     public static Cursor getIncomeType(Context context, String name) {
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        String[] projection = null; // we want all columns
         String selection = RetirementContract.IncomeTypeEntry.COLUMN_NAME+ " = ?";
         String[] selectionArgs = {name};
-        return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+        return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
     }
 
-    public static Cursor getIncomeType(Context context, long incomeId) {
+    public static Cursor getIncomeTypes(Context context) {
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        String[] projection = null; // we want all columns
+        return context.getContentResolver().query(uri, null, null, null, null);
+    }
+
+    private static Cursor getIncomeType(Context context, long incomeId) {
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         String selection = RetirementContract.IncomeTypeEntry._ID + " = ?";
         String id = String.valueOf(incomeId);
         String[] selectionArgs = {id};
-        return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+        return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
     }
 
-    private static IncomeDataHelper getIncomeTypeData(Context context, long incomeId) {
+    static IncomeDataHelper getIncomeTypeData(Context context, long incomeId) {
         Cursor cursor = getIncomeType(context, incomeId);
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
@@ -254,104 +263,7 @@ public class DataBaseUtils {
     // Methods for TaxDeferredIncome table
     //
 
-    public static String addTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid) {
-        String id = addIncomeType(context, tdid);
-        if(id == null) {
-            return null;
-        }
 
-        long incomeId = Long.parseLong(id);
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE, tdid.getMinimumAge());
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST, tdid.getInterest());
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD, tdid.getMonthAddition());
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY, tdid.getPenalty());
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K, tdid.getIs401k());
-        Uri uri = context.getContentResolver().insert(RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI, values);
-
-        List<BalanceData> balanceDataList = tdid.getBalanceDataList();
-        for(BalanceData bd : balanceDataList) {
-            addBalanceData(context, incomeId, bd.getBalance(), bd.getDate());
-        }
-        return "";
-    }
-
-    public static int saveTaxDeferredData(Context context, TaxDeferredIncomeData tdid) {
-        saveIncomeType(context, tdid);
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE, tdid.getMinimumAge());
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST, tdid.getInterest());
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD, tdid.getMonthAddition());
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY, tdid.getPenalty());
-        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K, tdid.getIs401k());
-
-        String id = String.valueOf(tdid.getId());
-        Uri uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, id);
-        context.getContentResolver().update(uri, values, null, null);
-        List<BalanceData> balanceDataList = tdid.getBalanceDataList();
-        for(BalanceData bd : balanceDataList) {
-            saveBalanceData(context, tdid.getId(), bd.getBalance(), bd.getDate());
-        }
-
-        return 0;
-    }
-
-    public static Cursor getTaxDeferredIncome(Context context, long incomeId) {
-        Uri uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
-        String[] projection = null; // we want all columns
-        String selection = RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
-        String sid = String.valueOf(incomeId);
-        String[] selectionArgs = {sid};
-        return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
-    }
-
-    public static TaxDeferredIncomeData getTaxDeferredIncomeData(Context context, long incomeId) {
-        IncomeDataHelper idh = getIncomeTypeData(context, incomeId);
-        if(idh == null) {
-            return null;
-        }
-
-        Cursor cursor = getTaxDeferredIncome(context, incomeId);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return null;
-        }
-        int minAgeIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE);
-        int interestIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST);
-        int monthAddIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD);
-        int penaltyIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY);
-        int is401kIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K);
-        String minAge = cursor.getString(minAgeIndex);
-        String interest = cursor.getString(interestIndex);
-        String monthAdd = cursor.getString(monthAddIndex);
-        String penalty = cursor.getString(penaltyIndex);
-        int is401k = cursor.getInt(is401kIndex);
-        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, is401k);
-
-        BalanceData[] bds = getBalanceData(context, incomeId);
-        if(bds != null) {
-            for (BalanceData bd : bds) {
-                tdid.addBalance(bd);
-            }
-        }
-        return tdid;
-    }
-
-    public static int deleteTaxDeferredIncome(Context context, long incomeId) {
-        String sid = String.valueOf(incomeId);
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
-        uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
-        uri = RetirementContract.BalanceEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
-
-        return numRowsDeleted; // TODO return succeed or fail flag
-    }
 
     //
     // Methods for PensionIncome table
@@ -379,13 +291,12 @@ public class DataBaseUtils {
         return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
     }
 
-    public static Cursor getPensionIncome(Context context, long incomeId) {
+    private static Cursor getPensionIncome(Context context, long incomeId) {
         Uri uri = RetirementContract.PensionIncomeEntry.CONTENT_URI;
-        String[] projection = null; // we want all columns
         String selection = RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
         String id = String.valueOf(incomeId);
         String[] selectionArgs = {id};
-        return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+        return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
     }
 
     public static PensionIncomeData getPensionIncomeData(Context context, long incomeId) {
@@ -401,7 +312,8 @@ public class DataBaseUtils {
         int monthlyBenefitIndex = cursor.getColumnIndex(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT);
         String startAge = cursor.getString(startAgeIndex);
         String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
-        return new PensionIncomeData(incomeId, idh.name, idh.type, startAge, monthlyBenefit);
+        double amount = Double.parseDouble(monthlyBenefit);
+        return new PensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
     }
 
     //
@@ -414,7 +326,10 @@ public class DataBaseUtils {
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, monthlyAmount);
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, minimumAge);
         Uri uri = context.getContentResolver().insert(RetirementContract.GovPensionIncomeEntry.CONTENT_URI, values);
-        return uri.getLastPathSegment();
+        if (uri == null) {
+            return null;
+        } else
+            return uri.getLastPathSegment();
     }
 
     public static int saveGovPensionData(Context context, long incomeId, String monthlyAmount, String minimumAge) {
@@ -430,13 +345,12 @@ public class DataBaseUtils {
         return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
     }
 
-    public static Cursor getGovPensionIncome(Context context, long incomeId) {
+    private static Cursor getGovPensionIncome(Context context, long incomeId) {
         Uri uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
-        String[] projection = null; // we want all columns
         String selection = RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
         String id = String.valueOf(incomeId);
         String[] selectionArgs = {id};
-        return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+        return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
     }
 
     public static GovPensionIncomeData getGovPensionIncomeData(Context context, long incomeId) {
@@ -453,14 +367,16 @@ public class DataBaseUtils {
         int monthlyBenefitIndex = cursor.getColumnIndex(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT);
         String startAge = cursor.getString(minAgeIndex);
         String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
-        return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, monthlyBenefit);
+        double amount = Double.parseDouble(monthlyBenefit);
+        return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
     }
 
     //
     // Methods for GovPensionIncome table
     //
 
-    public static String addBalanceData(Context context, long incomeId, String amount, String date) {
+    static String addBalanceData(Context context, long incomeId, double balance, String date) {
+        String amount = Double.toString(balance);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID, incomeId);
         values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, amount);
@@ -469,7 +385,8 @@ public class DataBaseUtils {
         return uri.getLastPathSegment();
     }
 
-    public static int saveBalanceData(Context context, long incomeId, String amount, String date) {
+    static int saveBalanceData(Context context, long incomeId, double balance, String date) {
+        String amount = Double.toString(balance);
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, amount);
         values.put(RetirementContract.BalanceEntry.COLUMN_DATE, date);
@@ -482,17 +399,16 @@ public class DataBaseUtils {
         return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
     }
 
-    public static Cursor getBalances(Context context, long incomeId) {
+    private static Cursor getBalances(Context context, long incomeId) {
         Uri uri = RetirementContract.BalanceEntry.CONTENT_URI;
-        String[] projection = null; // we want all columns
         String selection = RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " = ?";
         String id = String.valueOf(incomeId);
         String[] selectionArgs = {id};
         String sortOrder = RetirementContract.BalanceEntry.COLUMN_DATE + " DESC";
-        return context.getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
+        return context.getContentResolver().query(uri, null, selection, selectionArgs, sortOrder);
     }
 
-    public static BalanceData[] getBalanceData(Context context, long incomeId) {
+    static BalanceData[] getBalanceData(Context context, long incomeId) {
         Cursor cursor = getBalances(context, incomeId);
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
@@ -503,8 +419,10 @@ public class DataBaseUtils {
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             int balanceIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
             int dateIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_DATE);
-            String balance = cursor.getString(balanceIndex);
+            String amount = cursor.getString(balanceIndex);
             String date = cursor.getString(dateIndex);
+
+            double balance = Double.parseDouble(amount);
             bd[index++] = new BalanceData(balance, date);
         }
 

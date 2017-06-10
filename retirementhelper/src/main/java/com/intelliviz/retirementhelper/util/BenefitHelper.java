@@ -2,6 +2,14 @@ package com.intelliviz.retirementhelper.util;
 
 import android.content.Context;
 
+import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.IncomeType;
+import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.SavingsIncomeData;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,16 +34,9 @@ public class BenefitHelper {
     }
 
     private static List<MilestoneData> getMilestonesFromSavingsIncome(Context context, SavingsIncomeData sid) {
-        List<BalanceData> bd = sid.getBalanceDataList();
-        return getMilestones(context, parseDouble(bd.get(0).getBalance()),
+        return getMilestones(context, sid.getBalance(),
                 parseDouble(sid.getInterest()),
                 parseDouble(sid.getMonthlyIncrease()));
-    }
-
-    private static List<MilestoneData> getMilestonesFromTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid, RetirementOptionsData rod) {
-        List<BalanceData> bd = tdid.getBalanceDataList();
-        List<MilestoneData> milestones = getMilestonesNoPrincipleReduction(context, tdid, rod);
-        return milestones;
     }
 
     /**
@@ -54,7 +55,7 @@ public class BenefitHelper {
         double newBalance = 0;
         for(int i = 0; i < ages.size(); i++) {
             if(i == 0) {
-                newBalance = getBalance(balance, 0, interest, monthlyIncrease);
+                newBalance = getFutureBalance(balance, 0, interest, monthlyIncrease);
                 monthlyAmount = getMonthlyAmountFromBalance(newBalance, interest);
                 //milestones.add(new MilestoneData(ages.get(0), Double.toString(monthlyAmount), Double.toString(newBalance)));
                 refAge = ages.get(0);
@@ -62,7 +63,7 @@ public class BenefitHelper {
                 AgeData age = ages.get(i);
                 AgeData diffAge = age.subtract(refAge);
                 int numMonths = diffAge.getNumberOfMonths();
-                newBalance = getBalance(newBalance, numMonths, interest, monthlyIncrease);
+                newBalance = getFutureBalance(newBalance, numMonths, interest, monthlyIncrease);
                 monthlyAmount = getMonthlyAmountFromBalance(newBalance, interest);
                // milestones.add(new MilestoneData(age, Double.toString(monthlyAmount), Double.toString(newBalance)));
                 refAge = age;
@@ -96,15 +97,14 @@ public class BenefitHelper {
      * Get the milestones based on no loss of principle. Living off the interest only.
      * @return
      */
-    private static List<MilestoneData> getMilestonesNoPrincipleReduction(Context context, TaxDeferredIncomeData tdid, RetirementOptionsData rod) {
-        List<BalanceData> bd = tdid.getBalanceDataList();
-        double startBalance = parseDouble(bd.get(0).getBalance());
-        double interestRate = parseDouble(tdid.getInterest());
-        double monthlyAddition = Double.parseDouble(tdid.getMonthAddition());
-        double penalty = Double.parseDouble(tdid.getPenalty());
+    private static List<MilestoneData> getMilestonesFromTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid, RetirementOptionsData rod) {
+        double startBalance = tdid.getBalance();
+        double interestRate = tdid.getInterestRate();
+        double monthlyAddition = tdid.getMonthAddition();
+        double penalty = tdid.getPenalty();
         String minAge = tdid.getMinimumAge();
         String endAge = rod.getEndAge();
-        double withdrawAmount = Double.parseDouble(rod.getWithdrawAmount());
+        double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
         List<AgeData> ages = getMilestoneAges(context);
         if(ages.isEmpty()) {
@@ -114,15 +114,6 @@ public class BenefitHelper {
         AgeData endOfLifeAge = new AgeData(endAge);
 
         List<Double> milestoneBalances = getMilestoneBalances(ages, startBalance, interestRate, monthlyAddition);
-/*
-        for(int i = 0; i < ages.size(); i++) {
-            AgeData mileStoneAge = ages.get(i);
-            double milestoneBalance = balances.get(i);
-            MilestoneData milestoneData = getMonthlyBalances(mileStoneAge, endOfLifeAge,
-                    milestoneBalance, monthlyInterest, withdrawPercent, penalty, minimumAge);
-            milestones.add(milestoneData);
-        }
-*/
 
         milestones = getMilestones(endOfLifeAge, minimumAge, interestRate, penalty, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
         return milestones;
@@ -190,7 +181,7 @@ public class BenefitHelper {
             AgeData age = ages.get(i);
             AgeData diffAge = age.subtract(refAge);
             int numMonths = diffAge.getNumberOfMonths();
-            newBalance = getBalance(newBalance, numMonths, interest, monthlyIncrease);
+            newBalance = getFutureBalance(newBalance, numMonths, interest, monthlyIncrease);
             balances.add(newBalance);
             refAge = age;
         }
@@ -212,7 +203,16 @@ public class BenefitHelper {
         return milestones;
     }
 
-    private static double getBalance(double balance, int numMonths, double interest, double monthlyIncrease) {
+    /**
+     * Calculate the balance in the future after a certain number of months, at the specified interest rate
+     * and with monthly increases.
+     * @param balance The current balance.
+     * @param numMonths The number of months over which to calculate the gains.
+     * @param interest The annual interest rate.
+     * @param monthlyIncrease THe monthly amount added to the balance.
+     * @return The new balance.
+     */
+    private static double getFutureBalance(double balance, int numMonths, double interest, double monthlyIncrease) {
         double cumulativeBalance = balance;
         for(int i = 0; i < numMonths; i++) {
             cumulativeBalance = getBalance(cumulativeBalance, interest, monthlyIncrease);

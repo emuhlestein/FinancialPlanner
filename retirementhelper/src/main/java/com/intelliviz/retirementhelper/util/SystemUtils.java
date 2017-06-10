@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

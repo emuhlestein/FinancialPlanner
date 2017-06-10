@@ -28,16 +28,16 @@ import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
 import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
 import com.intelliviz.retirementhelper.ui.RetirementOptionsDialog;
-import com.intelliviz.retirementhelper.util.BalanceData;
+import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.MilestoneData;
-import com.intelliviz.retirementhelper.util.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 
 import java.util.List;
 
@@ -175,13 +175,13 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         String subTitle = SystemUtils.getIncomeSourceTypeString(getContext(), mTDID.getType());
         SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), subTitle);
         // TODO deal with % sign here and below
-        mAnnualInterest.setText(mTDID.getInterest()+"%");
+        mAnnualInterest.setText(mTDID.getInterestRate()+"%");
         // TODO getMonthAddition vs getMonthlyIncrease in SID - spelling consistency
         mMonthlyIncrease.setText(SystemUtils.getFormattedCurrency(mTDID.getMonthAddition()));
         mMinimumAge.setText(mTDID.getMinimumAge());
         mPenaltyAmount.setText(mTDID.getPenalty() +"%");
 
-        List<BalanceData> bd = mTDID.getBalanceDataList();
+        List<BalanceData> bd = mTDID.getBalanceData();
         String formattedAmount = "$0.00";
         if(bd != null && !bd.isEmpty()) {
             formattedAmount = SystemUtils.getFormattedCurrency(bd.get(0).getBalance());

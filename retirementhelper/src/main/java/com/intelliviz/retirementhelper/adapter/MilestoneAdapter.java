@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.util.MilestoneData;
+import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 

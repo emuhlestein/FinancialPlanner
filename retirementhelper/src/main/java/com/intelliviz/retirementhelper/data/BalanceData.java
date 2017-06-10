@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.util;
+package com.intelliviz.retirementhelper.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,15 +8,15 @@ import android.os.Parcelable;
  */
 
 public class BalanceData implements Parcelable {
-    private String mBalance;
+    private double mBalance;
     private String mDate;
 
-    public BalanceData(String balance, String date) {
+    public BalanceData(double balance, String date) {
         mBalance = balance;
         mDate = date;
     }
 
-    public String getBalance() {
+    public double getBalance() {
         return mBalance;
     }
 
@@ -35,12 +35,12 @@ public class BalanceData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mBalance);
+        dest.writeDouble(mBalance);
         dest.writeString(mDate);
     }
 
     public void readFromParcel(Parcel in) {
-        mBalance = in.readString();
+        mBalance = in.readDouble();
         mDate = in.readString();
     }
 

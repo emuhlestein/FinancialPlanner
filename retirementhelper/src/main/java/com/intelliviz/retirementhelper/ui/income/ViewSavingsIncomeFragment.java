@@ -11,12 +11,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.util.BalanceData;
+import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
-import com.intelliviz.retirementhelper.util.MilestoneData;
+import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementOptionsData;
-import com.intelliviz.retirementhelper.util.SavingsIncomeData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;

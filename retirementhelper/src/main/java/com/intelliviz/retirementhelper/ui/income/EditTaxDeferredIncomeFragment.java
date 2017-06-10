@@ -21,10 +21,10 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
-import com.intelliviz.retirementhelper.util.BalanceData;
+import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 
 import java.util.List;
 
@@ -205,7 +205,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
 
         String balanceString;
-        List<BalanceData> bd = mTDI.getBalanceDataList();
+        List<BalanceData> bd = mTDI.getBalanceData();
         if(bd == null) {
             balanceString = "0.00";
         } else {
@@ -220,7 +220,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         ab.setSubtitle(incomeSourceTypeString);
         mIncomeSourceName.setText(incomeSourceName);
         mBalance.setText(balanceString);
-        mAnnualInterest.setText(mTDI.getInterest()+"%");
+        mAnnualInterest.setText(mTDI.getInterestRate()+"%");
         mMonthlyIncrease.setText(monthlyIncreaseString);
         mPenaltyAge.setText(minimumAge);
         mPenaltyAmount.setText(penaltyAmount);
@@ -261,10 +261,13 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
 
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
-
         String minimumAge = mPenaltyAge.getText().toString();
-        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(mTDI.getId(), name, mTDI.getType(), minimumAge, interest, monthlyIncrease, penaltyAmount, 1);
-        tdid.addBalance(new BalanceData(balance, date));
+        double annualInterest = Double.parseDouble(interest);
+        double increase = Double.parseDouble(monthlyIncrease);
+        double penalty = Double.parseDouble(penaltyAmount);
+        double dbalance = Double.parseDouble(balance);
+        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(mTDI.getId(), name, mTDI.getType(), minimumAge, annualInterest, increase, penalty, 1);
+        tdid.addBalanceData(new BalanceData(dbalance, date));
         updateTDID(tdid);
     }
 

@@ -38,10 +38,11 @@ import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementOptionsData;
-import com.intelliviz.retirementhelper.util.SavingsIncomeData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
-import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -279,7 +280,7 @@ public class IncomeSourceListFragment extends Fragment implements
                     startActivityForResult(intent, REQUEST_SAVINGS);
                     break;
                 case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                    TaxDeferredIncomeData tdid = DataBaseUtils.getTaxDeferredIncomeData(getContext(), incomeSourceId);
+                    TaxDeferredIncomeData tdid = TaxDeferredHelper.getTaxDeferredIncomeData(getContext(), incomeSourceId);
                     rod = DataBaseUtils.getRetirementOptionsData(getContext());
                     intent = new Intent(getActivity(), IncomeSourceActivity.class);
                     intent.putExtra(EXTRA_INCOME_DATA, tdid);
@@ -316,9 +317,9 @@ public class IncomeSourceListFragment extends Fragment implements
         TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
 
         if (tdid.getId() == -1) {
-            String rc = DataBaseUtils.addTaxDeferredIncome(getContext(), tdid);
+            String rc = TaxDeferredHelper.addTaxDeferredIncome(getContext(), tdid);
         } else {
-            DataBaseUtils.saveTaxDeferredData(getContext(), tdid);
+            TaxDeferredHelper.saveTaxDeferredData(getContext(), tdid);
         }
     }
 
@@ -380,7 +381,7 @@ public class IncomeSourceListFragment extends Fragment implements
         if(action == INCOME_ACTION_DELETE) {
             long incomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
             if(incomeSourceId != -1) {
-                int rowsDeleted = DataBaseUtils.deleteTaxDeferredIncome(getContext(), incomeSourceId);
+                int rowsDeleted = TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), incomeSourceId);
             }
         }
     }

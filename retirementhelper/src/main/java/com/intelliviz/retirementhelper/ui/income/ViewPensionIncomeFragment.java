@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.PensionIncomeData;
+import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import butterknife.Bind;
@@ -68,7 +68,9 @@ public class ViewPensionIncomeFragment extends Fragment {
 
         mIncomeSourceName.setText(pid.getName());
         mStartAge.setText(pid.getStartAge());
-        mMonthlyBenefit.setText(pid.getMonthlyBenefit());
+
+        // TODO need to format
+        mMonthlyBenefit.setText(Double.toString(pid.getMonthlyBenefit(0)));
     }
 
     private void setToolbarSubtitle(String subtitle) {

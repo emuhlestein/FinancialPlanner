@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.PersonalInfoData;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;

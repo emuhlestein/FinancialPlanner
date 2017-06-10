@@ -16,9 +16,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.util.BalanceData;
+import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SavingsIncomeData;
+import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -191,9 +191,10 @@ public class EditSavingsIncomeFragment extends Fragment {
 
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
+        double dbalance = Double.parseDouble(balance);
 
         SavingsIncomeData sid = new SavingsIncomeData(mSID.getId(), name, mSID.getType(), interest, monthlyIncrease);
-        sid.addBalance(new BalanceData(balance, date));
+        sid.addBalance(new BalanceData(dbalance, date));
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_DATA, sid);
 
         getActivity().setResult(Activity.RESULT_OK, returnIntent);

@@ -15,7 +15,7 @@ import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.GovPensionIncomeData;
+import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -91,7 +91,7 @@ public class EditGovPensionIncomeFragment extends Fragment {
 
         mIncomeSourceName.setText(gpid.getName());
         mMinAge.setText(gpid.getStartAge());
-        mMonthlyAmount.setText(SystemUtils.getFormattedCurrency(gpid.getMonthlyBenefit()));
+        mMonthlyAmount.setText(SystemUtils.getFormattedCurrency(gpid.getMonthlyBenefit(0)));
     }
 
     private void sendIncomeSourceData() {

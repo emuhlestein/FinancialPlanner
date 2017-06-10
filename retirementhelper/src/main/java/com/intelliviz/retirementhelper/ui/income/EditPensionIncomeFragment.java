@@ -15,7 +15,7 @@ import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.PensionIncomeData;
+import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -89,7 +89,7 @@ public class EditPensionIncomeFragment extends Fragment {
         }
 
         String name = pid.getName();
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(pid.getMonthlyBenefit());
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(pid.getMonthlyBenefit(0));
         String age = pid.getStartAge();
 
         mIncomeSourceName.setText(name);

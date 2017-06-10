@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

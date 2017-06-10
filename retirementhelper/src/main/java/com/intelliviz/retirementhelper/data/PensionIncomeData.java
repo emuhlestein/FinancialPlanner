@@ -1,31 +1,42 @@
-package com.intelliviz.retirementhelper.util;
+package com.intelliviz.retirementhelper.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by edm on 5/11/2017.
+ * Created by ed muhlestein on 5/11/2017.
  */
 
 public class PensionIncomeData extends IncomeTypeData {
     private String mStartAge;
-    private String mMonthlyBenefit;
+    private double mMonthlyBenefit;
 
-    public PensionIncomeData(long id, String name, int type, String startAge, String monthlyBenefit) {
+    public PensionIncomeData(long id, String name, int type, String startAge, double monthlyBenefit) {
         super(id, name, type);
         mStartAge = startAge;
         mMonthlyBenefit = monthlyBenefit;
+    }
+
+    @Override
+    public boolean hasABalance() {
+        return false;
+    }
+
+    @Override
+    public double getBalance() {
+        return 0;
+    }
+
+    @Override
+    public double getMonthlyBenefit(double withdrawalRate) {
+        return mMonthlyBenefit;
     }
 
     public String getStartAge() {
         return mStartAge;
     }
 
-    public String getMonthlyBenefit() {
-        return mMonthlyBenefit;
-    }
-
-    public PensionIncomeData(Parcel in) {
+    private PensionIncomeData(Parcel in) {
         readFromParcel(in);
     }
 
@@ -38,14 +49,14 @@ public class PensionIncomeData extends IncomeTypeData {
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeString(mStartAge);
-        dest.writeString(mMonthlyBenefit);
+        dest.writeDouble(mMonthlyBenefit);
     }
 
     @Override
     public void readFromParcel(Parcel in) {
         super.readFromParcel(in);
         mStartAge = in.readString();
-        mMonthlyBenefit = in.readString();
+        mMonthlyBenefit = in.readDouble();
     }
 
     public static final Parcelable.Creator<PensionIncomeData> CREATOR = new Parcelable.Creator<PensionIncomeData>()

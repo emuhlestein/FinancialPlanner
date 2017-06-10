@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.util;
+package com.intelliviz.retirementhelper.data;
 
 import android.os.Parcel;
 

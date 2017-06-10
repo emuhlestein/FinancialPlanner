@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.RetirementOptionsData;
-import com.intelliviz.retirementhelper.util.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
@@ -33,7 +34,7 @@ public class TaxDeferredIntentService extends IntentService {
                 if(id == -1) {
                     return; // error
                 }
-                TaxDeferredIncomeData tdid = DataBaseUtils.getTaxDeferredIncomeData(this, id);
+                TaxDeferredIncomeData tdid = TaxDeferredHelper.getTaxDeferredIncomeData(this, id);
                 RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
                 if (tdid != null && rod != null) {
                     Intent localIntent = new Intent(LOCAL_TAX_DEFERRED);
@@ -45,9 +46,9 @@ public class TaxDeferredIntentService extends IntentService {
                 TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_DB_DATA);
                 if(tdid != null) {
                     if(id == -1) {
-                        String sid = DataBaseUtils.addTaxDeferredIncome(this, tdid);
+                        String sid = TaxDeferredHelper.addTaxDeferredIncome(this, tdid);
                     } else {
-                        int rowsUpdated = DataBaseUtils.saveTaxDeferredData(this, tdid);
+                        int rowsUpdated = TaxDeferredHelper.saveTaxDeferredData(this, tdid);
                         Intent localIntent = new Intent(LOCAL_RETIRE_OPTIONS);
                         localIntent.putExtra(EXTRA_DB_ROWS_UPDATED, rowsUpdated);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);

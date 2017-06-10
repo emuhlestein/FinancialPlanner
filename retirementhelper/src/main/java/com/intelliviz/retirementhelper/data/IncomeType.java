@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.util;
+package com.intelliviz.retirementhelper.data;
 
 import android.os.Parcelable;
 
@@ -10,4 +10,7 @@ public interface IncomeType extends Parcelable {
     long getId();
     String getName();
     int getType();
+    boolean hasABalance();
+    double getBalance();
+    double getMonthlyBenefit(double withdrawalRate);
 }
