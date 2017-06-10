@@ -5,12 +5,14 @@ import android.content.Context;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_AMOUNT;
@@ -84,8 +86,10 @@ public class BenefitHelper {
             return getMilestonesFromSavingsIncome(context, (SavingsIncomeData)incomeType);
         } else if(incomeType instanceof TaxDeferredIncomeData) {
             return getMilestonesFromTaxDeferredIncome(context, (TaxDeferredIncomeData)incomeType, rod);
+        } else if(incomeType instanceof PensionIncomeData){
+            return getMilestonesFromPensionIncome(context, (PensionIncomeData)incomeType, rod);
         } else {
-            return null; //"0.00";
+            return Collections.emptyList();
         }
     }
 
@@ -168,6 +172,33 @@ public class BenefitHelper {
         List<Double> milestoneBalances = getMilestoneBalances(ages, startBalance, interestRate, monthlyAddition);
 
         milestones = getMilestones(endOfLifeAge, minimumAge, interestRate, penalty, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
+        return milestones;
+    }
+
+    private static List<MilestoneData> getMilestonesFromPensionIncome(Context context, PensionIncomeData pid, RetirementOptionsData rod) {
+        List<MilestoneData> milestones = new ArrayList<>();
+        List<AgeData> ages = getMilestoneAges(context);
+        if(ages.isEmpty()) {
+            return milestones;
+        }
+
+        AgeData minimumAge = new AgeData(pid.getStartAge());
+        AgeData startAge = new AgeData(rod.getStartAge());
+        AgeData endAge = new AgeData(rod.getEndAge());
+        double monthlyBenefit = pid.getMonthlyBenefit(0);
+
+        MilestoneData milestone;
+        for(AgeData age : ages) {
+            if(age.isBefore(minimumAge)) {
+                milestone = new MilestoneData(age, endAge, minimumAge, 0, 0, 0, 0, 0);
+            } else {
+                AgeData diffAge = endAge.subtract(age);
+                int numMonths = diffAge.getNumberOfMonths();
+
+                milestone = new MilestoneData(age, endAge, minimumAge, monthlyBenefit, 0, 0, 0, numMonths);
+            }
+            milestones.add(milestone);
+        }
         return milestones;
     }
 
