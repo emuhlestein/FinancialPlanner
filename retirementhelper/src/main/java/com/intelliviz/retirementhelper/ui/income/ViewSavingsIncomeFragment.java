@@ -95,7 +95,7 @@ public class ViewSavingsIncomeFragment extends Fragment {
         mCurrentBalance.setText(String.valueOf(formattedAmount));
 
         List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
-        double monthlyAmount = milestones.get(0).getMonthlyAmount();
+        double monthlyAmount = milestones.get(0).getMonthlyBenefit();
         formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
 
         mMonthlyAmount.setText(formattedAmount);

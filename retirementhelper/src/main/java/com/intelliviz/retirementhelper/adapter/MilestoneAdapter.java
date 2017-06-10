@@ -81,22 +81,22 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.Mile
             mMSD = mMilestones.get(position);
 
             final int sdk = android.os.Build.VERSION.SDK_INT;
-            double annualAmount = mMSD.getMonthlyAmount() * 12;
+            double annualAmount = mMSD.getMonthlyBenefit() * 12;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                if(mMSD.getEndingBalance() < 0) {
-                    mLinearLayout.setBackgroundDrawable( mContext.getResources().getDrawable(R.drawable.red_ripple_effect) );
+                if(mMSD.getEndBalance() == 0) {
+                    mLinearLayout.setBackground( mContext.getResources().getDrawable(R.drawable.red_ripple_effect) );
                 } else {
-                    if(mMSD.getEndingBalance() < annualAmount) {
-                        mLinearLayout.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
+                    if(mMSD.getEndBalance() < annualAmount) {
+                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
                     } else {
-                        mLinearLayout.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
+                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
                     }
                 }
             } else {
-                if(mMSD.getEndingBalance() < 0) {
+                if(mMSD.getEndBalance() == 0) {
                     mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.red_ripple_effect));
                 } else {
-                    if(mMSD.getEndingBalance() < annualAmount) {
+                    if(mMSD.getEndBalance() < annualAmount) {
                         mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
                     } else {
                         mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
@@ -104,7 +104,7 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.Mile
                 }
             }
 
-            double monthlyAmount = mMSD.getMonthlyAmount();
+            double monthlyAmount = mMSD.getMonthlyBenefit();
             String formattedCurrency = SystemUtils.getFormattedCurrency(monthlyAmount);
             double penalty = mMSD.getPenaltyAmount();
             if(penalty > 0) {

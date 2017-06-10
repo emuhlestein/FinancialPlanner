@@ -11,8 +11,6 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -38,7 +36,7 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
         Intent intent = getIntent();
         MilestoneData msd = intent.getParcelableExtra(RetirementConstants.EXTRA_MILESTONEDATA);
         mAge.setText(SystemUtils.getFormattedAge(msd.getStartAge()));
-        String formattedCurrency = SystemUtils.getFormattedCurrency(msd.getMonthlyAmount());
+        String formattedCurrency = SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit());
         double penaltyAmount = msd.getPenaltyAmount();
         if(penaltyAmount > 0) {
             sb.append("*");
@@ -46,16 +44,16 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
             sb.append("% ");
             sb.append("penalty applies before minimum age is reached.");
 
-            double monthlyAmount = msd.getMonthlyAmount();
+            double monthlyAmount = msd.getMonthlyBenefit();
             double monthlyPenalty = monthlyAmount * penaltyAmount / 100.0;
             monthlyAmount = monthlyAmount - monthlyPenalty;
             formattedCurrency = SystemUtils.getFormattedCurrency(monthlyAmount);
             formattedCurrency = formattedCurrency + "*";
         }
 
-        String finalBalance = Double.toString(msd.getEndingBalance());
+        String finalBalance = Double.toString(msd.getEndBalance());
         finalBalance = SystemUtils.getFormattedCurrency(finalBalance);
-        if(msd.getEndingBalance() < 0) {
+        if(msd.getEndBalance() < 0) {
             finalBalance = "$0.00**";
             if(sb.length() > 0) {
                 sb.append("\n");
@@ -70,8 +68,7 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
         AgeData diffAge = endAge.subtract(startAge);
         mRetirementDuration.setText(diffAge.toString());
 
-        List<Double> balances = msd.getMonthlyBalances();
-        int numMonths = balances.size();
+        int numMonths = msd.getMonthsFundsFillLast();
         int years = numMonths / 12;
         int months = numMonths - years * 12;
         AgeData age = new AgeData(years, months);
