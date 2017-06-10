@@ -8,4 +8,5 @@
     <color name="endProgress">#303F9F</color>
     <color name="centerProgress">#FF4081</color>
     <color name="toolbarTextColor">#FFFFFF</color>
+    <color name="green">#00FF00</color>
 </resources>

@@ -43,6 +43,9 @@
             android:exported="false" />
         <service
             android:name=".services.IncomeTypeService"
+            android:exported="false" />
+        <service
+            android:name=".services.PensionDataService"
             android:exported="false"></service>
     </application>
 

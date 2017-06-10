@@ -4,7 +4,7 @@
     android:color="#f816a463"
     tools:targetApi="lollipop">
     <item>
-        <color android:color="#00ff00"/>
+        <color android:color="@color/green"/>
     </item>
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">

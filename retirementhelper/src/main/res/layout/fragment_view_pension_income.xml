@@ -2,62 +2,85 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/view_tax_defered_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name:"
+            android:text="@string/name"
             android:textSize="22sp"/>
 
         <TextView
             android:id="@+id/name_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Age"
+            android:text="@string/minimum_age"
             android:textSize="22sp"/>
 
         <TextView
-            android:id="@+id/age_text_view"
-            android:layout_width="wrap_content"
+            android:id="@+id/minimum_age_text_view"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
-
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
+        android:background="@color/green"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Amount"
+            android:text="@string/monthly_benefit"
             android:textSize="22sp"/>
 
         <TextView
-            android:id="@+id/monthly_amount_text_view"
-            android:layout_width="wrap_content"
+            android:id="@+id/monthly_benefit_text_view"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
-
+    <View
+        android:id="@+id/divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/separator" />
 </LinearLayout>

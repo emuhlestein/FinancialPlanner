@@ -229,6 +229,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     public void sendIncomeSourceData() {
         String value = mBalance.getText().toString();
         String balance = getFloatValue(value);
+        // TODO put all strings in string.xml
         if(balance == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Balance value is not valid " + value, Snackbar.LENGTH_LONG);
             snackbar.show();

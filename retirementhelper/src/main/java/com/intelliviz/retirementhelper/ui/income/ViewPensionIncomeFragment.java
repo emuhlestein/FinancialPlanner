@@ -1,39 +1,43 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static android.content.Intent.EXTRA_INTENT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ViewPensionIncomeFragment extends Fragment {
     public static final String VIEW_PENSION_INCOME_FRAG_TAG = "view pension income frag tag";
-    private long mIncomeId;
-    private int mIncomeType;
+    private PensionIncomeData mPID;
+    private RetirementOptionsData mROD;
+    private MilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
-    @Bind(R.id.age_text_view) TextView mStartAge;
-    @Bind(R.id.monthly_amount_text_view) TextView mMonthlyBenefit;
+    @Bind(R.id.minimum_age_text_view) TextView mStartAge;
+    @Bind(R.id.monthly_benefit_text_view) TextView mMonthlyBenefit;
 
-    public static ViewPensionIncomeFragment newInstance(long incomeSourceId) {
+    public static ViewPensionIncomeFragment newInstance(Intent intent) {
         ViewPensionIncomeFragment fragment = new ViewPensionIncomeFragment();
         Bundle args = new Bundle();
-        args.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+        args.putParcelable(EXTRA_INTENT, intent);
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,7 +50,11 @@ public class ViewPensionIncomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mIncomeId = getArguments().getLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID);
+            Intent intent = getArguments().getParcelable(EXTRA_INTENT);
+            if(intent != null) {
+                mPID = intent.getParcelableExtra(EXTRA_INCOME_DATA);
+                mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+            }
         }
     }
 
@@ -61,23 +69,11 @@ public class ViewPensionIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
-        PensionIncomeData pid = DataBaseUtils.getPensionIncomeData(getContext(), mIncomeId);
-        if(pid == null) {
-            return;
-        }
 
-        mIncomeSourceName.setText(pid.getName());
-        mStartAge.setText(pid.getStartAge());
+        mIncomeSourceName.setText(mPID.getName());
+        mStartAge.setText(mPID.getStartAge());
 
         // TODO need to format
-        mMonthlyBenefit.setText(Double.toString(pid.getMonthlyBenefit(0)));
-    }
-
-    private void setToolbarSubtitle(String subtitle) {
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
-        ActionBar actionBar = activity.getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setSubtitle(subtitle);
-        }
+        mMonthlyBenefit.setText(Double.toString(mPID.getMonthlyBenefit(0)));
     }
 }

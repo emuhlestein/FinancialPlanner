@@ -44,6 +44,7 @@
     <string name="retirement_helper">Retirement Helper</string>
     <string name="register_new_user">Register New User</string>
     <string name="monthly_amount">Monthly Amount:</string>
+    <string name="monthly_benefit">Monthly Benefit:</string>
     <string name="start_balance">Start Balance:</string>
     <string name="final_balance">Final Balance:</string>
     <string name="length_of_retirement">Length of retirement:</string>

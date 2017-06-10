@@ -32,16 +32,19 @@ import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
+import com.intelliviz.retirementhelper.data.PensionIncomeData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.SavingsIncomeData;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.services.PensionDataService;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.PensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
 import butterknife.Bind;
@@ -61,6 +64,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_AC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_VIEW;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_INCOME_MENU;
@@ -95,6 +99,21 @@ public class IncomeSourceListFragment extends Fragment implements
             newIntent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
             newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
             startActivityForResult(newIntent, REQUEST_TAX_DEFERRED);
+        }
+    };
+
+    private BroadcastReceiver mPensionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PensionIncomeData pid = intent.getParcelableExtra(EXTRA_DB_DATA);
+            RetirementOptionsData rod = intent.getParcelableExtra(EXTRA_DB_EXTRA_DATA);
+            Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, pid.getId());
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, pid.getType());
+            newIntent.putExtra(EXTRA_INCOME_DATA, pid);
+            newIntent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
+            startActivityForResult(newIntent, REQUEST_PENSION);
         }
     };
 
@@ -186,6 +205,7 @@ public class IncomeSourceListFragment extends Fragment implements
                                 startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                                 break;
                             case RetirementConstants.INCOME_TYPE_PENSION:
+                                intent.putExtra(EXTRA_INCOME_DATA, new PensionIncomeData(RetirementConstants.INCOME_TYPE_PENSION));
                                 startActivityForResult(intent, REQUEST_PENSION);
                                 break;
                             case RetirementConstants.INCOME_TYPE_GOV_PENSION:
@@ -290,37 +310,49 @@ public class IncomeSourceListFragment extends Fragment implements
                     intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
                     startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                     break;
+                case RetirementConstants.INCOME_TYPE_PENSION:
+                    PensionIncomeData pid = PensionHelper.getPensionIncomeData(getContext(), incomeSourceId);
+                    rod = DataBaseUtils.getRetirementOptionsData(getContext());
+                    intent = new Intent(getActivity(), IncomeSourceActivity.class);
+                    intent.putExtra(EXTRA_INCOME_DATA, pid);
+                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, pid.getType());
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
+                    startActivityForResult(intent, REQUEST_TAX_DEFERRED);
+                    break;
+                case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                    break;
             }
         }
     }
 
     private void registerReceiver() {
+        registerTaxDeferredReceiver();
+        registerPensionReceiver();
+    }
+
+    private void unregisterReceiver() {
+        unregisterTaxDeferredReceiver();
+        unregisterPensionReceiver();
+    }
+
+    private void registerTaxDeferredReceiver() {
         IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mTaxDeferredReceiver, filter);
     }
 
-    private void unregisterReceiver() {
+    private void unregisterTaxDeferredReceiver() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTaxDeferredReceiver);
     }
 
-    private void saveSavingsIncomeData(Intent intent) {
-        SavingsIncomeData sid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
-
-        if (sid.getId() == -1) {
-            String rc = DataBaseUtils.addSavingsIncome(getContext(), sid);
-        } else {
-            DataBaseUtils.saveSavingsIncomeData(getContext(), sid);
-        }
+    private void registerPensionReceiver() {
+        IntentFilter filter = new IntentFilter(LOCAL_PENSION);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mPensionReceiver, filter);
     }
 
-    private void saveTaxDeferredData(Intent intent) {
-        TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
-
-        if (tdid.getId() == -1) {
-            String rc = TaxDeferredHelper.addTaxDeferredIncome(getContext(), tdid);
-        } else {
-            TaxDeferredHelper.saveTaxDeferredData(getContext(), tdid);
-        }
+    private void unregisterPensionReceiver() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mPensionReceiver);
     }
 
     private void onHandleAction(Intent resultIntent) {
@@ -347,23 +379,9 @@ public class IncomeSourceListFragment extends Fragment implements
                 break;
             case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
                 if(action == INCOME_ACTION_EDIT) {
-                    /*
-                    TaxDeferredIncomeData tdid = DataBaseUtils.getTaxDeferredIncomeData(getContext(), incomeSourceId);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-                    intent.putExtra(EXTRA_INCOME_DATA, tdid);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
-                    startActivityForResult(intent, REQUEST_TAX_DEFERRED);
-                    */
                     Intent localIntent = new Intent(getContext(), TaxDeferredIntentService.class);
                     localIntent.putExtra(EXTRA_DB_ID, incomeSourceId);
                     localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
-                    /*
-                    localIntent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-                    localIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
-                    localIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
-                    */
-                    //SystemUtils.initTaxDeferredIntent(localIntent, incomeSourceId, incomeSourceType, INCOME_ACTION_QUERY, null);
                     getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     FragmentManager fm = getActivity().getSupportFragmentManager();
@@ -372,6 +390,21 @@ public class IncomeSourceListFragment extends Fragment implements
                     dialog.show(fm, DIALOG_YES_NO);
 
                 }
+                break;
+            case RetirementConstants.INCOME_TYPE_PENSION:
+                if(action == INCOME_ACTION_EDIT) {
+                    Intent localIntent = new Intent(getContext(), PensionDataService.class);
+                    localIntent.putExtra(EXTRA_DB_ID, incomeSourceId);
+                    localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
+                    getActivity().startService(localIntent);
+                } else if(action == INCOME_ACTION_DELETE) {
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    YesNoDialog dialog = YesNoDialog.newInstance(incomeSourceId);
+                    dialog.setTargetFragment(IncomeSourceListFragment.this, REQUEST_YES_NO);
+                    dialog.show(fm, DIALOG_YES_NO);
+                }
+                break;
+            case RetirementConstants.INCOME_TYPE_GOV_PENSION:
                 break;
         }
     }
@@ -386,33 +419,34 @@ public class IncomeSourceListFragment extends Fragment implements
         }
     }
 
-    private void savePensionData(Intent intent) {
-        /*
-        long incomeTypeId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
-        int incomeType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, 0);
-        String incomeSourceName = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
-        String monthlyBenefit = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_BENEFIT);
-        String age = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MINIMUM_AGE);
-        IncomeTypeData isd = DataBaseUtils.getIncomeTypeData(getContext(), incomeTypeId);
-        if (isd == null) {
-            String sid = DataBaseUtils.addIncomeType(getContext(), incomeSourceName, incomeType);
-            long id = Long.parseLong(sid);
+    private void saveSavingsIncomeData(Intent intent) {
+        SavingsIncomeData sid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
 
-            String sdid = DataBaseUtils.addPensionData(getContext(), id, monthlyBenefit, age);
+        if (sid.getId() == -1) {
+            String rc = DataBaseUtils.addSavingsIncome(getContext(), sid);
         } else {
-            String sid = Long.toString(incomeTypeId);
-
-            int rowsUpdated = DataBaseUtils.saveIncomeType(getContext(), incomeTypeId, incomeSourceName, incomeType);
-            if(rowsUpdated != 1) {
-                // TODO handle error
-            }
-
-            rowsUpdated = DataBaseUtils.savePensionData(getContext(), id, monthlyBenefit, age);
-            if(rowsUpdated != 1) {
-                // TODO handle error
-            }
+            DataBaseUtils.saveSavingsIncomeData(getContext(), sid);
         }
-        */
+    }
+
+    private void saveTaxDeferredData(Intent intent) {
+        TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
+
+        if (tdid.getId() == -1) {
+            String rc = TaxDeferredHelper.addTaxDeferredIncome(getContext(), tdid);
+        } else {
+            TaxDeferredHelper.saveTaxDeferredData(getContext(), tdid);
+        }
+    }
+
+    private void savePensionData(Intent intent) {
+        PensionIncomeData pid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
+
+        if (pid.getId() == -1) {
+            String rc = PensionHelper.addPensionData(getContext(), pid);
+        } else {
+            PensionHelper.savePensionData(getContext(), pid);
+        }
     }
 
     private void saveGovPensionData(Intent intent) {

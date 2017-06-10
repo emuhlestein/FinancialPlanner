@@ -5,24 +5,27 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class IncomeSourceActivity extends AppCompatActivity {
-    //@Bind(R.id.income_source_toolbar) Toolbar mToolbar;
+    @Bind(R.id.income_source_toolbar) Toolbar mToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_income_source);
         ButterKnife.bind(this);
 
-        //setSupportActionBar(mToolbar);
-
-        //ActionBar ab = getSupportActionBar();
+        setSupportActionBar(mToolbar);
+        ActionBar ab = getSupportActionBar();
 
         Intent intent = getIntent();
         int mIncomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_TYPE_SAVINGS);
@@ -38,6 +41,11 @@ public class IncomeSourceActivity extends AppCompatActivity {
                 case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
                     addTaxDeferredIncomeSourceFragmnet(false, intent);
                     break;
+                case RetirementConstants.INCOME_TYPE_PENSION:
+                    addPensionIncomeSourceFragmnet(false, intent);
+                    break;
+                case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                    break;
             }
         } else {
             // View or edit an income source
@@ -51,6 +59,11 @@ public class IncomeSourceActivity extends AppCompatActivity {
                     case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
                         addTaxDeferredIncomeSourceFragmnet(false, intent);
                         break;
+                    case RetirementConstants.INCOME_TYPE_PENSION:
+                        addPensionIncomeSourceFragmnet(false, intent);
+                        break;
+                    case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                        break;
                 }
             } else {
                 switch (mIncomeSourceType) {
@@ -59,6 +72,11 @@ public class IncomeSourceActivity extends AppCompatActivity {
                         break;
                     case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
                         addTaxDeferredIncomeSourceFragmnet(true, intent);
+                        break;
+                    case RetirementConstants.INCOME_TYPE_PENSION:
+                        addPensionIncomeSourceFragmnet(true, intent);
+                        break;
+                    case RetirementConstants.INCOME_TYPE_GOV_PENSION:
                         break;
                 }
             }
@@ -108,6 +126,30 @@ public class IncomeSourceActivity extends AppCompatActivity {
                 fragment = EditTaxDeferredIncomeFragment.newInstance(intent);
                 ft = fm.beginTransaction();
                 ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
+                ft.commit();
+            }
+        }
+    }
+
+    private void addPensionIncomeSourceFragmnet(boolean viewMode, Intent intent) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft;
+        Fragment fragment;
+
+        if (viewMode) {
+            fragment = fm.findFragmentByTag(ViewPensionIncomeFragment.VIEW_PENSION_INCOME_FRAG_TAG);
+            if (fragment == null) {
+                fragment = ViewPensionIncomeFragment.newInstance(intent);
+                ft = fm.beginTransaction();
+                ft.add(R.id.content_frame, fragment, ViewPensionIncomeFragment.VIEW_PENSION_INCOME_FRAG_TAG);
+                ft.commit();
+            }
+        } else {
+            fragment = fm.findFragmentByTag(EditPensionIncomeFragment.EDIT_PENSION_INCOME_FRAG_TAG);
+            if (fragment == null) {
+                fragment = EditPensionIncomeFragment.newInstance(intent);
+                ft = fm.beginTransaction();
+                ft.add(R.id.content_frame, fragment, EditPensionIncomeFragment.EDIT_PENSION_INCOME_FRAG_TAG);
                 ft.commit();
             }
         }
