@@ -21,6 +21,7 @@ import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
@@ -32,9 +33,10 @@ import static android.content.Intent.EXTRA_INTENT;
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
     private RetirementOptionsData mROD;
     private MilestoneAdapter mMilestoneAdapter;
+    private List<MilestoneData> mMilestones;
 
     @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
-    @Bind(R.id.current_balance_text_view) TextView mBalanceTextView;
+    @Bind(R.id.current_balance_text_view) TextView mCurrentBalanceTextView;
 
     public SummaryFragment() {
         // Required empty public constructor
@@ -73,8 +75,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             actionBar.setHomeButtonEnabled(true);
         }
 
-        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
-        mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
+        mMilestones = BenefitHelper.getAllMilestones(getContext(), mROD);
+        mMilestoneAdapter = new MilestoneAdapter(getContext(), mMilestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);
@@ -82,7 +84,15 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
                 linearLayoutManager.getOrientation()));
         mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
+        updateUI();
+
         return view;
+    }
+
+    private void updateUI() {
+        double currentBalance = mMilestones.get(0).getStartBalance();
+        String formattedAmount = SystemUtils.getFormattedCurrency(currentBalance);
+        mCurrentBalanceTextView.setText(String.valueOf(formattedAmount));
     }
 
     @Override
