@@ -24,38 +24,55 @@ import static java.lang.Double.parseDouble;
 public class BenefitHelper {
 
     public static List<MilestoneData> getAllMilestones(Context context, RetirementOptionsData rod) {
-        List<MilestoneData> milestones = new ArrayList<>();
+        List<MilestoneData> sumMilestones = new ArrayList<>();
         List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
         if(incomeTypes == null) {
-            return milestones;
+            return sumMilestones;
+        }
+        List<AgeData> ages = getMilestoneAges(context);
+        if(ages.isEmpty()) {
+            return sumMilestones;
         }
 
+        double[] sumMonthlyAmount = new double[ages.size()];
+        double[] sumBalance = new double[ages.size()];
+        for(int i = 0; i < ages.size(); i++) {
+            sumMonthlyAmount[i] = 0;
+            sumBalance[i] = 0;
+        }
+        List<MilestoneData> saveMilestones = null;
         for(IncomeType incomeType : incomeTypes) {
-            milestones = getMilestones(context, incomeType, rod);
+            List<MilestoneData> milestones = getMilestones(context, incomeType, rod);
             if(milestones == null || milestones.isEmpty()) {
                 continue;
             }
-            double sumMonthlyAmount = 0;
-            double sumBalance = 0;
 
-            AgeData startAge = milestones.get(0).getStartAge();
-            AgeData endAge = milestones.get(0).getEndAge();
-            AgeData minimumAge = milestones.get(0).getMinimumAge();
-            double penalty = milestones.get(0).getPenaltyAmount();
-            List<Double> balances = milestones.get(0).getMonthlyBalances();
+            if(saveMilestones == null) {
+                saveMilestones = milestones;
+            }
+
             double monthlyAmount;
             double balance;
-            for(MilestoneData milestoneData : milestones) {
+            for(int i = 0; i < milestones.size(); i++) {
+                MilestoneData milestoneData = milestones.get(i);
                 monthlyAmount = milestoneData.getMonthlyAmount();
-                sumMonthlyAmount += monthlyAmount;
+                sumMonthlyAmount[i] += monthlyAmount;
                 balance = milestoneData.getStartBalance();
-                sumBalance += balance;
+                sumBalance[i] += balance;
             }
-            MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount, sumBalance, penalty, balances);
-            milestones.add(milestoneData);
         }
 
-        return milestones;
+        AgeData endAge = saveMilestones.get(0).getEndAge();
+        AgeData minimumAge = saveMilestones.get(0).getMinimumAge();
+        double penalty = saveMilestones.get(0).getPenaltyAmount();
+        List<Double> balances = saveMilestones.get(0).getMonthlyBalances();
+        for(int i = 0; i < ages.size(); i++) {
+            AgeData startAge = ages.get(i);
+            MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i], sumBalance[i], 0, balances);
+            sumMilestones.add(milestoneData);
+        }
+
+        return sumMilestones;
     }
 
     public static List<MilestoneData> getMilestones(Context context, IncomeType incomeType, RetirementOptionsData rod) {
