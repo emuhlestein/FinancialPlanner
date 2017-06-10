@@ -12,10 +12,17 @@ import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
 
 /**
  * Created by edm on 4/25/2017.
@@ -23,6 +30,36 @@ import java.util.List;
 
 public class DataBaseUtils {
 
+    public static List<IncomeType> getAllIncomeTypes(Context context) {
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return Collections.emptyList();
+        }
+
+        List<IncomeType> incomeTypes = new ArrayList<>();
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            int idIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID);
+            int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
+            long id = Long.parseLong(cursor.getString(idIndex));
+            int type = Integer.parseInt(cursor.getString(typeIndex));
+            switch(type) {
+                case INCOME_TYPE_SAVINGS:
+                    break;
+                case INCOME_TYPE_TAX_DEFERRED:
+                    TaxDeferredIncomeData tdid = TaxDeferredHelper.getTaxDeferredIncomeData(context, id);
+                    incomeTypes.add(tdid);
+                    break;
+                case INCOME_TYPE_PENSION:
+                    break;
+                case INCOME_TYPE_GOV_PENSION:
+                    break;
+            }
+        }
+        cursor.close();
+
+        return incomeTypes;
+    }
     //
     // Methods for personal info table
     //
@@ -142,11 +179,6 @@ public class DataBaseUtils {
         return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
     }
 
-    public static Cursor getIncomeTypes(Context context) {
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        return context.getContentResolver().query(uri, null, null, null, null);
-    }
-
     private static Cursor getIncomeType(Context context, long incomeId) {
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         String selection = RetirementContract.IncomeTypeEntry._ID + " = ?";
@@ -164,6 +196,7 @@ public class DataBaseUtils {
         int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
         String name = cursor.getString(nameIndex);
         int type = cursor.getInt(typeIndex);
+        cursor.close();
         return new IncomeDataHelper(name, type);
     }
 
@@ -425,7 +458,7 @@ public class DataBaseUtils {
             double balance = Double.parseDouble(amount);
             bd[index++] = new BalanceData(balance, date);
         }
-
+        cursor.close();
         return bd;
     }
 

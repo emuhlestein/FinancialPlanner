@@ -13,6 +13,7 @@ import java.util.List;
 public class MilestoneData implements Parcelable {
     private AgeData mStartAge;
     private AgeData mEndAge;
+    private AgeData mMinimumAge;
     private double mMonthlyAmount;
     private double mStartBalance;
     private double mPenaltyAmount;
@@ -21,6 +22,7 @@ public class MilestoneData implements Parcelable {
     public MilestoneData(AgeData startAge, AgeData endAge, AgeData minimumAge, double amount, double balance, double penaltyAmount, List<Double> monthlyBalances) {
         mStartAge = startAge;
         mEndAge = endAge;
+        mMinimumAge = minimumAge;
         mMonthlyAmount = amount;
         mStartBalance = balance;
         mPenaltyAmount = penaltyAmount;
@@ -37,6 +39,10 @@ public class MilestoneData implements Parcelable {
 
     public AgeData getEndAge() {
         return mEndAge;
+    }
+
+    public AgeData getMinimumAge() {
+        return mMinimumAge;
     }
 
     public double getMonthlyAmount() {
@@ -78,6 +84,7 @@ public class MilestoneData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(mStartAge, flags);
         dest.writeParcelable(mEndAge, flags);
+        dest.writeParcelable(mMinimumAge, flags);
         dest.writeDouble(mMonthlyAmount);
         dest.writeDouble(mStartBalance);
         dest.writeDouble(mPenaltyAmount);
@@ -87,6 +94,7 @@ public class MilestoneData implements Parcelable {
     public void readFromParcel(Parcel in) {
         mStartAge = in.readParcelable(AgeData.class.getClassLoader());
         mEndAge = in.readParcelable(AgeData.class.getClassLoader());
+        mMinimumAge = in.readParcelable(AgeData.class.getClassLoader());
         mMonthlyAmount = in.readDouble();
         mStartBalance = in.readDouble();
         mPenaltyAmount = in.readDouble();

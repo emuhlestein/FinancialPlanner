@@ -11,9 +11,6 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getBalanceData;
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getIncomeTypeData;
-
 /**
  * Created by edm on 6/9/2017.
  */
@@ -92,7 +89,7 @@ public class TaxDeferredHelper {
     }
 
     public static TaxDeferredIncomeData getTaxDeferredIncomeData(Context context, long incomeId) {
-        DataBaseUtils.IncomeDataHelper idh = getIncomeTypeData(context, incomeId);
+        DataBaseUtils.IncomeDataHelper idh = DataBaseUtils.getIncomeTypeData(context, incomeId);
         if(idh == null) {
             return null;
         }
@@ -111,9 +108,10 @@ public class TaxDeferredHelper {
         double monthAdd = Double.parseDouble(cursor.getString(monthAddIndex));
         double penalty = Double.parseDouble(cursor.getString(penaltyIndex));
         int is401k = cursor.getInt(is401kIndex);
+        cursor.close();
         TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, is401k);
 
-        BalanceData[] bds = getBalanceData(context, incomeId);
+        BalanceData[] bds = DataBaseUtils.getBalanceData(context, incomeId);
         if(bds != null) {
             for (BalanceData bd : bds) {
                 tdid.addBalanceData(bd);

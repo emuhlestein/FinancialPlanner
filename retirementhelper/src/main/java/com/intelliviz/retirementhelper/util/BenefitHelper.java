@@ -23,6 +23,41 @@ import static java.lang.Double.parseDouble;
 
 public class BenefitHelper {
 
+    public static List<MilestoneData> getAllMilestones(Context context, RetirementOptionsData rod) {
+        List<MilestoneData> milestones = new ArrayList<>();
+        List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
+        if(incomeTypes == null) {
+            return milestones;
+        }
+
+        for(IncomeType incomeType : incomeTypes) {
+            milestones = getMilestones(context, incomeType, rod);
+            if(milestones == null || milestones.isEmpty()) {
+                continue;
+            }
+            double sumMonthlyAmount = 0;
+            double sumBalance = 0;
+
+            AgeData startAge = milestones.get(0).getStartAge();
+            AgeData endAge = milestones.get(0).getEndAge();
+            AgeData minimumAge = milestones.get(0).getMinimumAge();
+            double penalty = milestones.get(0).getPenaltyAmount();
+            List<Double> balances = milestones.get(0).getMonthlyBalances();
+            double monthlyAmount;
+            double balance;
+            for(MilestoneData milestoneData : milestones) {
+                monthlyAmount = milestoneData.getMonthlyAmount();
+                sumMonthlyAmount += monthlyAmount;
+                balance = milestoneData.getStartBalance();
+                sumBalance += balance;
+            }
+            MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount, sumBalance, penalty, balances);
+            milestones.add(milestoneData);
+        }
+
+        return milestones;
+    }
+
     public static List<MilestoneData> getMilestones(Context context, IncomeType incomeType, RetirementOptionsData rod) {
         if(incomeType instanceof SavingsIncomeData) {
             return getMilestonesFromSavingsIncome(context, (SavingsIncomeData)incomeType);
@@ -93,10 +128,6 @@ public class BenefitHelper {
         return numMonths;
     }
 
-    /**
-     * Get the milestones based on no loss of principle. Living off the interest only.
-     * @return
-     */
     private static List<MilestoneData> getMilestonesFromTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid, RetirementOptionsData rod) {
         double startBalance = tdid.getBalance();
         double interestRate = tdid.getInterestRate();
