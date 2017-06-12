@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 if(pin.equals(mPin)) {
                     Intent intent = new Intent(this, SummaryActivity.class);
                     startActivity(intent);
+                    finish();
                 } else {
                     // relaunch pin activity
                 }
