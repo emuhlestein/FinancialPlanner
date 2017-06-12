@@ -8,7 +8,11 @@ import android.util.Log;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.services.PersonalDataService;
+import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -18,16 +22,39 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 /**
  * Created by edm on 4/26/2017.
  */
 
 public class SystemUtils {
+
+    public static boolean onActivityResultForOptionMenu (Context context, int requestCode, int resultCode, Intent intent) {
+        switch (requestCode) {
+            case REQUEST_RETIRE_OPTIONS:
+                if (resultCode == RESULT_OK) {
+                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                    updateROD(context, rod);
+                }
+                return false;
+            case REQUEST_PERSONAL_INFO:
+                if (resultCode == RESULT_OK) {
+                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+                    updatePID(context, pid);
+                }
+                return false;
+            default:
+                return true;
+        }
+    }
+
     public static boolean validateBirthday(String birthdate) {
         String[] tokens = birthdate.split("-");
         if(tokens.length != 3) {
@@ -294,5 +321,19 @@ public class SystemUtils {
         dstIntent.putExtra(EXTRA_INCOME_DATA, tdid);
         dstIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
         dstIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+    }
+
+    private static void updateROD(Context context, RetirementOptionsData rod) {
+        Intent intent = new Intent(context, RetirementOptionsService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        context.startService(intent);
+    }
+
+    private static void updatePID(Context context, PersonalInfoData pid) {
+        Intent intent = new Intent(context, PersonalDataService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, pid);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        context.startService(intent);
     }
 }

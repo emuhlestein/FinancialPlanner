@@ -14,12 +14,11 @@ import android.view.MenuItem;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.services.PersonalDataService;
-import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
 import com.intelliviz.retirementhelper.ui.RetirementOptionsDialog;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -200,35 +199,8 @@ public class IncomeSourceActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        switch (requestCode) {
-            case REQUEST_RETIRE_OPTIONS:
-                if (resultCode == RESULT_OK) {
-                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                    updateROD(rod);
-                }
-                break;
-            case REQUEST_PERSONAL_INFO:
-                if (resultCode == RESULT_OK) {
-                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-                    updatePID(pid);
-                }
-                break;
-            default:
-                super.onActivityResult(requestCode, resultCode, intent);
+        if(SystemUtils.onActivityResultForOptionMenu(this, requestCode, resultCode, intent)) {
+            super.onActivityResult(requestCode, resultCode, intent);
         }
-    }
-
-    private void updateROD(RetirementOptionsData rod) {
-        Intent intent = new Intent(this, RetirementOptionsService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
-        startService(intent);
-    }
-
-    private void updatePID(PersonalInfoData pid) {
-        Intent intent = new Intent(this, PersonalDataService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, pid);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
-        startService(intent);
     }
 }
