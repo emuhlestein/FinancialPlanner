@@ -8,56 +8,65 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name:"
+            android:text="@string/name"
             android:textSize="22sp"/>
 
         <TextView
             android:id="@+id/name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Minimum Age"
+            android:text="@string/minimum_age"
             android:textSize="22sp"/>
 
         <TextView
             android:id="@+id/min_age_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
 
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Amount"
+            android:text="@string/monthly_amount"
             android:textSize="22sp"/>
 
         <TextView
             android:id="@+id/monthly_amount_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:gravity="end"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>

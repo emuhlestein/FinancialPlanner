@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout android:id="@+id/coordinatorLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
@@ -25,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Name of Institution"
+                android:hint="@string/name"
                 android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
 
@@ -45,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Minimum Age"
+                android:hint="@string/minimum_age"
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
 
@@ -60,15 +61,14 @@
             android:paddingTop="24dp">
 
             <EditText
-                android:id="@+id/monthly_amount_text"
+                android:id="@+id/monthly_benefit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Monthly Amount"
+                android:hint="@string/monthly_benefit"
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
-
 
         <Button
             android:id="@+id/add_income_source_button"
@@ -79,10 +79,9 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            android:onClick="addIncomeSource"
-            android:text="Add Income Source" />
+            android:text="@string/save_income_source" />
     </LinearLayout>
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
 
 

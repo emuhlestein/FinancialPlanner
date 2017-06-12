@@ -45,7 +45,8 @@ public class RetirementConstants {
 
     public static final String LOCAL_SAVINGS = "savingsDataBroadcast";
     public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";
-    public static final String LOCAL_PENSION = "retireOptionsBroadcast";
+    public static final String LOCAL_PENSION = "pensionBroadcast";
+    public static final String LOCAL_GOV_PENSION = "govPensionBroadcast";
     public static final String LOCAL_RETIRE_OPTIONS = "retireOptionsBroadcast";
     public static final String LOCAL_PERSONAL_DATA = "personalDataBroadcast";
 

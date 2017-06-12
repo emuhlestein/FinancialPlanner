@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.intelliviz.retirementhelper.data.BalanceData;
-import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
@@ -203,81 +202,6 @@ public class DataBaseUtils {
         cursor.close();
         return new IncomeDataHelper(name, type);
     }
-
-    //
-    // Methods for SavingsIncome table
-    //
-
-
-
-    //
-    // Methods for TaxDeferredIncome table
-    //
-
-
-
-    //
-    // Methods for PensionIncome table
-    //
-
-    //
-    // Methods for GovPensionIncome table
-    //
-
-    public static String addGovPensionData(Context context, long incomeId, String monthlyAmount, String minimumAge) {
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, monthlyAmount);
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, minimumAge);
-        Uri uri = context.getContentResolver().insert(RetirementContract.GovPensionIncomeEntry.CONTENT_URI, values);
-        if (uri == null) {
-            return null;
-        } else
-            return uri.getLastPathSegment();
-    }
-
-    public static int saveGovPensionData(Context context, long incomeId, String monthlyAmount, String minimumAge) {
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, monthlyAmount);
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, minimumAge);
-
-        String selectionClause = RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
-        String sid = String.valueOf(incomeId);
-        String[] selectionArgs = new String[]{sid};
-        Uri uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
-    }
-
-    private static Cursor getGovPensionIncome(Context context, long incomeId) {
-        Uri uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
-        String selection = RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
-        String id = String.valueOf(incomeId);
-        String[] selectionArgs = {id};
-        return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
-    }
-
-    public static GovPensionIncomeData getGovPensionIncomeData(Context context, long incomeId) {
-        IncomeDataHelper idh = getIncomeTypeData(context, incomeId);
-        if(idh == null) {
-            return null;
-        }
-
-        Cursor cursor = getGovPensionIncome(context, incomeId);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return null;
-        }
-        int minAgeIndex = cursor.getColumnIndex(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE);
-        int monthlyBenefitIndex = cursor.getColumnIndex(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT);
-        String startAge = cursor.getString(minAgeIndex);
-        String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
-        double amount = Double.parseDouble(monthlyBenefit);
-        return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
-    }
-
-    //
-    // Methods for GovPensionIncome table
-    //
 
     static String addBalanceData(Context context, long incomeId, double balance, String date) {
         String amount = Double.toString(balance);

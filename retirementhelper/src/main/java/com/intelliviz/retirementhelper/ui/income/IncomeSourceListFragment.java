@@ -32,16 +32,19 @@ import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
+import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.services.GovPensionDataService;
 import com.intelliviz.retirementhelper.services.PensionDataService;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.PensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SavingsHelper;
@@ -52,6 +55,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.PensionHelper.addPensionData;
+import static com.intelliviz.retirementhelper.util.PensionHelper.getPensionIncomeData;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
@@ -65,6 +70,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_AC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_VIEW;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_SAVINGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
@@ -128,6 +134,21 @@ public class IncomeSourceListFragment extends Fragment implements
             newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, pid.getId());
             newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, pid.getType());
             newIntent.putExtra(EXTRA_INCOME_DATA, pid);
+            newIntent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
+            startActivityForResult(newIntent, REQUEST_PENSION);
+        }
+    };
+
+    private BroadcastReceiver mGovPensionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            GovPensionIncomeData gpid = intent.getParcelableExtra(EXTRA_DB_DATA);
+            RetirementOptionsData rod = intent.getParcelableExtra(EXTRA_DB_EXTRA_DATA);
+            Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, gpid.getId());
+            newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, gpid.getType());
+            newIntent.putExtra(EXTRA_INCOME_DATA, gpid);
             newIntent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
             newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
             startActivityForResult(newIntent, REQUEST_PENSION);
@@ -226,6 +247,7 @@ public class IncomeSourceListFragment extends Fragment implements
                                 startActivityForResult(intent, REQUEST_PENSION);
                                 break;
                             case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                                intent.putExtra(EXTRA_INCOME_DATA, new GovPensionIncomeData(RetirementConstants.INCOME_TYPE_GOV_PENSION));
                                 startActivityForResult(intent, REQUEST_GOV_PENSION);
                                 break;
                         }
@@ -328,7 +350,7 @@ public class IncomeSourceListFragment extends Fragment implements
                     startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                     break;
                 case RetirementConstants.INCOME_TYPE_PENSION:
-                    PensionIncomeData pid = PensionHelper.getPensionIncomeData(getContext(), incomeSourceId);
+                    PensionIncomeData pid = getPensionIncomeData(getContext(), incomeSourceId);
                     rod = DataBaseUtils.getRetirementOptionsData(getContext());
                     intent = new Intent(getActivity(), IncomeSourceActivity.class);
                     intent.putExtra(EXTRA_INCOME_DATA, pid);
@@ -339,6 +361,15 @@ public class IncomeSourceListFragment extends Fragment implements
                     startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                     break;
                 case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                    GovPensionIncomeData gpid = GovPensionHelper.getGovPensionIncomeData(getContext(), incomeSourceId);
+                    rod = DataBaseUtils.getRetirementOptionsData(getContext());
+                    intent = new Intent(getActivity(), IncomeSourceActivity.class);
+                    intent.putExtra(EXTRA_INCOME_DATA, gpid);
+                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, gpid.getType());
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
+                    startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                     break;
             }
         }
@@ -348,12 +379,14 @@ public class IncomeSourceListFragment extends Fragment implements
         registerSavingsReceiver();
         registerTaxDeferredReceiver();
         registerPensionReceiver();
+        registerGovPensionReceiver();
     }
 
     private void unregisterReceiver() {
         unregisterSavingsReceiver();
         unregisterTaxDeferredReceiver();
         unregisterPensionReceiver();
+        unregisterGovPensionReceiver();
     }
 
     private void registerSavingsReceiver() {
@@ -381,6 +414,15 @@ public class IncomeSourceListFragment extends Fragment implements
 
     private void unregisterPensionReceiver() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mPensionReceiver);
+    }
+
+    private void registerGovPensionReceiver() {
+        IntentFilter filter = new IntentFilter(LOCAL_GOV_PENSION);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mGovPensionReceiver, filter);
+    }
+
+    private void unregisterGovPensionReceiver() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mGovPensionReceiver);
     }
 
     private void onHandleAction(Intent resultIntent) {
@@ -433,6 +475,17 @@ public class IncomeSourceListFragment extends Fragment implements
                 }
                 break;
             case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                if(action == INCOME_ACTION_EDIT) {
+                    Intent localIntent = new Intent(getContext(), GovPensionDataService.class);
+                    localIntent.putExtra(EXTRA_DB_ID, incomeSourceId);
+                    localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
+                    getActivity().startService(localIntent);
+                } else if(action == INCOME_ACTION_DELETE) {
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    YesNoDialog dialog = YesNoDialog.newInstance(incomeSourceId);
+                    dialog.setTargetFragment(IncomeSourceListFragment.this, REQUEST_YES_NO);
+                    dialog.show(fm, DIALOG_YES_NO);
+                }
                 break;
         }
     }
@@ -471,38 +524,19 @@ public class IncomeSourceListFragment extends Fragment implements
         PensionIncomeData pid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
 
         if (pid.getId() == -1) {
-            String rc = PensionHelper.addPensionData(getContext(), pid);
+            String rc = addPensionData(getContext(), pid);
         } else {
             PensionHelper.savePensionData(getContext(), pid);
         }
     }
 
     private void saveGovPensionData(Intent intent) {
-        /*
-        long incomeTypeId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
-        int incomeType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, 0);
-        String incomeSourceName = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
-        String monthlyBenefit = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MONTHLY_BENEFIT);
-        String age = intent.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_MINIMUM_AGE);
-        IncomeTypeData isd = DataBaseUtils.getIncomeTypeData(getContext(), incomeTypeId);
-        if (isd == null) {
-            String sid = DataBaseUtils.addIncomeType(getContext(), incomeSourceName, incomeType);
-            long id = Long.parseLong(sid);
+        GovPensionIncomeData gpid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
 
-            String sdid = DataBaseUtils.addGovPensionData(getContext(), id, monthlyBenefit, age);
+        if (gpid.getId() == -1) {
+            String rc = GovPensionHelper.addGovPensionData(getContext(), gpid);
         } else {
-            String sid = Long.toString(incomeTypeId);
-
-            int rowsUpdated = DataBaseUtils.saveIncomeType(getContext(), incomeTypeId, incomeSourceName, incomeType);
-            if(rowsUpdated != 1) {
-                // TODO handle error
-            }
-
-            rowsUpdated = DataBaseUtils.saveGovPensionData(getContext(), id, monthlyBenefit, age);
-            if(rowsUpdated != 1) {
-                // TODO handle error
-            }
+            GovPensionHelper.saveGovPensionData(getContext(), gpid);
         }
-        */
     }
 }

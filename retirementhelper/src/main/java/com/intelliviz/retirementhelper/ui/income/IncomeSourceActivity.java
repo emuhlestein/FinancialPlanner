@@ -43,7 +43,6 @@ public class IncomeSourceActivity extends AppCompatActivity {
 
         if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_ADD) {
             // Add a new income source
-            //ab.setSubtitle("Add income source");
             switch (mIncomeSourceType) {
                 case RetirementConstants.INCOME_TYPE_SAVINGS:
                     addSavingsIncomeSourceFragment(false, intent);
@@ -55,13 +54,12 @@ public class IncomeSourceActivity extends AppCompatActivity {
                     addPensionIncomeSourceFragmnet(false, intent);
                     break;
                 case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                    addGovPensionIncomeSourceFragmnet(false, intent);
                     break;
             }
         } else {
             // View or edit an income source
-
             if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_EDIT) {
-                //ab.setSubtitle("Add income source");
                 switch (mIncomeSourceType) {
                     case RetirementConstants.INCOME_TYPE_SAVINGS:
                         addSavingsIncomeSourceFragment(false, intent);
@@ -73,6 +71,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
                         addPensionIncomeSourceFragmnet(false, intent);
                         break;
                     case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                        addGovPensionIncomeSourceFragmnet(false, intent);
                         break;
                 }
             } else {
@@ -87,6 +86,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
                         addPensionIncomeSourceFragmnet(true, intent);
                         break;
                     case RetirementConstants.INCOME_TYPE_GOV_PENSION:
+                        addGovPensionIncomeSourceFragmnet(true, intent);
                         break;
                 }
             }
@@ -192,6 +192,30 @@ public class IncomeSourceActivity extends AppCompatActivity {
                 fragment = EditPensionIncomeFragment.newInstance(intent);
                 ft = fm.beginTransaction();
                 ft.add(R.id.content_frame, fragment, EditPensionIncomeFragment.EDIT_PENSION_INCOME_FRAG_TAG);
+                ft.commit();
+            }
+        }
+    }
+
+    private void addGovPensionIncomeSourceFragmnet(boolean viewMode, Intent intent) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft;
+        Fragment fragment;
+
+        if (viewMode) {
+            fragment = fm.findFragmentByTag(ViewGovPensionIncomeFragment.VIEW_GOV_PENSION_INCOME_FRAG_TAG);
+            if (fragment == null) {
+                fragment = ViewGovPensionIncomeFragment.newInstance(intent);
+                ft = fm.beginTransaction();
+                ft.add(R.id.content_frame, fragment, ViewGovPensionIncomeFragment.VIEW_GOV_PENSION_INCOME_FRAG_TAG);
+                ft.commit();
+            }
+        } else {
+            fragment = fm.findFragmentByTag(EditGovPensionIncomeFragment.EDIT_GOVPENSION_INCOME_FRAG_TAG);
+            if (fragment == null) {
+                fragment = EditGovPensionIncomeFragment.newInstance(intent);
+                ft = fm.beginTransaction();
+                ft.add(R.id.content_frame, fragment, EditGovPensionIncomeFragment.EDIT_GOVPENSION_INCOME_FRAG_TAG);
                 ft.commit();
             }
         }

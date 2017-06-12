@@ -4,24 +4,27 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.intelliviz.retirementhelper.data.PensionIncomeData;
+import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.PensionHelper;
+import com.intelliviz.retirementhelper.util.GovPensionHelper;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PENSION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
+/**
+ * Created by edm on 6/12/2017.
+ */
 
-public class PensionDataService extends IntentService {
+public class GovPensionDataService extends IntentService {
 
-    public PensionDataService() {
+    public GovPensionDataService() {
         super("GovPensionDataService");
     }
 
@@ -34,22 +37,22 @@ public class PensionDataService extends IntentService {
                 if(id == -1) {
                     return; // error
                 }
-                PensionIncomeData tdid = PensionHelper.getPensionIncomeData(this, id);
+                GovPensionIncomeData gpid = GovPensionHelper.getGovPensionIncomeData(this, id);
                 RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
-                if (tdid != null && rod != null) {
-                    Intent localIntent = new Intent(LOCAL_PENSION);
-                    localIntent.putExtra(EXTRA_DB_DATA, tdid);
+                if (gpid != null && rod != null) {
+                    Intent localIntent = new Intent(LOCAL_GOV_PENSION);
+                    localIntent.putExtra(EXTRA_DB_DATA, gpid);
                     localIntent.putExtra(EXTRA_DB_EXTRA_DATA, rod);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                 }
             } else if(action == SERVICE_DB_UPDATE) {
-                PensionIncomeData pid = intent.getParcelableExtra(EXTRA_DB_DATA);
-                if(pid != null) {
+                GovPensionIncomeData gpid = intent.getParcelableExtra(EXTRA_DB_DATA);
+                if(gpid != null) {
                     if(id == -1) {
-                        String sid = PensionHelper.addPensionData(this, pid);
+                        String sid = GovPensionHelper.addGovPensionData(this, gpid);
                     } else {
-                        int rowsUpdated = PensionHelper.savePensionData(this, pid);
-                        Intent localIntent = new Intent(LOCAL_PENSION);
+                        int rowsUpdated = GovPensionHelper.saveGovPensionData(this, gpid);
+                        Intent localIntent = new Intent(LOCAL_GOV_PENSION);
                         localIntent.putExtra(EXTRA_DB_ROWS_UPDATED, rowsUpdated);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                     }

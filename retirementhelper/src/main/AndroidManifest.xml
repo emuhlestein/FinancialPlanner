@@ -50,6 +50,10 @@
         <service
             android:name=".services.SavingsDataService"
             android:exported="false"></service>
+        <service
+            android:name=".services.GovPensionDataService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

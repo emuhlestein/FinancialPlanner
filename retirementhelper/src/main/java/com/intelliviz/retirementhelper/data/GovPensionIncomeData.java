@@ -11,6 +11,10 @@ public class GovPensionIncomeData extends IncomeTypeData {
     private String mStartAge;
     private double mMonthlyBenefit;
 
+    public GovPensionIncomeData(int type) {
+        super(type);
+    }
+
     public GovPensionIncomeData(long id, String name, int type, String startAge, double monthlyBenefit) {
         super(id, name, type);
         mStartAge = startAge;

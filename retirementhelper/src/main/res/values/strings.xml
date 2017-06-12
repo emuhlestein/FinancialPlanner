@@ -52,7 +52,7 @@
     <string name="name_hint">Name:</string>
     <string name="birthdate_format">Birthdate (yyyy-MM-dd)</string>
     <string name="personal_info">Personal Info</string>
-    <string name="name">Name</string>
+    <string name="name">Name:</string>
     <string name="birth_date">Birth Date</string>
     <string name="email">Email</string>
     <string name="change_password">Change Password</string>

@@ -81,12 +81,11 @@ public class EditPensionIncomeFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus) {
                     TextView textView = (TextView)v;
-                    String interest = textView.getText().toString();
-                    interest = getFloatValue(interest);
-                    if(interest != null) {
-                        mMonthlyBenefit.setText(interest + "%");
-                    } else {
-                        mMonthlyBenefit.setText("");
+                    String str = textView.getText().toString();
+                    String value = getFloatValue(str);
+                    String formattedString = SystemUtils.getFormattedCurrency(value);
+                    if(formattedString != null) {
+                        mMonthlyBenefit.setText(formattedString);
                     }
                 }
             }
