@@ -62,13 +62,10 @@ public class SavingsHelper {
     }
 
     public static Cursor getSavingsIncome(Context context, long incomeId) {
-        String[] projection = null; // we want all columns
-        String selection = RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
         String id = String.valueOf(incomeId);
-        String[] selectionArgs = {id};
         Uri uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, id);
-        return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+        return context.getContentResolver().query(uri, null, null, null, null);
     }
 
     public static SavingsIncomeData getSavingsIncomeData(Context context, long incomeId) {
@@ -82,8 +79,8 @@ public class SavingsHelper {
         }
         int interestIndex = cursor.getColumnIndex(RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST);
         int monthAddIndex = cursor.getColumnIndex(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD);
-        String interest = cursor.getString(interestIndex);
-        String monthAdd = cursor.getString(monthAddIndex);
+        double interest = Double.parseDouble(cursor.getString(interestIndex));
+        double monthAdd = Double.parseDouble(cursor.getString(monthAddIndex));
         SavingsIncomeData sid = new SavingsIncomeData(incomeId, idh.name, idh.type, interest, monthAdd);
 
         BalanceData[] bds = getBalanceData(context, incomeId);

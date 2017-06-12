@@ -83,7 +83,7 @@ public class BenefitHelper {
 
     public static List<MilestoneData> getMilestones(Context context, IncomeType incomeType, RetirementOptionsData rod) {
         if(incomeType instanceof SavingsIncomeData) {
-            return getMilestonesFromSavingsIncome(context, (SavingsIncomeData)incomeType);
+            return getMilestonesFromSavingsIncome(context, (SavingsIncomeData)incomeType, rod);
         } else if(incomeType instanceof TaxDeferredIncomeData) {
             return getMilestonesFromTaxDeferredIncome(context, (TaxDeferredIncomeData)incomeType, rod);
         } else if(incomeType instanceof PensionIncomeData){
@@ -93,10 +93,23 @@ public class BenefitHelper {
         }
     }
 
-    private static List<MilestoneData> getMilestonesFromSavingsIncome(Context context, SavingsIncomeData sid) {
-        return getMilestones(context, sid.getBalance(),
-                parseDouble(sid.getInterest()),
-                parseDouble(sid.getMonthlyIncrease()));
+    private static List<MilestoneData> getMilestonesFromSavingsIncome(Context context, SavingsIncomeData sid, RetirementOptionsData rod) {
+        double startBalance = sid.getBalance();
+        double interestRate = sid.getInterest();
+        double monthlyAddition = sid.getMonthlyIncrease();
+        String endAge = rod.getEndAge();
+        double withdrawAmount = parseDouble(rod.getWithdrawAmount());
+        List<MilestoneData> milestones = new ArrayList<>();
+        List<AgeData> ages = getMilestoneAges(context);
+        if(ages.isEmpty()) {
+            return milestones;
+        }
+        AgeData endOfLifeAge = new AgeData(endAge);
+
+        List<Double> milestoneBalances = getMilestoneBalances(ages, startBalance, interestRate, monthlyAddition);
+
+        milestones = getMilestones(endOfLifeAge, null, interestRate, 0, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
+        return milestones;
     }
 
     /**
@@ -210,8 +223,12 @@ public class BenefitHelper {
 
         for(int i = 0; i < ages.size(); i++) {
             AgeData startAge = ages.get(i);
-            if(!startAge.isBefore(minimumAge)) {
+            if(minimumAge == null) {
                 penalty = 0;
+            } else {
+                if (!startAge.isBefore(minimumAge)) {
+                    penalty = 0;
+                }
             }
             double startBalance = milestoneBalances.get(i);
             double monthlyAmount = getMonthlyAmount(startBalance, withdrawMode, withdrawAmount);

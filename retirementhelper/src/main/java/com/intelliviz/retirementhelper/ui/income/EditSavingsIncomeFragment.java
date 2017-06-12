@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.ui.income;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -17,8 +16,9 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.BalanceData;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
+import com.intelliviz.retirementhelper.services.SavingsDataService;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -26,6 +26,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -187,17 +188,22 @@ public class EditSavingsIncomeFragment extends Fragment {
             return;
         }
 
-        Intent returnIntent = new Intent();
-
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
         double dbalance = Double.parseDouble(balance);
+        double dinterest = Double.parseDouble(interest);
+        double dmonthlyIncrease = Double.parseDouble(monthlyIncrease);
 
-        SavingsIncomeData sid = new SavingsIncomeData(mSID.getId(), name, mSID.getType(), interest, monthlyIncrease);
+        SavingsIncomeData sid = new SavingsIncomeData(mSID.getId(), name, mSID.getType(), dinterest, dmonthlyIncrease);
         sid.addBalance(new BalanceData(dbalance, date));
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_DATA, sid);
+        updateSID(sid);
+    }
 
-        getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        getActivity().finish();
+    private void updateSID(SavingsIncomeData sid) {
+        Intent intent = new Intent(getContext(), SavingsDataService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ID, sid.getId());
+        intent.putExtra(EXTRA_DB_DATA, sid);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        getActivity().startService(intent);
     }
 }

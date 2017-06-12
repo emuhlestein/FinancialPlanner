@@ -183,7 +183,7 @@ public class RetirementProvider extends ContentProvider {
                 break;
             case SAVINGS_INCOME_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.SavingsIncomeEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.SavingsIncomeEntry._ID +
+                sqLiteQueryBuilder.appendWhere(RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID +
                         "=" + uri.getLastPathSegment());
                 break;
             case SAVINGS_INCOME_LIST:

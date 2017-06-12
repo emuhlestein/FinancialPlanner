@@ -14,12 +14,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name:"
+            android:text="@string/name"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/name_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:layout_weight="1"
@@ -37,12 +37,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Annual Interest:"
+            android:text="@string/annual_interest"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/annual_interest_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:layout_weight="1"
@@ -60,7 +60,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Increase:"
+            android:text="@string/monthly_increase"
             android:layout_weight="0"
             android:textSize="22sp" />
 
@@ -83,12 +83,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Current Balance:"
+            android:text="@string/current_balance"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/current_balance_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:layout_weight="1"
@@ -104,15 +104,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Amount:"
+            android:text="@string/monthly_amount"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/monthly_amount_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:layout_weight="1"
             android:textSize="22sp" />
     </LinearLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/separator" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

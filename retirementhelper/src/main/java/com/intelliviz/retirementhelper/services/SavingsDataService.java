@@ -18,17 +18,10 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_SAV
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
-
 public class SavingsDataService extends IntentService {
 
-
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
-    public SavingsDataService(String name) {
-        super(name);
+    public SavingsDataService() {
+        super("SavingsDataService");
     }
 
     @Override

@@ -11,8 +11,8 @@ import java.util.List;
  */
 
 public class SavingsIncomeData extends IncomeTypeData {
-    private String mInterest;
-    private String mMonthlyIncrease;
+    private double mInterest;
+    private double mMonthlyIncrease;
     private List<BalanceData> mBalanceDataList = new ArrayList<>();
 
     public SavingsIncomeData() {
@@ -23,13 +23,8 @@ public class SavingsIncomeData extends IncomeTypeData {
         super(type);
     }
 
-    public SavingsIncomeData(long id, String name, int type) {
-        super(id);
-        mInterest = "0";
-        mMonthlyIncrease = "0";
-    }
 
-    public SavingsIncomeData(long id, String name, int type, String interest, String monthlyIncrease) {
+    public SavingsIncomeData(long id, String name, int type, double interest, double monthlyIncrease) {
         super(id, name, type);
         mInterest = interest;
         mMonthlyIncrease = monthlyIncrease;
@@ -55,11 +50,11 @@ public class SavingsIncomeData extends IncomeTypeData {
         return getBalance() * monthlyInterest;
     }
 
-    public String getInterest() {
+    public double getInterest() {
         return mInterest;
     }
 
-    public String getMonthlyIncrease() {
+    public double getMonthlyIncrease() {
         return mMonthlyIncrease;
     }
 
@@ -83,16 +78,16 @@ public class SavingsIncomeData extends IncomeTypeData {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeString(mInterest);
-        dest.writeString(mMonthlyIncrease);
+        dest.writeDouble(mInterest);
+        dest.writeDouble(mMonthlyIncrease);
         dest.writeTypedList(mBalanceDataList);
     }
 
     @Override
     public void readFromParcel(Parcel in) {
         super.readFromParcel(in);
-        mInterest = in.readString();
-        mMonthlyIncrease = in.readString();
+        mInterest = in.readDouble();
+        mMonthlyIncrease = in.readDouble();
         in.readTypedList(mBalanceDataList, BalanceData.CREATOR);
     }
 
