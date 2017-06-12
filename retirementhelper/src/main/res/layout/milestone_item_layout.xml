@@ -9,14 +9,14 @@
         android:id="@+id/milestone_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="16sp"
+        android:paddingStart="16sp"
         android:textSize="22sp" />
 
     <TextView
         android:id="@+id/monthly_amount_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingRight="16sp"
+        android:paddingEnd="16sp"
         android:textSize="22sp"
         android:gravity="end"
         android:layout_weight="1"/>
