@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
@@ -15,6 +16,39 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.getIncomeTypeDa
  */
 
 public class GovPensionHelper {
+
+    public static AgeData getFullRetirementAge(int birthYear) {
+        AgeData fullAge;
+        if(birthYear <= 1937) {
+            fullAge = new AgeData(65, 0);
+        } else if(birthYear == 1938) {
+            fullAge = new AgeData(65, 2);
+        } else if(birthYear == 1939) {
+            fullAge = new AgeData(65, 4);
+        }else if(birthYear == 1940) {
+            fullAge = new AgeData(65, 6);
+        } else if(birthYear == 1941) {
+            fullAge = new AgeData(65, 8);
+        } else if(birthYear == 19342) {
+            fullAge = new AgeData(65, 10);
+        } else if(birthYear >= 1939 && birthYear < 1955) {
+            fullAge = new AgeData(66, 0);
+        } else if(birthYear == 1955) {
+            fullAge = new AgeData(66, 2);
+        } else if(birthYear == 1956) {
+            fullAge = new AgeData(66, 4);
+        } else if(birthYear == 1957) {
+            fullAge = new AgeData(66, 6);
+        } else if(birthYear == 1958) {
+            fullAge = new AgeData(66, 8);
+        } else if(birthYear == 1959) {
+            fullAge = new AgeData(66, 10);
+        } else {
+            fullAge = new AgeData(67, 0);
+        }
+
+        return fullAge;
+    }
 
     public static String addGovPensionData(Context context, GovPensionIncomeData gpid) {
         String id = DataBaseUtils.addIncomeType(context, gpid);

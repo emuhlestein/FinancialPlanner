@@ -29,7 +29,6 @@ public class RetirementConstants {
 
     public static final String EXTRA_INCOME_DATA = "extra income data";
     public static final String EXTRA_RETIREOPTIONS_DATA = "extra retire options data";
-
     public static final String EXTRA_PERSONALINFODATA = "personalinfodata";
     public static final String EXTRA_MILESTONEDATA = "milestonedata";
     public static final String EXTRA_DATEDATA = "datedata";

@@ -10,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,10 +30,11 @@ public class ViewGovPensionIncomeFragment extends Fragment {
 
     public static final String VIEW_GOV_PENSION_INCOME_FRAG_TAG = "view gov pension income frag tag";
     private GovPensionIncomeData mGPID;
-    private RetirementOptionsData mROD;
+    private PersonalInfoData mPERID;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.min_age_text_view) TextView mMinAge;
+    @Bind(R.id.full_age_text_view) TextView mFullAge;
     @Bind(R.id.monthly_amount_text_view) TextView mMonthlyBenefit;
 
     public static ViewGovPensionIncomeFragment newInstance(Intent intent) {
@@ -51,7 +55,7 @@ public class ViewGovPensionIncomeFragment extends Fragment {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
             if(intent != null) {
                 mGPID = intent.getParcelableExtra(EXTRA_INCOME_DATA);
-                mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                mPERID = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
             }
         }
     }
@@ -70,6 +74,10 @@ public class ViewGovPensionIncomeFragment extends Fragment {
 
         mIncomeSourceName.setText(mGPID.getName());
         mMinAge.setText(mGPID.getStartAge());
+
+        int birthYear = SystemUtils.getBirthYear(mPERID.getBirthdate());
+        AgeData fullAge = GovPensionHelper.getFullRetirementAge(birthYear);
+        mFullAge.setText(fullAge.toString());
 
         // TODO need to format
         mMonthlyBenefit.setText(Double.toString(mGPID.getMonthlyBenefit(0)));

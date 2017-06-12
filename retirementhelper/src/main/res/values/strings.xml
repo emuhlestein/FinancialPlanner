@@ -87,5 +87,6 @@
     </string-array>
     <string name="penalty_applies">penalty applies before minimum age is reached.</string>
     <string name="insufficient_funds">You do not have sufficient funds for the monthly amount desired.</string>
+    <string name="full_retirement_age">Full Retirement Age</string>
 
 </resources>

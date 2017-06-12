@@ -40,6 +40,10 @@ public class GovPensionIncomeData extends IncomeTypeData {
         return mStartAge;
     }
 
+    public double getMonthlyBenefit() {
+        return mMonthlyBenefit;
+    }
+
     private GovPensionIncomeData(Parcel in) {
         readFromParcel(in);
     }

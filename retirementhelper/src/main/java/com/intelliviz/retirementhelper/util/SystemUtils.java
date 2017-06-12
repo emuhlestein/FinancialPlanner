@@ -221,6 +221,13 @@ public class SystemUtils {
         return incomeTypes[incomeSourceType];
     }
 
+    public static int getBirthYear(String birthdate) {
+        String[] birthTokens = birthdate.split("-");
+
+        int birthYear = Integer.parseInt(birthTokens[0]);
+        return birthYear;
+    }
+
     public static AgeData getAge(String birthdate) {
         String[] birthTokens = birthdate.split("-");
 
