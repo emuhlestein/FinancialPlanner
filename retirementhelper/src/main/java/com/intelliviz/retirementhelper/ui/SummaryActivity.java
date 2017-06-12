@@ -9,18 +9,26 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.services.PersonalDataService;
+import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceActivity;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 public class SummaryActivity extends AppCompatActivity {
     private static final String DIALOG_RETIRE_OPTIONS = "reitre_options";
@@ -40,9 +48,7 @@ public class SummaryActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        mToolbar.showOverflowMenu();
-        mToolbar.setSubtitle("Summary");
-        //mToolbar.inflateMenu(R.menu.summary_menu);
+
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment;
 
@@ -105,11 +111,70 @@ public class SummaryActivity extends AppCompatActivity {
             }
         });
     }
-/*
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.summary_menu, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.summary_menu, menu);
         return true;
     }
-    */
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.retirement_options_item:
+                intent = new Intent(this, RetirementOptionsDialog.class);
+                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+                if (rod != null) {
+                    intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
+                }
+                startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
+
+                break;
+            case R.id.personal_info_item:
+                intent = new Intent(this, PersonalInfoDialog.class);
+                PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(this);
+                if (pid != null) {
+                    intent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
+                }
+                startActivityForResult(intent, REQUEST_PERSONAL_INFO);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch (requestCode) {
+            case REQUEST_RETIRE_OPTIONS:
+                if (resultCode == RESULT_OK) {
+                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                    updateROD(rod);
+                }
+                break;
+            case REQUEST_PERSONAL_INFO:
+                if (resultCode == RESULT_OK) {
+                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+                    updatePID(pid);
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, intent);
+        }
+    }
+
+    private void updateROD(RetirementOptionsData rod) {
+        Intent intent = new Intent(this, RetirementOptionsService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        startService(intent);
+    }
+
+    private void updatePID(PersonalInfoData pid) {
+        Intent intent = new Intent(this, PersonalDataService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, pid);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        startService(intent);
+    }
 }
