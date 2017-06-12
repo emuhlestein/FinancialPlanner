@@ -16,6 +16,7 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.getIncomeTypeDa
  */
 
 public class GovPensionHelper {
+    private static double MAX_SS_PENALTY = 30.0;
 
     public static AgeData getFullRetirementAge(int birthYear) {
         AgeData fullAge;
@@ -50,6 +51,11 @@ public class GovPensionHelper {
         return fullAge;
     }
 
+    /**
+     * Get the percent credit per year.
+     * @param birthyear
+     * @return
+     */
     public static double getDelayedCredit(int birthyear) {
         if(birthyear < 1925) {
             return 3;
@@ -72,7 +78,34 @@ public class GovPensionHelper {
         } else if(birthyear < 1943) {
             return 7.5;
         } else {
-            return 8.0;
+            return 8.0; // the max
+        }
+    }
+
+    public static double getSocialSecuretyAdjustment(String birthDate, AgeData startAge) {
+        int year = SystemUtils.getBirthYear(birthDate);
+        AgeData retireAge = getFullRetirementAge(year);
+        AgeData diffAge = retireAge.subtract(startAge);
+        int numMonths = diffAge.getNumberOfMonths();
+        if(numMonths > 0) {
+            // this is early retirement; the adjustment will be a penalty.
+            if(numMonths < 37) {
+                return (numMonths * 5.0) / 9.0;
+            } else {
+                double penalty = (numMonths * 5.0) / 12.0;
+                if(penalty > MAX_SS_PENALTY) {
+                    penalty = MAX_SS_PENALTY;
+                }
+                return penalty;
+            }
+        } else if(numMonths < 0) {
+            // this is delayed retirement; the adjustment is a credit.
+            double annualCredit = getDelayedCredit(year);
+            double monthlyCredit = numMonths * (annualCredit / 12.0);
+            return monthlyCredit;
+
+        } else {
+            return 0; // exact retirement age
         }
     }
 
