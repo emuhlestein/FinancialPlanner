@@ -162,6 +162,7 @@ public class GovPensionHelper {
         String startAge = cursor.getString(minAgeIndex);
         String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
         double amount = Double.parseDouble(monthlyBenefit);
+        cursor.close();
         return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
     }
 }

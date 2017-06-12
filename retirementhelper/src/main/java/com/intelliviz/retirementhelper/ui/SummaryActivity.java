@@ -75,8 +75,10 @@ public class SummaryActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.home_menu:
                         RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(SummaryActivity.this);
+                        PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(SummaryActivity.this);
                         Intent intent = new Intent(SummaryActivity.this, IncomeSourceActivity.class);
                         intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+                        intent.putExtra(EXTRA_PERSONALINFODATA, perid);
                         fragment = SummaryFragment.newInstance(intent);
                         ft = fm.beginTransaction();
                         ft.replace(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);

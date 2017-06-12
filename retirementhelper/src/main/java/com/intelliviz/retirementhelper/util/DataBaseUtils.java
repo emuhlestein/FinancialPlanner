@@ -6,10 +6,12 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.intelliviz.retirementhelper.data.BalanceData;
+import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
@@ -43,6 +45,8 @@ public class DataBaseUtils {
             int type = Integer.parseInt(cursor.getString(typeIndex));
             switch(type) {
                 case INCOME_TYPE_SAVINGS:
+                    SavingsIncomeData sid = SavingsHelper.getSavingsIncomeData(context, id);
+                    incomeTypes.add(sid);
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:
                     TaxDeferredIncomeData tdid = TaxDeferredHelper.getTaxDeferredIncomeData(context, id);
@@ -53,6 +57,8 @@ public class DataBaseUtils {
                     incomeTypes.add(pid);
                     break;
                 case INCOME_TYPE_GOV_PENSION:
+                    GovPensionIncomeData gpid = GovPensionHelper.getGovPensionIncomeData(context, id);
+                    incomeTypes.add(gpid);
                     break;
             }
         }
@@ -144,6 +150,7 @@ public class DataBaseUtils {
         if(withdrawAmount.equals("")) {
             withdrawAmount = "4";
         }
+        cursor.close();
         return new RetirementOptionsData(startAge, endAge, withdrawMode, withdrawAmount);
     }
 

@@ -47,7 +47,7 @@ public class BenefitHelper {
         }
         List<MilestoneData> saveMilestones = null;
         for(IncomeType incomeType : incomeTypes) {
-            List<MilestoneData> milestones = getMilestones(context, incomeType, rod, null);
+            List<MilestoneData> milestones = getMilestones(context, incomeType, rod, perid);
             if(milestones == null || milestones.isEmpty()) {
                 continue;
             }
