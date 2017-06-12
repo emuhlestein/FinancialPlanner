@@ -50,6 +50,32 @@ public class GovPensionHelper {
         return fullAge;
     }
 
+    public static double getDelayedCredit(int birthyear) {
+        if(birthyear < 1925) {
+            return 3;
+        } else if(birthyear < 1927) {
+            return 3.5;
+        } else if(birthyear < 1929) {
+            return 4.0;
+        } else if(birthyear < 1931) {
+            return 4.5;
+        } else if(birthyear < 1933 ) {
+            return 5.0;
+        } else if(birthyear < 1935) {
+            return 5.5;
+        } else if(birthyear < 1937) {
+            return 6.0;
+        } else if(birthyear < 1939) {
+            return 6.5;
+        } else if(birthyear < 1941) {
+            return 7.0;
+        } else if(birthyear < 1943) {
+            return 7.5;
+        } else {
+            return 8.0;
+        }
+    }
+
     public static String addGovPensionData(Context context, GovPensionIncomeData gpid) {
         String id = DataBaseUtils.addIncomeType(context, gpid);
         if(id == null) {
