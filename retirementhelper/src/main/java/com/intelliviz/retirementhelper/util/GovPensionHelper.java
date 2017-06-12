@@ -128,7 +128,7 @@ public class GovPensionHelper {
 
     public static int saveGovPensionData(Context context, GovPensionIncomeData gpid) {
         ContentValues values = new ContentValues();
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getMonthlyBenefit(0)));
+        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getMonthlyBenefit()));
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getStartAge());
 
         String sid = String.valueOf(gpid.getId());

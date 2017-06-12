@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -39,6 +40,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RET
 
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
     private RetirementOptionsData mROD;
+    private PersonalInfoData mPERID;
     private MilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
@@ -49,7 +51,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         public void onReceive(Context context, Intent intent) {
             intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
             mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
-            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
+            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD, mPERID);
             mMilestoneAdapter.update(milestones);
         }
     };
@@ -73,6 +75,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
             if(intent != null) {
                 mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                mPERID = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
             }
         }
     }
@@ -91,7 +94,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             actionBar.setHomeButtonEnabled(true);
         }
 
-        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
+        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD, mPERID);
         double currentBalance = milestones.get(0).getStartBalance();
         mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);

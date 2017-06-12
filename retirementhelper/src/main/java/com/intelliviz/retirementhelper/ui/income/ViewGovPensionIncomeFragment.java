@@ -8,18 +8,27 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
+import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,16 +42,18 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PER
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ViewGovPensionIncomeFragment extends Fragment {
+public class ViewGovPensionIncomeFragment extends Fragment implements SelectionMilestoneListener {
 
     public static final String VIEW_GOV_PENSION_INCOME_FRAG_TAG = "view gov pension income frag tag";
     private GovPensionIncomeData mGPID;
     private PersonalInfoData mPERID;
+    private MilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.min_age_text_view) TextView mMinAge;
     @Bind(R.id.full_age_text_view) TextView mFullAge;
     @Bind(R.id.monthly_amount_text_view) TextView mMonthlyBenefit;
+    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
 
     private BroadcastReceiver mPersonalInfoReceiver = new BroadcastReceiver() {
         @Override
@@ -84,6 +95,16 @@ public class ViewGovPensionIncomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_gov_pension_income, container, false);
         ButterKnife.bind(this, view);
+
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mGPID, null, mPERID);
+        mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setAdapter(mMilestoneAdapter);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
+                linearLayoutManager.getOrientation()));
+        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
+
         updateUI();
         return view;
     }
@@ -120,5 +141,10 @@ public class ViewGovPensionIncomeFragment extends Fragment {
 
     private void unregisterReceiver() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mPersonalInfoReceiver);
+    }
+
+    @Override
+    public void onSelectMilestoneListener(MilestoneData msd) {
+
     }
 }

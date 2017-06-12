@@ -3,6 +3,7 @@ package com.intelliviz.retirementhelper.util;
 import android.content.Context;
 
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
@@ -25,7 +26,7 @@ import static java.lang.Double.parseDouble;
 
 public class BenefitHelper {
 
-    public static List<MilestoneData> getAllMilestones(Context context, RetirementOptionsData rod) {
+    public static List<MilestoneData> getAllMilestones(Context context, RetirementOptionsData rod, PersonalInfoData perid) {
         List<MilestoneData> sumMilestones = new ArrayList<>();
         List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
         if(incomeTypes == null) {
@@ -46,7 +47,7 @@ public class BenefitHelper {
         }
         List<MilestoneData> saveMilestones = null;
         for(IncomeType incomeType : incomeTypes) {
-            List<MilestoneData> milestones = getMilestones(context, incomeType, rod);
+            List<MilestoneData> milestones = getMilestones(context, incomeType, rod, null);
             if(milestones == null || milestones.isEmpty()) {
                 continue;
             }
@@ -81,13 +82,17 @@ public class BenefitHelper {
         return sumMilestones;
     }
 
-    public static List<MilestoneData> getMilestones(Context context, IncomeType incomeType, RetirementOptionsData rod) {
+    public static List<MilestoneData> getMilestones(Context context,
+                                                    IncomeType incomeType,
+                                                    RetirementOptionsData rod, PersonalInfoData perid) {
         if(incomeType instanceof SavingsIncomeData) {
             return getMilestonesFromSavingsIncome(context, (SavingsIncomeData)incomeType, rod);
         } else if(incomeType instanceof TaxDeferredIncomeData) {
             return getMilestonesFromTaxDeferredIncome(context, (TaxDeferredIncomeData)incomeType, rod);
         } else if(incomeType instanceof PensionIncomeData){
             return getMilestonesFromPensionIncome(context, (PensionIncomeData)incomeType, rod);
+        } else if(incomeType instanceof GovPensionIncomeData) {
+            return getMilestonesFromGovPensionIncome(context, (GovPensionIncomeData)incomeType, rod, perid);
         } else {
             return Collections.emptyList();
         }
@@ -209,6 +214,42 @@ public class BenefitHelper {
                 int numMonths = diffAge.getNumberOfMonths();
 
                 milestone = new MilestoneData(age, endAge, minimumAge, monthlyBenefit, 0, 0, 0, numMonths);
+            }
+            milestones.add(milestone);
+        }
+        return milestones;
+    }
+
+    private static List<MilestoneData> getMilestonesFromGovPensionIncome(Context context,
+                                                                         GovPensionIncomeData gpid,
+                                                                         RetirementOptionsData rod, PersonalInfoData perid) {
+        List<MilestoneData> milestones = new ArrayList<>();
+        List<AgeData> ages = getMilestoneAges(context);
+        if(ages.isEmpty()) {
+            return milestones;
+        }
+
+        //AgeData minimumAge = new AgeData(gpid.getStartAge());
+
+        String birthDate = perid.getBirthdate();
+
+        int birthYear = SystemUtils.getBirthYear(birthDate);
+        AgeData fullAge = GovPensionHelper.getFullRetirementAge(birthYear);
+        double monthlyBenefit = gpid.getMonthlyBenefit();
+
+        AgeData minimumAge = new AgeData(62, 0);
+
+        MilestoneData milestone;
+        for(AgeData age : ages) {
+
+            if(age.isBefore(minimumAge)) {
+                milestone = new MilestoneData(age, null, minimumAge, 0, 0, 0, 0, 0);
+            } else {
+                double factor = GovPensionHelper.getSocialSecuretyAdjustment(birthDate, age);
+
+                double factorAmount = (monthlyBenefit * factor) / 100.0;
+                double adjustedBenefit = monthlyBenefit - factorAmount;
+                milestone = new MilestoneData(age, null, minimumAge, adjustedBenefit, 0, 0, 0, 0);
             }
             milestones.add(milestone);
         }

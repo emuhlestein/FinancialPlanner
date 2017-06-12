@@ -58,7 +58,7 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
         @Override
         public void onReceive(Context context, Intent intent) {
             intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
+            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD, null);
             mMilestoneAdapter.update(milestones);
         }
     };
@@ -95,7 +95,7 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_savings_income, container, false);
         ButterKnife.bind(this, view);
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD, null);
         mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -130,7 +130,7 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
 
         mCurrentBalance.setText(String.valueOf(formattedAmount));
 
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD, null);
         double monthlyAmount = milestones.get(0).getMonthlyBenefit();
         formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
 

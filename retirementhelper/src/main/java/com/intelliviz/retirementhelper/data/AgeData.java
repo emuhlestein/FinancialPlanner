@@ -55,11 +55,7 @@ public class AgeData implements Parcelable {
             month = 12 + month;
         }
 
-        if(year < 0) {
-            return new AgeData();
-        } else {
-            return new AgeData(year, month);
-        }
+        return new AgeData(year, month);
     }
 
     public float getAge() {

@@ -25,6 +25,7 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_PERSONALINFODATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
@@ -55,8 +56,10 @@ public class SummaryActivity extends AppCompatActivity {
         if (fragment == null) {
 
             RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+            PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(this);
             Intent intent = new Intent(this, IncomeSourceActivity.class);
             intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+            intent.putExtra(EXTRA_PERSONALINFODATA, perid);
             fragment = SummaryFragment.newInstance(intent);
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
@@ -135,7 +138,7 @@ public class SummaryActivity extends AppCompatActivity {
                 intent = new Intent(this, PersonalInfoDialog.class);
                 PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(this);
                 if (pid != null) {
-                    intent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
+                    intent.putExtra(EXTRA_PERSONALINFODATA, pid);
                 }
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 break;
