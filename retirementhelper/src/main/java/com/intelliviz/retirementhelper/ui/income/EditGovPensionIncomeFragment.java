@@ -102,7 +102,7 @@ public class EditGovPensionIncomeFragment extends Fragment {
 
     private void updateUI() {
         String name = mGPID.getName();
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getMonthlyBenefit(0));
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getMonthlyBenefit());
         String age = mGPID.getStartAge();
 
         mIncomeSourceName.setText(name);
