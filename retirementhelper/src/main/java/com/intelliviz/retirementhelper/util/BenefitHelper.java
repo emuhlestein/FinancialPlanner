@@ -237,6 +237,7 @@ public class BenefitHelper {
         AgeData fullAge = GovPensionHelper.getFullRetirementAge(birthYear);
         double monthlyBenefit = gpid.getMonthlyBenefit();
 
+        // TODO put this in a global place
         AgeData minimumAge = new AgeData(62, 0);
 
         MilestoneData milestone;

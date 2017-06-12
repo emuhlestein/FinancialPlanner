@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
+import com.intelliviz.retirementhelper.adapter.SSMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
@@ -47,7 +47,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
     public static final String VIEW_GOV_PENSION_INCOME_FRAG_TAG = "view gov pension income frag tag";
     private GovPensionIncomeData mGPID;
     private PersonalInfoData mPERID;
-    private MilestoneAdapter mMilestoneAdapter;
+    private SSMilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.min_age_text_view) TextView mMinAge;
@@ -97,7 +97,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
         ButterKnife.bind(this, view);
 
         List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mGPID, null, mPERID);
-        mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
+        mMilestoneAdapter = new SSMilestoneAdapter(getContext(), milestones, mPERID);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);
