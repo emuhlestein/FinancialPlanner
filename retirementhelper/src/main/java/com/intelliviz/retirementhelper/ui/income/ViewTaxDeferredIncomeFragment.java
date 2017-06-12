@@ -12,45 +12,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
-import com.intelliviz.retirementhelper.services.PersonalDataService;
-import com.intelliviz.retirementhelper.services.RetirementOptionsService;
-import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
-import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
-import com.intelliviz.retirementhelper.ui.RetirementOptionsDialog;
 import com.intelliviz.retirementhelper.data.BalanceData;
-import com.intelliviz.retirementhelper.util.BenefitHelper;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
+import com.intelliviz.retirementhelper.util.BenefitHelper;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static android.app.Activity.RESULT_OK;
 import static android.content.Intent.EXTRA_INTENT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 public class ViewTaxDeferredIncomeFragment extends Fragment implements SelectionMilestoneListener {
     public static final String VIEW_TAXDEF_INCOME_FRAG_TAG = "view taxdef income frag tag";
@@ -65,12 +53,12 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
     @Bind(R.id.minimum_age_text_view) TextView mMinimumAge;
     @Bind(R.id.penalty_amount_text_view) TextView mPenaltyAmount;
     @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
-    @Bind(R.id.view_tax_defered_toolbar) Toolbar mToolbar;
 
     private BroadcastReceiver mRetirementOptionsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
+            mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
             List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
             mMilestoneAdapter.update(milestones);
         }
@@ -116,42 +104,8 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
                 linearLayoutManager.getOrientation()));
         mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
-        setHasOptionsMenu(true);
-
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
-
         updateUI();
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.summary_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.retirement_options_item:
-                intent = new Intent(getContext(), RetirementOptionsDialog.class);
-                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(getContext());
-                if (rod != null) {
-                    intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
-                }
-                startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
-
-                break;
-            case R.id.personal_info_item:
-                intent = new Intent(getContext(), PersonalInfoDialog.class);
-                PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(getContext());
-                if (pid != null) {
-                    intent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
-                }
-                startActivityForResult(intent, REQUEST_PERSONAL_INFO);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -197,28 +151,6 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         startActivity(intent);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        switch (requestCode) {
-            case REQUEST_RETIRE_OPTIONS:
-                if (resultCode == RESULT_OK) {
-                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                    updateROD(rod);
-                    mROD = rod;
-                }
-                break;
-            case REQUEST_PERSONAL_INFO:
-                if (resultCode == RESULT_OK) {
-                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-                    updatePID(pid);
-                    //DataBaseUtils.savePersonalInfo(getContext(), pid);
-                }
-                break;
-            default:
-                super.onActivityResult(requestCode, resultCode, intent);
-        }
-    }
-
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mRetirementOptionsReceiver, filter);
@@ -226,19 +158,5 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
 
     private void unregisterReceiver() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mRetirementOptionsReceiver);
-    }
-
-    private void updateROD(RetirementOptionsData rod) {
-        Intent intent = new Intent(getContext(), RetirementOptionsService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
-        getActivity().startService(intent);
-    }
-
-    private void updatePID(PersonalInfoData pid) {
-        Intent intent = new Intent(getContext(), PersonalDataService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, pid);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
-        getActivity().startService(intent);
     }
 }

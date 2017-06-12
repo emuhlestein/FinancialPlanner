@@ -38,6 +38,7 @@ public class RetirementOptionsService extends IntentService {
                     int rowsUpdated = DataBaseUtils.saveRetirementOptions(this, rod);
                     Intent localIntent = new Intent(LOCAL_RETIRE_OPTIONS);
                     localIntent.putExtra(EXTRA_DB_ROWS_UPDATED, rowsUpdated);
+                    localIntent.putExtra(EXTRA_DB_DATA, rod);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                 }
             }

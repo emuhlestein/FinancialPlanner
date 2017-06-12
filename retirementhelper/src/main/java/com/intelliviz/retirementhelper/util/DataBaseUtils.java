@@ -142,6 +142,9 @@ public class DataBaseUtils {
         String endAge = cursor.getString(endAgeIndex);
         int withdrawMode = cursor.getInt(withdrawModeIndex);
         String withdrawAmount = cursor.getString(withdrawAmountIndex);
+        if(withdrawAmount.equals("")) {
+            withdrawAmount = "4";
+        }
         return new RetirementOptionsData(startAge, endAge, withdrawMode, withdrawAmount);
     }
 
