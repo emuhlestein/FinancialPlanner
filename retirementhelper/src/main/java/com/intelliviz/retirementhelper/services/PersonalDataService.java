@@ -38,6 +38,7 @@ public class PersonalDataService extends IntentService {
                     int rowsUpdated = DataBaseUtils.savePersonalInfo(this, pid);
                     Intent localIntent = new Intent(LOCAL_PERSONAL_DATA);
                     localIntent.putExtra(EXTRA_DB_ROWS_UPDATED, rowsUpdated);
+                    localIntent.putExtra(EXTRA_DB_DATA, pid);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                 }
             }

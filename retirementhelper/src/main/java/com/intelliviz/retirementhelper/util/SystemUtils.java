@@ -47,7 +47,7 @@ public class SystemUtils {
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
                     PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-                    updatePID(context, pid);
+                    updatePERID(context, pid);
                 }
                 return false;
             default:
@@ -337,7 +337,7 @@ public class SystemUtils {
         context.startService(intent);
     }
 
-    private static void updatePID(Context context, PersonalInfoData pid) {
+    private static void updatePERID(Context context, PersonalInfoData pid) {
         Intent intent = new Intent(context, PersonalDataService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, pid);
         intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
