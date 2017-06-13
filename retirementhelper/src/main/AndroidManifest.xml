@@ -26,6 +26,17 @@
             android:authorities="com.intelliviz.retirementhelper.db.RetirementProvider"
             android:exported="true"
             android:label="my provider" />
+        <receiver android:name=".widget.WidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.intelliviz.milestones.MILESTONES_REFRESHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/milestone_list_widget_info" />
+        </receiver>
 
         <activity android:name=".ui.PinActivity" />
         <activity android:name=".ui.income.IncomeSourceActivity" />
@@ -49,11 +60,18 @@
             android:exported="false" />
         <service
             android:name=".services.SavingsDataService"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".services.GovPensionDataService"
             android:exported="false" />
-
+        <service
+            android:name=".widget.MilestonesRemoteViewsService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".widget.WidgetService"
+            android:enabled="false"
+            android:exported="false"></service>
     </application>
 
 </manifest>
