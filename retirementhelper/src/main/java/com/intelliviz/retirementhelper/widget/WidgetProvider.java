@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.ui.SummaryActivity;
 
 /**
  * Created by edm on 6/12/2017.
@@ -26,13 +28,13 @@ public class WidgetProvider extends AppWidgetProvider {
 
             // Bind this widget to a remote view service
             Intent intent = new Intent(context, MilestonesRemoteViewsService.class);
-           // intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             views.setRemoteAdapter(R.id.collection_widget_list_view, intent);
 
-            //Intent templateIntent = new Intent(context, SummaryActivity.class);
-            //templateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-           // PendingIntent templatePendingIntent = PendingIntent.getActivity(context, 0, templateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            //views.setPendingIntentTemplate(R.id.collection_widget_list_view, templatePendingIntent);
+            Intent templateIntent = new Intent(context, SummaryActivity.class);
+            templateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            PendingIntent templatePendingIntent = PendingIntent.getActivity(context, 0, templateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setPendingIntentTemplate(R.id.collection_widget_list_view, templatePendingIntent);
 
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
