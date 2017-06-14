@@ -68,7 +68,7 @@ public class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteVi
         Intent fillIntent = new Intent();
 
         // TODO should not use name here; need to figure something out
-        Uri uri = Uri.withAppendedPath(RetirementContract.IncomeTypeEntry.CONTENT_URI, name);
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI; //Uri.withAppendedPath(RetirementContract.IncomeTypeEntry.CONTENT_URI, name);
         fillIntent.setData(uri);
 
         rv.setOnClickFillInIntent(R.id.start_age_text_view, fillIntent);

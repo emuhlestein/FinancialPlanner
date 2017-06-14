@@ -1,5 +1,7 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +23,7 @@ import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -114,6 +117,12 @@ public class SummaryActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        ComponentName appWidget = new ComponentName(this, WidgetProvider.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
+
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
     }
 
     @Override

@@ -30,9 +30,6 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="com.intelliviz.milestones.MILESTONES_REFRESHED" />
-            </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/milestone_list_widget_info" />
@@ -66,12 +63,7 @@
             android:exported="false" />
         <service
             android:name=".widget.MilestonesRemoteViewsService"
-            android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".widget.WidgetService"
-            android:enabled="false"
-            android:exported="false"></service>
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
     </application>
 
 </manifest>

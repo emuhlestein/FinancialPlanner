@@ -4,4 +4,6 @@
     android:minHeight="212dp"
     android:minWidth="148dp"
     android:resizeMode="vertical|horizontal"
-    android:updatePeriodMillis="360"/>
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen">
+</appwidget-provider>

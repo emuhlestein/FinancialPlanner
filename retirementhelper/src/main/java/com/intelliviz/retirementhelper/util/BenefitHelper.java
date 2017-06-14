@@ -29,7 +29,7 @@ public class BenefitHelper {
     public static List<MilestoneData> getAllMilestones(Context context, RetirementOptionsData rod, PersonalInfoData perid) {
         List<MilestoneData> sumMilestones = new ArrayList<>();
         List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
-        if(incomeTypes == null) {
+        if(incomeTypes == null || incomeTypes.isEmpty()) {
             return sumMilestones;
         }
         List<AgeData> ages = getMilestoneAges(context);

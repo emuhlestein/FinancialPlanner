@@ -95,16 +95,18 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         }
 
         List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD, mPERID);
-        double currentBalance = milestones.get(0).getStartBalance();
-        mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mMilestoneAdapter);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
-                linearLayoutManager.getOrientation()));
-        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
+        if(!milestones.isEmpty()) {
+            double currentBalance = milestones.get(0).getStartBalance();
+            mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(linearLayoutManager);
+            mRecyclerView.setAdapter(mMilestoneAdapter);
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
+                    linearLayoutManager.getOrientation()));
+            mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
-        updateUI(currentBalance);
+            updateUI(currentBalance);
+        }
 
         return view;
     }
