@@ -1,7 +1,9 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -51,6 +53,7 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SavingsHelper;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
+import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -499,6 +502,7 @@ public class IncomeSourceListFragment extends Fragment implements
             long incomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
             if(incomeSourceId != -1) {
                 int rowsDeleted = TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), incomeSourceId);
+                updateAppWidget();
             }
         }
     }
@@ -511,6 +515,8 @@ public class IncomeSourceListFragment extends Fragment implements
         } else {
             SavingsHelper.saveSavingsIncomeData(getContext(), sid);
         }
+
+        updateAppWidget();
     }
 
     private void saveTaxDeferredData(Intent intent) {
@@ -521,6 +527,8 @@ public class IncomeSourceListFragment extends Fragment implements
         } else {
             TaxDeferredHelper.saveTaxDeferredData(getContext(), tdid);
         }
+
+        updateAppWidget();
     }
 
     private void savePensionData(Intent intent) {
@@ -531,6 +539,8 @@ public class IncomeSourceListFragment extends Fragment implements
         } else {
             PensionHelper.savePensionData(getContext(), pid);
         }
+
+        updateAppWidget();
     }
 
     private void saveGovPensionData(Intent intent) {
@@ -541,5 +551,15 @@ public class IncomeSourceListFragment extends Fragment implements
         } else {
             GovPensionHelper.saveGovPensionData(getContext(), gpid);
         }
+
+        updateAppWidget();
+    }
+
+    private void updateAppWidget() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getContext());
+        ComponentName appWidget = new ComponentName(getContext(), WidgetProvider.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
+
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
     }
 }
