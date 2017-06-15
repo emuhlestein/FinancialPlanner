@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/add_widget_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Retirement\nMilestones"
+        android:background="@color/cardview_dark_background"
+        />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/collection_widget_list_view"/>
-</FrameLayout>
+</LinearLayout>

@@ -8,10 +8,12 @@ import android.net.Uri;
 import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
+import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
+import com.intelliviz.retirementhelper.data.SummaryData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.intelliviz.retirementhelper.util.BenefitHelper.getAllMilestones;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
@@ -29,6 +32,42 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TY
  */
 
 public class DataBaseUtils {
+
+    public static void updateSummaryData(Context context) {
+        RetirementOptionsData rod = getRetirementOptionsData(context);
+        PersonalInfoData perid = getPersonalInfoData(context);
+        List<MilestoneData> milestones = getAllMilestones(context, rod, perid);
+        List<SummaryData> listSummaryData = new ArrayList<>();
+        for(MilestoneData msd : milestones) {
+            listSummaryData.add(new SummaryData(msd.getStartAge().toString(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
+        }
+        Uri uri = RetirementContract.SummaryEntry.CONTENT_URI;
+        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        for(SummaryData summaryData : listSummaryData) {
+            ContentValues values = new ContentValues();
+            values.put(RetirementContract.SummaryEntry.COLUMN_AGE, summaryData.getAge().toString());
+            values.put(RetirementContract.SummaryEntry.COLUMN_AMOUNT, summaryData.getMonthlyBenefit());
+            uri = context.getContentResolver().insert(RetirementContract.SummaryEntry.CONTENT_URI, values);
+        }
+    }
+
+    public static List<SummaryData> getSummaryData(Context context) {
+        Uri uri = RetirementContract.SummaryEntry.CONTENT_URI;
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return Collections.emptyList();
+        }
+        List<SummaryData> summaryData = new ArrayList<>();
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            int ageIndex = cursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AGE);
+            int amountIndex = cursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AMOUNT);
+            String age = cursor.getString(ageIndex);
+            String amount = cursor.getString(amountIndex);
+            summaryData.add(new SummaryData(age, amount));
+        }
+
+        return summaryData;
+    }
 
     public static List<IncomeType> getAllIncomeTypes(Context context) {
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;

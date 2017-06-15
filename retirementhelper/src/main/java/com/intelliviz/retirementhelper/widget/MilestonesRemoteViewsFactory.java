@@ -54,16 +54,16 @@ public class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteVi
         mCursor.moveToPosition(position);
         int count = mCursor.getCount();
 
-        int nameIndex = mCursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
-        int typeIndex = mCursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
+        int ageIndex = mCursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AGE);
+        int amountIndex = mCursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AMOUNT);
 
-        String name = mCursor.getString(nameIndex);
-        int type = mCursor.getInt(typeIndex);
+        String age = mCursor.getString(ageIndex);
+        String monthlyBenefit = mCursor.getString(amountIndex);
 
         RemoteViews rv = new RemoteViews(mContext.getPackageName(),
                 R.layout.milestone_collection_item_layout);
-        rv.setTextViewText(R.id.start_age_text_view, name);
-        rv.setTextViewText(R.id.monthly_benefit_text_view, Integer.toString(type));
+        rv.setTextViewText(R.id.start_age_text_view, age.toString());
+        rv.setTextViewText(R.id.monthly_benefit_text_view, monthlyBenefit);
 
         Intent fillIntent = new Intent();
 
@@ -90,7 +90,7 @@ public class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteVi
     @Override
     public long getItemId(int position) {
         if(mCursor != null) {
-            return mCursor.getInt(mCursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID));
+            return mCursor.getInt(mCursor.getColumnIndex(RetirementContract.SummaryEntry._ID));
         } else {
             return position;
         }
@@ -103,12 +103,12 @@ public class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteVi
 
     private Cursor executeQuery() {
         String[] projection = new String[] {
-                RetirementContract.IncomeTypeEntry._ID,
-                RetirementContract.IncomeTypeEntry.COLUMN_TYPE,
-                RetirementContract.IncomeTypeEntry.COLUMN_NAME
+                RetirementContract.SummaryEntry._ID,
+                RetirementContract.SummaryEntry.COLUMN_AGE,
+                RetirementContract.SummaryEntry.COLUMN_AMOUNT
         };
 
-        Cursor cursor = mContext.getContentResolver().query(RetirementContract.IncomeTypeEntry.CONTENT_URI,
+        Cursor cursor = mContext.getContentResolver().query(RetirementContract.SummaryEntry.CONTENT_URI,
                 projection, null, null, null);
 
         return cursor;

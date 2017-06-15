@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 5;
+    private static final int DBASE_VERSION = 6;
     private static final int PERSONALINFO_ID = 101;
     private static final int RETIREMENT_OPTIONS_ID = 102;
     private static final int CATEGORY_LIST = 201;
@@ -42,6 +42,7 @@ public class RetirementProvider extends ContentProvider {
     private static final int BALANCE_ID = 902;
     private static final int MILESTONE_LIST = 1001;
     private static final int MILESTONE_ID = 1002;
+    private static final int SUMMARY_LIST = 1101;
 
     private static UriMatcher sUriMatcher;
 
@@ -87,6 +88,8 @@ public class RetirementProvider extends ContentProvider {
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE, MILESTONE_LIST);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE + "/#", MILESTONE_ID);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_SUMMARY, SUMMARY_LIST);
     }
 
     @Override
@@ -136,6 +139,8 @@ public class RetirementProvider extends ContentProvider {
                 return RetirementContract.BalanceEntry.CONTENT_TYPE;
             case BALANCE_ID:
                 return RetirementContract.BalanceEntry.CONTENT_ITEM_TYPE;
+            case SUMMARY_LIST:
+                return RetirementContract.SummaryEntry.CONTENT_TYPE;
             case TAX_DEFERRED_INCOME_LIST:
                 return RetirementContract.TaxDeferredIncomeEntry.CONTENT_TYPE;
             case TAX_DEFERRED_INCOME_ID:
@@ -188,6 +193,9 @@ public class RetirementProvider extends ContentProvider {
                 break;
             case SAVINGS_INCOME_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.SavingsIncomeEntry.TABLE_NAME);
+                break;
+            case SUMMARY_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.SummaryEntry.TABLE_NAME);
                 break;
             case TAX_DEFERRED_INCOME_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
@@ -286,6 +294,16 @@ public class RetirementProvider extends ContentProvider {
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
                 rowId = db.insert(RetirementContract.SavingsIncomeEntry.TABLE_NAME, null, values);
+                if (rowId > -1) {
+                    returnUri = ContentUris.withAppendedId(uri, rowId);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            case SUMMARY_LIST:
+                // The second parameter will allow an empty row to be inserted. If it was null, then no row
+                // can be inserted if values is empty.
+                rowId = db.insert(RetirementContract.SummaryEntry.TABLE_NAME, null, values);
                 if (rowId > -1) {
                     returnUri = ContentUris.withAppendedId(uri, rowId);
                 } else {
@@ -433,6 +451,9 @@ public class RetirementProvider extends ContentProvider {
                             RetirementContract.MileStoneEntry._ID + " = ?", new String[]{id});
                 }
                 break;
+            case SUMMARY_LIST:
+                rowsDeleted = db.delete(RetirementContract.SummaryEntry.TABLE_NAME, null, null);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri");
         }
@@ -447,8 +468,7 @@ public class RetirementProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mSqliteHelper.getWritableDatabase();
-        final int match = sUriMatcher.match(uri);
-        int rowsUpdated = 0;
+        int rowsUpdated;
         String id;
 
         switch(sUriMatcher.match(uri)) {
@@ -728,6 +748,14 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
+            // create the summary table
+            sql = "CREATE TABLE " + RetirementContract.SummaryEntry.TABLE_NAME +
+                    " ( " + RetirementContract.SummaryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.SummaryEntry.COLUMN_AMOUNT + " TEXT NOT NULL, " +
+                    RetirementContract.SummaryEntry.COLUMN_AGE + " TEXT NOT NULL);";
+
+            db.execSQL(sql);
+
             String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1', '-1');";
             db.execSQL(ROW);
             ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '62', '90', '0', '0');";
@@ -754,6 +782,7 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.GovPensionIncomeEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.BalanceEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.MileStoneEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.SummaryEntry.TABLE_NAME);
 
             onCreate(db);
         }

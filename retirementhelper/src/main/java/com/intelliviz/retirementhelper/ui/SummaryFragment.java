@@ -24,6 +24,7 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -106,6 +107,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
             updateUI(currentBalance);
+
+            DataBaseUtils.updateSummaryData(getContext());
         }
 
         return view;
