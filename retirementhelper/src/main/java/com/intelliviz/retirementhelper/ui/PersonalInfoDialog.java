@@ -96,16 +96,19 @@ public class PersonalInfoDialog extends AppCompatActivity {
     private void sendData() {
         String name = mNameEditText.getText().toString();
         String birthday = mBirthDateateEditText.getText().toString();
-        // TODO need to validate birth date
         if(!SystemUtils.validateBirthday(birthday)) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Birthday is not valid.", Snackbar.LENGTH_LONG);
+            String errMsg = getResources().getString(R.string.birthday_not_valid);
+            String yearFormat = getResources().getString(R.string.year_format);
+            StringBuilder sb = new StringBuilder();
+            sb.append(errMsg);
+            sb.append(" ");
+            sb.append(yearFormat);
+            sb.append(".");
+
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, sb.toString(), Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
-        } else {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Birthday is valid.", Snackbar.LENGTH_LONG);
-            snackbar.show();
         }
-
 
         PersonalInfoData pid = new PersonalInfoData(name, birthday, mEmail, mPIN, mPassword);
 

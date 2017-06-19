@@ -50,7 +50,7 @@
     <string name="length_of_retirement">Length of retirement:</string>
     <string name="funds_will_last">Funds will last:</string>
     <string name="name_hint">Name:</string>
-    <string name="birthdate_format">Birthdate (yyyy-MM-dd)</string>
+    <string name="year_format">(yyyy-MM-dd)</string>
     <string name="personal_info">Personal Info</string>
     <string name="name">Name:</string>
     <string name="birth_date">Birth Date</string>
@@ -91,5 +91,6 @@
 
 
     <string name="signed_in_fmt">Signed in as: %s</string>
+    <string name="birthday_not_valid">Birthday is not valid</string>
 
 </resources>

@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="@string/birthdate_format"
+                android:hint="@string/year_format"
                 android:inputType="date" />
         </android.support.design.widget.TextInputLayout>
 
