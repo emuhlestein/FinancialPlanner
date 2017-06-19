@@ -138,16 +138,12 @@ public class NewUserActivity extends AppCompatActivity {
 
     private void updateUserInfo() {
         ContentValues values = new ContentValues();
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL, mEmail);
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD, mPassword);
         values.put(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE, mBirthday);
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_NAME, mName);
         getContentResolver().update(RetirementContract.PeronsalInfoEntry.CONTENT_URI, values, null, null);
     }
 
     private void updatePIN() {
         ContentValues values = new ContentValues();
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_PIN, mPin);
         getContentResolver().update(RetirementContract.PeronsalInfoEntry.CONTENT_URI, values, null, null);
     }
 

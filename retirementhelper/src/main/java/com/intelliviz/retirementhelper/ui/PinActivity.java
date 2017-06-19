@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.db.RetirementContract;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -163,8 +162,7 @@ public class PinActivity extends AppCompatActivity implements UserInfoQueryListe
     public void onQueryUserInfo(int token, Object cookie, Cursor cursor) {
         if(cursor.moveToFirst()) {
             String userPin = (String)cookie;
-            int pinIndex = cursor.getColumnIndex(RetirementContract.PeronsalInfoEntry.COLUMN_PIN);
-            String pin = cursor.getString(pinIndex);
+            String pin = "";
             if(pin.equals(userPin)) {
                 Toast.makeText(this, "Pin is valid. Log in user", Toast.LENGTH_LONG).show();
             } else {

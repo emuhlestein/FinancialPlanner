@@ -38,12 +38,8 @@ public class RetirementContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PERSONALINFO;
 
         public static final String TABLE_NAME = PATH_PERSONALINFO;
-        public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_EMAIL = "email";
-        public static final String COLUMN_PASSWORD = "password";
         // yyyy-MM-dd
         public static final String COLUMN_BIRTHDATE = "birthdate";
-        public static final String COLUMN_PIN = "pin";
     }
 
     public static final class RetirementParmsEntry implements BaseColumns {

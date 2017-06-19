@@ -648,10 +648,6 @@ public class RetirementProvider extends ContentProvider {
             // create the personal info table
             String sql = "CREATE TABLE " + RetirementContract.PeronsalInfoEntry.TABLE_NAME +
                     " ( " + RetirementContract.PeronsalInfoEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.PeronsalInfoEntry.COLUMN_EMAIL + " TEXT NOT NULL, " +
-                    RetirementContract.PeronsalInfoEntry.COLUMN_PASSWORD + " TEXT, " +
-                    RetirementContract.PeronsalInfoEntry.COLUMN_NAME + " TEXT, " +
-                    RetirementContract.PeronsalInfoEntry.COLUMN_PIN + " TEXT, " +
                     RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE + " TEXT);";
 
             db.execSQL(sql);

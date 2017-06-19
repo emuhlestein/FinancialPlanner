@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -58,11 +60,19 @@ public class PersonalInfoDialog extends AppCompatActivity {
 
     private void updateUI() {
 
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+        String email = "";
+        String displayName = "";
+        if (user != null) {
+            email = user.getEmail();
+            displayName = user.getDisplayName();
+        }
         Intent intent = getIntent();
         PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-        mNameEditText.setText(pid.getName());
+        mNameEditText.setText(displayName);
         mBirthDateateEditText.setText(pid.getBirthdate());
-        mEmailTextView.setText(pid.getEmail());
+        mEmailTextView.setText(email);
     }
 
     private void sendData() {
@@ -82,7 +92,7 @@ public class PersonalInfoDialog extends AppCompatActivity {
             return;
         }
 
-        PersonalInfoData pid = new PersonalInfoData(name, birthday, "", "", "");
+        PersonalInfoData pid = new PersonalInfoData(birthday);
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
