@@ -56,7 +56,8 @@
             android:exported="false" />
         <service
             android:name=".services.PensionDataService"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <service
             android:name=".services.SavingsDataService"
             android:exported="false" />
