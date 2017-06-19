@@ -21,7 +21,7 @@ import android.text.TextUtils;
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
-    private static final int DBASE_VERSION = 6;
+    private static final int DBASE_VERSION = 1;
     private static final int PERSONALINFO_ID = 101;
     private static final int RETIREMENT_OPTIONS_ID = 102;
     private static final int CATEGORY_LIST = 201;
