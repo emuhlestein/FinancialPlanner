@@ -15,6 +15,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
@@ -40,6 +46,7 @@ public class SummaryActivity extends AppCompatActivity {
     private static final String INCOME_FRAG_TAG = "income frag tag";
     private static final String TAXES_FRAG_TAG = "taxes frag tag";
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
+    private GoogleApiClient mGoogleApiClient;
 
     @Bind(R.id.summary_toolbar) Toolbar mToolbar;
     @Bind(R.id.bottom_navigation) BottomNavigationView mBottonNavigation;
@@ -51,6 +58,14 @@ public class SummaryActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment;
@@ -153,10 +168,43 @@ public class SummaryActivity extends AppCompatActivity {
                 }
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 break;
+            case R.id.sign_out_item:
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                FirebaseAuth  auth = FirebaseAuth.getInstance();
+                                auth.signOut();
+                                mGoogleApiClient.disconnect();
+                                Intent intent = new Intent(SummaryActivity.this, StartActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                break;
+            case R.id.revoke_item:
+                Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                FirebaseAuth  auth = FirebaseAuth.getInstance();
+                                auth.signOut();
+                                mGoogleApiClient.disconnect();
+                                Intent intent = new Intent(SummaryActivity.this, StartActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

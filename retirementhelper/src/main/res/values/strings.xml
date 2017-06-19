@@ -89,4 +89,7 @@
     <string name="insufficient_funds">You do not have sufficient funds for the monthly amount desired.</string>
     <string name="full_retirement_age">Full Retirement Age</string>
 
+
+    <string name="signed_in_fmt">Signed in as: %s</string>
+
 </resources>

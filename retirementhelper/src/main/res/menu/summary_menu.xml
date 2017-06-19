@@ -11,5 +11,14 @@
         android:orderInCategory="200"
         android:title="Retirement Options"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/sign_out_item"
+        android:orderInCategory="200"
+        android:title="Sign Out"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/revoke_item"
+        android:orderInCategory="200"
+        android:title="Revoke"
+        app:showAsAction="never" />
 </menu>

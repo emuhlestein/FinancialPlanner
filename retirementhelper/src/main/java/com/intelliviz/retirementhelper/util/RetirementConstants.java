@@ -26,6 +26,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_MONTHLY_BENEFIT = "income source monthly benefit";
     public static final String EXTRA_INCOME_SOURCE_MINIMUM_AGE = "income source minimum age";
     public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
+    public static final String EXTRA_LOGIN_RESPONSE = "login response";
 
     public static final String EXTRA_INCOME_DATA = "extra income data";
     public static final String EXTRA_RETIREOPTIONS_DATA = "extra retire options data";
