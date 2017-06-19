@@ -20,17 +20,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class PersonalInfoDialog extends AppCompatActivity {
-    private String mPassword;
-    private String mPIN;
-    private String mEmail;
     private PersonalInfoData mPID;
     @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.name_edit_text) EditText mNameEditText;
     @Bind(R.id.birthdate_edit_text) EditText mBirthDateateEditText;
     @Bind(R.id.email_edit_text) TextView mEmailTextView;
-    @Bind(R.id.change_email) Button mChangeEmailButton;
-    @Bind(R.id.change_password) Button mChangePasswordButton;
-    @Bind(R.id.change_pin) Button mChangePinButton;
     @Bind(R.id.personal_info_ok) Button mOk;
     @Bind(R.id.personal_info_cancel) Button mCancel;
 
@@ -56,24 +50,6 @@ public class PersonalInfoDialog extends AppCompatActivity {
             }
         });
 
-        mChangeEmailButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
-        mChangePasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
-        mChangePinButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
         Intent intent = getIntent();
         mPID = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
 
@@ -87,10 +63,6 @@ public class PersonalInfoDialog extends AppCompatActivity {
         mNameEditText.setText(pid.getName());
         mBirthDateateEditText.setText(pid.getBirthdate());
         mEmailTextView.setText(pid.getEmail());
-
-        mPassword = pid.getPassword();
-        mPIN = pid.getPIN();
-        mEmail = pid.getEmail();
     }
 
     private void sendData() {
@@ -110,7 +82,7 @@ public class PersonalInfoDialog extends AppCompatActivity {
             return;
         }
 
-        PersonalInfoData pid = new PersonalInfoData(name, birthday, mEmail, mPIN, mPassword);
+        PersonalInfoData pid = new PersonalInfoData(name, birthday, "", "", "");
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
