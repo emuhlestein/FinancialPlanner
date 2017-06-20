@@ -23,12 +23,23 @@ import butterknife.ButterKnife;
 
 public class PersonalInfoDialog extends AppCompatActivity {
     private PersonalInfoData mPID;
-    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
-    @Bind(R.id.name_edit_text) EditText mNameEditText;
-    @Bind(R.id.birthdate_edit_text) EditText mBirthDateateEditText;
-    @Bind(R.id.email_edit_text) TextView mEmailTextView;
-    @Bind(R.id.personal_info_ok) Button mOk;
-    @Bind(R.id.personal_info_cancel) Button mCancel;
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+
+    @Bind(R.id.name_edit_text)
+    TextView mNameTextView;
+
+    @Bind(R.id.email_edit_text)
+    TextView mEmailTextView;
+
+    @Bind(R.id.birthdate_edit_text)
+    EditText mBirthDateEditText;
+
+    @Bind(R.id.personal_info_ok)
+    Button mOk;
+
+    @Bind(R.id.personal_info_cancel)
+    Button mCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +57,21 @@ public class PersonalInfoDialog extends AppCompatActivity {
         mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO make this into a method to be reused below
+                String birthday = mBirthDateEditText.getText().toString();
+                if(!SystemUtils.validateBirthday(birthday)) {
+                    String errMsg = getResources().getString(R.string.birthday_not_valid);
+                    String yearFormat = getResources().getString(R.string.year_format);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(errMsg);
+                    sb.append(" ");
+                    sb.append(yearFormat);
+                    sb.append(".");
+
+                    Snackbar snackbar = Snackbar.make(mCoordinatorLayout, sb.toString(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    return;
+                }
                 Intent returnIntent = new Intent();
                 setResult(Activity.RESULT_CANCELED, returnIntent);
                 finish();
@@ -56,6 +82,11 @@ public class PersonalInfoDialog extends AppCompatActivity {
         mPID = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
 
         updateUI();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // disable back button; force user to use ok or cancel
     }
 
     private void updateUI() {
@@ -70,14 +101,19 @@ public class PersonalInfoDialog extends AppCompatActivity {
         }
         Intent intent = getIntent();
         PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-        mNameEditText.setText(displayName);
-        mBirthDateateEditText.setText(pid.getBirthdate());
+        mNameTextView.setText(displayName);
+        mBirthDateEditText.setText(pid.getBirthdate());
         mEmailTextView.setText(email);
+
+        if(!SystemUtils.validateBirthday(pid.getBirthdate())) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Please enter your birthdate", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
     }
 
     private void sendData() {
-        String name = mNameEditText.getText().toString();
-        String birthday = mBirthDateateEditText.getText().toString();
+        String name = mNameTextView.getText().toString();
+        String birthday = mBirthDateEditText.getText().toString();
         if(!SystemUtils.validateBirthday(birthday)) {
             String errMsg = getResources().getString(R.string.birthday_not_valid);
             String yearFormat = getResources().getString(R.string.year_format);

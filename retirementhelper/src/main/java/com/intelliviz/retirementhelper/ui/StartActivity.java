@@ -114,6 +114,7 @@ public class StartActivity extends AppCompatActivity implements
     }
 
     private void startSignedInActivity(IdpResponse response) {
+        // TODO make sure birthdate is read before starting activity
         mGoogleApiClient.connect();
         Intent intent = new Intent(this, SummaryActivity.class);
         intent.putExtra(EXTRA_LOGIN_RESPONSE, response);

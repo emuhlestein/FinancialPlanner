@@ -92,5 +92,6 @@
 
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="birthday_not_valid">Birthday is not valid</string>
+    <string name="birthday_year_format">Birthdate (yyyy-MM-dd)</string>
 
 </resources>

@@ -752,7 +752,7 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
-            String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '-1', '-1', '-1', '-1', '-1');";
+            String ROW = "INSERT INTO " + RetirementContract.PeronsalInfoEntry.TABLE_NAME + " Values ('0', '0');";
             db.execSQL(ROW);
             ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '62', '90', '0', '0');";
             db.execSQL(ROW);

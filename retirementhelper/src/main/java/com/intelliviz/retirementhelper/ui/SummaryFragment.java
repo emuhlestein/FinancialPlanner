@@ -34,7 +34,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static android.content.Intent.EXTRA_INTENT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BUNDLE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
@@ -61,10 +61,10 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         // Required empty public constructor
     }
 
-    public static SummaryFragment newInstance(Intent intent) {
+    public static SummaryFragment newInstance(Bundle bundle) {
         SummaryFragment fragment = new SummaryFragment();
         Bundle args = new Bundle();
-        args.putParcelable(EXTRA_INTENT, intent);
+        args.putParcelable(EXTRA_BUNDLE, bundle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,10 +73,10 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            if(intent != null) {
-                mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                mPERID = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+            Bundle bundle = getArguments().getParcelable(EXTRA_BUNDLE);
+            if(bundle != null) {
+                mROD = bundle.getParcelable(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                mPERID = bundle.getParcelable(RetirementConstants.EXTRA_PERSONALINFODATA);
             }
         }
     }

@@ -33,6 +33,7 @@ public class RetirementConstants {
     public static final String EXTRA_PERSONALINFODATA = "personalinfodata";
     public static final String EXTRA_MILESTONEDATA = "milestonedata";
     public static final String EXTRA_DATEDATA = "datedata";
+    public static final String EXTRA_BUNDLE = "bundle";
 
     public static final int REQUEST_RETIRE_OPTIONS = 0;
     public static final int REQUEST_PERSONAL_INFO = 1;
