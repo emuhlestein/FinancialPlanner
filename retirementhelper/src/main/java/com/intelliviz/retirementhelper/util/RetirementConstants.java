@@ -62,4 +62,8 @@ public class RetirementConstants {
     public static final int SERVICE_DB_QUERY = 1;
     public static final int SERVICE_DB_UPDATE = 2;
     public static final int SERVICE_DB_DELETE = 3;
+
+    public static final String DIALOG_MENU = "DialogIncomeMenu";
+    public static final String DIALOG_YES_NO = "DialogYesNo";
+    public static final String DIALOG_BIRTHDATE = "DialogBirthdate";
 }

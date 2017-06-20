@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -34,10 +35,14 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.DIALOG_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BUNDLE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
 
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
     private RetirementOptionsData mROD;
@@ -111,7 +116,21 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             DataBaseUtils.updateSummaryData(getContext());
         }
 
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter your birth date");
+        dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
+        dialog.show(fm, DIALOG_BIRTHDATE);
+
         return view;
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_BIRTHDATE:
+                    onHandleBirthdate(intent);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -143,5 +162,18 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
 
     private void unregisterReceiver() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mRetirementOptionsReceiver);
+    }
+
+    private void onHandleBirthdate(Intent intent) {
+        String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+        if(!SystemUtils.validateBirthday(birthdate)) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter a valid birth date");
+            dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
+            dialog.show(fm, DIALOG_BIRTHDATE);
+            return;
+        }
+
+        SystemUtils.updatePERID(getContext(), new PersonalInfoData(birthdate));
     }
 }
