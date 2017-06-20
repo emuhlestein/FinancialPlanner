@@ -27,6 +27,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_MINIMUM_AGE = "income source minimum age";
     public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
+    public static final String EXTRA_BIRTHDATE = "birthdate";
 
     public static final String EXTRA_INCOME_DATA = "extra income data";
     public static final String EXTRA_RETIREOPTIONS_DATA = "extra retire options data";
@@ -43,6 +44,7 @@ public class RetirementConstants {
     public static final int REQUEST_GOV_PENSION = 5;
     public static final int REQUEST_INCOME_MENU = 6;
     public static final int REQUEST_YES_NO = 7;
+    public static final int REQUEST_BIRTHDATE = 8;
 
     public static final String LOCAL_SAVINGS = "savingsDataBroadcast";
     public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";

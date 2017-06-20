@@ -46,6 +46,7 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.services.GovPensionDataService;
 import com.intelliviz.retirementhelper.services.PensionDataService;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
+import com.intelliviz.retirementhelper.ui.BirthdateDialog;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
@@ -69,6 +70,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.getRetirementOptionsData;
 import static com.intelliviz.retirementhelper.util.PensionHelper.addPensionData;
 import static com.intelliviz.retirementhelper.util.PensionHelper.getPensionIncomeData;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
@@ -87,6 +89,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_GOV
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_SAVINGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_INCOME_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PENSION;
@@ -100,6 +103,7 @@ public class IncomeSourceListFragment extends Fragment implements
     public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
     private static final String DIALOG_MENU = "DialogIncomeMenu";
     private static final String DIALOG_YES_NO = "DialogYesNo";
+    private static final String DIALOG_BIRTHDATE = "DialogBirthdate";
 
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
@@ -274,6 +278,11 @@ public class IncomeSourceListFragment extends Fragment implements
         ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         ab.setSubtitle("Income Source");
 
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter your birth date");
+        dialog.setTargetFragment(IncomeSourceListFragment.this, REQUEST_BIRTHDATE);
+        dialog.show(fm, DIALOG_BIRTHDATE);
+
         return view;
     }
 
@@ -298,6 +307,9 @@ public class IncomeSourceListFragment extends Fragment implements
                     break;
                 case REQUEST_YES_NO:
                     onHandleYesNo(intent);
+                    break;
+                case REQUEST_BIRTHDATE:
+                    onHandleBirthdate(intent);
                     break;
             }
 
@@ -511,6 +523,16 @@ public class IncomeSourceListFragment extends Fragment implements
                 int rowsDeleted = TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), incomeSourceId);
                 updateAppWidget();
             }
+        }
+    }
+
+    private void onHandleBirthdate(Intent intent) {
+        String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+        if(!SystemUtils.validateBirthday(birthdate)) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter a valid birth date");
+            dialog.setTargetFragment(IncomeSourceListFragment.this, REQUEST_BIRTHDATE);
+            dialog.show(fm, DIALOG_BIRTHDATE);
         }
     }
 
