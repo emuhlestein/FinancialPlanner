@@ -1,8 +1,12 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +18,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.services.PersonalDataService;
 import com.intelliviz.retirementhelper.util.GoogleApiClientHelper;
+import com.intelliviz.retirementhelper.util.PersonalInfoMgr;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +31,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 
 public class StartActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
@@ -32,6 +43,7 @@ public class StartActivity extends AppCompatActivity implements
     private static final String FIREBASE_PRIVACY_POLICY_URL = "https://firebase.google.com/terms/analytics/#7_privacy";
     private static final int REQUEST_SIGN_IN = 1;
     private GoogleApiClient mGoogleApiClient;
+    private IdpResponse mResponse;
     @Bind(R.id.login_button)
     Button mLoginButton;
 
@@ -43,7 +55,6 @@ public class StartActivity extends AppCompatActivity implements
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             startSignedInActivity(null);
-            finish();
             return;
         }
         startActivityForResult(
@@ -56,6 +67,19 @@ public class StartActivity extends AppCompatActivity implements
                         .build(),
                 REQUEST_SIGN_IN);
     }
+
+    private BroadcastReceiver mPersonalInfoReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
+            PersonalInfoData pid = intent.getParcelableExtra(EXTRA_DB_DATA);
+            PersonalInfoMgr.getmInstance().setBirthdate(pid.getBirthdate());
+            Intent newIntent = new Intent(StartActivity.this, SummaryActivity.class);
+            newIntent.putExtra(EXTRA_LOGIN_RESPONSE, mResponse);
+            startActivity(newIntent);
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +107,18 @@ public class StartActivity extends AppCompatActivity implements
                 handleSignInResult(response);
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver();
     }
 
     private void handleSignInResult(IdpResponse response) {
@@ -114,15 +150,24 @@ public class StartActivity extends AppCompatActivity implements
     }
 
     private void startSignedInActivity(IdpResponse response) {
-        // TODO make sure birthdate is read before starting activity
+        mResponse = response;
         mGoogleApiClient.connect();
-        Intent intent = new Intent(this, SummaryActivity.class);
-        intent.putExtra(EXTRA_LOGIN_RESPONSE, response);
-        startActivity(intent);
+        Intent intent = new Intent(this, PersonalDataService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_QUERY);
+        startService(intent);
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e(TAG, "Failed to connect");
+    }
+
+    private void registerReceiver() {
+        IntentFilter filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mPersonalInfoReceiver, filter);
+    }
+
+    private void unregisterReceiver() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mPersonalInfoReceiver);
     }
 }
