@@ -26,7 +26,7 @@ import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.PersonalInfoMgr;
+import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -117,7 +117,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             DataBaseUtils.updateSummaryData(getContext());
         }
 
-        String birthdate = PersonalInfoMgr.getmInstance().getBirthdate();
+        String birthdate = RetirementInfoMgr.getInstance().getBirthdate();
         if(!SystemUtils.validateBirthday(birthdate) ) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter your birth date");

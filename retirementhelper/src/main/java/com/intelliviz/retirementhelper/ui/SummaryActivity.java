@@ -26,7 +26,7 @@ import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.PersonalInfoMgr;
+import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
@@ -68,7 +68,7 @@ public class SummaryActivity extends AppCompatActivity {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        String birthdate = PersonalInfoMgr.getmInstance().getBirthdate();
+        String birthdate = RetirementInfoMgr.getInstance().getBirthdate();
         if(!SystemUtils.validateBirthday(birthdate)) {
             Intent intent = new Intent(this, PersonalInfoDialog.class);
             PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(this);

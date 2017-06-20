@@ -54,6 +54,7 @@ public class RetirementConstants {
     public static final String LOCAL_PERSONAL_DATA = "personalDataBroadcast";
 
     public static final String EXTRA_DB_DATA = "db data";
+    public static final String EXTRA_DB_ROD = "db rod";
     public static final String EXTRA_DB_EXTRA_DATA = "db extra data";
     public static final String EXTRA_DB_ROWS_UPDATED = "rows updated";
     public static final String EXTRA_DB_ID = "db id";

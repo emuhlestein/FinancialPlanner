@@ -338,7 +338,7 @@ public class SystemUtils {
     }
 
     public static void updatePERID(Context context, PersonalInfoData pid) {
-        PersonalInfoMgr.getmInstance().setBirthdate(pid.getBirthdate());
+        RetirementInfoMgr.getInstance().setBirthdate(pid.getBirthdate());
         Intent intent = new Intent(context, PersonalDataService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, pid);
         intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);

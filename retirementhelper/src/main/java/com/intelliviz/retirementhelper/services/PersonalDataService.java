@@ -4,14 +4,16 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.getPersonalInfoData;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROD;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PERSONAL_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
@@ -26,10 +28,20 @@ public class PersonalDataService extends IntentService {
         if (intent != null) {
             int action = intent.getIntExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
             if(action == SERVICE_DB_QUERY) {
-                PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(this);
+                PersonalInfoData pid = getPersonalInfoData(this);
+                Intent localIntent = new Intent(LOCAL_PERSONAL_DATA);
+                boolean broadcast = false;
                 if (pid != null) {
-                    Intent localIntent = new Intent(LOCAL_RETIRE_OPTIONS);
                     localIntent.putExtra(EXTRA_DB_DATA, pid);
+                    broadcast = true;
+                }
+                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+                if (rod != null) {
+                    localIntent.putExtra(EXTRA_DB_ROD, rod);
+                    broadcast = true;
+                }
+
+                if(broadcast) {
                     LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                 }
             } else if(action == SERVICE_DB_UPDATE) {

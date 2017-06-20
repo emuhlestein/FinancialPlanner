@@ -19,9 +19,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.services.PersonalDataService;
 import com.intelliviz.retirementhelper.util.GoogleApiClientHelper;
-import com.intelliviz.retirementhelper.util.PersonalInfoMgr;
+import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import java.util.ArrayList;
@@ -32,9 +33,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROD;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PERSONAL_DATA;
 
 public class StartActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
@@ -73,7 +75,9 @@ public class StartActivity extends AppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
             intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
             PersonalInfoData pid = intent.getParcelableExtra(EXTRA_DB_DATA);
-            PersonalInfoMgr.getmInstance().setBirthdate(pid.getBirthdate());
+            RetirementOptionsData rod = intent.getParcelableExtra(EXTRA_DB_ROD);
+            RetirementInfoMgr.getInstance().setPersonalInfoData(pid);
+            RetirementInfoMgr.getInstance().setRetirementInfoData(rod);
             Intent newIntent = new Intent(StartActivity.this, SummaryActivity.class);
             newIntent.putExtra(EXTRA_LOGIN_RESPONSE, mResponse);
             startActivity(newIntent);
@@ -163,7 +167,7 @@ public class StartActivity extends AppCompatActivity implements
     }
 
     private void registerReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
+        IntentFilter filter = new IntentFilter(LOCAL_PERSONAL_DATA);
         LocalBroadcastManager.getInstance(this).registerReceiver(mPersonalInfoReceiver, filter);
     }
 
