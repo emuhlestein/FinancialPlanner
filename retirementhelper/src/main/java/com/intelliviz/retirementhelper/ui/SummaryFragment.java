@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
+import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
@@ -131,14 +132,18 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             dialog.show(fm, DIALOG_BIRTHDATE);
         }
 
-        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Please add some income source on the income source screen", Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAction("Dismiss", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                snackbar.dismiss();
-            }
-        });
-        snackbar.show();
+        List<IncomeType> incomeSources = DataBaseUtils.getAllIncomeTypes(getContext());
+
+        if(incomeSources.isEmpty()) {
+            final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Please add some income source on the income source screen", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("Dismiss", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snackbar.dismiss();
+                }
+            });
+            snackbar.show();
+        }
 
         return view;
     }
