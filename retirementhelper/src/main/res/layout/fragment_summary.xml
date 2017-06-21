@@ -27,6 +27,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:layout_marginStart="16sp"
                     android:text="@string/retirement_age"
                     android:textSize="22sp" />
@@ -34,6 +36,8 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:layout_marginEnd="16sp"
                     android:layout_weight="1"
                     android:gravity="end"
@@ -65,6 +69,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:layout_marginStart="16sp"
                     android:text="@string/current_balance"
                     android:textSize="22sp" />
@@ -73,6 +79,8 @@
                     android:id="@+id/current_balance_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:layout_marginEnd="16sp"
                     android:layout_weight="1"
                     android:gravity="end"
@@ -84,8 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-
-                android:background="@drawable/gradient_green1"
+                android:background="@drawable/gradient_gray1"
                 android:text="@string/add_income_source" />
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
