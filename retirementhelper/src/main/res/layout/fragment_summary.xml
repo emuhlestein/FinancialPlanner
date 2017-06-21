@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <LinearLayout android:id="@+id/activity_summary"
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -18,6 +18,7 @@
             tools:context="com.intelliviz.retirementhelper.ui.SummaryActivity">
 
             <LinearLayout
+                android:id="@+id/monthly_benefit_label_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/gradient_green1"
@@ -44,17 +45,20 @@
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_below="@id/monthly_benefit_label_layout"
                 android:background="@drawable/separator" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider" />
 
             <LinearLayout
+                android:id="@+id/balance_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_below="@id/recyclerview"
                 android:background="@drawable/gradient_green1"
                 android:orientation="horizontal">
 
@@ -74,6 +78,15 @@
                     android:gravity="end"
                     android:textSize="22sp" />
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
+
+            <Button
+                android:id="@+id/add_income_source_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+
+                android:background="@drawable/gradient_green1"
+                android:text="Add Income Source" />
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>
