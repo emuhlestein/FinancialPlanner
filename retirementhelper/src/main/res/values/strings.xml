@@ -45,6 +45,7 @@
     <string name="register_new_user">Register New User</string>
     <string name="monthly_amount">Monthly Amount:</string>
     <string name="monthly_benefit">Monthly Benefit:</string>
+    <string name="monthly_benefit_noc">Monthly Benefit</string>
     <string name="start_balance">Start Balance:</string>
     <string name="final_balance">Final Balance:</string>
     <string name="length_of_retirement">Length of retirement:</string>
@@ -93,5 +94,7 @@
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="birthday_not_valid">Birthday is not valid</string>
     <string name="birthday_year_format">Birthdate (yyyy-MM-dd)</string>
+    <string name="summary_screen_subtitle">Monthly Benefit Summary</string>
+    <string name="retirement_age">Retirement Age</string>
 
 </resources>

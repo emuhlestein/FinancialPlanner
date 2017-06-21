@@ -88,7 +88,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Bundle bundle = getArguments().getParcelable(EXTRA_BUNDLE);
-            if(bundle != null) {
+            if (bundle != null) {
                 mROD = bundle.getParcelable(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
                 mPERID = bundle.getParcelable(RetirementConstants.EXTRA_PERSONALINFODATA);
             }
@@ -98,19 +98,17 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_summary, container, false);
         ButterKnife.bind(this, view);
 
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
+        if (actionBar != null) {
+            actionBar.setSubtitle(getString(R.string.summary_screen_subtitle));
         }
 
         List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD, mPERID);
-        if(!milestones.isEmpty()) {
+        if (!milestones.isEmpty()) {
             double currentBalance = milestones.get(0).getStartBalance();
             mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -126,7 +124,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         }
 
         String birthdate = RetirementInfoMgr.getInstance().getBirthdate();
-        if(!SystemUtils.validateBirthday(birthdate) ) {
+        if (!SystemUtils.validateBirthday(birthdate)) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter your birth date");
             dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
@@ -135,15 +133,16 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
 
         final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Please add some income source on the income source screen", Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction("Dismiss", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        snackbar.dismiss();
-                    }
-                });
+            @Override
+            public void onClick(View v) {
+                snackbar.dismiss();
+            }
+        });
         snackbar.show();
 
         return view;
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -187,7 +186,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
 
     private void onHandleBirthdate(Intent intent) {
         String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
-        if(!SystemUtils.validateBirthday(birthdate)) {
+        if (!SystemUtils.validateBirthday(birthdate)) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter a valid birth date");
             dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
