@@ -4,34 +4,13 @@
     <item
         android:id="@+id/home_menu"
         android:enabled="true"
-        android:title="Home"
+        android:title="@string/home"
         android:icon="@mipmap/ic_home_black_24dp"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/expenses_menu"
-        android:enabled="true"
-        android:title="Expenses"
-        android:icon="@mipmap/ic_pie_chart_black_24dp"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/income_menu"
         android:enabled="true"
-        android:title="Income"
+        android:title="@string/income"
         android:icon="@mipmap/ic_monetization_on_black_24dp"
         app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/taxes_menu"
-        android:enabled="true"
-        android:title="Taxes"
-        android:icon="@mipmap/ic_account_balance_black_24dp"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/milestones_menu"
-        android:enabled="true"
-        android:title="Milestones"
-        android:icon="@mipmap/ic_schedule_black_24dp"
-        app:showAsAction="ifRoom" />
-
 </menu>

@@ -227,28 +227,10 @@ public class SummaryActivity extends AppCompatActivity {
                         ft.replace(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
                         ft.commit();
                         break;
-                    case R.id.expenses_menu:
-                        fragment = ExpensesFragment.newInstance();
-                        ft = fm.beginTransaction();
-                        ft.replace(R.id.content_frame, fragment, EXPENSES_FRAG_TAG);
-                        ft.commit();
-                        break;
                     case R.id.income_menu:
                         fragment = IncomeSourceListFragment.newInstance();
                         ft = fm.beginTransaction();
                         ft.replace(R.id.content_frame, fragment, INCOME_FRAG_TAG);
-                        ft.commit();
-                        break;
-                    case R.id.taxes_menu:
-                        fragment = TaxesFragment.newInstance();
-                        ft = fm.beginTransaction();
-                        ft.replace(R.id.content_frame, fragment, TAXES_FRAG_TAG);
-                        ft.commit();
-                        break;
-                    case R.id.milestones_menu:
-                        fragment = MilestonesFragment.newInstance();
-                        ft = fm.beginTransaction();
-                        ft.replace(R.id.content_frame, fragment, MILESTONES_FRAG_TAG);
                         ft.commit();
                         break;
                     default:
