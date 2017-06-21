@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -26,8 +28,8 @@ import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -50,8 +52,14 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     private PersonalInfoData mPERID;
     private MilestoneAdapter mMilestoneAdapter;
 
-    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
-    @Bind(R.id.current_balance_text_view) TextView mCurrentBalanceTextView;
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+
+    @Bind(R.id.recyclerview)
+    RecyclerView mRecyclerView;
+
+    @Bind(R.id.current_balance_text_view)
+    TextView mCurrentBalanceTextView;
 
     private BroadcastReceiver mRetirementOptionsReceiver = new BroadcastReceiver() {
         @Override
@@ -124,6 +132,15 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
             dialog.show(fm, DIALOG_BIRTHDATE);
         }
+
+        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Please add some income source on the income source screen", Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        snackbar.dismiss();
+                    }
+                });
+        snackbar.show();
 
         return view;
     }

@@ -17,6 +17,10 @@ public class MilestoneData implements Parcelable {
     private double mPenaltyAmount;
     private int mMonthsFundsFillLast;
 
+    public MilestoneData(AgeData startAge) {
+        this(startAge, null, null, 0, 0, 0, 0, 0);
+    }
+    
     public MilestoneData(AgeData startAge, AgeData endAge, AgeData minimumAge,
                          double monthlyBenefit, double startBalance, double endBalance,
                          double penaltyAmount, int monthsFundsWillLast) {
