@@ -344,9 +344,11 @@ public class BenefitHelper {
     public static List<AgeData> getMilestoneAges(Context context) {
         List<AgeData> milestones = new ArrayList<>();
         PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(context);
-        AgeData nowAge = SystemUtils.getAge(pid.getBirthdate());
+        if(SystemUtils.validateBirthday(pid.getBirthdate())) {
+            AgeData nowAge = SystemUtils.getAge(pid.getBirthdate());
+            milestones.add(nowAge);
+        }
 
-        milestones.add(nowAge);
         milestones.add(new AgeData(59, 6));
         milestones.add(new AgeData(62, 0)); // minimum age to receive benefit
         milestones.add(new AgeData(65, 0));

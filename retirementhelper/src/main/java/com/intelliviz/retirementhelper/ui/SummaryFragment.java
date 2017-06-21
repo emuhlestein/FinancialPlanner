@@ -45,6 +45,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIR
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BUNDLE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PERSONAL_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
 
@@ -67,6 +68,16 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         public void onReceive(Context context, Intent intent) {
             intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
             mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
+            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD, mPERID);
+            mMilestoneAdapter.update(milestones);
+        }
+    };
+
+    private BroadcastReceiver mPersonalInfoDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
+            mPERID = intent.getParcelableExtra(EXTRA_DB_DATA);
             List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD, mPERID);
             mMilestoneAdapter.update(milestones);
         }
@@ -183,10 +194,13 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mRetirementOptionsReceiver, filter);
+        filter = new IntentFilter(LOCAL_PERSONAL_DATA);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mPersonalInfoDataReceiver, filter);
     }
 
     private void unregisterReceiver() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mRetirementOptionsReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mPersonalInfoDataReceiver);
     }
 
     private void onHandleBirthdate(Intent intent) {

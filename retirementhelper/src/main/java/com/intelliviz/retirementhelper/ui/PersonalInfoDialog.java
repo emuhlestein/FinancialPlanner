@@ -57,21 +57,6 @@ public class PersonalInfoDialog extends AppCompatActivity {
         mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO make this into a method to be reused below
-                String birthday = mBirthDateEditText.getText().toString();
-                if(!SystemUtils.validateBirthday(birthday)) {
-                    String errMsg = getResources().getString(R.string.birthday_not_valid);
-                    String yearFormat = getResources().getString(R.string.year_format);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(errMsg);
-                    sb.append(" ");
-                    sb.append(yearFormat);
-                    sb.append(".");
-
-                    Snackbar snackbar = Snackbar.make(mCoordinatorLayout, sb.toString(), Snackbar.LENGTH_LONG);
-                    snackbar.show();
-                    return;
-                }
                 Intent returnIntent = new Intent();
                 setResult(Activity.RESULT_CANCELED, returnIntent);
                 finish();

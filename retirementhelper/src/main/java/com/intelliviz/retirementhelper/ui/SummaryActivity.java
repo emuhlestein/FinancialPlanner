@@ -24,7 +24,6 @@ import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
@@ -63,18 +62,6 @@ public class SummaryActivity extends AppCompatActivity {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-        String birthdate = RetirementInfoMgr.getInstance().getBirthdate();
-        if(!SystemUtils.validateBirthday(birthdate)) {
-            Intent intent = new Intent(this, PersonalInfoDialog.class);
-            PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(this);
-            if (pid != null) {
-                intent.putExtra(EXTRA_PERSONALINFODATA, pid);
-            }
-            startActivityForResult(intent, REQUEST_PERSONAL_INFO);
-            mNeedToStartSummaryFtagment = true;
-            return;
-        }
 
         mNeedToStartSummaryFtagment = false;
 
