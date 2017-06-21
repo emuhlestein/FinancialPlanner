@@ -98,5 +98,6 @@
     <string name="retirement_age">Retirement Age</string>
     <string name="home">Home</string>
     <string name="income">Income</string>
+    <string name="add_income_source">Add Income Source</string>
 
 </resources>
