@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -312,9 +311,10 @@ public class IncomeSourceListFragment extends AppCompatActivity implements
         final long incomeSourceId = id;
         final int incomeSourceType = type;
         if(showMenu) {
-            FragmentManager fm = getSupportFragmentManager();
-            IncomeSourceListMenuFragment dialog = IncomeSourceListMenuFragment.newInstance(id, type);
-            dialog.show(fm, RetirementConstants.DIALOG_MENU);
+            Intent intent = new Intent(this, IncomeSourceListMenuFragment.class);
+            intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
+            intent.putExtra(EXTRA_PERSONALINFODATA, type);
+            startActivityForResult(intent, REQUEST_YES_NO);
         } else {
             Intent intent;
             RetirementOptionsData rod;

@@ -2,61 +2,63 @@ package com.intelliviz.retirementhelper.ui;
 
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_PERSONALINFODATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class IncomeSourceListMenuFragment extends DialogFragment {
+public class IncomeSourceListMenuFragment extends AppCompatActivity {
     private static final int MENU_EDIT = 0;
     private static final int MENU_DELETE = 1;
-    private static final String ARG_ID = "arg id";
-    private static final String ARG_TYPE = "arg type";
     private long mIncomeSourceId;
     private int mIncomeSourceType;
 
-    public static IncomeSourceListMenuFragment newInstance(long id, int type) {
-        Bundle args = new Bundle();
-        args.putLong(ARG_ID, id);
-        args.putInt(ARG_TYPE, type);
-        IncomeSourceListMenuFragment fragment = new IncomeSourceListMenuFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
+    @Bind(R.id.list_view)
+    ListView mListView;
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mIncomeSourceType = getArguments().getInt(ARG_TYPE);
-        mIncomeSourceId = getArguments().getLong(ARG_ID);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.dialog_menu_list);
+        ButterKnife.bind(this);
+
+        Intent intent = getIntent();
+        mIncomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+        mIncomeSourceType = intent.getIntExtra(EXTRA_PERSONALINFODATA, -1);
 
         final String[] incomeActions = getResources().getStringArray(R.array.income_source_actions);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setItems(incomeActions, new DialogInterface.OnClickListener() {
+        ArrayAdapter adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, incomeActions);
+        mListView.setAdapter(adapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int item) {
-                Toast.makeText(getContext(), "You selected " + incomeActions[item], Toast.LENGTH_LONG).show();
-                dialogInterface.dismiss();
-                sendResult(Activity.RESULT_OK, item);
+            public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
+                Toast.makeText(IncomeSourceListMenuFragment.this, "You selected " + incomeActions[position], Toast.LENGTH_LONG).show();
+                sendResult(Activity.RESULT_OK, position);
+                finish();
             }
         });
-        return builder.create();
     }
 
     private void sendResult(int resultCode, int menuItem) {
@@ -71,6 +73,6 @@ public class IncomeSourceListMenuFragment extends DialogFragment {
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceId);
         intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
-        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+        setResult(resultCode, intent);
     }
 }

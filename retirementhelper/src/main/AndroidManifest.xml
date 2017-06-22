@@ -40,6 +40,8 @@
         <activity android:name=".ui.PersonalInfoDialog" />
         <activity android:name=".ui.MilestoneDetailsDialog" />
         <activity android:name=".ui.income.IncomeSourceListFragment" />
+        <activity android:name=".ui.IncomeSourceListMenuFragment"
+                  android:theme="@style/RetireDialog"/>
 
         <service
             android:name=".services.TaxDeferredIntentService"
