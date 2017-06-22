@@ -2,15 +2,17 @@ package com.intelliviz.retirementhelper.ui;
 
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 
+import com.intelliviz.retirementhelper.R;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
@@ -18,51 +20,32 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_AC
 /**
  * A simple {@link Fragment} subclass.
  */
-public class YesNoDialog extends DialogFragment {
-    private static final String ARG_ID = "arg id";
+public class YesNoDialog extends AppCompatActivity {
     private long mIncomeSourceId;
 
-    public static YesNoDialog newInstance(long id) {
-        YesNoDialog dialog = new YesNoDialog();
-        Bundle args = new Bundle();
-        args.putLong(ARG_ID, id);
-        dialog.setArguments(args);
-        return dialog;
+    @OnClick(R.id.yes_button) void onYesClick() {
+        sendResult();
+        finish();
     }
 
-    public YesNoDialog() {
-        // Required empty public constructor
+    @OnClick(R.id.no_button) void onNoClick() {
+        finish();
     }
 
-    @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mIncomeSourceId = getArguments().getLong(ARG_ID);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_yes_no_layout);
+        ButterKnife.bind(this);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("Delete income source?");
-        builder.setTitle("Alert");
-        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                sendResult(Activity.RESULT_OK);
-            }
-        });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        return builder.create();
+        Intent intent = getIntent();
+        mIncomeSourceId = intent.getLongExtra(EXTRA_DB_ID, -1);
     }
 
-    private void sendResult(int resultCode) {
+    private void sendResult() {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceId);
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_DELETE);
-        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+        setResult(Activity.RESULT_OK, intent);
     }
 }
