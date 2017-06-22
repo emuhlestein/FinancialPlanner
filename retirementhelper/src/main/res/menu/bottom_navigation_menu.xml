@@ -4,13 +4,20 @@
     <item
         android:id="@+id/home_menu"
         android:enabled="true"
-        android:title="@string/home"
+        android:title="Home"
         android:icon="@mipmap/ic_home_black_24dp"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/income_menu"
         android:enabled="true"
-        android:title="@string/income"
+        android:title="Income"
         android:icon="@mipmap/ic_monetization_on_black_24dp"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/milestones_menu"
+        android:enabled="true"
+        android:title="Milestones"
+        android:icon="@mipmap/ic_schedule_black_24dp"
+        app:showAsAction="ifRoom" />
+
 </menu>

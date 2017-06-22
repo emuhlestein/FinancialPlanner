@@ -4,6 +4,8 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -45,7 +48,11 @@ public class SummaryActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
     private boolean mNeedToStartSummaryFtagment;
 
-    @Bind(R.id.summary_toolbar) Toolbar mToolbar;
+    @Bind(R.id.summary_toolbar)
+    Toolbar mToolbar;
+
+    @Bind(R.id.bottom_navigation)
+    BottomNavigationView mBottonNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,7 @@ public class SummaryActivity extends AppCompatActivity {
         mNeedToStartSummaryFtagment = false;
 
         startSummaryFragment();
+        setNavigationFragment();
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         ComponentName appWidget = new ComponentName(this, WidgetProvider.class);
@@ -147,6 +155,7 @@ public class SummaryActivity extends AppCompatActivity {
             // fragment transactions have to be handled outside of onActivityResult.
             // The state has already been saved and no state modifications are allowed.
             startSummaryFragment();
+            setNavigationFragment();
         }
     }
 
@@ -187,6 +196,45 @@ public class SummaryActivity extends AppCompatActivity {
             ft.add(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
             ft.commit();
         }
+    }
+
+    private void setNavigationFragment() {
+        mBottonNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                FragmentManager fm = getSupportFragmentManager();
+                Fragment fragment = null;
+                FragmentTransaction ft = null;
+                switch (item.getItemId()) {
+                    case R.id.home_menu:
+                        RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(SummaryActivity.this);
+                        PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(SummaryActivity.this);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(EXTRA_RETIREOPTIONS_DATA, rod);
+                        bundle.putParcelable(EXTRA_PERSONALINFODATA, perid);
+                        fragment = SummaryFragment.newInstance(bundle);
+                        ft = fm.beginTransaction();
+                        ft.replace(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
+                        ft.commit();
+                        break;
+                    case R.id.income_menu:
+                        fragment = IncomeSourceListFragment.newInstance();
+                        ft = fm.beginTransaction();
+                        ft.replace(R.id.content_frame, fragment, INCOME_FRAG_TAG);
+                        ft.commit();
+                        break;
+                    case R.id.milestones_menu:
+                        fragment = MilestonesFragment.newInstance();
+                        ft = fm.beginTransaction();
+                        ft.replace(R.id.content_frame, fragment, MILESTONES_FRAG_TAG);
+                        ft.commit();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
     }
 }
 

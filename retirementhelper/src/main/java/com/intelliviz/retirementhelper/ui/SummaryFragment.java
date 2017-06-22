@@ -27,7 +27,6 @@ import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -39,7 +38,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.DIALOG_BIRTHDATE;
@@ -64,12 +62,6 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
 
     @Bind(R.id.current_balance_text_view)
     TextView mCurrentBalanceTextView;
-
-    @OnClick(R.id.add_income_source_button)
-    void startIncomeSourceActivity() {
-        Intent intent = new Intent(getContext(), IncomeSourceListFragment.class);
-        getActivity().startActivity(intent);
-    }
 
     private BroadcastReceiver mRetirementOptionsReceiver = new BroadcastReceiver() {
         @Override

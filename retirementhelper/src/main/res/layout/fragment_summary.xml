@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -27,20 +27,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
                     android:layout_marginStart="16sp"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
                     android:text="@string/retirement_age"
                     android:textSize="22sp" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
                     android:layout_marginEnd="16sp"
                     android:layout_weight="1"
                     android:gravity="end"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
                     android:text="@string/monthly_benefit_noc"
                     android:textSize="22sp" />
             </LinearLayout>
@@ -69,9 +69,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
                     android:layout_marginStart="16sp"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
                     android:text="@string/current_balance"
                     android:textSize="22sp" />
 
@@ -79,21 +79,13 @@
                     android:id="@+id/current_balance_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
                     android:layout_marginEnd="16sp"
                     android:layout_weight="1"
                     android:gravity="end"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
                     android:textSize="22sp" />
             </LinearLayout>
-
-            <Button
-                android:id="@+id/add_income_source_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/gradient_gray1"
-                android:text="@string/add_income_source" />
-        </RelativeLayout>
+        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>
