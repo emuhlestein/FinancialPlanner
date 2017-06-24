@@ -33,7 +33,16 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESONTE_AGE_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_DELETE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_EDIT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ACTION_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_AGE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
 
 public class MilestoneAgesFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectMilestoneAgeListener {
@@ -102,6 +111,23 @@ public class MilestoneAgesFragment extends Fragment implements
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_ACTION_MENU:
+                    onHandleAction(intent);
+                    break;
+                case REQUEST_YES_NO:
+                    onHandleYesNo(intent);
+                    break;
+
+            }
+
+            getLoaderManager().restartLoader(MILESTONE_AGE_LOADER, null, this);
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Loader<Cursor> loader;
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
@@ -130,6 +156,31 @@ public class MilestoneAgesFragment extends Fragment implements
 
     @Override
     public void onSelectMilestoneAge(AgeData age) {
+        Intent intent = new Intent(getContext(), ListMenuActivity.class);
+        startActivityForResult(intent, REQUEST_ACTION_MENU);
+    }
 
+    private void onHandleAction(Intent resultIntent) {
+        int action = resultIntent.getIntExtra(EXTRA_MILESONTE_AGE_ACTION, -1);
+
+        switch(action) {
+            case MILESTONE_AGE_EDIT:
+                break;
+            case MILESTONE_AGE_DELETE:
+                Intent intent = new Intent(getContext(), YesNoDialog.class);
+                startActivityForResult(intent, REQUEST_YES_NO);
+                break;
+
+        }
+    }
+
+    private void onHandleYesNo(Intent intent) {
+        int action = intent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, -1);
+        if(action == INCOME_ACTION_DELETE) {
+            long incomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+            if(incomeSourceId != -1) {
+                //int rowsDeleted = TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), incomeSourceId);
+            }
+        }
     }
 }

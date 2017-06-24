@@ -317,7 +317,7 @@ public class IncomeSourceListFragment extends Fragment implements
             Intent intent = new Intent(getContext(), IncomeSourceListMenuFragment.class);
             intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
             intent.putExtra(EXTRA_PERSONALINFODATA, type);
-            startActivityForResult(intent, REQUEST_YES_NO);
+            startActivityForResult(intent, REQUEST_INCOME_MENU);
         } else {
             Intent intent;
             RetirementOptionsData rod;

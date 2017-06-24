@@ -16,6 +16,11 @@ public class RetirementConstants {
     public static final int INCOME_ACTION_EDIT = 2;
     public static final int INCOME_ACTION_DELETE = 3;
 
+    public static final int MILESTONE_AGE_EDIT = 0;
+    public static final int MILESTONE_AGE_DELETE = 1;
+
+
+
     // principle reduction mode
     public static final int WITHDRAW_MODE_AMOUNT = 0; // dollar amount
     public static final int WITHDRAW_MODE_PERCENT = 1; // percentage of principle
@@ -28,6 +33,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
     public static final String EXTRA_BIRTHDATE = "birthdate";
+    public static final String EXTRA_MILESONTE_AGE_ACTION = "milestone age action";
 
     public static final String EXTRA_INCOME_DATA = "extra income data";
     public static final String EXTRA_RETIREOPTIONS_DATA = "extra retire options data";
@@ -46,6 +52,7 @@ public class RetirementConstants {
     public static final int REQUEST_YES_NO = 7;
     public static final int REQUEST_BIRTHDATE = 8;
     public static final int REQUEST_AGE = 9;
+    public static final int REQUEST_ACTION_MENU = 10;
 
     public static final String LOCAL_SAVINGS = "savingsDataBroadcast";
     public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";

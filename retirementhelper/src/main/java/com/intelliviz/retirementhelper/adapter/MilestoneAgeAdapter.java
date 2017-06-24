@@ -83,7 +83,7 @@ public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapte
         @Override
         public void onClick(View v) {
             if(mListener != null) {
-                mListener.onSelectMilestoneAge(null);
+                mListener.onSelectMilestoneAge(mAge);
             }
         }
     }
