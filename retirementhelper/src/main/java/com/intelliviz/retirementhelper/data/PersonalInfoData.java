@@ -3,23 +3,32 @@ package com.intelliviz.retirementhelper.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by edm on 5/20/2017.
  */
 
 public class PersonalInfoData implements Parcelable {
-    private final String mBirthdate;
+    private String mBirthdate;
+    private List<AgeData> mAgeList = new ArrayList<>();
 
-    public PersonalInfoData(String birthdate) {
+    public PersonalInfoData(String birthdate, List<AgeData> ageList) {
         mBirthdate = birthdate;
+        mAgeList = ageList;
     }
 
     public String getBirthdate() {
         return mBirthdate;
     }
 
+    public List<AgeData> getAgeList() {
+        return mAgeList;
+    }
+
     public PersonalInfoData(Parcel in) {
-        mBirthdate = in.readString();
+        readFromParcel(in);
     }
 
     @Override
@@ -30,6 +39,12 @@ public class PersonalInfoData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mBirthdate);
+        dest.writeTypedList(mAgeList);
+    }
+
+    public void readFromParcel(Parcel in) {
+        mBirthdate = in.readString();
+        in.readTypedList(mAgeList, AgeData.CREATOR);
     }
 
     public static final Creator<PersonalInfoData> CREATOR = new Creator<PersonalInfoData>() {

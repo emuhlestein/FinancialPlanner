@@ -7,8 +7,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getPersonalInfoData;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROD;
@@ -28,7 +26,7 @@ public class PersonalDataService extends IntentService {
         if (intent != null) {
             int action = intent.getIntExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
             if(action == SERVICE_DB_QUERY) {
-                PersonalInfoData pid = getPersonalInfoData(this);
+                PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(this);
                 Intent localIntent = new Intent(LOCAL_PERSONAL_DATA);
                 boolean broadcast = false;
                 if (pid != null) {

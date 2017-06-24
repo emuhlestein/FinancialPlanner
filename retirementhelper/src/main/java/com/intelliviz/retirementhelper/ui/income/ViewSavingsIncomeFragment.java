@@ -147,7 +147,7 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
     }
 
     @Override
-    public void onSelectMilestoneListener(MilestoneData msd) {
+    public void onSelectMilestone(MilestoneData msd) {
         Intent intent = new Intent(getContext(), MilestoneDetailsDialog.class);
         intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, msd);
         startActivity(intent);

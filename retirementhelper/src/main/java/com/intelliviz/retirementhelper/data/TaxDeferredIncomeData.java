@@ -11,6 +11,8 @@ import java.util.List;
  */
 
 public class TaxDeferredIncomeData extends IncomeTypeData {
+    private static final String DEFAULT_MIN_AGE = "59 6";
+    private static final double DEFAULT_PENALTY = 10.0;
     private String mMinimumAge;
     private double mInterestRate;
     private double mMonthAdd;
@@ -24,6 +26,8 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
 
     public TaxDeferredIncomeData(int type) {
         super(type);
+        mMinimumAge = DEFAULT_MIN_AGE;
+        mPenalty = DEFAULT_PENALTY;
     }
 
     public TaxDeferredIncomeData(long id, String name, int type, String minimumAge, double annualRate, double monthlyAdd, double penalty, int is401k) {

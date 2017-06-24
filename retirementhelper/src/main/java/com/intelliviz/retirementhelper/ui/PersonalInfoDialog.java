@@ -113,7 +113,7 @@ public class PersonalInfoDialog extends AppCompatActivity {
             return;
         }
 
-        PersonalInfoData pid = new PersonalInfoData(birthday);
+        PersonalInfoData pid = new PersonalInfoData(birthday, null);
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);

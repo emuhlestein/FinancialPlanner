@@ -121,7 +121,7 @@ public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.
         @Override
         public void onClick(View v) {
             if(mListener != null) {
-                mListener.onSelectMilestoneListener(mMSD);
+                mListener.onSelectMilestone(mMSD);
             }
         }
     }

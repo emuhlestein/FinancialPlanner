@@ -7,5 +7,5 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
  */
 
 public interface SelectionMilestoneListener {
-    void onSelectMilestoneListener(MilestoneData msd);
+    void onSelectMilestone(MilestoneData msd);
 }

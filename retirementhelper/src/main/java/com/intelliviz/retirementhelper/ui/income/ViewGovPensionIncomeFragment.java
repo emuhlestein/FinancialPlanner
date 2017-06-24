@@ -144,7 +144,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
     }
 
     @Override
-    public void onSelectMilestoneListener(MilestoneData msd) {
+    public void onSelectMilestone(MilestoneData msd) {
 
     }
 }

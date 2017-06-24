@@ -45,6 +45,7 @@ public class RetirementConstants {
     public static final int REQUEST_INCOME_MENU = 6;
     public static final int REQUEST_YES_NO = 7;
     public static final int REQUEST_BIRTHDATE = 8;
+    public static final int REQUEST_AGE = 9;
 
     public static final String LOCAL_SAVINGS = "savingsDataBroadcast";
     public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";

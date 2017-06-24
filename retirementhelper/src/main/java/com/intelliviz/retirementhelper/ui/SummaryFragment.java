@@ -23,12 +23,14 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
@@ -144,7 +146,6 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         }
 
         List<IncomeType> incomeSources = DataBaseUtils.getAllIncomeTypes(getContext());
-
         if(incomeSources.isEmpty()) {
             final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Please add some income source on the income source screen", Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction("Dismiss", new View.OnClickListener() {
@@ -187,7 +188,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     }
 
     @Override
-    public void onSelectMilestoneListener(MilestoneData msd) {
+    public void onSelectMilestone(MilestoneData msd) {
 
     }
 
@@ -213,6 +214,16 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             return;
         }
 
-        SystemUtils.updatePERID(getContext(), new PersonalInfoData(birthdate));
+        // birth date is valid
+        // add current age
+        AgeData age = SystemUtils.getAge(birthdate);
+        DataBaseUtils.addAge(getContext(), age);
+
+        // add full retirement age
+        int year = SystemUtils.getBirthYear(birthdate);
+        age = GovPensionHelper.getFullRetirementAge(year);
+        DataBaseUtils.addAge(getContext(), age);
+
+        SystemUtils.updatePERID(getContext(), new PersonalInfoData(birthdate, null));
     }
 }

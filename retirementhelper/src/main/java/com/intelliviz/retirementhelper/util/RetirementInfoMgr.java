@@ -9,7 +9,6 @@ import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 
 public class RetirementInfoMgr {
     private String mBirthdate = "0";
-    private String mStartAge;
     private String mEndAge;
     private int mWithdrawalMode;
     private String mWithdrawlAmount;
@@ -33,7 +32,6 @@ public class RetirementInfoMgr {
 
     public void setRetirementInfoData(RetirementOptionsData rod) {
         if(rod != null) {
-            mStartAge = rod.getStartAge();
             mEndAge = rod.getEndAge();
             mWithdrawalMode = rod.getWithdrawMode();
             mWithdrawlAmount = rod.getWithdrawAmount();
@@ -47,5 +45,4 @@ public class RetirementInfoMgr {
     public void setBirthdate(String birthdate) {
         mBirthdate = birthdate;
     }
-
 }

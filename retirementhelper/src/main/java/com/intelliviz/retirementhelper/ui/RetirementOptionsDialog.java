@@ -12,8 +12,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,7 +28,6 @@ import butterknife.OnClick;
 
 public class RetirementOptionsDialog extends AppCompatActivity implements View.OnClickListener{
 
-    @Bind(R.id.start_age_edit_text) EditText mStartAgeEditText;
     @Bind(R.id.end_age_edit_text) EditText mEndAgeEditText;
     @Bind(R.id.withdraw_amount_button) RadioButton mWithdrawAmountButton;
     @Bind(R.id.withdraw_percent_button) RadioButton mWithdrawPercentButton;
@@ -74,7 +75,6 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
 
         // TODO add check in case rod is null
-        mStartAgeEditText.setText(rod.getStartAge());
         mEndAgeEditText.setText(rod.getEndAge());
         int mode = rod.getWithdrawMode();
         switch(mode) {
@@ -98,7 +98,6 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
      * Send the data to the interested party.
      */
     private void sendData() {
-        String startAge = mStartAgeEditText.getText().toString();
         String endAge = mEndAgeEditText.getText().toString();
         int withdrawMode;
         switch(mWithdrawModeRadioGroup.getCheckedRadioButtonId()) {
@@ -114,8 +113,10 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
 
         // TODO need to validate
         String withdrawAmount = mWithdrawAmount.getText().toString();
+        AgeData age = SystemUtils.parseAgeString(endAge, "0");
+        endAge = age.getUnformattedString();
 
-        RetirementOptionsData rod = new RetirementOptionsData(startAge, endAge, withdrawMode, withdrawAmount);
+        RetirementOptionsData rod = new RetirementOptionsData(endAge, withdrawMode, withdrawAmount);
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);

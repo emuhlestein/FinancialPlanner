@@ -2,25 +2,19 @@ package com.intelliviz.retirementhelper.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * Created by edm on 5/23/2017.
  */
 
-public class AgeData implements Parcelable {
+public class AgeData implements Parcelable, Comparable {
     private int mYear;
     private int mMonth;
 
     public AgeData() {
         mYear = 0;
         mMonth = 0;
-    }
-
-    public AgeData(String age) {
-        float fage = Float.parseFloat(age);
-        mYear = (int)fage;
-        float fmonths = fage - mYear;
-        mMonth = (int)(fmonths * 12);
     }
 
     public AgeData(int year, int month) {
@@ -74,6 +68,14 @@ public class AgeData implements Parcelable {
         return mMonth;
     }
 
+    public boolean isValid() {
+        if(mYear > 0 && mMonth > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public AgeData(Parcel in) {
         readFromParcel(in);
     }
@@ -86,6 +88,15 @@ public class AgeData implements Parcelable {
         sb.append("m");
         return sb.toString();
     }
+
+    public String getUnformattedString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Integer.toString(mYear));
+        sb.append(" ");
+        sb.append(Integer.toString(mMonth));
+        return sb.toString();
+    }
+
 
     @Override
     public int describeContents() {
@@ -116,4 +127,10 @@ public class AgeData implements Parcelable {
             return new AgeData[size];
         }
     };
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        AgeData age = (AgeData)o;
+        return getNumberOfMonths()-age.getNumberOfMonths();
+    }
 }

@@ -29,6 +29,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
+import static java.lang.Integer.parseInt;
 
 /**
  * Created by edm on 4/26/2017.
@@ -224,24 +225,27 @@ public class SystemUtils {
     public static int getBirthYear(String birthdate) {
         String[] birthTokens = birthdate.split("-");
 
-        int birthYear = Integer.parseInt(birthTokens[0]);
+        int birthYear = parseInt(birthTokens[0]);
         return birthYear;
     }
 
     public static AgeData getAge(String birthdate) {
         String[] birthTokens = birthdate.split("-");
+        if(birthTokens.length != 3) {
+            return new AgeData();
+        }
 
-        int birthYear = Integer.parseInt(birthTokens[0]);
-        int birthMonth = Integer.parseInt(birthTokens[1]);
-        int birthDay = Integer.parseInt(birthTokens[2]);
+        int birthYear = parseInt(birthTokens[0]);
+        int birthMonth = parseInt(birthTokens[1]);
+        int birthDay = parseInt(birthTokens[2]);
 
         String today = SystemUtils.getTodaysDate();
 
         String[] nowTokens = today.split("-");
 
-        int nowYear = Integer.parseInt(nowTokens[0]);
-        int nowMonth = Integer.parseInt(nowTokens[1]);
-        int nowDay = Integer.parseInt(nowTokens[2]);
+        int nowYear = parseInt(nowTokens[0]);
+        int nowMonth = parseInt(nowTokens[1]);
+        int nowDay = parseInt(nowTokens[2]);
 
         int years = nowYear - birthYear;
 
@@ -265,6 +269,39 @@ public class SystemUtils {
         }
 
         return new AgeData(years, months);
+    }
+
+    /**
+     * The format for age is "Y M", where Y is an integer that is the year, and M
+     * is an integer that is the month.
+     *
+     * @param age
+     * @return The AgeData;
+     */
+    public static AgeData parseAgeString(String age) {
+        String[] tokens = age.split(" ");
+        if(tokens.length != 2) {
+            return null; // age is invalid
+        }
+
+        int year = 0;
+        int month = 0;
+        try {
+            year = Integer.parseInt(tokens[0]);
+            month = Integer.parseInt(tokens[1]);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
+        return new AgeData(year, month);
+    }
+
+    public static AgeData parseAgeString(String year, String month) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(year);
+        sb.append(" ");
+        sb.append(month);
+        return parseAgeString(sb.toString());
     }
 
     /**

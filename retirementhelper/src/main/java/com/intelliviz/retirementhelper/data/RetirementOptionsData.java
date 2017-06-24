@@ -8,20 +8,14 @@ import android.os.Parcelable;
  */
 
 public class RetirementOptionsData implements Parcelable {
-    private final String mStartAge;
     private final String mEndAge;
     private final int mWithdrawMode;
     private final String mWithdrawAmount;
 
-    public RetirementOptionsData(String startAge, String endAge, int withdrawMode, String withdrawAmount) {
-        mStartAge = startAge;
+    public RetirementOptionsData(String endAge, int withdrawMode, String withdrawAmount) {
         mEndAge = endAge;
         mWithdrawMode = withdrawMode;
         mWithdrawAmount = withdrawAmount;
-    }
-
-    public String getStartAge() {
-        return mStartAge;
     }
 
     public String getEndAge() {
@@ -37,7 +31,6 @@ public class RetirementOptionsData implements Parcelable {
     }
 
     public RetirementOptionsData(Parcel in) {
-        mStartAge = in.readString();
         mEndAge = in.readString();
         mWithdrawMode = in.readInt();
         mWithdrawAmount = in.readString();
@@ -50,7 +43,6 @@ public class RetirementOptionsData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mStartAge);
         dest.writeString(mEndAge);
         dest.writeInt(mWithdrawMode);
         dest.writeString(mWithdrawAmount);

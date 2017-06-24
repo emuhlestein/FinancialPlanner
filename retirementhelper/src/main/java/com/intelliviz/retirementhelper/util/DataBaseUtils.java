@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.intelliviz.retirementhelper.R.string.balance;
 import static com.intelliviz.retirementhelper.util.BenefitHelper.getAllMilestones;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
@@ -32,6 +34,33 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TY
  */
 
 public class DataBaseUtils {
+
+    public static String addAge(Context context, AgeData age) {
+        String amount = Double.toString(balance);
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.MilestoneEntry.COLUMN_AGE, age.getUnformattedString());
+        Uri uri = context.getContentResolver().insert(RetirementContract.MilestoneEntry.CONTENT_URI, values);
+        return uri.getLastPathSegment();
+    }
+    public static List<AgeData> getMilestoneAges(Context context, PersonalInfoData pid) {
+        List<AgeData> ages = new ArrayList<>();
+        Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
+        String[] projection = {RetirementContract.MilestoneEntry.COLUMN_AGE};
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        if(cursor == null || !cursor.moveToFirst()) {
+            return ages;
+        }
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            int ageIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry.COLUMN_AGE);
+            String ageString = cursor.getString(ageIndex);
+            AgeData age = SystemUtils.parseAgeString(ageString);
+            ages.add(age);
+        }
+        cursor.close();
+
+        Collections.sort(ages);
+        return ages;
+    }
 
     public static void updateSummaryData(Context context) {
         RetirementOptionsData rod = getRetirementOptionsData(context);
@@ -111,8 +140,8 @@ public class DataBaseUtils {
 
     public static int savePersonalInfo(Context context, PersonalInfoData pid) {
         ContentValues values  = new ContentValues();
-        values.put(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE, pid.getBirthdate());
-        Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI;
+        values.put(RetirementContract.PersonalInfoEntry.COLUMN_BIRTHDATE, pid.getBirthdate());
+        Uri uri = RetirementContract.PersonalInfoEntry.CONTENT_URI;
         return context.getContentResolver().update(uri, values, null, null);
     }
 
@@ -121,14 +150,14 @@ public class DataBaseUtils {
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
         }
-        int birthdateIndex = cursor.getColumnIndex(RetirementContract.PeronsalInfoEntry.COLUMN_BIRTHDATE);
+        int birthdateIndex = cursor.getColumnIndex(RetirementContract.PersonalInfoEntry.COLUMN_BIRTHDATE);
 
         String birthdate = cursor.getString(birthdateIndex);
-        return new PersonalInfoData(birthdate);
+        return new PersonalInfoData(birthdate, null);
     }
 
     public static Cursor getPersonalInfo(Context context) {
-        Uri uri = RetirementContract.PeronsalInfoEntry.CONTENT_URI;
+        Uri uri = RetirementContract.PersonalInfoEntry.CONTENT_URI;
         return context.getContentResolver().query(uri, null, null, null, null);
     }
 
@@ -137,7 +166,6 @@ public class DataBaseUtils {
     //
     public static int saveRetirementOptions(Context context, RetirementOptionsData rod) {
         ContentValues values  = new ContentValues();
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE, rod.getStartAge());
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, rod.getEndAge());
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, rod.getWithdrawMode());
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT, rod.getWithdrawAmount());
@@ -147,7 +175,6 @@ public class DataBaseUtils {
 
     public static int saveRetirementOptions(Context context, String startAge, String endAge, int withdrawMode, String withdrawAmount) {
         ContentValues values  = new ContentValues();
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE, startAge);
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, endAge);
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, withdrawMode);
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT, withdrawAmount);
@@ -165,12 +192,11 @@ public class DataBaseUtils {
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
         }
-        int startAgeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_START_AGE);
         int endAgeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE);
         int withdrawModeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE);
         int withdrawAmountIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT);
 
-        String startAge = cursor.getString(startAgeIndex);
+
         String endAge = cursor.getString(endAgeIndex);
         int withdrawMode = cursor.getInt(withdrawModeIndex);
         String withdrawAmount = cursor.getString(withdrawAmountIndex);
@@ -178,7 +204,7 @@ public class DataBaseUtils {
             withdrawAmount = "4";
         }
         cursor.close();
-        return new RetirementOptionsData(startAge, endAge, withdrawMode, withdrawAmount);
+        return new RetirementOptionsData(endAge, withdrawMode, withdrawAmount);
     }
 
     //
@@ -307,22 +333,8 @@ public class DataBaseUtils {
         }
     }
 
-    public static List<String> getMilestoneData(Context context) {
-        Cursor cursor = getMilestones(context);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return null;
-        }
-        List<String> milestones = new ArrayList<>();
-        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            int ageIndex = cursor.getColumnIndex(RetirementContract.MileStoneEntry.COLUMN_AGE);
-            String age = cursor.getString(ageIndex);
-            milestones.add(age);
-        }
-        return milestones;
-    }
-
     public static Cursor getMilestones(Context context) {
-        Uri uri = RetirementContract.MileStoneEntry.CONTENT_URI;
+        Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
         String[] projection = null; // we want all columns
         return context.getContentResolver().query(uri, projection, null, null, null);
     }

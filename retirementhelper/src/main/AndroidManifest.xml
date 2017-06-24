@@ -39,9 +39,9 @@
         <activity android:name=".ui.income.IncomeSourceActivity" />
         <activity android:name=".ui.PersonalInfoDialog" />
         <activity android:name=".ui.MilestoneDetailsDialog" />
-        <activity android:name=".ui.income.IncomeSourceListFragment" />
-        <activity android:name=".ui.IncomeSourceListMenuFragment"
-                  android:theme="@style/RetireDialog"/>
+        <activity
+            android:name=".ui.IncomeSourceListMenuFragment"
+            android:theme="@style/RetireDialog" />
 
         <service
             android:name=".services.TaxDeferredIntentService"
@@ -58,7 +58,7 @@
         <service
             android:name=".services.PensionDataService"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <service
             android:name=".services.SavingsDataService"
             android:exported="false" />
@@ -68,6 +68,8 @@
         <service
             android:name=".widget.MilestonesRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <activity android:name=".ui.SimpleTextDialog"></activity>
     </application>
 
 </manifest>
