@@ -26,7 +26,6 @@
         android:id="@+id/yes_no_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient_green1"
         android:orientation="horizontal">
 
         <Button

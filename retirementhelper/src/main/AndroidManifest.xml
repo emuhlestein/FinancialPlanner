@@ -69,8 +69,11 @@
             android:name=".widget.MilestonesRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <activity android:name=".ui.SimpleTextDialog" />
+        <activity android:name=".ui.SimpleTextDialog"
+            android:theme="@style/RetireDialog"/>
         <activity android:name=".ui.ListMenuActivity"
+            android:theme="@style/RetireDialog" />
+        <activity android:name=".ui.YesNoDialog"
             android:theme="@style/RetireDialog" />
     </application>
 
