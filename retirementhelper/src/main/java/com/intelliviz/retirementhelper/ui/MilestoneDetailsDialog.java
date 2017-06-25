@@ -71,7 +71,14 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
         int numMonths = msd.getMonthsFundsFillLast();
         int years = numMonths / 12;
         int months = numMonths - years * 12;
-        AgeData age = new AgeData(years, months);
+        AgeData age = new AgeData(
+
+
+
+
+
+
+                years, months);
         mFundsDuration.setText(age.toString());
 
         mStartBalance.setText(SystemUtils.getFormattedCurrency(msd.getStartBalance()));

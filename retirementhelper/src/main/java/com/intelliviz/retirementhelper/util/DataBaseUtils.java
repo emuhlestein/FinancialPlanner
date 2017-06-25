@@ -9,6 +9,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
+import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
@@ -42,19 +43,29 @@ public class DataBaseUtils {
         Uri uri = context.getContentResolver().insert(RetirementContract.MilestoneEntry.CONTENT_URI, values);
         return uri.getLastPathSegment();
     }
-    public static List<AgeData> getMilestoneAges(Context context, PersonalInfoData pid) {
-        List<AgeData> ages = new ArrayList<>();
+
+    public static int deleteAge(Context context, long id) {
+            String sid = String.valueOf(id);
+            Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
+            uri = Uri.withAppendedPath(uri, sid);
+            int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+            return numRowsDeleted; // TODO return succeed or fail flag
+    }
+
+    public static List<MilestoneAgeData> getMilestoneAges(Context context, PersonalInfoData pid) {
+        List<MilestoneAgeData> ages = new ArrayList<>();
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
-        String[] projection = {RetirementContract.MilestoneEntry.COLUMN_AGE};
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if(cursor == null || !cursor.moveToFirst()) {
             return ages;
         }
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            int idIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry._ID);
             int ageIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry.COLUMN_AGE);
+            long id = cursor.getLong(idIndex);
             String ageString = cursor.getString(ageIndex);
             AgeData age = SystemUtils.parseAgeString(ageString);
-            ages.add(age);
+            ages.add(new MilestoneAgeData(id, age));
         }
         cursor.close();
 

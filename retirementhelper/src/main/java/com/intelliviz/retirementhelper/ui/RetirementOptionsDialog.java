@@ -111,7 +111,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
                 withdrawMode = RetirementConstants.WITHDRAW_MODE_AMOUNT;
         }
 
-        // TODO need to validate
+        // TODO need to validate age
         String withdrawAmount = mWithdrawAmount.getText().toString();
         AgeData age = SystemUtils.parseAgeString(endAge, "0");
         endAge = age.getUnformattedString();

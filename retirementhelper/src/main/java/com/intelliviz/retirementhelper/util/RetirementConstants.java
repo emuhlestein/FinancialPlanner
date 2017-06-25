@@ -41,6 +41,8 @@ public class RetirementConstants {
     public static final String EXTRA_MILESTONEDATA = "milestonedata";
     public static final String EXTRA_DATEDATA = "datedata";
     public static final String EXTRA_BUNDLE = "bundle";
+    public static final String EXTRA_AGE_DATA = "age data";
+    public static final String EXTRA_ID_DATA = "id data";
 
     public static final int REQUEST_RETIRE_OPTIONS = 0;
     public static final int REQUEST_PERSONAL_INFO = 1;
@@ -51,7 +53,7 @@ public class RetirementConstants {
     public static final int REQUEST_INCOME_MENU = 6;
     public static final int REQUEST_YES_NO = 7;
     public static final int REQUEST_BIRTHDATE = 8;
-    public static final int REQUEST_AGE = 9;
+    public static final int REQUEST_ADD_AGE = 9;
     public static final int REQUEST_ACTION_MENU = 10;
 
     public static final String LOCAL_SAVINGS = "savingsDataBroadcast";

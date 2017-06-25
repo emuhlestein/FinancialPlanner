@@ -23,10 +23,12 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAgeAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
@@ -34,19 +36,18 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_AGE_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESONTE_AGE_ACTION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ACTION_MENU;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_AGE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ADD_AGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
 
 public class MilestoneAgesFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectMilestoneAgeListener {
     private static final int MILESTONE_AGE_LOADER = 1;
+    private MilestoneAgeData mSelectedAge = null;
 
     @Bind(R.id.recyclerview)
     RecyclerView mRecyclerView;
@@ -60,7 +61,7 @@ public class MilestoneAgesFragment extends Fragment implements
     @Bind(R.id.add_milestone_age_fab)
     FloatingActionButton mAddMilestoneAgeFAB;
 
-    private MilestoneAgeAdapter mAdapter;
+    private MilestoneAgeAdapter mAdapter = null;
 
     public MilestoneAgesFragment() {
         // Required empty public constructor
@@ -84,15 +85,14 @@ public class MilestoneAgesFragment extends Fragment implements
         ButterKnife.bind(this, view);
 
         PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(getContext());
-        List<AgeData> milestoneAges = DataBaseUtils.getMilestoneAges(getContext(), perid);
-        mAdapter = new MilestoneAgeAdapter(getContext(), milestoneAges);
+        List<MilestoneAgeData> milestoneAges = DataBaseUtils.getMilestoneAges(getContext(), perid);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
                 linearLayoutManager.getOrientation()));
 
-        mAdapter.setOnSelectMilestoneAgeListener(this);
+
         getLoaderManager().initLoader(MILESTONE_AGE_LOADER, null, this);
 
         // The FAB will pop up an activity to allow a new income source to be created.
@@ -103,7 +103,7 @@ public class MilestoneAgesFragment extends Fragment implements
                 snackbar.show();
 
                 Intent intent = new Intent(getContext(), SimpleTextDialog.class);
-                startActivityForResult(intent, REQUEST_AGE);
+                startActivityForResult(intent, REQUEST_ADD_AGE);
             }
         });
 
@@ -119,6 +119,9 @@ public class MilestoneAgesFragment extends Fragment implements
                     break;
                 case REQUEST_YES_NO:
                     onHandleYesNo(intent);
+                    break;
+                case REQUEST_ADD_AGE:
+                    onHandleAddAge(intent);
                     break;
 
             }
@@ -138,7 +141,13 @@ public class MilestoneAgesFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mAdapter.swapCursor(cursor);
+        if(mAdapter == null) {
+            mAdapter = new MilestoneAgeAdapter(getContext(), cursor);
+            mRecyclerView.setAdapter(mAdapter);
+            mAdapter.setOnSelectMilestoneAgeListener(this);
+        } else {
+            mAdapter.swapCursor(cursor);
+        }
         if (mAdapter.getItemCount() == 0) {
             mEmptyView.setText(R.string.empty_list);
             mEmptyView.setVisibility(View.VISIBLE);
@@ -155,7 +164,8 @@ public class MilestoneAgesFragment extends Fragment implements
     }
 
     @Override
-    public void onSelectMilestoneAge(AgeData age) {
+    public void onSelectMilestoneAge(MilestoneAgeData age) {
+        mSelectedAge = age;
         Intent intent = new Intent(getContext(), ListMenuActivity.class);
         startActivityForResult(intent, REQUEST_ACTION_MENU);
     }
@@ -165,22 +175,34 @@ public class MilestoneAgesFragment extends Fragment implements
 
         switch(action) {
             case MILESTONE_AGE_EDIT:
+                mSelectedAge = null;
                 break;
             case MILESTONE_AGE_DELETE:
                 Intent intent = new Intent(getContext(), YesNoDialog.class);
                 startActivityForResult(intent, REQUEST_YES_NO);
                 break;
-
         }
     }
 
     private void onHandleYesNo(Intent intent) {
-        int action = intent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, -1);
-        if(action == INCOME_ACTION_DELETE) {
-            long incomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
-            if(incomeSourceId != -1) {
-                //int rowsDeleted = TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), incomeSourceId);
-            }
-        }
+        DataBaseUtils.deleteAge(getContext(), mSelectedAge.getId());
+        SystemUtils.updateAppWidget(getContext());
+        SystemUtils.updateAppWidget(getContext());
+        getLoaderManager().initLoader(MILESTONE_AGE_LOADER, null, this);
+        PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(getContext());
+        List<MilestoneAgeData> milestoneAges = DataBaseUtils.getMilestoneAges(getContext(), perid);
+        mAdapter.update(milestoneAges);
+    }
+
+    private void onHandleAddAge(Intent intent) {
+        String ageString = intent.getStringExtra(EXTRA_AGE_DATA);
+        // TODO add age to DB
+        AgeData age = SystemUtils.parseAgeString(ageString);
+        DataBaseUtils.addAge(getContext(), age);
+        SystemUtils.updateAppWidget(getContext());
+        getLoaderManager().initLoader(MILESTONE_AGE_LOADER, null, this);
+        PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(getContext());
+        List<MilestoneAgeData> milestoneAges = DataBaseUtils.getMilestoneAges(getContext(), perid);
+        mAdapter.update(milestoneAges);
     }
 }

@@ -1,5 +1,7 @@
 package com.intelliviz.retirementhelper.util;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
@@ -8,25 +10,25 @@ import android.util.Log;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.data.SummaryData;
 import com.intelliviz.retirementhelper.services.PersonalDataService;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
+import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 import static java.lang.Integer.parseInt;
@@ -36,6 +38,29 @@ import static java.lang.Integer.parseInt;
  */
 
 public class SystemUtils {
+
+    public static void updateAppWidget(Context context) {
+        PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(context);
+        RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(context);
+        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(context, rod, pid);
+
+        List<SummaryData> summaryData = getSummaryData(milestones);
+        DataBaseUtils.updateSummaryData(context);
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName appWidget = new ComponentName(context, WidgetProvider.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
+
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
+    }
+
+    private static List<SummaryData> getSummaryData(List<MilestoneData> milestoneData) {
+        List<SummaryData> summaryData = new ArrayList<>();
+        for(MilestoneData msd : milestoneData) {
+            summaryData.add(new SummaryData(msd.getStartAge().toString(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
+        }
+        return summaryData;
+    }
 
     public static boolean onActivityResultForOptionMenu (Context context, int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
@@ -117,22 +142,6 @@ public class SystemUtils {
         }
         return false;
     }
-
-    /*
-    public static String getFloatValue(String value) {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-        Number number;
-        try {
-            number = nf.parse(value);
-            if(number instanceof Float || number instanceof Double || number instanceof Long || number instanceof Integer) {
-                return number.toString();
-            }
-        } catch (ParseException e) {
-            return null;
-        }
-        return null;
-    }
-    */
 
     public static String getTodaysDate() {
         Date date = Calendar.getInstance().getTime();
@@ -278,22 +287,28 @@ public class SystemUtils {
      * @param age
      * @return The AgeData;
      */
+    // TODO make sure all callers chaeck for invalid age
     public static AgeData parseAgeString(String age) {
         String[] tokens = age.split(" ");
-        if(tokens.length != 2) {
-            return null; // age is invalid
-        }
-
         int year = 0;
         int month = 0;
-        try {
-            year = Integer.parseInt(tokens[0]);
-            month = Integer.parseInt(tokens[1]);
-        } catch (NumberFormatException e) {
-            return null;
+        if(tokens.length == 1) {
+            try {
+                year = Integer.parseInt(tokens[0]);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+            return new AgeData(year, month);
+        } else if(tokens.length == 2) {
+            try {
+                year = Integer.parseInt(tokens[0]);
+                month = Integer.parseInt(tokens[1]);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+            return new AgeData(year, month);
         }
-
-        return new AgeData(year, month);
+        return new AgeData();
     }
 
     public static AgeData parseAgeString(String year, String month) {
@@ -344,27 +359,6 @@ public class SystemUtils {
         sb.append(month);
         sb.append("m");
         return sb.toString();
-    }
-
-    public static Intent initTaxDeferredIntent(Intent intent, long incomeSourceId, int incomeSourceType, int action, TaxDeferredIncomeData tdid) {
-        intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-        if(tdid != null) {
-            intent.putExtra(EXTRA_INCOME_DATA, tdid);
-        }
-        intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
-        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
-        return intent;
-    }
-
-    public static void initTaxDeferredIntent(Intent srcIntent, Intent dstIntent) {
-        long incomeSourceId = srcIntent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
-        int incomeSourceType = srcIntent.getIntExtra(EXTRA_INCOME_SOURCE_TYPE, -1);
-        TaxDeferredIncomeData tdid = srcIntent.getParcelableExtra(EXTRA_INCOME_DATA);
-        int action = srcIntent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, -1);
-        dstIntent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-        dstIntent.putExtra(EXTRA_INCOME_DATA, tdid);
-        dstIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, incomeSourceType);
-        dstIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
     }
 
     public  static void updateROD(Context context, RetirementOptionsData rod) {

@@ -15,9 +15,8 @@ import com.intelliviz.retirementhelper.R;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESONTE_AGE_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_DELETE;
 
 public class ListMenuActivity extends AppCompatActivity {
     private static final int MENU_EDIT = 0;
@@ -34,7 +33,7 @@ public class ListMenuActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        final String[] incomeActions = getResources().getStringArray(R.array.income_source_actions);
+        final String[] incomeActions = getResources().getStringArray(R.array.age_actions);
         ArrayAdapter adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, incomeActions);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -49,14 +48,7 @@ public class ListMenuActivity extends AppCompatActivity {
 
     private void sendResult(int resultCode, int menuItem) {
         Intent intent = new Intent();
-
-        int action = -1;
-        if(menuItem == MENU_EDIT) {
-            action = INCOME_ACTION_EDIT;
-        } else if(menuItem == MENU_DELETE) {
-            action = INCOME_ACTION_DELETE;
-        }
-        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+        intent.putExtra(EXTRA_MILESONTE_AGE_ACTION, MILESTONE_AGE_DELETE);
         setResult(resultCode, intent);
     }
 }

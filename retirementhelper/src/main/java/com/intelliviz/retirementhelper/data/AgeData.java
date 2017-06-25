@@ -2,13 +2,12 @@ package com.intelliviz.retirementhelper.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 /**
  * Created by edm on 5/23/2017.
  */
 
-public class AgeData implements Parcelable, Comparable {
+public class AgeData implements Parcelable {
     private int mYear;
     private int mMonth;
 
@@ -50,10 +49,6 @@ public class AgeData implements Parcelable, Comparable {
         }
 
         return new AgeData(year, month);
-    }
-
-    public float getAge() {
-        return (float)(mYear + mMonth / 12.0);
     }
 
     public int getNumberOfMonths() {
@@ -127,10 +122,4 @@ public class AgeData implements Parcelable, Comparable {
             return new AgeData[size];
         }
     };
-
-    @Override
-    public int compareTo(@NonNull Object o) {
-        AgeData age = (AgeData)o;
-        return getNumberOfMonths()-age.getNumberOfMonths();
-    }
 }

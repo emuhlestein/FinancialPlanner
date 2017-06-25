@@ -5,6 +5,7 @@ import android.content.Context;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
+import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
@@ -31,22 +32,22 @@ public class BenefitHelper {
         List<MilestoneData> sumMilestones = new ArrayList<>();
         List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
         if(incomeTypes == null || incomeTypes.isEmpty()) {
-            List<AgeData> ages = getMilestoneAges(context, perid);
-            for(AgeData age : ages) {
-                MilestoneData msd = new MilestoneData(age);
+            List<MilestoneAgeData> milestoneAges = getMilestoneAges(context, perid);
+            for(MilestoneAgeData msad : milestoneAges) {
+                MilestoneData msd = new MilestoneData(msad.getAge());
                 sumMilestones.add(msd);
             }
             return sumMilestones;
         }
-        List<AgeData> ages = getMilestoneAges(context, perid);
-        if(ages.isEmpty()) {
+        List<MilestoneAgeData> msad = getMilestoneAges(context, perid);
+        if(msad.isEmpty()) {
             return sumMilestones;
         }
 
-        double[] sumMonthlyAmount = new double[ages.size()];
-        double[] sumStartBalance = new double[ages.size()];
-        double[] sumEndBalance = new double[ages.size()];
-        for(int i = 0; i < ages.size(); i++) {
+        double[] sumMonthlyAmount = new double[msad.size()];
+        double[] sumStartBalance = new double[msad.size()];
+        double[] sumEndBalance = new double[msad.size()];
+        for(int i = 0; i < msad.size(); i++) {
             sumMonthlyAmount[i] = 0;
             sumStartBalance[i] = 0;
             sumEndBalance[i] = 0;
@@ -78,9 +79,8 @@ public class BenefitHelper {
 
         AgeData endAge = saveMilestones.get(0).getEndAge();
         AgeData minimumAge = saveMilestones.get(0).getMinimumAge();
-        double penalty = saveMilestones.get(0).getPenaltyAmount();
-        for(int i = 0; i < ages.size(); i++) {
-            AgeData startAge = ages.get(i);
+        for(int i = 0; i < msad.size(); i++) {
+            AgeData startAge = msad.get(i).getAge();
             MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i], sumStartBalance[i], sumEndBalance[i], 0, 0);
             sumMilestones.add(milestoneData);
         }
@@ -112,16 +112,16 @@ public class BenefitHelper {
         String endAge = rod.getEndAge();
         double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
-        List<AgeData> ages = getMilestoneAges(context, perid);
-        if(ages.isEmpty()) {
+        List<MilestoneAgeData> msad = getMilestoneAges(context, perid);
+        if(msad.isEmpty()) {
             return milestones;
         }
 
         AgeData endOfLifeAge = SystemUtils.parseAgeString(endAge);
 
-        List<Double> milestoneBalances = getMilestoneBalances(ages, startBalance, interestRate, monthlyAddition);
+        List<Double> milestoneBalances = getMilestoneBalances(msad, startBalance, interestRate, monthlyAddition);
 
-        milestones = getMilestones(endOfLifeAge, null, interestRate, 0, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
+        milestones = getMilestones(endOfLifeAge, null, interestRate, 0, rod.getWithdrawMode(), withdrawAmount, msad, milestoneBalances);
         return milestones;
     }
 
@@ -155,7 +155,7 @@ public class BenefitHelper {
         String endAge = rod.getEndAge();
         double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
-        List<AgeData> ages = getMilestoneAges(context, perid);
+        List<MilestoneAgeData> ages = getMilestoneAges(context, perid);
         if(ages.isEmpty()) {
             return milestones;
         }
@@ -171,7 +171,7 @@ public class BenefitHelper {
     private static List<MilestoneData> getMilestonesFromPensionIncome(Context context, PensionIncomeData pid,
                                                                       RetirementOptionsData rod, PersonalInfoData perid) {
         List<MilestoneData> milestones = new ArrayList<>();
-        List<AgeData> ages = getMilestoneAges(context, perid);
+        List<MilestoneAgeData> ages = getMilestoneAges(context, perid);
         if(ages.isEmpty()) {
             return milestones;
         }
@@ -181,7 +181,8 @@ public class BenefitHelper {
         double monthlyBenefit = pid.getMonthlyBenefit(0);
 
         MilestoneData milestone;
-        for(AgeData age : ages) {
+        for(MilestoneAgeData msad : ages) {
+            AgeData age = msad.getAge();
             if(age.isBefore(minimumAge)) {
                 milestone = new MilestoneData(age, endAge, minimumAge, 0, 0, 0, 0, 0);
             } else {
@@ -199,7 +200,7 @@ public class BenefitHelper {
                                                                          GovPensionIncomeData gpid,
                                                                          RetirementOptionsData rod, PersonalInfoData perid) {
         List<MilestoneData> milestones = new ArrayList<>();
-        List<AgeData> ages = getMilestoneAges(context, perid);
+        List<MilestoneAgeData> ages = getMilestoneAges(context, perid);
         if(ages.isEmpty()) {
             return milestones;
         }
@@ -216,8 +217,8 @@ public class BenefitHelper {
         AgeData minimumAge = new AgeData(62, 0);
 
         MilestoneData milestone;
-        for(AgeData age : ages) {
-
+        for(MilestoneAgeData msad : ages) {
+            AgeData age = msad.getAge();
             if(age.isBefore(minimumAge)) {
                 milestone = new MilestoneData(age, null, minimumAge, 0, 0, 0, 0, 0);
             } else {
@@ -234,12 +235,12 @@ public class BenefitHelper {
 
     private static List<MilestoneData> getMilestones(AgeData endOfLifeAge, AgeData minimumAge,
                                                      double interestRate, double penalty, int withdrawMode, double withdrawAmount,
-                                                     List<AgeData> ages, List<Double> milestoneBalances) {
+                                                     List<MilestoneAgeData> ages, List<Double> milestoneBalances) {
 
         List<MilestoneData> milestones = new ArrayList<>();
 
         for(int i = 0; i < ages.size(); i++) {
-            AgeData startAge = ages.get(i);
+            AgeData startAge = ages.get(i).getAge();
             if(minimumAge == null) {
                 penalty = 0;
             } else {
@@ -291,16 +292,16 @@ public class BenefitHelper {
      * @param monthlyIncrease The monthly increase.
      * @return The list of balances.
      */
-    private static List<Double> getMilestoneBalances(List<AgeData> ages, double balance, double interest, double monthlyIncrease) {
+    private static List<Double> getMilestoneBalances(List<MilestoneAgeData> ages, double balance, double interest, double monthlyIncrease) {
         List<Double> balances = new ArrayList<>();
         if(ages.isEmpty()) {
             return balances;
         }
-        AgeData refAge = ages.get(0);
+        AgeData refAge = ages.get(0).getAge();
         double newBalance = balance;
         balances.add(newBalance);
         for (int i = 1; i < ages.size(); i++) {
-            AgeData age = ages.get(i);
+            AgeData age = ages.get(i).getAge();
             AgeData diffAge = age.subtract(refAge);
             int numMonths = diffAge.getNumberOfMonths();
             newBalance = getFutureBalance(newBalance, numMonths, interest, monthlyIncrease);

@@ -1,9 +1,7 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
-import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,12 +30,10 @@ import android.widget.Toast;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
-import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
-import com.intelliviz.retirementhelper.data.SummaryData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.services.GovPensionDataService;
@@ -45,7 +41,6 @@ import com.intelliviz.retirementhelper.services.PensionDataService;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
-import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.PensionHelper;
@@ -54,10 +49,6 @@ import com.intelliviz.retirementhelper.util.SavingsHelper;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
-import com.intelliviz.retirementhelper.widget.WidgetProvider;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -484,7 +475,7 @@ public class IncomeSourceListFragment extends Fragment implements
             long incomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
             if(incomeSourceId != -1) {
                 int rowsDeleted = TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), incomeSourceId);
-                updateAppWidget();
+                SystemUtils.updateAppWidget(getContext());
             }
         }
     }
@@ -498,7 +489,7 @@ public class IncomeSourceListFragment extends Fragment implements
             SavingsHelper.saveSavingsIncomeData(getContext(), sid);
         }
 
-        updateAppWidget();
+        SystemUtils.updateAppWidget(getContext());
     }
 
     private void saveTaxDeferredData(Intent intent) {
@@ -510,7 +501,7 @@ public class IncomeSourceListFragment extends Fragment implements
             TaxDeferredHelper.saveTaxDeferredData(getContext(), tdid);
         }
 
-        updateAppWidget();
+        SystemUtils.updateAppWidget(getContext());
     }
 
     private void savePensionData(Intent intent) {
@@ -522,7 +513,7 @@ public class IncomeSourceListFragment extends Fragment implements
             PensionHelper.savePensionData(getContext(), pid);
         }
 
-        updateAppWidget();
+        SystemUtils.updateAppWidget(getContext());
     }
 
     private void saveGovPensionData(Intent intent) {
@@ -534,29 +525,8 @@ public class IncomeSourceListFragment extends Fragment implements
             GovPensionHelper.saveGovPensionData(getContext(), gpid);
         }
 
-        updateAppWidget();
+        SystemUtils.updateAppWidget(getContext());
     }
 
-    private void updateAppWidget() {
-        PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(getContext());
-        RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(getContext());
-        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), rod, pid);
 
-        List<SummaryData> summaryData = getSummaryData(milestones);
-        DataBaseUtils.updateSummaryData(getContext());
-
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getContext());
-        ComponentName appWidget = new ComponentName(getContext(), WidgetProvider.class);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
-
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
-    }
-
-    private List<SummaryData> getSummaryData(List<MilestoneData> milestoneData) {
-        List<SummaryData> summaryData = new ArrayList<>();
-        for(MilestoneData msd : milestoneData) {
-            summaryData.add(new SummaryData(msd.getStartAge().toString(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
-        }
-        return summaryData;
-    }
 }
