@@ -389,7 +389,7 @@ public class SystemUtils {
     public  static void updateROD(Context context, RetirementOptionsData rod) {
         Intent intent = new Intent(context, RetirementOptionsService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_ACTION_UPDATE);
         context.startService(intent);
     }
 
@@ -397,7 +397,7 @@ public class SystemUtils {
         RetirementInfoMgr.getInstance().setBirthdate(pid.getBirthdate());
         Intent intent = new Intent(context, PersonalDataService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, pid);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_ACTION_UPDATE);
         context.startService(intent);
     }
 }
