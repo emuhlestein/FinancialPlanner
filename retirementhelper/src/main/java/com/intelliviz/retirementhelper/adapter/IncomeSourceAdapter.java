@@ -40,7 +40,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
             return;
         }
 
-        holder.bindIncomeSource();
+        holder.bindIncomeSource(mCursor);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         mListener = listener;
     }
 
-    public class IncomeSourceHolder extends RecyclerView.ViewHolder
+    class IncomeSourceHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         private long mId;
         private int mIncomeType;
@@ -70,7 +70,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         TextView incomeTypeTextView;
         ImageView overflowImage;
 
-        public IncomeSourceHolder(View itemView) {
+        IncomeSourceHolder(View itemView) {
             super(itemView);
             incomeSourceNameTextView = (TextView) itemView.findViewById(R.id.income_source_name_text_view);
             incomeTypeTextView = (TextView) itemView.findViewById(R.id.income_source_type_text_view);
@@ -79,20 +79,20 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
             itemView.setOnClickListener(this);
         }
 
-        public void bindIncomeSource() {
-            int idIndex = mCursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID);
-            int nameIndex = mCursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
-            int typeIndex = mCursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
+        void bindIncomeSource(Cursor cursor) {
+            int idIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID);
+            int nameIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
+            int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
             if(nameIndex != -1) {
-                mIncomeSourceName = mCursor.getString(nameIndex);
+                mIncomeSourceName = cursor.getString(nameIndex);
                 incomeSourceNameTextView.setText(mIncomeSourceName);
             }
             if(typeIndex != -1) {
-                mIncomeType = mCursor.getInt(typeIndex);
+                mIncomeType = cursor.getInt(typeIndex);
                 incomeTypeTextView.setText(mIncomeTypes[mIncomeType]);
             }
             if(idIndex != -1) {
-                String id = mCursor.getString(idIndex);
+                String id = cursor.getString(idIndex);
                 mId = Long.parseLong(id);
             }
         }
