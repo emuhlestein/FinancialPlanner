@@ -65,9 +65,9 @@ public class SummaryActivity extends AppCompatActivity {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        mNeedToStartSummaryFtagment = false;
+        mNeedToStartSummaryFtagment = true;
 
-        startSummaryFragment();
+        //startSummaryFragment();
         setNavigationFragment();
 /*
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
@@ -151,7 +151,8 @@ public class SummaryActivity extends AppCompatActivity {
             // fragment transactions have to be handled outside of onActivityResult.
             // The state has already been saved and no state modifications are allowed.
             startSummaryFragment();
-            setNavigationFragment();
+            //setNavigationFragment();
+            mNeedToStartSummaryFtagment = false;
         }
     }
 

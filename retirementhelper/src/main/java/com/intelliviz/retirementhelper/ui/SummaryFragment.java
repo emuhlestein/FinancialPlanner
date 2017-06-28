@@ -157,6 +157,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             snackbar.show();
         }
 
+        SystemUtils.updateAppWidget(getContext());
+
         return view;
     }
 
@@ -225,5 +227,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         DataBaseUtils.addAge(getContext(), age);
 
         SystemUtils.updatePERID(getContext(), new PersonalInfoData(birthdate, null));
+
+        SystemUtils.updateAppWidget(getContext());
     }
 }

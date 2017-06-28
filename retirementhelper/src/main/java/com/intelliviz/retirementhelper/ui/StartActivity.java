@@ -20,10 +20,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.services.PersonalDataService;
 import com.intelliviz.retirementhelper.util.GoogleApiClientHelper;
 import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,9 +154,10 @@ public class StartActivity extends AppCompatActivity implements
     private void startSignedInActivity(IdpResponse response) {
         mResponse = response;
         mGoogleApiClient.connect();
-        Intent intent = new Intent(this, PersonalDataService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_QUERY);
-        startService(intent);
+        Intent newIntent = new Intent(StartActivity.this, SummaryActivity.class);
+        newIntent.putExtra(EXTRA_LOGIN_RESPONSE, response);
+        startActivity(newIntent);
+        finish();
     }
 
     @Override

@@ -135,7 +135,7 @@ public class MilestoneAgesFragment extends Fragment implements
         Loader<Cursor> loader;
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
         loader = new CursorLoader(getContext(),
-                uri, null, null, null, null);
+                uri, null, null, null, RetirementContract.MilestoneEntry.COLUMN_AGE + " ASC");
         return loader;
     }
 
