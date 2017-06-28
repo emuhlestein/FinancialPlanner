@@ -36,18 +36,17 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_P
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 public class SummaryActivity extends AppCompatActivity {
-    private static final String DIALOG_RETIRE_OPTIONS = "retire_options";
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
     private GoogleApiClient mGoogleApiClient;
-    private boolean mNeedToStartSummaryFtagment;
+    private boolean mNeedToStartSummaryFragment;
 
     @Bind(R.id.summary_toolbar)
     Toolbar mToolbar;
 
     @Bind(R.id.bottom_navigation)
-    BottomNavigationView mBottonNavigation;
+    BottomNavigationView mBottomNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,17 +64,8 @@ public class SummaryActivity extends AppCompatActivity {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        mNeedToStartSummaryFtagment = true;
-
-        //startSummaryFragment();
-        setNavigationFragment();
-/*
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        ComponentName appWidget = new ComponentName(this, WidgetProvider.class);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
-
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
-        */
+        mNeedToStartSummaryFragment = true;
+        initNavigationFragments();
     }
 
     @Override
@@ -110,7 +100,7 @@ public class SummaryActivity extends AppCompatActivity {
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                         new ResultCallback<Status>() {
                             @Override
-                            public void onResult(Status status) {
+                            public void onResult(@NonNull Status status) {
                                 FirebaseAuth  auth = FirebaseAuth.getInstance();
                                 auth.signOut();
                                 mGoogleApiClient.disconnect();
@@ -124,7 +114,7 @@ public class SummaryActivity extends AppCompatActivity {
                 Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
                         new ResultCallback<Status>() {
                             @Override
-                            public void onResult(Status status) {
+                            public void onResult(@NonNull Status status) {
                                 FirebaseAuth  auth = FirebaseAuth.getInstance();
                                 auth.signOut();
                                 mGoogleApiClient.disconnect();
@@ -147,12 +137,11 @@ public class SummaryActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if(mNeedToStartSummaryFtagment) {
+        if(mNeedToStartSummaryFragment) {
             // fragment transactions have to be handled outside of onActivityResult.
             // The state has already been saved and no state modifications are allowed.
             startSummaryFragment();
-            //setNavigationFragment();
-            mNeedToStartSummaryFtagment = false;
+            mNeedToStartSummaryFragment = false;
         }
     }
 
@@ -195,13 +184,13 @@ public class SummaryActivity extends AppCompatActivity {
         }
     }
 
-    private void setNavigationFragment() {
-        mBottonNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private void initNavigationFragments() {
+        mBottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 FragmentManager fm = getSupportFragmentManager();
-                Fragment fragment = null;
-                FragmentTransaction ft = null;
+                Fragment fragment;
+                FragmentTransaction ft;
                 switch (item.getItemId()) {
                     case R.id.home_menu:
                         RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(SummaryActivity.this);

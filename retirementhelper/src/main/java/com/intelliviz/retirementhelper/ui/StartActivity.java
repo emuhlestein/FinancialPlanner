@@ -1,12 +1,8 @@
 package com.intelliviz.retirementhelper.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,10 +14,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.util.GoogleApiClientHelper;
-import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +23,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROD;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PERSONAL_DATA;
 
 public class StartActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
@@ -43,13 +32,15 @@ public class StartActivity extends AppCompatActivity implements
     private static final String FIREBASE_PRIVACY_POLICY_URL = "https://firebase.google.com/terms/analytics/#7_privacy";
     private static final int REQUEST_SIGN_IN = 1;
     private GoogleApiClient mGoogleApiClient;
-    private IdpResponse mResponse;
+
     @Bind(R.id.login_button)
     Button mLoginButton;
 
     @OnClick(R.id.login_button)
     public void login(View view) {
-        mGoogleApiClient.connect();
+        if(mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
 
         // need to see if user is already logged in
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -68,33 +59,17 @@ public class StartActivity extends AppCompatActivity implements
                 REQUEST_SIGN_IN);
     }
 
-    private BroadcastReceiver mPersonalInfoReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-            PersonalInfoData pid = intent.getParcelableExtra(EXTRA_DB_DATA);
-            RetirementOptionsData rod = intent.getParcelableExtra(EXTRA_DB_ROD);
-            RetirementInfoMgr.getInstance().setPersonalInfoData(pid);
-            RetirementInfoMgr.getInstance().setRetirementInfoData(rod);
-            Intent newIntent = new Intent(StartActivity.this, SummaryActivity.class);
-            newIntent.putExtra(EXTRA_LOGIN_RESPONSE, mResponse);
-            startActivity(newIntent);
-            finish();
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         ButterKnife.bind(this);
 
-        GoogleApiClientHelper.createGoogleApiClient(this);
-        mGoogleApiClient = GoogleApiClientHelper.getInstance();
+        mGoogleApiClient = SystemUtils.createGoogleApiClient(this);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
-            mLoginButton.setText("Sign In");
+            mLoginButton.setText(R.string.sign_in);
         }
     }
 
@@ -111,25 +86,13 @@ public class StartActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterReceiver();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerReceiver();
-    }
-
     private void handleSignInResult(IdpResponse response) {
         if (response != null) {
             // Signed in successfully, show authenticated UI.
-            mGoogleApiClient.connect();
-            String email = response.getEmail();
-            int err = response.getErrorCode();
-            startSignedInActivity(null);
+            if(mGoogleApiClient != null) {
+                mGoogleApiClient.connect();
+            }
+            startSignedInActivity(response);
         }
     }
 
@@ -147,13 +110,10 @@ public class StartActivity extends AppCompatActivity implements
     }
 
     private List<String> getGooglePermissions() {
-        List<String> result = new ArrayList<>();
-        return result;
+        return new ArrayList<>();
     }
 
     private void startSignedInActivity(IdpResponse response) {
-        mResponse = response;
-        mGoogleApiClient.connect();
         Intent newIntent = new Intent(StartActivity.this, SummaryActivity.class);
         newIntent.putExtra(EXTRA_LOGIN_RESPONSE, response);
         startActivity(newIntent);
@@ -163,14 +123,5 @@ public class StartActivity extends AppCompatActivity implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e(TAG, "Failed to connect");
-    }
-
-    private void registerReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_PERSONAL_DATA);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mPersonalInfoReceiver, filter);
-    }
-
-    private void unregisterReceiver() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mPersonalInfoReceiver);
     }
 }

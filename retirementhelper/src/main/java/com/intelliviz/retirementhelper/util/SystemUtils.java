@@ -4,10 +4,14 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
@@ -29,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.ContentValues.TAG;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 import static java.lang.Integer.parseInt;
@@ -38,6 +43,26 @@ import static java.lang.Integer.parseInt;
  */
 
 public class SystemUtils {
+    public static GoogleApiClient createGoogleApiClient(Context context) {
+
+        FragmentActivity fact;
+        GoogleApiClient.OnConnectionFailedListener listener;
+        try {
+            fact = (FragmentActivity)context;
+            listener = (GoogleApiClient.OnConnectionFailedListener)context;
+        } catch(ClassCastException e) {
+            Log.e(TAG, "Failed to create GoogleApiClient");
+            return null;
+        }
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        return new GoogleApiClient.Builder(context)
+                .enableAutoManage(fact, listener)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+    }
 
     public static void updateAppWidget(Context context) {
         PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(context);

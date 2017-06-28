@@ -102,5 +102,6 @@
     <string name="home">Home</string>
     <string name="income">Income</string>
     <string name="add_income_source">Add Income Source</string>
+    <string name="sign_in">Sign In</string>
 
 </resources>
