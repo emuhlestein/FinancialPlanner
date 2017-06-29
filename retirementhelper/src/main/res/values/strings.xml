@@ -107,5 +107,6 @@
     <string name="add_income_source_message">Please add some income sources on the income source screen</string>
     <string name="dismiss">Dismiss</string>
     <string name="enter_valid_birthdate">Please enter a valid birth date</string>
+    <string name="birthdate_format">Format (yyyy-MM-dd)</string>
 
 </resources>

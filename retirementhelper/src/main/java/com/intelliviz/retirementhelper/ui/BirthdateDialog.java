@@ -45,7 +45,7 @@ public class BirthdateDialog extends DialogFragment {
         final View view = inflater.inflate(R.layout.birthdate_layout, null);
         mBirthdateEditText = (EditText) view.findViewById(R.id.birthdate_edit_text);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("Format (yyyy-MM-dd)");
+        builder.setMessage(R.string.birthdate_format);
         builder.setTitle(title);
         builder.setView(view);
 
