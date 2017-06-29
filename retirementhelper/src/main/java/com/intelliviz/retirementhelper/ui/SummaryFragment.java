@@ -44,7 +44,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIR
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BUNDLE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PERSONAL_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
 
@@ -75,12 +74,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         // Required empty public constructor
     }
 
-    public static SummaryFragment newInstance(Bundle bundle) {
-        SummaryFragment fragment = new SummaryFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_BUNDLE, bundle);
-        fragment.setArguments(args);
-        return fragment;
+    public static SummaryFragment newInstance() {
+        return new SummaryFragment();
     }
 
     @Override
@@ -123,18 +118,20 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         }
 
         RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
-        String birthdate = rod.getBirthdate();
-        if (!SystemUtils.validateBirthday(birthdate)) {
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-            BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter your birth date");
-            dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
-            dialog.show(fm, DIALOG_BIRTHDATE);
+        if(rod != null) {
+            String birthdate = rod.getBirthdate();
+            if (!SystemUtils.validateBirthday(birthdate)) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                BirthdateDialog dialog = BirthdateDialog.newInstance(getString(R.string.enter_birthdate));
+                dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
+                dialog.show(fm, DIALOG_BIRTHDATE);
+            }
         }
 
         List<IncomeType> incomeSources = DataBaseUtils.getAllIncomeTypes(getContext());
         if(incomeSources.isEmpty()) {
-            final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Please add some income source on the income source screen", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("Dismiss", new View.OnClickListener() {
+            final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.add_income_source_message, Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     snackbar.dismiss();
@@ -183,7 +180,6 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mRetirementOptionsReceiver, filter);
-        filter = new IntentFilter(LOCAL_PERSONAL_DATA);
     }
 
     private void unregisterReceiver() {

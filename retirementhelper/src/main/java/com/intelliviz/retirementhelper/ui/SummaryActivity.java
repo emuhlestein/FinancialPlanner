@@ -63,7 +63,10 @@ public class SummaryActivity extends AppCompatActivity {
                 .build();
 
         mNeedToStartSummaryFragment = true;
-        initNavigationFragments();
+
+        initBottomNavigation();
+        MenuItem startFragment = mBottomNavigation.getMenu().getItem(0);
+        selectedNavFragment(startFragment);
     }
 
     @Override
@@ -138,7 +141,7 @@ public class SummaryActivity extends AppCompatActivity {
         if(mNeedToStartSummaryFragment) {
             // fragment transactions have to be handled outside of onActivityResult.
             // The state has already been saved and no state modifications are allowed.
-            startSummaryFragment();
+            //startSummaryFragment();
             mNeedToStartSummaryFragment = false;
         }
     }
@@ -155,7 +158,7 @@ public class SummaryActivity extends AppCompatActivity {
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
                     String birthdate = intent.getStringExtra(RetirementConstants.EXTRA_BIRTHDATE);
-                    RetirementOptionsHelper.saveBirthdate(this, birthdate);
+                    SystemUtils.updateBirthdate(this, birthdate);
                 }
                 break;
             default:
@@ -163,57 +166,41 @@ public class SummaryActivity extends AppCompatActivity {
         }
     }
 
-    private void startSummaryFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment;
-
-        fragment = fm.findFragmentByTag(SUMMARY_FRAG_TAG);
-        if (fragment == null) {
-            RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(EXTRA_RETIREOPTIONS_DATA, rod);
-            fragment = SummaryFragment.newInstance(bundle);
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
-            ft.commit();
-        }
-    }
-
-    private void initNavigationFragments() {
+    private void initBottomNavigation() {
         mBottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                FragmentManager fm = getSupportFragmentManager();
-                Fragment fragment;
-                FragmentTransaction ft;
-                switch (item.getItemId()) {
-                    case R.id.home_menu:
-                        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(SummaryActivity.this);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable(EXTRA_RETIREOPTIONS_DATA, rod);
-                        fragment = SummaryFragment.newInstance(bundle);
-                        ft = fm.beginTransaction();
-                        ft.replace(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
-                        ft.commit();
-                        break;
-                    case R.id.income_menu:
-                        fragment = IncomeSourceListFragment.newInstance();
-                        ft = fm.beginTransaction();
-                        ft.replace(R.id.content_frame, fragment, INCOME_FRAG_TAG);
-                        ft.commit();
-                        break;
-                    case R.id.milestones_menu:
-                        fragment = MilestoneAgesFragment.newInstance();
-                        ft = fm.beginTransaction();
-                        ft.replace(R.id.content_frame, fragment, MILESTONES_FRAG_TAG);
-                        ft.commit();
-                        break;
-                    default:
-                        return false;
-                }
+                selectedNavFragment(item);
                 return true;
             }
         });
+    }
+
+    private void selectedNavFragment(MenuItem item) {
+        Fragment fragment;
+        String fragmentTag;
+        switch (item.getItemId()) {
+            case R.id.home_menu:
+                fragment = SummaryFragment.newInstance();
+                fragmentTag = SUMMARY_FRAG_TAG;
+                break;
+            case R.id.income_menu:
+                fragment = IncomeSourceListFragment.newInstance();
+                fragmentTag = INCOME_FRAG_TAG;
+                break;
+            case R.id.milestones_menu:
+                fragment = MilestoneAgesFragment.newInstance();
+                fragmentTag = MILESTONES_FRAG_TAG;
+                break;
+            default:
+                return;
+        }
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft;
+        ft = fm.beginTransaction();
+        ft.replace(R.id.content_frame, fragment, fragmentTag);
+        ft.commit();
     }
 }
 

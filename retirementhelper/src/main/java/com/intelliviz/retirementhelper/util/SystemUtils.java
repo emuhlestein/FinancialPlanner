@@ -389,4 +389,11 @@ public class SystemUtils {
         intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         context.startService(intent);
     }
+
+    public  static void updateBirthdate(Context context, String birthdate) {
+        Intent intent = new Intent(context, RetirementOptionsService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, birthdate);
+        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        context.startService(intent);
+    }
 }

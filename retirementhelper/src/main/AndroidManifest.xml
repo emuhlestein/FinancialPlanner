@@ -75,6 +75,10 @@
         <activity
             android:name=".ui.YesNoDialog"
             android:theme="@style/RetireDialog" />
+
+        <service
+            android:name=".services.PersonalInfoIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

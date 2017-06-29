@@ -103,5 +103,8 @@
     <string name="income">Income</string>
     <string name="add_income_source">Add Income Source</string>
     <string name="sign_in">Sign In</string>
+    <string name="enter_birthdate">Please enter your birth date</string>
+    <string name="add_income_source_message">Please add some income sources on the income source screen</string>
+    <string name="dismiss">Dismiss</string>
 
 </resources>
