@@ -12,12 +12,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.ui.PersonalInfoDialog;
 import com.intelliviz.retirementhelper.ui.RetirementOptionsDialog;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
@@ -106,7 +105,7 @@ public class IncomeSourceActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.retirement_options_item:
                 intent = new Intent(this, RetirementOptionsDialog.class);
-                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+                RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (rod != null) {
                     intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
                 }
@@ -115,9 +114,9 @@ public class IncomeSourceActivity extends AppCompatActivity {
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
-                PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(this);
-                if (pid != null) {
-                    intent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
+                rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+                if (rod != null) {
+                    intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
                 }
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 break;

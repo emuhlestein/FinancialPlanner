@@ -59,7 +59,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         public void onReceive(Context context, Intent intent) {
             intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
             mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
-            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD, null);
+            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
             mMilestoneAdapter.update(milestones);
         }
     };
@@ -95,7 +95,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         View view = inflater.inflate(R.layout.fragment_view_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
 
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD, null);
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
         mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);

@@ -6,8 +6,8 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
@@ -38,7 +38,7 @@ public class GovPensionDataService extends IntentService {
                     return; // error
                 }
                 GovPensionIncomeData gpid = GovPensionHelper.getGovPensionIncomeData(this, id);
-                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+                RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (gpid != null && rod != null) {
                     Intent localIntent = new Intent(LOCAL_GOV_PENSION);
                     localIntent.putExtra(EXTRA_DB_DATA, gpid);

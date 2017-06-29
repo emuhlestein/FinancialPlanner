@@ -20,17 +20,15 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_PERSONALINFODATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
@@ -81,7 +79,7 @@ public class SummaryActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.retirement_options_item:
                 intent = new Intent(this, RetirementOptionsDialog.class);
-                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+                RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (rod != null) {
                     intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
                 }
@@ -90,9 +88,9 @@ public class SummaryActivity extends AppCompatActivity {
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
-                PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(this);
-                if (pid != null) {
-                    intent.putExtra(EXTRA_PERSONALINFODATA, pid);
+                rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+                if (rod != null) {
+                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                 }
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 break;
@@ -156,8 +154,8 @@ public class SummaryActivity extends AppCompatActivity {
                 break;
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
-                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-                    SystemUtils.updatePERID(this, pid);
+                    String birthdate = intent.getStringExtra(RetirementConstants.EXTRA_BIRTHDATE);
+                    RetirementOptionsHelper.saveBirthdate(this, birthdate);
                 }
                 break;
             default:
@@ -171,12 +169,9 @@ public class SummaryActivity extends AppCompatActivity {
 
         fragment = fm.findFragmentByTag(SUMMARY_FRAG_TAG);
         if (fragment == null) {
-
-            RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
-            PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(this);
+            RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
             Bundle bundle = new Bundle();
             bundle.putParcelable(EXTRA_RETIREOPTIONS_DATA, rod);
-            bundle.putParcelable(EXTRA_PERSONALINFODATA, perid);
             fragment = SummaryFragment.newInstance(bundle);
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);
@@ -193,11 +188,9 @@ public class SummaryActivity extends AppCompatActivity {
                 FragmentTransaction ft;
                 switch (item.getItemId()) {
                     case R.id.home_menu:
-                        RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(SummaryActivity.this);
-                        PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(SummaryActivity.this);
+                        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(SummaryActivity.this);
                         Bundle bundle = new Bundle();
                         bundle.putParcelable(EXTRA_RETIREOPTIONS_DATA, rod);
-                        bundle.putParcelable(EXTRA_PERSONALINFODATA, perid);
                         fragment = SummaryFragment.newInstance(bundle);
                         ft = fm.beginTransaction();
                         ft.replace(R.id.content_frame, fragment, SUMMARY_FRAG_TAG);

@@ -8,7 +8,6 @@ import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
@@ -28,18 +27,18 @@ import static java.lang.Double.parseDouble;
 
 public class BenefitHelper {
 
-    public static List<MilestoneData> getAllMilestones(Context context, RetirementOptionsData rod, PersonalInfoData perid) {
+    public static List<MilestoneData> getAllMilestones(Context context, RetirementOptionsData rod) {
         List<MilestoneData> sumMilestones = new ArrayList<>();
         List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
         if(incomeTypes == null || incomeTypes.isEmpty()) {
-            List<MilestoneAgeData> milestoneAges = getMilestoneAges(context, perid);
+            List<MilestoneAgeData> milestoneAges = getMilestoneAges(context, rod);
             for(MilestoneAgeData msad : milestoneAges) {
                 MilestoneData msd = new MilestoneData(msad.getAge());
                 sumMilestones.add(msd);
             }
             return sumMilestones;
         }
-        List<MilestoneAgeData> msad = getMilestoneAges(context, perid);
+        List<MilestoneAgeData> msad = getMilestoneAges(context, rod);
         if(msad.isEmpty()) {
             return sumMilestones;
         }
@@ -54,7 +53,7 @@ public class BenefitHelper {
         }
         List<MilestoneData> saveMilestones = null;
         for(IncomeType incomeType : incomeTypes) {
-            List<MilestoneData> milestones = getMilestones(context, incomeType, rod, perid);
+            List<MilestoneData> milestones = getMilestones(context, incomeType, rod);
             if(milestones == null || milestones.isEmpty()) {
                 continue;
             }
@@ -90,29 +89,29 @@ public class BenefitHelper {
 
     public static List<MilestoneData> getMilestones(Context context,
                                                     IncomeType incomeType,
-                                                    RetirementOptionsData rod, PersonalInfoData perid) {
+                                                    RetirementOptionsData rod) {
         if(incomeType instanceof SavingsIncomeData) {
-            return getMilestonesFromSavingsIncome(context, (SavingsIncomeData)incomeType, rod, perid);
+            return getMilestonesFromSavingsIncome(context, (SavingsIncomeData)incomeType, rod);
         } else if(incomeType instanceof TaxDeferredIncomeData) {
-            return getMilestonesFromTaxDeferredIncome(context, (TaxDeferredIncomeData)incomeType, rod, perid);
+            return getMilestonesFromTaxDeferredIncome(context, (TaxDeferredIncomeData)incomeType, rod);
         } else if(incomeType instanceof PensionIncomeData){
-            return getMilestonesFromPensionIncome(context, (PensionIncomeData)incomeType, rod, perid);
+            return getMilestonesFromPensionIncome(context, (PensionIncomeData)incomeType, rod);
         } else if(incomeType instanceof GovPensionIncomeData) {
-            return getMilestonesFromGovPensionIncome(context, (GovPensionIncomeData)incomeType, rod, perid);
+            return getMilestonesFromGovPensionIncome(context, (GovPensionIncomeData)incomeType, rod);
         } else {
             return Collections.emptyList();
         }
     }
 
     private static List<MilestoneData> getMilestonesFromSavingsIncome(Context context, SavingsIncomeData sid,
-                                                                      RetirementOptionsData rod, PersonalInfoData perid) {
+                                                                      RetirementOptionsData rod) {
         double startBalance = sid.getBalance();
         double interestRate = sid.getInterest();
         double monthlyAddition = sid.getMonthlyIncrease();
         String endAge = rod.getEndAge();
         double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
-        List<MilestoneAgeData> msad = getMilestoneAges(context, perid);
+        List<MilestoneAgeData> msad = getMilestoneAges(context, rod);
         if(msad.isEmpty()) {
             return milestones;
         }
@@ -127,11 +126,6 @@ public class BenefitHelper {
 
     /**
      * Get the number of months the principle will last given the withdraw rate.
-     * @param balance
-     * @param interest
-     * @param withdrawInterest
-     * @param penalty
-     * @return
      */
     private static int getNumMonthsByWidthdrawInterest(double balance, double interest, double withdrawInterest, double penalty) {
         double newBalance = balance;
@@ -146,7 +140,7 @@ public class BenefitHelper {
     }
 
     private static List<MilestoneData> getMilestonesFromTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid,
-                                                                          RetirementOptionsData rod, PersonalInfoData perid) {
+                                                                          RetirementOptionsData rod) {
         double startBalance = tdid.getBalance();
         double interestRate = tdid.getInterestRate();
         double monthlyAddition = tdid.getMonthAddition();
@@ -155,7 +149,7 @@ public class BenefitHelper {
         String endAge = rod.getEndAge();
         double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
-        List<MilestoneAgeData> ages = getMilestoneAges(context, perid);
+        List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
         if(ages.isEmpty()) {
             return milestones;
         }
@@ -169,9 +163,9 @@ public class BenefitHelper {
     }
 
     private static List<MilestoneData> getMilestonesFromPensionIncome(Context context, PensionIncomeData pid,
-                                                                      RetirementOptionsData rod, PersonalInfoData perid) {
+                                                                      RetirementOptionsData rod) {
         List<MilestoneData> milestones = new ArrayList<>();
-        List<MilestoneAgeData> ages = getMilestoneAges(context, perid);
+        List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
         if(ages.isEmpty()) {
             return milestones;
         }
@@ -198,16 +192,16 @@ public class BenefitHelper {
 
     private static List<MilestoneData> getMilestonesFromGovPensionIncome(Context context,
                                                                          GovPensionIncomeData gpid,
-                                                                         RetirementOptionsData rod, PersonalInfoData perid) {
+                                                                         RetirementOptionsData rod) {
         List<MilestoneData> milestones = new ArrayList<>();
-        List<MilestoneAgeData> ages = getMilestoneAges(context, perid);
+        List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
         if(ages.isEmpty()) {
             return milestones;
         }
 
         //AgeData minimumAge = new AgeData(gpid.getStartAge());
 
-        String birthDate = perid.getBirthdate();
+        String birthDate = rod.getBirthdate();
 
         int birthYear = SystemUtils.getBirthYear(birthDate);
         AgeData fullAge = GovPensionHelper.getFullRetirementAge(birthYear);

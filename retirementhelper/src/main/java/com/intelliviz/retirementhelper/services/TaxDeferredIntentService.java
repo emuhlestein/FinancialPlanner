@@ -6,7 +6,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
@@ -34,7 +34,7 @@ public class TaxDeferredIntentService extends IntentService {
                     return; // error
                 }
                 TaxDeferredIncomeData tdid = TaxDeferredHelper.getTaxDeferredIncomeData(this, id);
-                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+                RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (tdid != null && rod != null) {
                     Intent localIntent = new Intent(LOCAL_TAX_DEFERRED);
                     localIntent.putExtra(EXTRA_DB_DATA, tdid);

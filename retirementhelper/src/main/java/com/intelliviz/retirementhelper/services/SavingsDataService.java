@@ -6,7 +6,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SavingsHelper;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
@@ -34,7 +34,7 @@ public class SavingsDataService extends IntentService {
                     return; // error
                 }
                 SavingsIncomeData sid = SavingsHelper.getSavingsIncomeData(this, id);
-                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+                RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (sid != null && rod != null) {
                     Intent localIntent = new Intent(LOCAL_SAVINGS);
                     localIntent.putExtra(EXTRA_DB_DATA, sid);

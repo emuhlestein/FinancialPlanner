@@ -12,6 +12,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -30,10 +31,10 @@ public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.
     private AgeData mFullAge;
     private AgeData mMinimumAge;
 
-    public SSMilestoneAdapter(Context context, List<MilestoneData> milestones, PersonalInfoData perid) {
+    public SSMilestoneAdapter(Context context, List<MilestoneData> milestones, RetirementOptionsData rod) {
         mContext = context;
         mMilestones = milestones;
-        String birthdate = perid.getBirthdate();
+        String birthdate = rod.getBirthdate();
         int year = SystemUtils.getBirthYear(birthdate);
         mFullAge = GovPensionHelper.getFullRetirementAge(year);
 

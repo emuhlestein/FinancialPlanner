@@ -15,10 +15,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SummaryData;
-import com.intelliviz.retirementhelper.services.PersonalDataService;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
@@ -65,9 +63,8 @@ public class SystemUtils {
     }
 
     public static void updateAppWidget(Context context) {
-        PersonalInfoData pid = DataBaseUtils.getPersonalInfoData(context);
-        RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(context);
-        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(context, rod, pid);
+        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(context);
+        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(context, rod);
 
         List<SummaryData> summaryData = getSummaryData(milestones);
         DataBaseUtils.updateSummaryData(context);
@@ -97,8 +94,8 @@ public class SystemUtils {
                 return false;
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
-                    PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
-                    updatePERID(context, pid);
+                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                    updateROD(context, rod);
                 }
                 return false;
             default:
@@ -389,15 +386,7 @@ public class SystemUtils {
     public  static void updateROD(Context context, RetirementOptionsData rod) {
         Intent intent = new Intent(context, RetirementOptionsService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
-        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_ACTION_UPDATE);
-        context.startService(intent);
-    }
-
-    public static void updatePERID(Context context, PersonalInfoData pid) {
-        RetirementInfoMgr.getInstance().setBirthdate(pid.getBirthdate());
-        Intent intent = new Intent(context, PersonalDataService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, pid);
-        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_ACTION_UPDATE);
+        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         context.startService(intent);
     }
 }

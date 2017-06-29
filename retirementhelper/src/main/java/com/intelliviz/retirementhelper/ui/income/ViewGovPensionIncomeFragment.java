@@ -21,7 +21,7 @@ import com.intelliviz.retirementhelper.adapter.SSMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -46,7 +46,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
 
     public static final String VIEW_GOV_PENSION_INCOME_FRAG_TAG = "view gov pension income frag tag";
     private GovPensionIncomeData mGPID;
-    private PersonalInfoData mPERID;
+    private RetirementOptionsData mROD;
     private SSMilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
@@ -59,7 +59,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
         @Override
         public void onReceive(Context context, Intent intent) {
             intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-            mPERID = intent.getParcelableExtra(EXTRA_DB_DATA);
+            mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
             updateUI();
             //List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
             //mMilestoneAdapter.update(milestones);
@@ -84,7 +84,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
             if(intent != null) {
                 mGPID = intent.getParcelableExtra(EXTRA_INCOME_DATA);
-                mPERID = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+                mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
             }
         }
     }
@@ -96,8 +96,8 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
         View view = inflater.inflate(R.layout.fragment_view_gov_pension_income, container, false);
         ButterKnife.bind(this, view);
 
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mGPID, null, mPERID);
-        mMilestoneAdapter = new SSMilestoneAdapter(getContext(), milestones, mPERID);
+        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mGPID, mROD);
+        mMilestoneAdapter = new SSMilestoneAdapter(getContext(), milestones, mROD);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);
@@ -126,7 +126,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
         mIncomeSourceName.setText(mGPID.getName());
         mMinAge.setText(mGPID.getStartAge());
 
-        int birthYear = SystemUtils.getBirthYear(mPERID.getBirthdate());
+        int birthYear = SystemUtils.getBirthYear(mROD.getBirthdate());
         AgeData fullAge = GovPensionHelper.getFullRetirementAge(birthYear);
         mFullAge.setText(fullAge.toString());
 

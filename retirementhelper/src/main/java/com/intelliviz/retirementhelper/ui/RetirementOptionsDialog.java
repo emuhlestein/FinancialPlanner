@@ -27,6 +27,7 @@ import butterknife.OnClick;
  */
 
 public class RetirementOptionsDialog extends AppCompatActivity implements View.OnClickListener{
+    private RetirementOptionsData mROD;
 
     @Bind(R.id.end_age_edit_text) EditText mEndAgeEditText;
     @Bind(R.id.withdraw_amount_button) RadioButton mWithdrawAmountButton;
@@ -55,6 +56,9 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         mWithdrawAmountButton.setOnClickListener(this);
         mWithdrawPercentButton.setOnClickListener(this);
 
+        Intent intent = getIntent();
+        mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+
         updateUI();
     }
 
@@ -71,12 +75,11 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
      * Update the UI.
      */
     private void updateUI() {
-        Intent intent = getIntent();
-        RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+
 
         // TODO add check in case rod is null
-        mEndAgeEditText.setText(rod.getEndAge());
-        int mode = rod.getWithdrawMode();
+        mEndAgeEditText.setText(mROD.getEndAge());
+        int mode = mROD.getWithdrawMode();
         switch(mode) {
             case RetirementConstants.WITHDRAW_MODE_AMOUNT:
                 mWithdrawModeRadioGroup.check(mWithdrawAmountButton.getId());
@@ -91,7 +94,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
                 mAmountTextView.setText(R.string.dollar_amount);
         }
 
-        mWithdrawAmount.setText(rod.getWithdrawAmount());
+        mWithdrawAmount.setText(mROD.getWithdrawAmount());
     }
 
     /**
@@ -116,7 +119,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         AgeData age = SystemUtils.parseAgeString(endAge, "0");
         endAge = age.getUnformattedString();
 
-        RetirementOptionsData rod = new RetirementOptionsData(endAge, withdrawMode, withdrawAmount);
+        RetirementOptionsData rod = new RetirementOptionsData(mROD.getBirthdate(), endAge, withdrawMode, withdrawAmount);
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);

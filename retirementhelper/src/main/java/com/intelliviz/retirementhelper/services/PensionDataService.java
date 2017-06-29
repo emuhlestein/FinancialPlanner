@@ -6,8 +6,8 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.PensionHelper;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
@@ -35,7 +35,7 @@ public class PensionDataService extends IntentService {
                     return; // error
                 }
                 PensionIncomeData tdid = PensionHelper.getPensionIncomeData(this, id);
-                RetirementOptionsData rod = DataBaseUtils.getRetirementOptionsData(this);
+                RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (tdid != null && rod != null) {
                     Intent localIntent = new Intent(LOCAL_PENSION);
                     localIntent.putExtra(EXTRA_DB_DATA, tdid);

@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -22,7 +22,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class PersonalInfoDialog extends AppCompatActivity {
-    private PersonalInfoData mPID;
+    private RetirementOptionsData mROD;
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
@@ -64,7 +64,7 @@ public class PersonalInfoDialog extends AppCompatActivity {
         });
 
         Intent intent = getIntent();
-        mPID = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+        mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
 
         updateUI();
     }
@@ -85,12 +85,12 @@ public class PersonalInfoDialog extends AppCompatActivity {
             displayName = user.getDisplayName();
         }
         Intent intent = getIntent();
-        PersonalInfoData pid = intent.getParcelableExtra(RetirementConstants.EXTRA_PERSONALINFODATA);
+
         mNameTextView.setText(displayName);
-        mBirthDateEditText.setText(pid.getBirthdate());
+        mBirthDateEditText.setText(mROD.getBirthdate());
         mEmailTextView.setText(email);
 
-        if(!SystemUtils.validateBirthday(pid.getBirthdate())) {
+        if(!SystemUtils.validateBirthday(mROD.getBirthdate())) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Please enter your birthdate", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
@@ -113,10 +113,8 @@ public class PersonalInfoDialog extends AppCompatActivity {
             return;
         }
 
-        PersonalInfoData pid = new PersonalInfoData(birthday, null);
-
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(RetirementConstants.EXTRA_PERSONALINFODATA, pid);
+        returnIntent.putExtra(RetirementConstants.EXTRA_BIRTHDATE, birthday);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }

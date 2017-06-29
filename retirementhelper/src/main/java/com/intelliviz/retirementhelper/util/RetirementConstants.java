@@ -18,10 +18,7 @@ public class RetirementConstants {
 
     public static final String EXTRA_SERVICE_ACTION = "service action";
 
-    public static final int SERVICE_ACTION_INSERT = 0;
-    public static final int SERVICE_ACTION_QUERY = 1;
-    public static final int SERVICE_ACTION_UPDATE = 2;
-    public static final int SERVICE_ACTION_DELETE = 3;
+
 
     public static final int SERVICE_DATA_SAVINGS = 0;
     public static final int SERVICE_DATA_TAX_DEFERRED = 1;
@@ -52,7 +49,6 @@ public class RetirementConstants {
 
     public static final String EXTRA_INCOME_DATA = "extra income data";
     public static final String EXTRA_RETIREOPTIONS_DATA = "extra retire options data";
-    public static final String EXTRA_PERSONALINFODATA = "personalinfodata";
     public static final String EXTRA_MILESTONEDATA = "milestonedata";
     public static final String EXTRA_DATEDATA = "datedata";
     public static final String EXTRA_BUNDLE = "bundle";
@@ -78,12 +74,18 @@ public class RetirementConstants {
     public static final String LOCAL_RETIRE_OPTIONS = "retireOptionsBroadcast";
     public static final String LOCAL_PERSONAL_DATA = "personalDataBroadcast";
 
+    public static final String EXTRA_DB_ACTION = "db action";
     public static final String EXTRA_DB_DATA = "db data";
     public static final String EXTRA_DB_PERID = "db perid";
     public static final String EXTRA_DB_ROD = "db rod";
     public static final String EXTRA_DB_EXTRA_DATA = "db extra data";
     public static final String EXTRA_DB_ROWS_UPDATED = "rows updated";
     public static final String EXTRA_DB_ID = "db id";
+
+    public static final int SERVICE_DB_INSERT = 0;
+    public static final int SERVICE_DB_QUERY = 1;
+    public static final int SERVICE_DB_UPDATE = 2;
+    public static final int SERVICE_DB_DELETE = 3;
 
 
 

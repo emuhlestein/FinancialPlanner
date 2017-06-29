@@ -21,7 +21,6 @@ import butterknife.ButterKnife;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_PERSONALINFODATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 
@@ -46,10 +45,10 @@ public class IncomeSourceListMenuFragment extends AppCompatActivity {
 
         Intent intent = getIntent();
         mIncomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
-        mIncomeSourceType = intent.getIntExtra(EXTRA_PERSONALINFODATA, -1);
+        mIncomeSourceType = intent.getIntExtra(EXTRA_INCOME_SOURCE_TYPE, -1);
 
         final String[] incomeActions = getResources().getStringArray(R.array.income_source_actions);
-        ArrayAdapter adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, incomeActions);
+        ArrayAdapter adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, incomeActions);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

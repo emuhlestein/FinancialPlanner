@@ -12,7 +12,6 @@ import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.SummaryData;
@@ -23,12 +22,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.R.string.balance;
 import static com.intelliviz.retirementhelper.util.BenefitHelper.getAllMilestones;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementOptionsHelper.getRetirementOptionsData;
 
 /**
  * Created by edm on 4/25/2017.
@@ -36,23 +35,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TY
 
 public class DataBaseUtils {
 
-    public static String addAge(Context context, AgeData age) {
-        String amount = Double.toString(balance);
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.MilestoneEntry.COLUMN_AGE, age.getUnformattedString());
-        Uri uri = context.getContentResolver().insert(RetirementContract.MilestoneEntry.CONTENT_URI, values);
-        return uri.getLastPathSegment();
-    }
-
-    public static int deleteAge(Context context, long id) {
-            String sid = String.valueOf(id);
-            Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
-            uri = Uri.withAppendedPath(uri, sid);
-            int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
-            return numRowsDeleted; // TODO return succeed or fail flag
-    }
-
-    public static List<MilestoneAgeData> getMilestoneAges(Context context, PersonalInfoData pid) {
+    public static List<MilestoneAgeData> getMilestoneAges(Context context, RetirementOptionsData rod) {
         List<MilestoneAgeData> ages = new ArrayList<>();
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
@@ -69,14 +52,24 @@ public class DataBaseUtils {
         }
         cursor.close();
 
+        String birthdate = rod.getBirthdate();
+        if(SystemUtils.validateBirthday(birthdate)) {
+            AgeData nowAge = SystemUtils.getAge(birthdate);
+            ages.add(new MilestoneAgeData(-1, nowAge));
+
+            int year = SystemUtils.getBirthYear(birthdate);
+            AgeData fullRetirementAge = GovPensionHelper.getFullRetirementAge(year);
+            ages.add(new MilestoneAgeData(-1, fullRetirementAge));
+        }
+
+
         Collections.sort(ages);
         return ages;
     }
 
     public static void updateSummaryData(Context context) {
         RetirementOptionsData rod = getRetirementOptionsData(context);
-        PersonalInfoData perid = getPersonalInfoData(context);
-        List<MilestoneData> milestones = getAllMilestones(context, rod, perid);
+        List<MilestoneData> milestones = getAllMilestones(context, rod);
         List<SummaryData> listSummaryData = new ArrayList<>();
         for(MilestoneData msd : milestones) {
             listSummaryData.add(new SummaryData(msd.getStartAge().toString(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
@@ -149,74 +142,6 @@ public class DataBaseUtils {
     // Methods for personal info table
     //
 
-    public static int savePersonalInfo(Context context, PersonalInfoData pid) {
-        ContentValues values  = new ContentValues();
-        values.put(RetirementContract.PersonalInfoEntry.COLUMN_BIRTHDATE, pid.getBirthdate());
-        Uri uri = RetirementContract.PersonalInfoEntry.CONTENT_URI;
-        return context.getContentResolver().update(uri, values, null, null);
-    }
-
-    public static PersonalInfoData getPersonalInfoData(Context context) {
-        Cursor cursor = getPersonalInfo(context);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return null;
-        }
-        int birthdateIndex = cursor.getColumnIndex(RetirementContract.PersonalInfoEntry.COLUMN_BIRTHDATE);
-
-        String birthdate = cursor.getString(birthdateIndex);
-        return new PersonalInfoData(birthdate, null);
-    }
-
-    public static Cursor getPersonalInfo(Context context) {
-        Uri uri = RetirementContract.PersonalInfoEntry.CONTENT_URI;
-        return context.getContentResolver().query(uri, null, null, null, null);
-    }
-
-    //
-    // Methods for retirement options table
-    //
-    public static int saveRetirementOptions(Context context, RetirementOptionsData rod) {
-        ContentValues values  = new ContentValues();
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, rod.getEndAge());
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, rod.getWithdrawMode());
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT, rod.getWithdrawAmount());
-        Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
-        return context.getContentResolver().update(uri, values, null, null);
-    }
-
-    public static int saveRetirementOptions(Context context, String startAge, String endAge, int withdrawMode, String withdrawAmount) {
-        ContentValues values  = new ContentValues();
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, endAge);
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, withdrawMode);
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT, withdrawAmount);
-        Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
-        return context.getContentResolver().update(uri, values, null, null);
-    }
-
-    private static Cursor getRetirementOptions(Context context) {
-        Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
-        return context.getContentResolver().query(uri, null, null, null, null);
-    }
-
-    public static RetirementOptionsData getRetirementOptionsData(Context context) {
-        Cursor cursor = getRetirementOptions(context);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return null;
-        }
-        int endAgeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE);
-        int withdrawModeIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE);
-        int withdrawAmountIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT);
-
-
-        String endAge = cursor.getString(endAgeIndex);
-        int withdrawMode = cursor.getInt(withdrawModeIndex);
-        String withdrawAmount = cursor.getString(withdrawAmountIndex);
-        if(withdrawAmount.equals("")) {
-            withdrawAmount = "4";
-        }
-        cursor.close();
-        return new RetirementOptionsData(endAge, withdrawMode, withdrawAmount);
-    }
 
     //
     // Methods for IncomeType table

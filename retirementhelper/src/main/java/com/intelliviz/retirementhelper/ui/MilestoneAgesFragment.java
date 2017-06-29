@@ -24,9 +24,10 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAgeAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
+import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -36,6 +37,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_AGE_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESONTE_AGE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_DELETE;
@@ -84,8 +86,8 @@ public class MilestoneAgesFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_milestone_age_layout, container, false);
         ButterKnife.bind(this, view);
 
-        PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(getContext());
-        List<MilestoneAgeData> milestoneAges = DataBaseUtils.getMilestoneAges(getContext(), perid);
+        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
+        List<MilestoneAgeData> milestoneAges = getMilestoneAges(getContext(), rod);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
@@ -142,11 +144,15 @@ public class MilestoneAgesFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if(mAdapter == null) {
-            mAdapter = new MilestoneAgeAdapter(getContext(), cursor);
+            RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
+            List<MilestoneAgeData> milestoneAges = DataBaseUtils.getMilestoneAges(getContext(), rod);
+            mAdapter = new MilestoneAgeAdapter(milestoneAges);
             mRecyclerView.setAdapter(mAdapter);
             mAdapter.setOnSelectMilestoneAgeListener(this);
         } else {
-            mAdapter.swapCursor(cursor);
+            RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
+            List<MilestoneAgeData> milestoneAges = DataBaseUtils.getMilestoneAges(getContext(), rod);
+            mAdapter.update(milestoneAges);
         }
         if (mAdapter.getItemCount() == 0) {
             mEmptyView.setText(R.string.empty_list);
@@ -160,7 +166,7 @@ public class MilestoneAgesFragment extends Fragment implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mAdapter.swapCursor(null);
+        mAdapter.update(null);
     }
 
     @Override
@@ -185,12 +191,11 @@ public class MilestoneAgesFragment extends Fragment implements
     }
 
     private void onHandleYesNo(Intent intent) {
-        DataBaseUtils.deleteAge(getContext(), mSelectedAge.getId());
-        SystemUtils.updateAppWidget(getContext());
+        RetirementOptionsHelper.deleteAge(getContext(), mSelectedAge.getId());
         SystemUtils.updateAppWidget(getContext());
         getLoaderManager().initLoader(MILESTONE_AGE_LOADER, null, this);
-        PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(getContext());
-        List<MilestoneAgeData> milestoneAges = DataBaseUtils.getMilestoneAges(getContext(), perid);
+        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
+        List<MilestoneAgeData> milestoneAges = getMilestoneAges(getContext(), rod);
         mAdapter.update(milestoneAges);
     }
 
@@ -198,11 +203,11 @@ public class MilestoneAgesFragment extends Fragment implements
         String ageString = intent.getStringExtra(EXTRA_AGE_DATA);
         // TODO add age to DB
         AgeData age = SystemUtils.parseAgeString(ageString);
-        DataBaseUtils.addAge(getContext(), age);
+        RetirementOptionsHelper.addAge(getContext(), age);
         SystemUtils.updateAppWidget(getContext());
         getLoaderManager().initLoader(MILESTONE_AGE_LOADER, null, this);
-        PersonalInfoData perid = DataBaseUtils.getPersonalInfoData(getContext());
-        List<MilestoneAgeData> milestoneAges = DataBaseUtils.getMilestoneAges(getContext(), perid);
+        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
+        List<MilestoneAgeData> milestoneAges = getMilestoneAges(getContext(), rod);
         mAdapter.update(milestoneAges);
     }
 }

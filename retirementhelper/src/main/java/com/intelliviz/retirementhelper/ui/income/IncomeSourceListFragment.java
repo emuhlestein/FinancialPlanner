@@ -31,7 +31,6 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
@@ -41,10 +40,10 @@ import com.intelliviz.retirementhelper.services.PensionDataService;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.PensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SavingsHelper;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -54,7 +53,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getRetirementOptionsData;
 import static com.intelliviz.retirementhelper.util.PensionHelper.addPensionData;
 import static com.intelliviz.retirementhelper.util.PensionHelper.getPensionIncomeData;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
@@ -65,7 +63,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_PERSONALINFODATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
@@ -82,6 +79,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_S
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
+import static com.intelliviz.retirementhelper.util.RetirementOptionsHelper.getRetirementOptionsData;
 
 public class IncomeSourceListFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
@@ -307,7 +305,7 @@ public class IncomeSourceListFragment extends Fragment implements
         if(showMenu) {
             Intent intent = new Intent(getContext(), IncomeSourceListMenuFragment.class);
             intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-            intent.putExtra(EXTRA_PERSONALINFODATA, type);
+            intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
             startActivityForResult(intent, REQUEST_INCOME_MENU);
         } else {
             Intent intent;
@@ -348,10 +346,10 @@ public class IncomeSourceListFragment extends Fragment implements
                     break;
                 case RetirementConstants.INCOME_TYPE_GOV_PENSION:
                     GovPensionIncomeData gpid = GovPensionHelper.getGovPensionIncomeData(getContext(), incomeSourceId);
-                    PersonalInfoData perId = DataBaseUtils.getPersonalInfoData(getContext());
+                    rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
                     intent = new Intent(getContext(), IncomeSourceActivity.class);
                     intent.putExtra(EXTRA_INCOME_DATA, gpid);
-                    intent.putExtra(EXTRA_PERSONALINFODATA, perId);
+                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                     intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
                     intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, gpid.getType());
                     intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);

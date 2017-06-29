@@ -23,16 +23,13 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
-import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementInfoMgr;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -53,7 +50,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_B
 
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
     private RetirementOptionsData mROD;
-    private PersonalInfoData mPERID;
     private MilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.coordinatorLayout)
@@ -70,17 +66,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         public void onReceive(Context context, Intent intent) {
             intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
             mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
-            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD, mPERID);
-            mMilestoneAdapter.update(milestones);
-        }
-    };
-
-    private BroadcastReceiver mPersonalInfoDataReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-            mPERID = intent.getParcelableExtra(EXTRA_DB_DATA);
-            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD, mPERID);
+            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
             mMilestoneAdapter.update(milestones);
         }
     };
@@ -104,7 +90,6 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             Bundle bundle = getArguments().getParcelable(EXTRA_BUNDLE);
             if (bundle != null) {
                 mROD = bundle.getParcelable(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                mPERID = bundle.getParcelable(RetirementConstants.EXTRA_PERSONALINFODATA);
             }
         }
     }
@@ -121,7 +106,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             actionBar.setSubtitle(getString(R.string.summary_screen_subtitle));
         }
 
-        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD, mPERID);
+        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
         if (!milestones.isEmpty()) {
             double currentBalance = milestones.get(0).getStartBalance();
             mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
@@ -137,7 +122,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             DataBaseUtils.updateSummaryData(getContext());
         }
 
-        String birthdate = RetirementInfoMgr.getInstance().getBirthdate();
+        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
+        String birthdate = rod.getBirthdate();
         if (!SystemUtils.validateBirthday(birthdate)) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter your birth date");
@@ -198,12 +184,10 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         IntentFilter filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mRetirementOptionsReceiver, filter);
         filter = new IntentFilter(LOCAL_PERSONAL_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mPersonalInfoDataReceiver, filter);
     }
 
     private void unregisterReceiver() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mRetirementOptionsReceiver);
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mPersonalInfoDataReceiver);
     }
 
     private void onHandleBirthdate(Intent intent) {
@@ -215,18 +199,10 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             dialog.show(fm, DIALOG_BIRTHDATE);
             return;
         }
-
-        // birth date is valid
-        // add current age
-        AgeData age = SystemUtils.getAge(birthdate);
-        DataBaseUtils.addAge(getContext(), age);
-
-        // add full retirement age
-        int year = SystemUtils.getBirthYear(birthdate);
-        age = GovPensionHelper.getFullRetirementAge(year);
-        DataBaseUtils.addAge(getContext(), age);
-
-        SystemUtils.updatePERID(getContext(), new PersonalInfoData(birthdate, null));
+        RetirementOptionsHelper.saveBirthdate(getContext(), birthdate);
+        RetirementOptionsData rod = new RetirementOptionsData(birthdate, mROD.getEndAge(), mROD.getWithdrawMode(), mROD.getWithdrawAmount());
+        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), rod);
+        mMilestoneAdapter.update(milestones);
 
         SystemUtils.updateAppWidget(getContext());
     }
