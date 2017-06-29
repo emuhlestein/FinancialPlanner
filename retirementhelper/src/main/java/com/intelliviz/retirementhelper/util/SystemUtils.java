@@ -18,6 +18,7 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SummaryData;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
+import com.intelliviz.retirementhelper.services.SummaryDataIntentService;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import java.text.DecimalFormat;
@@ -383,17 +384,22 @@ public class SystemUtils {
         return sb.toString();
     }
 
-    public  static void updateROD(Context context, RetirementOptionsData rod) {
+    public static void updateROD(Context context, RetirementOptionsData rod) {
         Intent intent = new Intent(context, RetirementOptionsService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
         intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         context.startService(intent);
     }
 
-    public  static void updateBirthdate(Context context, String birthdate) {
+    public static void updateBirthdate(Context context, String birthdate) {
         Intent intent = new Intent(context, RetirementOptionsService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, birthdate);
         intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        context.startService(intent);
+    }
+
+    public static void updateSummaryData(Context context) {
+        Intent intent = new Intent(context, SummaryDataIntentService.class);
         context.startService(intent);
     }
 }

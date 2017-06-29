@@ -55,7 +55,6 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.Mile
         mMilestones.clear();
         mMilestones.addAll(milestones);
         notifyDataSetChanged();
-
     }
 
     public void setOnSelectionMilestoneListener (SelectionMilestoneListener listener) {

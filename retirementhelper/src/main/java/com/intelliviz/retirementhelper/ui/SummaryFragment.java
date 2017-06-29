@@ -26,6 +26,7 @@ import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -33,6 +34,7 @@ import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -41,7 +43,6 @@ import butterknife.ButterKnife;
 import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.DIALOG_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BUNDLE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
@@ -50,6 +51,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_B
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
     private RetirementOptionsData mROD;
     private MilestoneAdapter mMilestoneAdapter;
+    private List<MilestoneData> mMilestones;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -67,6 +69,21 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
             List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
             mMilestoneAdapter.update(milestones);
+
+            double currentBalance = milestones.get(0).getStartBalance();
+            updateUI(currentBalance);
+
+            SystemUtils.updateSummaryData(getContext());
+
+            if(mROD != null) {
+                String birthdate = mROD.getBirthdate();
+                if (!SystemUtils.validateBirthday(birthdate)) {
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    BirthdateDialog dialog = BirthdateDialog.newInstance(getString(R.string.enter_birthdate));
+                    dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
+                    dialog.show(fm, DIALOG_BIRTHDATE);
+                }
+            }
         }
     };
 
@@ -81,12 +98,6 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Bundle bundle = getArguments().getParcelable(EXTRA_BUNDLE);
-            if (bundle != null) {
-                mROD = bundle.getParcelable(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-            }
-        }
     }
 
     @Override
@@ -101,32 +112,14 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             actionBar.setSubtitle(getString(R.string.summary_screen_subtitle));
         }
 
-        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
-        if (!milestones.isEmpty()) {
-            double currentBalance = milestones.get(0).getStartBalance();
-            mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-            mRecyclerView.setLayoutManager(linearLayoutManager);
-            mRecyclerView.setAdapter(mMilestoneAdapter);
-            mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
-                    linearLayoutManager.getOrientation()));
-            mMilestoneAdapter.setOnSelectionMilestoneListener(this);
-
-            updateUI(currentBalance);
-
-            DataBaseUtils.updateSummaryData(getContext());
-        }
-
-        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
-        if(rod != null) {
-            String birthdate = rod.getBirthdate();
-            if (!SystemUtils.validateBirthday(birthdate)) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                BirthdateDialog dialog = BirthdateDialog.newInstance(getString(R.string.enter_birthdate));
-                dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
-                dialog.show(fm, DIALOG_BIRTHDATE);
-            }
-        }
+        mMilestones = new ArrayList<>();
+        mMilestoneAdapter = new MilestoneAdapter(getContext(), mMilestones);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setAdapter(mMilestoneAdapter);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
+                linearLayoutManager.getOrientation()));
+        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
         List<IncomeType> incomeSources = DataBaseUtils.getAllIncomeTypes(getContext());
         if(incomeSources.isEmpty()) {
@@ -141,6 +134,10 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         }
 
         SystemUtils.updateAppWidget(getContext());
+
+        Intent intent = new Intent(getContext(), RetirementOptionsService.class);
+        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_QUERY);
+        getContext().startService(intent);
 
         return view;
     }
@@ -190,7 +187,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
         if (!SystemUtils.validateBirthday(birthdate)) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
-            BirthdateDialog dialog = BirthdateDialog.newInstance("Please enter a valid birth date");
+            BirthdateDialog dialog = BirthdateDialog.newInstance(getString(R.string.enter_valid_birthdate));
             dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
             dialog.show(fm, DIALOG_BIRTHDATE);
             return;
