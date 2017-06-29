@@ -51,7 +51,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_B
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
     private RetirementOptionsData mROD;
     private MilestoneAdapter mMilestoneAdapter;
-    private List<MilestoneData> mMilestones;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -112,8 +111,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             actionBar.setSubtitle(getString(R.string.summary_screen_subtitle));
         }
 
-        mMilestones = new ArrayList<>();
-        mMilestoneAdapter = new MilestoneAdapter(getContext(), mMilestones);
+        List<MilestoneData> milestones = new ArrayList<>();
+        mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);
