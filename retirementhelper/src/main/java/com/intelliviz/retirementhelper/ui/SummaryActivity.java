@@ -39,6 +39,7 @@ public class SummaryActivity extends AppCompatActivity {
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
     private GoogleApiClient mGoogleApiClient;
     private boolean mNeedToStartSummaryFragment;
+    private int mStartFragment;
 
     @Bind(R.id.summary_toolbar)
     Toolbar mToolbar;
@@ -65,9 +66,23 @@ public class SummaryActivity extends AppCompatActivity {
         mNeedToStartSummaryFragment = true;
 
         initBottomNavigation();
-        MenuItem startFragment = mBottomNavigation.getMenu().getItem(0);
-        selectedNavFragment(startFragment);
+
+        MenuItem selectedItem;
+        if(savedInstanceState == null) {
+            selectedItem = mBottomNavigation.getMenu().getItem(0);
+        } else {
+            mStartFragment = savedInstanceState.getInt("START_FRAGMENT");
+            selectedItem = mBottomNavigation.getMenu().findItem(mStartFragment);
+        }
+        selectedNavFragment(selectedItem);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("START_FRAGMENT", mStartFragment);
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,7 +102,6 @@ public class SummaryActivity extends AppCompatActivity {
                     intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
                 }
                 startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
-
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
@@ -195,6 +209,7 @@ public class SummaryActivity extends AppCompatActivity {
             default:
                 return;
         }
+        mStartFragment = item.getItemId();
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft;
