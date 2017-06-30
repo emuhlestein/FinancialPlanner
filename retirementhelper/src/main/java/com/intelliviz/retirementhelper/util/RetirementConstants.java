@@ -50,6 +50,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_DATA = "extra income data";
     public static final String EXTRA_RETIREOPTIONS_DATA = "extra retire options data";
     public static final String EXTRA_MILESTONEDATA = "milestonedata";
+    public static final String EXTRA_MILESTONEAGE_DATA = "milestoneagedata";
     public static final String EXTRA_DATEDATA = "datedata";
     public static final String EXTRA_BUNDLE = "bundle";
     public static final String EXTRA_AGE_DATA = "age data";
@@ -73,6 +74,7 @@ public class RetirementConstants {
     public static final String LOCAL_GOV_PENSION = "govPensionBroadcast";
     public static final String LOCAL_RETIRE_OPTIONS = "retireOptionsBroadcast";
     public static final String LOCAL_PERSONAL_DATA = "personalDataBroadcast";
+    public static final String LOCAL_MILESTONE_AGE = "milestoneAgeBroadcast";
 
     public static final String EXTRA_DB_ACTION = "db action";
     public static final String EXTRA_DB_DATA = "db data";

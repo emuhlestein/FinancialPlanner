@@ -35,8 +35,8 @@ import static com.intelliviz.retirementhelper.util.RetirementOptionsHelper.getRe
 
 public class DataBaseUtils {
 
-    public static List<MilestoneAgeData> getMilestoneAges(Context context, RetirementOptionsData rod) {
-        List<MilestoneAgeData> ages = new ArrayList<>();
+    public static ArrayList<MilestoneAgeData> getMilestoneAges(Context context, RetirementOptionsData rod) {
+        ArrayList<MilestoneAgeData> ages = new ArrayList<>();
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if(cursor == null || !cursor.moveToFirst()) {
