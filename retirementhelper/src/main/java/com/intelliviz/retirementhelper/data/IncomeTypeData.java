@@ -3,40 +3,68 @@ package com.intelliviz.retirementhelper.data;
 import android.os.Parcel;
 
 /**
- * Created by edm on 5/12/2017.
+ * Class for a basic income type.
+ * Created by Ed Muhlestein on 5/12/2017.
  */
 
-public abstract class IncomeTypeData implements IncomeType {
+abstract class IncomeTypeData implements IncomeType {
+    /**
+     * The database id.
+     */
     private long mId;
+
+    /**
+     * The name of the income type.
+     */
     private String mName;
+
+    /**
+     * The income type. Can be one of following:
+     *      INCOME_TYPE_SAVINGS
+     *      INCOME_TYPE_TAX_DEFERRED
+     *      INCOME_TYPE_PENSION
+     *      INCOME_TYPE_GOV_PENSION
+     */
     private int mType;
 
-    public IncomeTypeData() {
+    /**
+     * Default constructor.
+     */
+    IncomeTypeData() {
         this(-1, "", 0);
     }
 
-    public IncomeTypeData(int type) {
+    /**
+     * Constructor.
+     * @param type The income type.
+     */
+    IncomeTypeData(int type) {
         this(-1, "", type);
     }
 
-    public IncomeTypeData(long id) {
-        this(id, "", 0);
-    }
-
-    public IncomeTypeData(long id, String name, int type) {
+    /**
+     * Constructor.
+     * @param id The database id.
+     * @param name The income type name.
+     * @param type The income type.
+     */
+    IncomeTypeData(long id, String name, int type) {
         mId = id;
         mName = name;
         mType = type;
     }
 
+    @Override
     public long getId() {
         return mId;
     }
 
+    @Override
     public String getName() {
         return mName;
     }
 
+    @Override
     public int getType() {
         return mType;
     }
