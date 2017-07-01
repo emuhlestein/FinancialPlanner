@@ -25,6 +25,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.services.MilestoneAgeIntentService;
+import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
@@ -127,6 +128,10 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
         });
 
         Intent intent = new Intent(getContext(), MilestoneAgeIntentService.class);
+        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_QUERY);
+        getContext().startService(intent);
+
+        intent = new Intent(getContext(), RetirementOptionsService.class);
         intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_QUERY);
         getContext().startService(intent);
 
