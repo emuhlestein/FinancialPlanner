@@ -54,7 +54,7 @@ public class MilestoneAgeData implements Parcelable, Comparable {
         dest.writeParcelable(mAge, flags);
     }
 
-    public void readFromParcel(Parcel in) {
+    private void readFromParcel(Parcel in) {
         mId = in.readLong();
         mAge = in.readParcelable(AgeData.class.getClassLoader());
     }

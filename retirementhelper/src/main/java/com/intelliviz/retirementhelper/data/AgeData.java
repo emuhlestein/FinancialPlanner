@@ -112,11 +112,7 @@ public class AgeData implements Parcelable {
         dest.writeInt(mMonth);
     }
 
-    /**
-     * Read the values from the parcel.
-     * @param in THe parcel.
-     */
-    public void readFromParcel(Parcel in) {
+    private void readFromParcel(Parcel in) {
         mYear = in.readInt();
         mMonth = in.readInt();
     }

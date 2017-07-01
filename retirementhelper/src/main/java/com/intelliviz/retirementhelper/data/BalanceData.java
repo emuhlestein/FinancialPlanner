@@ -57,11 +57,7 @@ public class BalanceData implements Parcelable {
         dest.writeString(mDate);
     }
 
-    /**
-     * Read the values from the parcel.
-     * @param in The parcel.
-     */
-    public void readFromParcel(Parcel in) {
+    private void readFromParcel(Parcel in) {
         mBalance = in.readDouble();
         mDate = in.readString();
     }
