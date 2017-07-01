@@ -4,27 +4,41 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by edm on 6/14/2017.
+ * Class for summary data.
+ * Created by Ed Muhlestein on 6/14/2017.
  */
 
 public class SummaryData implements Parcelable {
     private String mAge;
     private String mMonthlyBenefit;
 
+    /**
+     * Constructor.
+     * @param age The age.
+     * @param monthlyBenefit The monthly benefit.
+     */
     public SummaryData(String age, String monthlyBenefit) {
         mAge = age;
         mMonthlyBenefit = monthlyBenefit;
     }
 
+    /**
+     * Get the age.
+     * @return The age.
+     */
     public String getAge() {
         return mAge;
     }
 
+    /**
+     * Get the monthly benefit.
+     * @return The monthly benefit.
+     */
     public String getMonthlyBenefit() {
         return mMonthlyBenefit;
     }
 
-    protected SummaryData(Parcel in) {
+    private SummaryData(Parcel in) {
         readFromParcel(in);
     }
 
@@ -34,7 +48,7 @@ public class SummaryData implements Parcelable {
         dest.writeString(mMonthlyBenefit);
     }
 
-    public void readFromParcel(Parcel in) {
+    private void readFromParcel(Parcel in) {
         mAge = in.readString();
         mMonthlyBenefit = in.readString();
     }
