@@ -115,5 +115,6 @@
     <string name="test_test">a test message</string>
     <string name="delete_age">Delete retirement age?</string>
     <string name="testtest">test</string>
+    <string name="select_income_source_type">Select an income source type</string>
 
 </resources>
