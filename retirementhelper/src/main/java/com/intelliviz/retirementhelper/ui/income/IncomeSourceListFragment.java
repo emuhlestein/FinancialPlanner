@@ -235,7 +235,7 @@ public class IncomeSourceListFragment extends Fragment implements
                                 startActivityForResult(intent, REQUEST_SAVINGS);
                                 break;
                             case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                                intent.putExtra(EXTRA_INCOME_DATA, new TaxDeferredIncomeData(RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
+                                intent.putExtra(EXTRA_INCOME_DATA, new TaxDeferredIncomeData());
                                 startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                                 break;
                             case RetirementConstants.INCOME_TYPE_PENSION:
