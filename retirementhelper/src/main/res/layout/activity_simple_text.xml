@@ -44,7 +44,7 @@
             android:paddingStart="22sp"
             android:paddingEnd="22sp"
             android:layout_weight="1"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:textSize="22sp" />
 
         <Button
@@ -56,7 +56,7 @@
             android:paddingStart="22sp"
             android:paddingEnd="22sp"
             android:layout_weight="1"
-            android:text="Yes"
+            android:text="@string/ok"
             android:textSize="22sp" />
     </LinearLayout>
 
