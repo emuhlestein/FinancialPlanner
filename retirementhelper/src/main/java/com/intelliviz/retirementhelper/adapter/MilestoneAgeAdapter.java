@@ -14,7 +14,8 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.List;
 
 /**
- * Created by edm on 6/22/2017.
+ * Adapter for milestones.
+ * Created by Ed Muhlestein on 6/22/2017.
  */
 
 public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapter.MilestoneAgeHolder> {

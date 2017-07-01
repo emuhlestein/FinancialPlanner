@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.PersonalInfoData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
@@ -20,14 +19,13 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.List;
 
 /**
- * Created by edm on 6/12/2017.
+ * Created by Ed Muhlestein on 6/12/2017.
  */
 
 public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.SSMilestoneHolder> {
     private List<MilestoneData> mMilestones;
     private SelectionMilestoneListener mListener;
     private Context mContext;
-    private PersonalInfoData mPERID;
     private AgeData mFullAge;
     private AgeData mMinimumAge;
 

@@ -16,7 +16,8 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.List;
 
 /**
- * Created by edm on 5/29/2017.
+ * Milestone summary adapter.
+ * Created by Ed Muhlestein on 5/29/2017.
  */
 
 public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilestoneAdapter.MilestoneHolder> {
