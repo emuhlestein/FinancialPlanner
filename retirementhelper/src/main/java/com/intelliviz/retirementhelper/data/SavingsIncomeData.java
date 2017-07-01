@@ -31,11 +31,6 @@ public class SavingsIncomeData extends IncomeTypeData {
     }
 
     @Override
-    public boolean hasABalance() {
-        return true;
-    }
-
-    @Override
     public double getBalance() {
         if(mBalanceDataList.isEmpty()) {
             return 0;

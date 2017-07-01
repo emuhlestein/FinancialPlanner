@@ -3,27 +3,37 @@ package com.intelliviz.retirementhelper.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.intelliviz.retirementhelper.util.RetirementConstants;
+
 /**
- * Created by ed muhlestein on 5/11/2017.
+ * Class for pension income data.
+ * Created by Ed Muhlestein muhlestein on 5/11/2017.
  */
 
 public class PensionIncomeData extends IncomeTypeData {
     private String mStartAge;
     private double mMonthlyBenefit;
 
-    public PensionIncomeData(int type) {
-        super(type);
+    /**
+     * Constructor.
+     * @param type The income type.
+     */
+    public PensionIncomeData() {
+        super(RetirementConstants.INCOME_TYPE_PENSION);
     }
 
+    /**
+     * Constructor.
+     * @param id The database id.
+     * @param name The income source name.
+     * @param type The income source type.
+     * @param startAge The start age.
+     * @param monthlyBenefit The monthly benefir.
+     */
     public PensionIncomeData(long id, String name, int type, String startAge, double monthlyBenefit) {
         super(id, name, type);
         mStartAge = startAge;
         mMonthlyBenefit = monthlyBenefit;
-    }
-
-    @Override
-    public boolean hasABalance() {
-        return false;
     }
 
     @Override
@@ -36,6 +46,10 @@ public class PensionIncomeData extends IncomeTypeData {
         return mMonthlyBenefit;
     }
 
+    /**
+     * Get the start age.
+     * @return The start age.
+     */
     public String getStartAge() {
         return mStartAge;
     }
