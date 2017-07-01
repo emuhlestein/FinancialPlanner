@@ -90,12 +90,7 @@ public class AgeData implements Parcelable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Integer.toString(mYear));
-        sb.append("y ");
-        sb.append(Integer.toString(mMonth));
-        sb.append("m");
-        return sb.toString();
+        return Integer.toString(mYear) + "y " + Integer.toString(mMonth) + "m";
     }
 
     /**
@@ -103,11 +98,7 @@ public class AgeData implements Parcelable {
      * @return The unformatted string.
      */
     public String getUnformattedString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Integer.toString(mYear));
-        sb.append(" ");
-        sb.append(Integer.toString(mMonth));
-        return sb.toString();
+        return Integer.toString(mYear) + " " + Integer.toString(mMonth);
     }
 
     @Override
