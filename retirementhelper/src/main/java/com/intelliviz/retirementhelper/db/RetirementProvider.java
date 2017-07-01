@@ -11,13 +11,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 /**
- * Created by edm on 3/27/2017.
+ * Content provider.
+ * Created by Ed Muhlestein on 3/27/2017.
  */
-
+@SuppressWarnings("ConstantConditions")
 public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
@@ -89,7 +91,7 @@ public class RetirementProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         switch(sUriMatcher.match(uri)) {
             case PERSONALINFO_ID:
                 return RetirementContract.PersonalInfoEntry.CONTENT_ITEM_TYPE;
@@ -132,7 +134,7 @@ public class RetirementProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
         switch(sUriMatcher.match(uri)) {
             case PERSONALINFO_ID:
@@ -216,7 +218,7 @@ public class RetirementProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         long rowId;
         SQLiteDatabase db;
         Uri returnUri;
@@ -312,9 +314,9 @@ public class RetirementProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mSqliteHelper.getWritableDatabase();
-        int rowsDeleted = 0;
+        int rowsDeleted;
         String id;
 
         switch(sUriMatcher.match(uri)) {
@@ -400,7 +402,7 @@ public class RetirementProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mSqliteHelper.getWritableDatabase();
         int rowsUpdated;
         String id;
@@ -532,7 +534,7 @@ public class RetirementProvider extends ContentProvider {
         return rowsUpdated;
     }
 
-    private void notifyChanges(Uri uri) {
+    private void notifyChanges(@NonNull Uri uri) {
         ContentResolver contentResolver = getContext().getContentResolver();
         if(contentResolver != null) {
             contentResolver.notifyChange(uri, null);

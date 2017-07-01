@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
- * Created by edm on 3/27/2017.
+ * Class that describes the sqlite table schemas.
+ * Created by Ed Muhlestein on 3/27/2017.
  */
-
 public class RetirementContract {
     static final String CONTENT_AUTHORITY =
             "com.intelliviz.retirementhelper.db.RetirementProvider";
@@ -27,6 +27,9 @@ public class RetirementContract {
     private RetirementContract() {
     }
 
+    /**
+     * Class for personal info table.
+     */
     public static final class PersonalInfoEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PERSONALINFO).build();
 
@@ -40,6 +43,9 @@ public class RetirementContract {
         public static final String COLUMN_BIRTHDATE = "birthdate";
     }
 
+    /**
+     * Class for retirement params table.
+     */
     public static final class RetirementParmsEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_RETIREMENT_PARMS).build();
 
@@ -54,6 +60,9 @@ public class RetirementContract {
         public static final String COLUMN_WITHDRAW_AMOUNT = "withdraw_amount";
     }
 
+    /**
+     * Class for income type table.
+     */
     public static final class IncomeTypeEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INCOME_TYPE).build();
 
@@ -67,6 +76,9 @@ public class RetirementContract {
         public static final String COLUMN_TYPE = "type";
     }
 
+    /**
+     * Class for savings income table.
+     */
     public static final class SavingsIncomeEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SAVINGS_INCOME).build();
 
@@ -81,6 +93,9 @@ public class RetirementContract {
         public static final String COLUMN_MONTH_ADD = "month_add";
     }
 
+    /**
+     * Class for tax deferred table.
+     */
     public static final class TaxDeferredIncomeEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TAX_DEFERRED_INCOME).build();
 
@@ -98,6 +113,9 @@ public class RetirementContract {
         public static final String COLUMN_IS_401K = "is_401k";
     }
 
+    /**
+     * Class for pension income table.
+     */
     public static final class PensionIncomeEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PENSION_INCOME).build();
 
@@ -112,6 +130,9 @@ public class RetirementContract {
         public static final String COLUMN_MONTH_BENEFIT = "month_benefit";
     }
 
+    /**
+     * Class for pension income table.
+     */
     public static final class GovPensionIncomeEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GOV_PENSION_INCOME).build();
 
@@ -126,6 +147,9 @@ public class RetirementContract {
         public static final String COLUMN_MONTH_BENEFIT = "month_benefit";
     }
 
+    /**
+     * Class for balance table.
+     */
     public static final class BalanceEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_BALANCE).build();
 
@@ -140,6 +164,9 @@ public class RetirementContract {
         public static final String COLUMN_DATE = "date";
     }
 
+    /**
+     * Class for milestone table.
+     */
     public static final class MilestoneEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MILESTONE).build();
 
@@ -152,6 +179,9 @@ public class RetirementContract {
         public static final String COLUMN_AGE = "ages";
     }
 
+    /**
+     * Class for summary table.
+     */
     public static final class SummaryEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SUMMARY).build();
 
