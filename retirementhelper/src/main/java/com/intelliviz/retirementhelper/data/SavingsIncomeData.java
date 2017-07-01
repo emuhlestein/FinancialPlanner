@@ -3,27 +3,35 @@ package com.intelliviz.retirementhelper.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.intelliviz.retirementhelper.util.RetirementConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by edm on 5/1/2017.
+ * Class to manage savings income.
+ * Created by Ed Muhlestein on 5/1/2017.
  */
-
 public class SavingsIncomeData extends IncomeTypeData {
     private double mInterest;
     private double mMonthlyIncrease;
     private List<BalanceData> mBalanceDataList = new ArrayList<>();
 
+    /**
+     * Default constructor.
+     */
     public SavingsIncomeData() {
-        super();
+        super(RetirementConstants.INCOME_TYPE_SAVINGS);
     }
 
-    public SavingsIncomeData(int type) {
-        super(type);
-    }
-
-
+    /**
+     * Constructor.
+     * @param id The database id.
+     * @param name The income source name.
+     * @param type The income source type.
+     * @param interest The interest.
+     * @param monthlyIncrease The monthly increase.
+     */
     public SavingsIncomeData(long id, String name, int type, double interest, double monthlyIncrease) {
         super(id, name, type);
         mInterest = interest;
@@ -45,18 +53,34 @@ public class SavingsIncomeData extends IncomeTypeData {
         return getBalance() * monthlyInterest;
     }
 
+    /**
+     * Get the interest rate.
+     * @return The interest rate.
+     */
     public double getInterest() {
         return mInterest;
     }
 
+    /**
+     * Get the monthly increase.
+     * @return The monthly increase.
+     */
     public double getMonthlyIncrease() {
         return mMonthlyIncrease;
     }
 
+    /**
+     * Add a balance.
+     * @param bd The balance data to add.
+     */
     public void addBalance(BalanceData bd) {
         mBalanceDataList.add(bd);
     }
 
+    /**
+     * Get the list of balance data.
+     * @return THe list of balance data.
+     */
     public List<BalanceData> getBalanceDataList() {
         return mBalanceDataList;
     }

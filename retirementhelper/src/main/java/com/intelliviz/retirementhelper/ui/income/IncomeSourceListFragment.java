@@ -231,7 +231,7 @@ public class IncomeSourceListFragment extends Fragment implements
                         intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, item);
                         switch (item) {
                             case INCOME_TYPE_SAVINGS:
-                                intent.putExtra(EXTRA_INCOME_DATA, new SavingsIncomeData(INCOME_TYPE_SAVINGS));
+                                intent.putExtra(EXTRA_INCOME_DATA, new SavingsIncomeData());
                                 startActivityForResult(intent, REQUEST_SAVINGS);
                                 break;
                             case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
