@@ -4,7 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by edm on 5/29/2017.
+ * Class for retirement milestone data.
+ * Created by Ed Muhlestein on 5/29/2017.
  */
 
 public class MilestoneData implements Parcelable {
@@ -17,10 +18,25 @@ public class MilestoneData implements Parcelable {
     private double mPenaltyAmount;
     private int mMonthsFundsFillLast;
 
+    /**
+     * Constructor.
+     * @param startAge The start age.
+     */
     public MilestoneData(AgeData startAge) {
         this(startAge, null, null, 0, 0, 0, 0, 0);
     }
-    
+
+    /**
+     * Constructor.
+     * @param startAge The start age.
+     * @param endAge The end age.
+     * @param minimumAge The minimum age.
+     * @param monthlyBenefit The monthly benefit.
+     * @param startBalance The start balance.
+     * @param endBalance The end balance.
+     * @param penaltyAmount The penalty amount.
+     * @param monthsFundsWillLast The number of months the funds will last.
+     */
     public MilestoneData(AgeData startAge, AgeData endAge, AgeData minimumAge,
                          double monthlyBenefit, double startBalance, double endBalance,
                          double penaltyAmount, int monthsFundsWillLast) {
@@ -34,34 +50,66 @@ public class MilestoneData implements Parcelable {
         mMonthsFundsFillLast = monthsFundsWillLast;
     }
 
+    /**
+     * Get the start age.
+     * @return The start age.
+     */
     public AgeData getStartAge() {
         return mStartAge;
     }
 
+    /**
+     * Get the end age.
+     * @return The end age.
+     */
     public AgeData getEndAge() {
         return mEndAge;
     }
 
+    /**
+     * Get the minimum age.
+     * @return The minimum age.
+     */
     public AgeData getMinimumAge() {
         return mMinimumAge;
     }
 
+    /**
+     * Get the monthly benefit.
+     * @return The monthly benefit.
+     */
     public double getMonthlyBenefit() {
         return mMonthlyBenefit;
     }
 
+    /**
+     * Get the start balance.
+     * @return The start balance.
+     */
     public double getStartBalance() {
         return mStartBalance;
     }
 
+    /**
+     * Get the end balance.
+     * @return The end balance.
+     */
     public double getEndBalance() {
         return mEndBalance;
     }
 
+    /**
+     * Get the penalty amount.
+     * @return The penalty amount.
+     */
     public double getPenaltyAmount() {
         return mPenaltyAmount;
     }
 
+    /**
+     * Get the number of months the funds will last.
+     * @return The number of months.
+     */
     public int getMonthsFundsFillLast() {
         return mMonthsFundsFillLast;
     }
