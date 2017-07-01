@@ -68,7 +68,7 @@ public class RetirementOptionsHelper {
         int birthdateIndex = cursor.getColumnIndex(RetirementContract.PersonalInfoEntry.COLUMN_BIRTHDATE);
 
         String birthdate = cursor.getString(birthdateIndex);
-        return new PersonalInfoData(birthdate, null);
+        return new PersonalInfoData(birthdate);
     }
 
     private static Cursor getPersonalInfo(Context context) {
