@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
+import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
@@ -50,7 +50,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_B
 
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
     private RetirementOptionsData mROD;
-    private MilestoneAdapter mMilestoneAdapter;
+    private SummaryMilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -112,7 +112,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         }
 
         List<MilestoneData> milestones = new ArrayList<>();
-        mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
+        mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);

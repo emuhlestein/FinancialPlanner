@@ -19,12 +19,12 @@ import java.util.List;
  * Created by edm on 5/29/2017.
  */
 
-public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneAdapter.MilestoneHolder> {
+public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilestoneAdapter.MilestoneHolder> {
     private List<MilestoneData> mMilestones;
     private SelectionMilestoneListener mListener;
     private Context mContext;
 
-    public MilestoneAdapter(Context context, List<MilestoneData> milestones) {
+    public SummaryMilestoneAdapter(Context context, List<MilestoneData> milestones) {
         mContext = context;
         mMilestones = milestones;
     }

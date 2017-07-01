@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
+import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -28,7 +28,7 @@ public class ViewPensionIncomeFragment extends Fragment {
     public static final String VIEW_PENSION_INCOME_FRAG_TAG = "view pension income frag tag";
     private PensionIncomeData mPID;
     private RetirementOptionsData mROD;
-    private MilestoneAdapter mMilestoneAdapter;
+    private SummaryMilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.minimum_age_text_view) TextView mStartAge;

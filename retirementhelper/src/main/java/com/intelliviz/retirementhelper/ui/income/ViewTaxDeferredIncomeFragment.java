@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.MilestoneAdapter;
+import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
@@ -44,7 +44,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
     public static final String VIEW_TAXDEF_INCOME_FRAG_TAG = "view taxdef income frag tag";
     private TaxDeferredIncomeData mTDID;
     private RetirementOptionsData mROD;
-    private MilestoneAdapter mMilestoneAdapter;
+    private SummaryMilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
@@ -96,7 +96,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         ButterKnife.bind(this, view);
 
         List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
-        mMilestoneAdapter = new MilestoneAdapter(getContext(), milestones);
+        mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);
