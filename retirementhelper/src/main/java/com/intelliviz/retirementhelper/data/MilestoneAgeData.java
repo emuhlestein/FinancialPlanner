@@ -5,22 +5,36 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 /**
- * Created by edm on 6/24/2017.
+ * Class to manager retirement milestone ages.
+ * Created by Ed Muhlestein on 6/24/2017.
  */
 
 public class MilestoneAgeData implements Parcelable, Comparable {
     private long mId;
     private AgeData mAge;
 
+    /**
+     * Constructor.
+     * @param id The database id.
+     * @param age The age.
+     */
     public MilestoneAgeData(long id, AgeData age) {
         mId = id;
         mAge = age;
     }
 
+    /**
+     * get the database id.
+     * @return The database id.
+     */
     public long getId() {
         return mId;
     }
 
+    /**
+     * Get the age.
+     * @return The age.
+     */
     public AgeData getAge() {
         return mAge;
     }
