@@ -4,15 +4,22 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by edm on 5/16/2017.
+ * CLass for managing retirement options.
+ * Created by Ed Muhlestein on 5/16/2017.
  */
-
 public class RetirementOptionsData implements Parcelable {
     private final String mBirthdate;
     private final String mEndAge;
     private final int mWithdrawMode;
     private final String mWithdrawAmount;
 
+    /**
+     * Constructor.
+     * @param birthdate The birthdate.
+     * @param endAge The end age.
+     * @param withdrawMode The withdrawal mode.
+     * @param withdrawAmount The withdrawal amount.
+     */
     public RetirementOptionsData(String birthdate, String endAge, int withdrawMode, String withdrawAmount) {
         mBirthdate = birthdate;
         mEndAge = endAge;
@@ -20,22 +27,42 @@ public class RetirementOptionsData implements Parcelable {
         mWithdrawAmount = withdrawAmount;
     }
 
+    /**
+     * Get the birthdate.
+     * @return The birthdate.
+     */
     public String getBirthdate() {
         return mBirthdate;
     }
 
+    /**
+     * Get the end age.
+     * @return The end age.
+     */
     public String getEndAge() {
         return mEndAge;
     }
 
+    /**
+     * Get the withdrawal mode.
+     * @return The withdrawal mode.
+     */
     public int getWithdrawMode() {
         return mWithdrawMode;
     }
 
+    /**
+     * Get the withdrawal amount.
+     * @return The withdrawal amount.
+     */
     public String getWithdrawAmount() {
         return mWithdrawAmount;
     }
 
+    /**
+     * Constructor used by parcelable
+     * @param in The parcel.
+     */
     public RetirementOptionsData(Parcel in) {
         mBirthdate = in.readString();
         mEndAge = in.readString();
