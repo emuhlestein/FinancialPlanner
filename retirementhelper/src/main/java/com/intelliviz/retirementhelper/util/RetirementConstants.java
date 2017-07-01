@@ -57,6 +57,7 @@ public class RetirementConstants {
     public static final String EXTRA_ID_DATA = "id data";
     public static final String EXTRA_DIALOG_MESSAGE = "dialog message";
     public static final String EXTRA_DIALOG_INPUT_TEXT = "dialog input text";
+    public static final String EXTRA_DIALOG_AFFIRMATIVE_TEXT = "dialog affirmative text";
 
     public static final int REQUEST_RETIRE_OPTIONS = 0;
     public static final int REQUEST_PERSONAL_INFO = 1;

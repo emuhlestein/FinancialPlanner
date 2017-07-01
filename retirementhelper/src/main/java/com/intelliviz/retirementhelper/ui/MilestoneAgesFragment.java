@@ -38,20 +38,24 @@ import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESONTE_AGE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESTONEAGE_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_MILESTONE_AGE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ACTION_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ADD_AGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
+import static com.intelliviz.retirementhelper.util.SystemUtils.getAge;
 
 public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAgeListener {
     private MilestoneAgeData mSelectedAge = null;
     private MilestoneAgeAdapter mAdapter = null;
+    private RetirementOptionsData mROD;
 
     @Bind(R.id.recyclerview)
     RecyclerView mRecyclerView;
@@ -70,6 +74,13 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
         public void onReceive(Context context, Intent intent) {
             ArrayList<MilestoneAgeData> milestoneAges = intent.getParcelableArrayListExtra(EXTRA_MILESTONEAGE_DATA);
             mAdapter.update(milestoneAges);
+        }
+    };
+
+    private BroadcastReceiver mRetirementOptionsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
         }
     };
 
@@ -177,10 +188,13 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter(LOCAL_MILESTONE_AGE);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mMilestoneAgeReceiver, filter);
+        filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mRetirementOptionsReceiver, filter);
     }
 
     private void unregisterReceiver() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mMilestoneAgeReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mRetirementOptionsReceiver);
     }
 
     private void onHandleYesNo() {
@@ -193,23 +207,21 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
 
     private void onHandleAddAge(Intent intent) {
         String ageString = intent.getStringExtra(EXTRA_DIALOG_INPUT_TEXT);
-        if(ageString == null) {
+        AgeData newAge;
+        if(ageString != null) {
+            newAge = SystemUtils.parseAgeString(ageString);
+            if(newAge == null) {
+                return;
+            }
+        } else {
             return;
         }
 
-        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
-        if(rod == null) {
-            return;
-        }
-        AgeData age = SystemUtils.parseAgeString(ageString);
-        if(age == null) {
-            return;
-        }
-        AgeData nowAge = SystemUtils.getAge(rod.getBirthdate());
+        AgeData nowAge = getAge(mROD.getBirthdate());
         if(nowAge == null) {
             return;
         }
-        if(age.isBefore(nowAge)) {
+        if(newAge.isBefore(nowAge)) {
             String message = getString(R.string.invalid_age);
             message += nowAge.toString();
             final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_INDEFINITE);
@@ -222,13 +234,9 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
             snackbar.show();
             return;
         }
-        RetirementOptionsHelper.addAge(getContext(), age);
+        RetirementOptionsHelper.addAge(getContext(), nowAge);
         SystemUtils.updateAppWidget(getContext());
-        rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
-        if(rod == null) {
-            return;
-        }
-        List<MilestoneAgeData> milestoneAges = getMilestoneAges(getContext(), rod);
+        List<MilestoneAgeData> milestoneAges = getMilestoneAges(getContext(), mROD);
         mAdapter.update(milestoneAges);
     }
 }
