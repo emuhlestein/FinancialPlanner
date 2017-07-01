@@ -3,6 +3,8 @@ package com.intelliviz.retirementhelper.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.intelliviz.retirementhelper.util.RetirementConstants;
+
 /**
  * Class to manager government pensions. e.g. social security.
  * Created by Ed Muhlestein on 5/11/2017.
@@ -13,11 +15,10 @@ public class GovPensionIncomeData extends IncomeTypeData {
     private double mMonthlyBenefit;
 
     /**
-     * Constructor.
-     * @param type The income type.
+     * Default constructor.
      */
-    public GovPensionIncomeData(int type) {
-        super(type);
+    public GovPensionIncomeData() {
+        super(RetirementConstants.INCOME_TYPE_GOV_PENSION);
     }
 
     /**
