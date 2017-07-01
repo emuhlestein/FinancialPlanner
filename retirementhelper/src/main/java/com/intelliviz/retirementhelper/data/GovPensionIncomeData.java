@@ -4,26 +4,34 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by edm on 5/11/2017.
+ * Class to manager government pensions. e.g. social security.
+ * Created by Ed Muhlestein on 5/11/2017.
  */
 
 public class GovPensionIncomeData extends IncomeTypeData {
     private String mStartAge;
     private double mMonthlyBenefit;
 
+    /**
+     * Constructor.
+     * @param type The income type.
+     */
     public GovPensionIncomeData(int type) {
         super(type);
     }
 
+    /**
+     * Constructor.
+     * @param id The database id.
+     * @param name The income type name.
+     * @param type The income type.
+     * @param startAge The start age.
+     * @param monthlyBenefit The monthly benefit.
+     */
     public GovPensionIncomeData(long id, String name, int type, String startAge, double monthlyBenefit) {
         super(id, name, type);
         mStartAge = startAge;
         mMonthlyBenefit = monthlyBenefit;
-    }
-
-    @Override
-    public boolean hasABalance() {
-        return false;
     }
 
     @Override
