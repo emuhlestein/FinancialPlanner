@@ -5,7 +5,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/message_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
@@ -13,12 +13,11 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:layout_marginStart="16sp"
-        android:text="Enter retirement age."
         android:textSize="22sp" />
 
     <EditText
-        android:id="@+id/age_text"
-        android:layout_below="@id/message_text"
+        android:id="@+id/message_edit_text"
+        android:layout_below="@id/message_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
@@ -33,7 +32,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/age_text"
+        android:layout_below="@id/message_edit_text"
         android:orientation="horizontal">
 
         <Button

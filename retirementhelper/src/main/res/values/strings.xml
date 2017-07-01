@@ -108,6 +108,12 @@
     <string name="dismiss">Dismiss</string>
     <string name="enter_valid_birthdate">Please enter a valid birth date</string>
     <string name="birthdate_format">Format (yyyy-MM-dd)</string>
-    <string name="add_age">Add an age</string>
+    <string name="add_age">Add a retirement age.</string>
+    <string name="invalid_age">Invalid age. Age cannot be less than your current age:</string>
+    <string name="no_text">No</string>
+    <string name="yes_text">Yes</string>
+    <string name="test_test">a test message</string>
+    <string name="delete_age">Delete retirement age?</string>
+    <string name="testtest">test</string>
 
 </resources>
