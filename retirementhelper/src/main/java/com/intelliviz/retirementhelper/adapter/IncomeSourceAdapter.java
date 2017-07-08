@@ -17,12 +17,14 @@ import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
  * Adpater for income sources.
  * Created by Ed Muhlestein on 4/12/2017.
  */
-
 public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapter.IncomeSourceHolder> {
     private Cursor mCursor;
     private SelectIncomeSourceListener mListener;
     private String[] mIncomeTypes;
 
+    /**
+     * Default constructor.
+     */
     public IncomeSourceAdapter() {
 
     }
@@ -53,6 +55,10 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         }
     }
 
+    /**
+     * Update the cursor.
+     * @param cursor The new cursor.
+     */
     public void swapCursor(Cursor cursor) {
         mCursor = cursor;
         notifyDataSetChanged();

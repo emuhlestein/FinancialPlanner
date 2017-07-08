@@ -21,7 +21,6 @@ import java.util.List;
 /**
  * Created by Ed Muhlestein on 6/12/2017.
  */
-
 public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.SSMilestoneHolder> {
     private List<MilestoneData> mMilestones;
     private SelectionMilestoneListener mListener;
@@ -29,6 +28,12 @@ public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.
     private AgeData mFullAge;
     private AgeData mMinimumAge;
 
+    /**
+     * Constructor.
+     * @param context The context.
+     * @param milestones The list of milestones.
+     * @param rod The retirement options data.
+     */
     public SSMilestoneAdapter(Context context, List<MilestoneData> milestones, RetirementOptionsData rod) {
         mContext = context;
         mMilestones = milestones;
@@ -61,12 +66,20 @@ public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.
         }
     }
 
+    /**
+     * Update the milestones.
+     * @param milestones The milestoens.
+     */
     public void update(List<MilestoneData> milestones) {
         mMilestones.clear();
         mMilestones.addAll(milestones);
         notifyDataSetChanged();
     }
 
+    /**
+     * Set the listerner for milestones selection.
+     * @param listener THe listener.
+     */
     public void setOnSelectionMilestoneListener (SelectionMilestoneListener listener) {
         mListener = listener;
     }

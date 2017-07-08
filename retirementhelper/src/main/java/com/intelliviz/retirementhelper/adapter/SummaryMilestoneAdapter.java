@@ -25,6 +25,11 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
     private SelectionMilestoneListener mListener;
     private Context mContext;
 
+    /**
+     * Constructor.
+     * @param context The contexte.
+     * @param milestones The milestones.
+     */
     public SummaryMilestoneAdapter(Context context, List<MilestoneData> milestones) {
         mContext = context;
         mMilestones = milestones;
@@ -52,12 +57,20 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
         }
     }
 
+    /**
+     * Update the milestone ages.
+     * @param milestones The new milestone.
+     */
     public void update(List<MilestoneData> milestones) {
         mMilestones.clear();
         mMilestones.addAll(milestones);
         notifyDataSetChanged();
     }
 
+    /**
+     * Set the listerner for milestones selection.
+     * @param listener THe listener.
+     */
     public void setOnSelectionMilestoneListener (SelectionMilestoneListener listener) {
         mListener = listener;
     }

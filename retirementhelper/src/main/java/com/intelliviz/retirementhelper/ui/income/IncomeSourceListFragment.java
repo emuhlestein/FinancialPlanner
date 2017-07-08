@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
@@ -81,18 +80,26 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_Y
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementOptionsHelper.getRetirementOptionsData;
 
+/**
+ * CLass for handling the list of income sources.
+ */
 public class IncomeSourceListFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, SelectIncomeSourceListener {
     public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
-    private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
-
-
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
-    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
-    @Bind(R.id.emptyView) TextView mEmptyView;
-    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
-    @Bind(R.id.addIncomeTypeFAB) FloatingActionButton mAddIncomeSourceFAB;
+
+    @Bind(R.id.recyclerview)
+    RecyclerView mRecyclerView;
+
+    @Bind(R.id.emptyView)
+    TextView mEmptyView;
+
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+
+    @Bind(R.id.addIncomeTypeFAB)
+    FloatingActionButton mAddIncomeSourceFAB;
 
     private BroadcastReceiver mSavingsReceiver = new BroadcastReceiver() {
         @Override
@@ -154,13 +161,19 @@ public class IncomeSourceListFragment extends Fragment implements
         }
     };
 
+    /**
+     * Default constructor.
+     */
     public IncomeSourceListFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Create a new instance of the fragment.
+     * @return The fragment.
+     */
     public static IncomeSourceListFragment newInstance() {
-        IncomeSourceListFragment fragment = new IncomeSourceListFragment();
-        return fragment;
+        return new IncomeSourceListFragment();
     }
 
     @Override
@@ -197,8 +210,6 @@ public class IncomeSourceListFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_income_list_layout, container, false);
         ButterKnife.bind(this, view);
 
-        mCallbacks = this;
-
         mIncomeSourceAdapter = new IncomeSourceAdapter();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -206,24 +217,23 @@ public class IncomeSourceListFragment extends Fragment implements
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
                 linearLayoutManager.getOrientation()));
         mIncomeSourceAdapter.setOnSelectIncomeSourceListener(this);
-        getLoaderManager().initLoader(INCOME_TYPE_LOADER, null, mCallbacks);
+        getLoaderManager().initLoader(INCOME_TYPE_LOADER, null, this);
 
         // The FAB will pop up an activity to allow a new income source to be created.
         mAddIncomeSourceFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Add new income source", Snackbar.LENGTH_LONG);
+                String message = getString(R.string.add_income_source);
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
                 snackbar.show();
 
                 final String[] incomeTypes = getResources().getStringArray(R.array.income_types);
 
-                // TODO wrap in DialogFragment
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Select an account type");
+                builder.setTitle(R.string.select_income_source_type);
                 builder.setItems(incomeTypes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int item) {
-                        Toast.makeText(getContext(), "You selected " + incomeTypes[item], Toast.LENGTH_LONG).show();
                         dialogInterface.dismiss();
                         Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
                         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
@@ -300,8 +310,6 @@ public class IncomeSourceListFragment extends Fragment implements
 
     @Override
     public void onSelectIncomeSource(long id, int type, boolean showMenu) {
-        final long incomeSourceId = id;
-        final int incomeSourceType = type;
         if(showMenu) {
             Intent intent = new Intent(getContext(), IncomeSourceListMenuFragment.class);
             intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
@@ -310,47 +318,49 @@ public class IncomeSourceListFragment extends Fragment implements
         } else {
             Intent intent;
             RetirementOptionsData rod;
-            switch(incomeSourceType) {
+            switch(type) {
                 case INCOME_TYPE_SAVINGS:
-                    SavingsIncomeData sid = SavingsHelper.getSavingsIncomeData(getContext(), incomeSourceId);
+                    SavingsIncomeData sid = SavingsHelper.getSavingsIncomeData(getContext(), id);
                     rod = getRetirementOptionsData(getContext());
                     intent = new Intent(getContext(), IncomeSourceActivity.class);
                     intent.putExtra(EXTRA_INCOME_DATA, sid);
                     intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
                     intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, sid.getType());
                     intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
                     startActivityForResult(intent, REQUEST_SAVINGS);
                     break;
                 case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                    TaxDeferredIncomeData tdid = TaxDeferredHelper.getTaxDeferredIncomeData(getContext(), incomeSourceId);
-                    rod = getRetirementOptionsData(getContext());
-                    intent = new Intent(getContext(), IncomeSourceActivity.class);
-                    intent.putExtra(EXTRA_INCOME_DATA, tdid);
-                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, tdid.getType());
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
-                    startActivityForResult(intent, REQUEST_TAX_DEFERRED);
+                    TaxDeferredIncomeData tdid = TaxDeferredHelper.getTaxDeferredIncomeData(getContext(), id);
+                    if(tdid != null) {
+                        rod = getRetirementOptionsData(getContext());
+                        intent = new Intent(getContext(), IncomeSourceActivity.class);
+                        intent.putExtra(EXTRA_INCOME_DATA, tdid);
+                        intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+                        intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
+                        intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, tdid.getType());
+                        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
+                        startActivityForResult(intent, REQUEST_TAX_DEFERRED);
+                    }
                     break;
                 case RetirementConstants.INCOME_TYPE_PENSION:
-                    PensionIncomeData pid = getPensionIncomeData(getContext(), incomeSourceId);
+                    PensionIncomeData pid = getPensionIncomeData(getContext(), id);
                     rod = getRetirementOptionsData(getContext());
                     intent = new Intent(getContext(), IncomeSourceActivity.class);
                     intent.putExtra(EXTRA_INCOME_DATA, pid);
                     intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
                     intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, pid.getType());
                     intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
                     startActivityForResult(intent, REQUEST_TAX_DEFERRED);
                     break;
                 case RetirementConstants.INCOME_TYPE_GOV_PENSION:
-                    GovPensionIncomeData gpid = GovPensionHelper.getGovPensionIncomeData(getContext(), incomeSourceId);
+                    GovPensionIncomeData gpid = GovPensionHelper.getGovPensionIncomeData(getContext(), id);
                     rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
                     intent = new Intent(getContext(), IncomeSourceActivity.class);
                     intent.putExtra(EXTRA_INCOME_DATA, gpid);
                     intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, incomeSourceId);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
                     intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, gpid.getType());
                     intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
                     startActivityForResult(intent, REQUEST_TAX_DEFERRED);
@@ -472,7 +482,7 @@ public class IncomeSourceListFragment extends Fragment implements
         if(action == INCOME_ACTION_DELETE) {
             long incomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
             if(incomeSourceId != -1) {
-                int rowsDeleted = TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), incomeSourceId);
+                TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), incomeSourceId);
                 SystemUtils.updateAppWidget(getContext());
             }
         }
@@ -525,6 +535,4 @@ public class IncomeSourceListFragment extends Fragment implements
 
         SystemUtils.updateAppWidget(getContext());
     }
-
-
 }

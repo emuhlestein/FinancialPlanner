@@ -17,11 +17,14 @@ import java.util.List;
  * Adapter for milestones.
  * Created by Ed Muhlestein on 6/22/2017.
  */
-
 public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapter.MilestoneAgeHolder> {
     private SelectMilestoneAgeListener mListener;
     private List<MilestoneAgeData> mMilestoneAges;
 
+    /**
+     * Constructor.
+     * @param milestoneAges The list of milestone ages.
+     */
     public MilestoneAgeAdapter(List<MilestoneAgeData> milestoneAges) {
         mMilestoneAges = milestoneAges;
     }
@@ -53,6 +56,10 @@ public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapte
         return 0;
     }
 
+    /**
+     * Update the milestone ages.
+     * @param ages The new milestone ages.
+     */
     public void update(List<MilestoneAgeData> ages) {
         mMilestoneAges.clear();
         if(ages != null) {
@@ -61,6 +68,10 @@ public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapte
         notifyDataSetChanged();
     }
 
+    /**
+     * Set the listerner for milestones selection.
+     * @param listener THe listener.
+     */
     public void setOnSelectMilestoneAgeListener(SelectMilestoneAgeListener listener) {
         mListener = listener;
     }
