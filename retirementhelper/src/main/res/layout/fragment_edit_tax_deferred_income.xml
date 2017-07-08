@@ -1,166 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout android:id="@+id/coordinatorLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/view_tax_defered_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
-        <LinearLayout
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:paddingTop="24dp">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_name"
+            <EditText
+                android:id="@+id/name_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:paddingTop="24dp">
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:hint="@string/name_of_institution"
+                android:inputType="textPersonName" />
+        </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/name_edit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:ems="10"
-                    android:hint="@string/name_of_institution"
-                    android:inputType="textPersonName" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_balance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:paddingTop="24dp">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_balance"
+            <EditText
+                android:id="@+id/balance_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:paddingTop="24dp">
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:hint="@string/balance"
+                android:inputType="number" />
+        </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/balance_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:ems="10"
-                    android:hint="@string/balance"
-                    android:inputType="number" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_interest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:paddingTop="24dp">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_interest"
+            <EditText
+                android:id="@+id/annual_interest_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:paddingTop="24dp">
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:hint="@string/annual_interest"
+                android:inputType="number" />
+        </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/annual_interest_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:ems="10"
-                    android:hint="@string/annual_interest"
-                    android:inputType="number" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_monthly_increase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_monthly_increase"
+            <EditText
+                android:id="@+id/monthly_increase_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp">
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:hint="@string/monthly_increase"
+                android:inputType="numberDecimal" />
+        </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/monthly_increase_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:ems="10"
-                    android:hint="@string/monthly_increase"
-                    android:inputType="numberDecimal" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_penalty_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:paddingTop="24dp">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_penalty_age"
+            <EditText
+                android:id="@+id/penalty_age_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:paddingTop="24dp">
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:enabled="false"
+                android:hint="@string/minimum_withdraw_age"
+                android:inputType="number"
+                android:text="@string/min_401k_age" />
+        </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/penalty_age_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:ems="10"
-                    android:enabled="false"
-                    android:hint="@string/minimum_withdraw_age"
-                    android:inputType="number"
-                    android:text="59y 6m" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_penalty_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_penalty_amount"
+            <EditText
+                android:id="@+id/penalty_amount_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp">
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:enabled="false"
+                android:hint="@string/early_withdraw_penalty"
+                android:inputType="numberDecimal"
+                android:text="@string/penalty_401k" />
+        </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/penalty_amount_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:ems="10"
-                    android:enabled="false"
-                    android:hint="@string/early_withdraw_penalty"
-                    android:inputType="numberDecimal"
-                    android:text="10%" />
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/add_income_source_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:onClick="addIncomeSource"
-                android:text="@string/save_income_source" />
-        </LinearLayout>
-
+        <Button
+            android:id="@+id/add_income_source_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/save_income_source" />
     </LinearLayout>
+
 </android.support.design.widget.CoordinatorLayout>
 
 

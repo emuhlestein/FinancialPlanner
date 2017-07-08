@@ -11,12 +11,13 @@ public class RetirementConstants {
     public static final int INCOME_TYPE_GOV_PENSION = 3; //eg social security
 
 
+    public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
     public static final int INCOME_ACTION_ADD = 0;
     public static final int INCOME_ACTION_VIEW = 1;
     public static final int INCOME_ACTION_EDIT = 2;
     public static final int INCOME_ACTION_DELETE = 3;
 
-    public static final String EXTRA_SERVICE_ACTION = "service action";
+
 
 
 
@@ -42,7 +43,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_TYPE = "income source type";
     public static final String EXTRA_INCOME_SOURCE_MONTHLY_BENEFIT = "income source monthly benefit";
     public static final String EXTRA_INCOME_SOURCE_MINIMUM_AGE = "income source minimum age";
-    public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
+
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
     public static final String EXTRA_BIRTHDATE = "birthdate";
     public static final String EXTRA_MILESONTE_AGE_ACTION = "milestone age action";
@@ -87,6 +88,7 @@ public class RetirementConstants {
     public static final String EXTRA_DB_ROWS_UPDATED = "rows updated";
     public static final String EXTRA_DB_ID = "db id";
 
+    public static final String EXTRA_SERVICE_ACTION = "service action";
     public static final int SERVICE_DB_INSERT = 0;
     public static final int SERVICE_DB_QUERY = 1;
     public static final int SERVICE_DB_UPDATE = 2;

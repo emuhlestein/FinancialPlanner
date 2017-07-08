@@ -11,25 +11,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.data.BalanceData;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
@@ -52,8 +51,10 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     @Bind(R.id.monthly_increase_text) EditText mMonthlyIncrease;
     @Bind(R.id.penalty_age_text) EditText mPenaltyAge;
     @Bind(R.id.penalty_amount_text) EditText mPenaltyAmount;
-    @Bind(R.id.add_income_source_button) Button mAddIncomeSource;
-    @Bind(R.id.view_tax_defered_toolbar) Toolbar mToolbar;
+    @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
+        sendIncomeSourceData();
+        getActivity().finish();
+    }
 
     private BroadcastReceiver mTaxDeferredReceiver = new BroadcastReceiver() {
         @Override
@@ -90,19 +91,15 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
 
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
 
         if(mTDI.getId() == -1) {
-            mToolbar.setSubtitle(SystemUtils.getIncomeSourceTypeString(getContext(), RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
+            if(actionBar != null) {
+                actionBar.setSubtitle(SystemUtils.getIncomeSourceTypeString(getContext(), RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
+            }
         } else {
             updateUI();
         }
-        mAddIncomeSource.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendIncomeSourceData();
-            }
-        });
 
         mBalance.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -198,6 +195,11 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
             return;
         }
 
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setSubtitle(SystemUtils.getIncomeSourceTypeString(getContext(), RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
+        }
+
         // TODO clean up strings
 
         String incomeSourceName = mTDI.getName();
@@ -276,7 +278,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         Intent intent = new Intent(getContext(), TaxDeferredIntentService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_ID, tdid.getId());
         intent.putExtra(EXTRA_DB_DATA, tdid);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         getActivity().startService(intent);
     }
 

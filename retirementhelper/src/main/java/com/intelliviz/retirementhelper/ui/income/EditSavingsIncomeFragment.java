@@ -25,6 +25,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
@@ -44,6 +45,9 @@ public class EditSavingsIncomeFragment extends Fragment {
     @Bind(R.id.annual_interest_text) EditText mAnnualInterest;
     @Bind(R.id.monthly_increase_text) EditText mMonthlyIncrease;
     @Bind(R.id.add_income_source_button) Button mAddIncomeSource;
+    @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
+        sendIncomeSourceData();
+    }
 
     public EditSavingsIncomeFragment() {
         // Required empty public constructor
@@ -62,7 +66,9 @@ public class EditSavingsIncomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mSID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            if(intent != null) {
+                mSID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            }
         }
     }
 
@@ -80,12 +86,6 @@ public class EditSavingsIncomeFragment extends Fragment {
         } else {
             updateUI();
         }
-        mAddIncomeSource.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendIncomeSourceData();
-            }
-        });
 
         mBalance.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

@@ -116,5 +116,7 @@
     <string name="delete_age">Delete retirement age?</string>
     <string name="testtest">test</string>
     <string name="select_income_source_type">Select an income source type</string>
+    <string name="min_401k_age">59y 6m</string>
+    <string name="penalty_401k">10%</string>
 
 </resources>

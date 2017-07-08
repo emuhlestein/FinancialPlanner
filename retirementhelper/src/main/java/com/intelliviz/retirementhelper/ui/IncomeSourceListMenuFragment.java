@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.intelliviz.retirementhelper.R;
 
@@ -53,7 +52,6 @@ public class IncomeSourceListMenuFragment extends AppCompatActivity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
-                Toast.makeText(IncomeSourceListMenuFragment.this, "You selected " + incomeActions[position], Toast.LENGTH_LONG).show();
                 sendResult(Activity.RESULT_OK, position);
                 finish();
             }

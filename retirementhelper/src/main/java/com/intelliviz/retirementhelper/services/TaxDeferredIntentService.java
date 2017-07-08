@@ -14,6 +14,9 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SERVICE_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_VIEW;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
@@ -34,7 +37,8 @@ public class TaxDeferredIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            int action = intent.getIntExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
+            int action = intent.getIntExtra(EXTRA_SERVICE_ACTION, SERVICE_DB_QUERY);
+            int incomeAction = intent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
             long id = intent.getLongExtra(EXTRA_DB_ID, -1);
             if(action == SERVICE_DB_QUERY) {
                 if(id == -1) {
@@ -46,6 +50,8 @@ public class TaxDeferredIntentService extends IntentService {
                     Intent localIntent = new Intent(LOCAL_TAX_DEFERRED);
                     localIntent.putExtra(EXTRA_DB_DATA, tdid);
                     localIntent.putExtra(EXTRA_DB_EXTRA_DATA, rod);
+                    localIntent.putExtra(EXTRA_DB_ACTION, action);
+                    localIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, incomeAction);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                 }
             } else if(action == SERVICE_DB_UPDATE) {
@@ -57,6 +63,8 @@ public class TaxDeferredIntentService extends IntentService {
                         int rowsUpdated = TaxDeferredHelper.saveTaxDeferredData(this, tdid);
                         Intent localIntent = new Intent(LOCAL_TAX_DEFERRED);
                         localIntent.putExtra(EXTRA_DB_ROWS_UPDATED, rowsUpdated);
+                        localIntent.putExtra(EXTRA_DB_ACTION, action);
+                        localIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, incomeAction);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                     }
                 }
