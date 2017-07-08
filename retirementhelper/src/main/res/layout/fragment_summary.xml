@@ -49,20 +49,17 @@
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@id/monthly_benefit_label_layout"
                 android:background="@drawable/separator" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/divider" />
+                android:layout_height="wrap_content"/>
 
             <LinearLayout
                 android:id="@+id/balance_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/recyclerview"
                 android:background="@drawable/gradient_green1"
                 android:orientation="horizontal">
 
