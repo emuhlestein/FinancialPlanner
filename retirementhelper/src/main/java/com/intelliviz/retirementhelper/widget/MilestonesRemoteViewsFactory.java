@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.widget;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,17 +11,16 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
 /**
- * Created by edm on 6/12/2017.
+ * Implementation of remote views factory.
+ * Created by Ed Muhlestein on 6/12/2017.
  */
 
-public class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context mContext;
-    private ContentResolver mCR;
     private Cursor mCursor;
 
-    public MilestonesRemoteViewsFactory(Context context) {
+    MilestonesRemoteViewsFactory(Context context) {
         mContext = context;
-        mCR = context.getContentResolver();
     }
 
     @Override
@@ -52,7 +50,6 @@ public class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteVi
     @Override
     public RemoteViews getViewAt(int position) {
         mCursor.moveToPosition(position);
-        int count = mCursor.getCount();
 
         int ageIndex = mCursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AGE);
         int amountIndex = mCursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AMOUNT);
@@ -62,13 +59,12 @@ public class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteVi
 
         RemoteViews rv = new RemoteViews(mContext.getPackageName(),
                 R.layout.milestone_collection_item_layout);
-        rv.setTextViewText(R.id.start_age_text_view, age.toString());
+        rv.setTextViewText(R.id.start_age_text_view, age);
         rv.setTextViewText(R.id.monthly_benefit_text_view, monthlyBenefit);
 
         Intent fillIntent = new Intent();
 
-        // TODO should not use name here; need to figure something out
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI; //Uri.withAppendedPath(RetirementContract.IncomeTypeEntry.CONTENT_URI, name);
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         fillIntent.setData(uri);
 
         rv.setOnClickFillInIntent(R.id.start_age_text_view, fillIntent);
@@ -108,9 +104,7 @@ public class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteVi
                 RetirementContract.SummaryEntry.COLUMN_AMOUNT
         };
 
-        Cursor cursor = mContext.getContentResolver().query(RetirementContract.SummaryEntry.CONTENT_URI,
+        return mContext.getContentResolver().query(RetirementContract.SummaryEntry.CONTENT_URI,
                 projection, null, null, null);
-
-        return cursor;
     }
 }

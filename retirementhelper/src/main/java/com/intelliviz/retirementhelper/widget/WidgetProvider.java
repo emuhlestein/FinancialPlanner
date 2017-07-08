@@ -12,16 +12,13 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.ui.SummaryActivity;
 
 /**
- * Created by edm on 6/12/2017.
+ * Class for keeping appwidget updated.
+ * Created by Ed Muhlestein on 6/12/2017.
  */
-
 public class WidgetProvider extends AppWidgetProvider {
 
     public void updateMilestones(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        final int N = appWidgetIds.length;
-        for(int i = 0; i < N; i++) {
-            int appWidgetId = appWidgetIds[i];
-
+        for (int appWidgetId : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(),
                     R.layout.milestone_collection_widget_layout);
 
