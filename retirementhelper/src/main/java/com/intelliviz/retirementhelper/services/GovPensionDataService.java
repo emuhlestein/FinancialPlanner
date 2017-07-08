@@ -19,11 +19,14 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_D
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
 /**
- * Created by edm on 6/12/2017.
+ * Service for handling database access to governemnt pension table.
+ * Created by Ed Muhlestein on 6/12/2017.
  */
-
 public class GovPensionDataService extends IntentService {
 
+    /**
+     * Default constructor.
+     */
     public GovPensionDataService() {
         super("GovPensionDataService");
     }
@@ -49,7 +52,7 @@ public class GovPensionDataService extends IntentService {
                 GovPensionIncomeData gpid = intent.getParcelableExtra(EXTRA_DB_DATA);
                 if(gpid != null) {
                     if(id == -1) {
-                        String sid = GovPensionHelper.addGovPensionData(this, gpid);
+                        GovPensionHelper.addGovPensionData(this, gpid);
                     } else {
                         int rowsUpdated = GovPensionHelper.saveGovPensionData(this, gpid);
                         Intent localIntent = new Intent(LOCAL_GOV_PENSION);

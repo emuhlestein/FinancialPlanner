@@ -18,8 +18,15 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_SAV
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
+/**
+ * Service for handling database access to savings table.
+ * Created by Ed Muhlestein on 6/12/2017.
+ */
 public class SavingsDataService extends IntentService {
 
+    /**
+     * Default constructor.
+     */
     public SavingsDataService() {
         super("SavingsDataService");
     }
@@ -45,7 +52,7 @@ public class SavingsDataService extends IntentService {
                 SavingsIncomeData sid = intent.getParcelableExtra(EXTRA_DB_DATA);
                 if(sid != null) {
                     if(id == -1) {
-                        String dbid = SavingsHelper.addSavingsIncome(this, sid);
+                        SavingsHelper.addSavingsIncome(this, sid);
                     } else {
                         int rowsUpdated = SavingsHelper.saveSavingsIncomeData(this, sid);
                         Intent localIntent = new Intent(LOCAL_SAVINGS);

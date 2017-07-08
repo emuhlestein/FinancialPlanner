@@ -18,11 +18,17 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PEN
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
-
+/**
+ * Service for handling database access to pension table.
+ * Created by Ed Muhlestein on 6/12/2017.
+ */
 public class PensionDataService extends IntentService {
 
+    /**
+     * Constructor.
+     */
     public PensionDataService() {
-        super("GovPensionDataService");
+        super("PensionDataService");
     }
 
     @Override
@@ -46,7 +52,7 @@ public class PensionDataService extends IntentService {
                 PensionIncomeData pid = intent.getParcelableExtra(EXTRA_DB_DATA);
                 if(pid != null) {
                     if(id == -1) {
-                        String sid = PensionHelper.addPensionData(this, pid);
+                        PensionHelper.addPensionData(this, pid);
                     } else {
                         int rowsUpdated = PensionHelper.savePensionData(this, pid);
                         Intent localIntent = new Intent(LOCAL_PENSION);

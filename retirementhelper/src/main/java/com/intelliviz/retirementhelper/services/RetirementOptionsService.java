@@ -14,9 +14,15 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RET
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
-
+/**
+ * Service for handling database access to retirementoptions table.
+ * Created by Ed Muhlestein on 6/12/2017.
+ */
 public class RetirementOptionsService extends IntentService {
 
+    /**
+     * Default constructor.
+     */
     public RetirementOptionsService() {
         super("RetirementOptionsService");
     }

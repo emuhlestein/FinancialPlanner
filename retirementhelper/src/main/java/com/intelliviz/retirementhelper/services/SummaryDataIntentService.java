@@ -16,8 +16,15 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for handling database access to summarydata table.
+ * Created by Ed Muhlestein on 6/12/2017.
+ */
 public class SummaryDataIntentService extends IntentService {
 
+    /**
+     * Default constructor.
+     */
     public SummaryDataIntentService() {
         super("SummaryDataIntentService");
     }

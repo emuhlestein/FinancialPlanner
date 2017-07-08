@@ -17,6 +17,10 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_MIL
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
+/**
+ * Service for handling database access to tax deferred savings table.
+ * Created by Ed Muhlestein on 6/12/2017.
+ */
 public class MilestoneAgeIntentService extends IntentService {
 
     public MilestoneAgeIntentService() {
@@ -34,7 +38,6 @@ public class MilestoneAgeIntentService extends IntentService {
                 localIntent.putParcelableArrayListExtra(EXTRA_MILESTONEAGE_DATA, milestoneAges);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
             } else if(action == SERVICE_DB_UPDATE) {
-
             }
         }
     }

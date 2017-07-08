@@ -18,8 +18,15 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
+/**
+ * Service for handling database access to tax deferred savings table.
+ * Created by Ed Muhlestein on 6/12/2017.
+ */
 public class TaxDeferredIntentService extends IntentService {
 
+    /**
+     * Default constructor.
+     */
     public TaxDeferredIntentService() {
         super("TaxDeferredIntentService");
     }
@@ -45,7 +52,7 @@ public class TaxDeferredIntentService extends IntentService {
                 TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_DB_DATA);
                 if(tdid != null) {
                     if(id == -1) {
-                        String sid = TaxDeferredHelper.addTaxDeferredIncome(this, tdid);
+                        TaxDeferredHelper.addTaxDeferredIncome(this, tdid);
                     } else {
                         int rowsUpdated = TaxDeferredHelper.saveTaxDeferredData(this, tdid);
                         Intent localIntent = new Intent(LOCAL_TAX_DEFERRED);

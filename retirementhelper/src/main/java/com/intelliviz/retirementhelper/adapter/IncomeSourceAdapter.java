@@ -14,7 +14,7 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 
 /**
- * Adpater for income sources.
+ * Adapter for income sources.
  * Created by Ed Muhlestein on 4/12/2017.
  */
 public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapter.IncomeSourceHolder> {

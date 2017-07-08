@@ -74,9 +74,6 @@
             android:theme="@style/RetireDialog" />
 
         <service
-            android:name=".services.PersonalInfoIntentService"
-            android:exported="false" />
-        <service
             android:name=".services.SummaryDataIntentService"
             android:exported="false" />
         <service
