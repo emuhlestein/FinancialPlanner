@@ -118,5 +118,8 @@
     <string name="select_income_source_type">Select an income source type</string>
     <string name="min_401k_age">59y 6m</string>
     <string name="penalty_401k">10%</string>
+    <string name="balance_not_valid">Balance value is not valid</string>
+    <string name="interest_not_valid">Interest value is not valid</string>
+    <string name="value_not_valid">Monthly increase value is not valid</string>
 
 </resources>

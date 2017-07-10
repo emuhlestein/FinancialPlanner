@@ -46,7 +46,8 @@ public class EditSavingsIncomeFragment extends Fragment {
     @Bind(R.id.monthly_increase_text) EditText mMonthlyIncrease;
     @Bind(R.id.add_income_source_button) Button mAddIncomeSource;
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
-        sendIncomeSourceData();
+        updateIncomeSourceData();
+        getActivity().finish();
     }
 
     public EditSavingsIncomeFragment() {
@@ -146,6 +147,7 @@ public class EditSavingsIncomeFragment extends Fragment {
         String incomeSourceName = mSID.getName();
         int type = mSID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
+        SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), incomeSourceTypeString);
 
         String balanceString;
         List<BalanceData> bd =  mSID.getBalanceDataList();
@@ -158,17 +160,16 @@ public class EditSavingsIncomeFragment extends Fragment {
         String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mSID.getMonthlyIncrease());
         String interestString = String.valueOf(mSID.getInterest());
 
-        SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), incomeSourceTypeString);
         mIncomeSourceName.setText(incomeSourceName);
         mBalance.setText(balanceString);
         mAnnualInterest.setText(interestString);
         mMonthlyIncrease.setText(monthlyIncreaseString);
     }
 
-    public void sendIncomeSourceData() {
+    public void updateIncomeSourceData() {
         String balance = SystemUtils.getFloatValue(mBalance.getText().toString());
         if(balance == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Balance value is not valid " + balance, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout,getString(R.string.balance_not_valid), Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
@@ -176,14 +177,14 @@ public class EditSavingsIncomeFragment extends Fragment {
         String interest = mAnnualInterest.getText().toString();
         interest = SystemUtils.getFloatValue(interest);
         if(interest == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Interest value is not valid " + interest, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout,  getString(R.string.interest_not_valid) + " " + interest, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
 
         String monthlyIncrease = SystemUtils.getFloatValue(mMonthlyIncrease.getText().toString());
         if(monthlyIncrease == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Monthly increase value is not valid " + monthlyIncrease, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + monthlyIncrease, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }

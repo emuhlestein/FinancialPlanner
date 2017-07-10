@@ -233,7 +233,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         String balance = getFloatValue(value);
         // TODO put all strings in string.xml
         if(balance == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Balance value is not valid " + value, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.balance_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
@@ -241,7 +241,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         value = mAnnualInterest.getText().toString();
         String interest = getFloatValue(value);
         if(interest == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Interest value is not valid " + value, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.interest_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
@@ -249,7 +249,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         value = mMonthlyIncrease.getText().toString();
         String monthlyIncrease = getFloatValue(value);
         if(monthlyIncrease == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Monthly increase value is not valid " + value, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }

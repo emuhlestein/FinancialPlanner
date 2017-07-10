@@ -56,6 +56,7 @@ public class SavingsDataService extends IntentService {
                     } else {
                         int rowsUpdated = SavingsHelper.saveSavingsIncomeData(this, sid);
                         Intent localIntent = new Intent(LOCAL_SAVINGS);
+                        localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_UPDATE);
                         localIntent.putExtra(EXTRA_DB_ROWS_UPDATED, rowsUpdated);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                     }
