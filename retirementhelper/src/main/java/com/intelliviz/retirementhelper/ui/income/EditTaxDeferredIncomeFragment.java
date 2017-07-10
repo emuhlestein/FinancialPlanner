@@ -52,7 +52,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     @Bind(R.id.penalty_age_text) EditText mPenaltyAge;
     @Bind(R.id.penalty_amount_text) EditText mPenaltyAmount;
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
-        sendIncomeSourceData();
+        updateIncomeSourceData();
         getActivity().finish();
     }
 
@@ -228,7 +228,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         mPenaltyAmount.setText(penaltyAmount);
     }
 
-    public void sendIncomeSourceData() {
+    public void updateIncomeSourceData() {
         String value = mBalance.getText().toString();
         String balance = getFloatValue(value);
         // TODO put all strings in string.xml

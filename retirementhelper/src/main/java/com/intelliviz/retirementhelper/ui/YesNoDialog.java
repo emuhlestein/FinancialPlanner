@@ -14,8 +14,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 
 /**
  * Yes/No dialog;
@@ -47,7 +45,6 @@ public class YesNoDialog extends AppCompatActivity {
 
     private void sendResult() {
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_DELETE);
         setResult(Activity.RESULT_OK, intent);
     }
 }
