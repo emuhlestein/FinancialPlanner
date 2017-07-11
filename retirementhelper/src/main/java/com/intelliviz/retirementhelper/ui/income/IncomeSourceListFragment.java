@@ -53,7 +53,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.PensionHelper.addPensionData;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
@@ -77,9 +76,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_GOV
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_SAVINGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_INCOME_MENU;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
@@ -313,20 +310,13 @@ public class IncomeSourceListFragment extends Fragment implements
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case REQUEST_PENSION:
-                    //savePensionData(intent);
-                    break;
-                case REQUEST_GOV_PENSION:
-                    //saveGovPensionData(intent);
-                    break;
                 case REQUEST_INCOME_MENU:
                     onHandleMenuSelection(intent);
                     break;
                 case REQUEST_YES_NO:
-                    onHandleYesNo(intent);
+                    onHandleYesNo();
                     break;
             }
-
             getLoaderManager().restartLoader(INCOME_TYPE_LOADER, null, this);
         }
     }
@@ -354,7 +344,6 @@ public class IncomeSourceListFragment extends Fragment implements
         } else {
             // view
             Intent intent;
-            RetirementOptionsData rod;
             mIncomeAction = INCOME_ACTION_VIEW;
             switch(type) {
                 case INCOME_TYPE_SAVINGS:
@@ -370,34 +359,12 @@ public class IncomeSourceListFragment extends Fragment implements
                     getActivity().startService(intent);
                     break;
                 case INCOME_TYPE_PENSION:
-                    /*
-                    PensionIncomeData pid = getPensionIncomeData(getContext(), id);
-                    rod = getRetirementOptionsData(getContext());
-                    intent = new Intent(getContext(), IncomeSourceActivity.class);
-                    intent.putExtra(EXTRA_INCOME_DATA, pid);
-                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, pid.getType());
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
-                    startActivityForResult(intent, REQUEST_TAX_DEFERRED);
-                    */
                     intent = new Intent(getContext(), PensionDataService.class);
                     intent.putExtra(RetirementConstants.EXTRA_DB_ID, id);
                     intent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
                     getActivity().startService(intent);
                     break;
                 case INCOME_TYPE_GOV_PENSION:
-                    /*
-                    GovPensionIncomeData gpid = GovPensionHelper.getGovPensionIncomeData(getContext(), id);
-                    rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
-                    intent = new Intent(getContext(), IncomeSourceActivity.class);
-                    intent.putExtra(EXTRA_INCOME_DATA, gpid);
-                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-                    intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, gpid.getType());
-                    intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
-                    startActivityForResult(intent, REQUEST_TAX_DEFERRED);
-                    */
                     intent = new Intent(getContext(), GovPensionDataService.class);
                     intent.putExtra(RetirementConstants.EXTRA_DB_ID, id);
                     intent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
@@ -530,7 +497,7 @@ public class IncomeSourceListFragment extends Fragment implements
         }
     }
 
-    private void onHandleYesNo(Intent intent) {
+    private void onHandleYesNo() {
         if (mIncomeAction == INCOME_ACTION_DELETE && mSelectedId != -1) {
             switch(mIncomeSourceType){
                 case RetirementConstants.INCOME_TYPE_SAVINGS:
@@ -549,29 +516,5 @@ public class IncomeSourceListFragment extends Fragment implements
 
             SystemUtils.updateAppWidget(getContext());
         }
-    }
-
-    private void savePensionData(Intent intent) {
-        PensionIncomeData pid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
-
-        if (pid.getId() == -1) {
-            String rc = addPensionData(getContext(), pid);
-        } else {
-            PensionHelper.savePensionData(getContext(), pid);
-        }
-
-        SystemUtils.updateAppWidget(getContext());
-    }
-
-    private void saveGovPensionData(Intent intent) {
-        GovPensionIncomeData gpid = intent.getParcelableExtra(EXTRA_INCOME_DATA);
-
-        if (gpid.getId() == -1) {
-            String rc = GovPensionHelper.addGovPensionData(getContext(), gpid);
-        } else {
-            GovPensionHelper.saveGovPensionData(getContext(), gpid);
-        }
-
-        SystemUtils.updateAppWidget(getContext());
     }
 }
