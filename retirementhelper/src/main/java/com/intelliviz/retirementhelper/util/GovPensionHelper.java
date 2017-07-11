@@ -165,4 +165,19 @@ public class GovPensionHelper {
         cursor.close();
         return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
     }
+
+    public static int deleteSavingsIncome(Context context, long incomeId) {
+        String sid = String.valueOf(incomeId);
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        uri = RetirementContract.BalanceEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+
+        return numRowsDeleted; // TODO return succeed or fail flag
+    }
 }

@@ -1,13 +1,9 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,10 +30,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.content.Intent.EXTRA_INTENT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PERSONAL_DATA;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,17 +47,6 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
     @Bind(R.id.full_age_text_view) TextView mFullAge;
     @Bind(R.id.monthly_amount_text_view) TextView mMonthlyBenefit;
     @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
-
-    private BroadcastReceiver mPersonalInfoReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-            mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
-            updateUI();
-            //List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
-            //mMilestoneAdapter.update(milestones);
-        }
-    };
 
     public static ViewGovPensionIncomeFragment newInstance(Intent intent) {
         ViewGovPensionIncomeFragment fragment = new ViewGovPensionIncomeFragment();
@@ -109,18 +91,6 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
         return view;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterReceiver();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerReceiver();
-    }
-
     private void updateUI() {
 
         mIncomeSourceName.setText(mGPID.getName());
@@ -132,15 +102,6 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
 
         // TODO need to format
         mMonthlyBenefit.setText(Double.toString(mGPID.getMonthlyBenefit(0)));
-    }
-
-    private void registerReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_PERSONAL_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mPersonalInfoReceiver, filter);
-    }
-
-    private void unregisterReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mPersonalInfoReceiver);
     }
 
     @Override
