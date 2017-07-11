@@ -121,5 +121,6 @@
     <string name="balance_not_valid">Balance value is not valid</string>
     <string name="interest_not_valid">Interest value is not valid</string>
     <string name="value_not_valid">Monthly increase value is not valid</string>
+    <string name="delete_income_source">Delete income source?</string>
 
 </resources>

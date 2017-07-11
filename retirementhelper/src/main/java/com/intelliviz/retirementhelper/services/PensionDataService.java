@@ -46,6 +46,7 @@ public class PensionDataService extends IntentService {
                     Intent localIntent = new Intent(LOCAL_PENSION);
                     localIntent.putExtra(EXTRA_DB_DATA, tdid);
                     localIntent.putExtra(EXTRA_DB_EXTRA_DATA, rod);
+                    localIntent.putExtra(EXTRA_DB_ACTION, action);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                 }
             } else if(action == SERVICE_DB_UPDATE) {
@@ -57,6 +58,7 @@ public class PensionDataService extends IntentService {
                         int rowsUpdated = PensionHelper.savePensionData(this, pid);
                         Intent localIntent = new Intent(LOCAL_PENSION);
                         localIntent.putExtra(EXTRA_DB_ROWS_UPDATED, rowsUpdated);
+                        localIntent.putExtra(EXTRA_DB_ACTION, action);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                     }
                 }

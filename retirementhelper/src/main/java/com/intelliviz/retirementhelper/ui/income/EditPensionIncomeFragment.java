@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,6 +22,7 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
@@ -38,8 +38,10 @@ public class EditPensionIncomeFragment extends Fragment {
     @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
     @Bind(R.id.age_text) EditText mMinAge;
     @Bind(R.id.monthly_benefit_text) EditText mMonthlyBenefit;
-    @Bind(R.id.add_income_source_button) Button mAddIncomeSource;
-
+    @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
+        updateIncomeSourceData();
+        getActivity().finish();
+    }
     public static EditPensionIncomeFragment newInstance(Intent intent) {
         EditPensionIncomeFragment fragment = new EditPensionIncomeFragment();
         Bundle args = new Bundle();
@@ -90,12 +92,6 @@ public class EditPensionIncomeFragment extends Fragment {
                 }
             }
         });
-        mAddIncomeSource.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendIncomeSourceData();
-            }
-        });
 
         return view;
     }
@@ -110,7 +106,7 @@ public class EditPensionIncomeFragment extends Fragment {
         mMonthlyBenefit.setText(monthlyBenefit);
     }
 
-    public void sendIncomeSourceData() {
+    public void updateIncomeSourceData() {
         String name = mIncomeSourceName.getText().toString();
         String age = mMinAge.getText().toString();
         String value = mMonthlyBenefit.getText().toString();
