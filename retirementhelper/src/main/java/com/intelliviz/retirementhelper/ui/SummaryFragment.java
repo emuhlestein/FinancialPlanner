@@ -135,7 +135,7 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         SystemUtils.updateAppWidget(getContext());
 
         Intent intent = new Intent(getContext(), RetirementOptionsService.class);
-        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_QUERY);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_QUERY);
         getContext().startService(intent);
 
         return view;

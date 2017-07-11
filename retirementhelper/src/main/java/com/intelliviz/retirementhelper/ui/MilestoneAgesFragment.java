@@ -128,11 +128,11 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
         });
 
         Intent intent = new Intent(getContext(), MilestoneAgeIntentService.class);
-        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_QUERY);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_QUERY);
         getContext().startService(intent);
 
         intent = new Intent(getContext(), RetirementOptionsService.class);
-        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_QUERY);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_QUERY);
         getContext().startService(intent);
 
         return view;

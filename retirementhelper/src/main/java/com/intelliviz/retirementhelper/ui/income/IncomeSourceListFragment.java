@@ -53,7 +53,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ID;
@@ -64,7 +63,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SERVICE_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_VIEW;
@@ -443,7 +442,7 @@ public class IncomeSourceListFragment extends Fragment implements
                     mIncomeAction = INCOME_ACTION_EDIT;
                     Intent localIntent = new Intent(getContext(), SavingsDataService.class);
                     localIntent.putExtra(EXTRA_DB_ID, incomeSourceId);
-                    localIntent.putExtra(EXTRA_SERVICE_ACTION, SERVICE_DB_QUERY);
+                    localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
                     getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
@@ -457,7 +456,7 @@ public class IncomeSourceListFragment extends Fragment implements
                     mIncomeAction = INCOME_ACTION_EDIT;
                     Intent localIntent = new Intent(getContext(), TaxDeferredIntentService.class);
                     localIntent.putExtra(EXTRA_DB_ID, incomeSourceId);
-                    localIntent.putExtra(EXTRA_SERVICE_ACTION, SERVICE_DB_QUERY);
+                    localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
                     getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;

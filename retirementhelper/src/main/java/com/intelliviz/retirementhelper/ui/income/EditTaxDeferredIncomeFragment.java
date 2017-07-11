@@ -278,7 +278,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         Intent intent = new Intent(getContext(), TaxDeferredIntentService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_ID, tdid.getId());
         intent.putExtra(EXTRA_DB_DATA, tdid);
-        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         getActivity().startService(intent);
     }
 

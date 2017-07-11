@@ -21,7 +21,6 @@ import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.services.SummaryDataIntentService;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
@@ -152,74 +150,11 @@ public class SystemUtils {
             actionBar.setSubtitle(subtitle);
         }
     }
-    public static boolean isValidFloatValue(String value) {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-        Number number;
-        try {
-            number = nf.parse(value);
-            if(number instanceof Float || number instanceof Double || number instanceof Long || number instanceof Integer) {
-                return true;
-            }
-        } catch (ParseException e) {
-            return false;
-        }
-        return false;
-    }
 
     public static String getTodaysDate() {
         Date date = Calendar.getInstance().getTime();
         SimpleDateFormat sdf = new SimpleDateFormat(RetirementConstants.DATE_FORMAT);
         return sdf.format(date);
-    }
-
-    public static float getFloatCurrency(String value) {
-        Number number1 = 0;
-        Number number2 = 0;
-        float retval = 0;
-        NumberFormat nf = NumberFormat.getCurrencyInstance( java.util.Locale.US );
-        NumberFormat numberf = NumberFormat.getNumberInstance(Locale.US);
-        Number num1;
-        try {
-            num1 = numberf.parse(value);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(java.util.Locale.US);
-        try {
-
-            number1 = nf.parse(value);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            number2 = df.parse(value);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        //try {
-
-            //BigDecimal bd = new BigDecimal(value);
-            //value = "$1,000.00";
-            String fmt = nf.format(value);
-            Log.d("SystemUtils", fmt);
-            /*
-            if(number instanceof Integer) {
-                retval = (float)number.intValue();
-            } else if(number instanceof Float) {
-                retval = number.floatValue();
-            } else if(number instanceof Long) {
-                retval = (float)number.longValue();
-            } else {
-                retval = 0;
-            }
-            */
-        //}catch(ParseException e) {
-         //   Log.d("SystemUtils", e.toString());
-       // }
-        return retval;
     }
 
     public static String getFormattedCurrency(Double value) {
@@ -387,14 +322,14 @@ public class SystemUtils {
     public static void updateROD(Context context, RetirementOptionsData rod) {
         Intent intent = new Intent(context, RetirementOptionsService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
-        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         context.startService(intent);
     }
 
     public static void updateBirthdate(Context context, String birthdate) {
         Intent intent = new Intent(context, RetirementOptionsService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, birthdate);
-        intent.putExtra(RetirementConstants.EXTRA_SERVICE_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         context.startService(intent);
     }
 
