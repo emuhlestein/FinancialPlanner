@@ -27,8 +27,8 @@ public class RetirementConstants {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     // principle reduction mode
-    public static final int WITHDRAW_MODE_AMOUNT = 0; // dollar amount
-    public static final int WITHDRAW_MODE_PERCENT = 1; // percentage of principle
+    public static final int WITHDRAW_MODE_AMOUNT = 1; // dollar amount
+    public static final int WITHDRAW_MODE_PERCENT = 0; // percentage of principle
 
     public static final String EXTRA_INCOME_SOURCE_ID = "income source id";
     public static final String EXTRA_INCOME_SOURCE_TYPE = "income source type";

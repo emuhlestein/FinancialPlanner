@@ -62,6 +62,9 @@ public class DataBaseUtils {
             ages.add(new MilestoneAgeData(-1, fullRetirementAge));
         }
 
+        // Need to get this age from deferred tax income source
+        AgeData min401kAge = new AgeData(59, 6);
+        ages.add(new MilestoneAgeData(-1, min401kAge));
 
         Collections.sort(ages);
         return ages;

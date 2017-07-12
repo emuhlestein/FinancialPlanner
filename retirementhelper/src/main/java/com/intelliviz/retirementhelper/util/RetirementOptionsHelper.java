@@ -11,7 +11,8 @@ import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
 /**
- * Created by edm on 6/28/2017.
+ * Helper class for retirement options.
+ * Created by Ed Muhlestein on 6/28/2017.
  */
 
 public class RetirementOptionsHelper {
@@ -26,8 +27,7 @@ public class RetirementOptionsHelper {
         String sid = String.valueOf(id);
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
-        return numRowsDeleted; // TODO return succeed or fail flag
+        return context.getContentResolver().delete(uri, null, null);
     }
 
     public static RetirementOptionsData getRetirementOptionsData(Context context) {
@@ -85,15 +85,6 @@ public class RetirementOptionsHelper {
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, rod.getEndAge());
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, rod.getWithdrawMode());
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT, rod.getWithdrawAmount());
-        Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
-        return context.getContentResolver().update(uri, values, null, null);
-    }
-
-    public static int saveRetirementOptions(Context context, String startAge, String endAge, int withdrawMode, String withdrawAmount) {
-        ContentValues values  = new ContentValues();
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_END_AGE, endAge);
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE, withdrawMode);
-        values.put(RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT, withdrawAmount);
         Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
         return context.getContentResolver().update(uri, values, null, null);
     }

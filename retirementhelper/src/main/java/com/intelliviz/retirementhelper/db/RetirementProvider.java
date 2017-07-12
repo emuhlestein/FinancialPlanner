@@ -653,7 +653,7 @@ public class RetirementProvider extends ContentProvider {
                     " Values ('4', '70 0');";
             db.execSQL(ROW);
 
-            ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '90 0', '0', '0');";
+            ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '90 0', '0', '4');";
             db.execSQL(ROW);
 
             ROW = "INSERT INTO " + RetirementContract.PersonalInfoEntry.TABLE_NAME + " Values ('0','0');";
