@@ -1,8 +1,10 @@
 package com.intelliviz.retirementhelper.ui;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +29,9 @@ import butterknife.OnClick;
  */
 
 public class RetirementOptionsDialog extends AppCompatActivity implements View.OnClickListener{
+    private static final String DEFAULT_END_AGE = "90";
+    private static final int DEFAULT_WITHDRAW_MODE = RetirementConstants.WITHDRAW_MODE_PERCENT;
+    private static final String DEFAULT_WITHDRAW_AMOUNT = "4";
     private RetirementOptionsData mROD;
 
     @Bind(R.id.end_age_edit_text) EditText mEndAgeEditText;
@@ -42,7 +47,6 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     }
     @OnClick(R.id.retirement_parms_cancel) void onClickCancel() {
         Intent returnIntent = new Intent();
-
         setResult(Activity.RESULT_CANCELED, returnIntent);
         finish();
     }
@@ -71,15 +75,23 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         }
     }
 
-    /**
-     * Update the UI.
-     */
     private void updateUI() {
 
+        int mode = DEFAULT_WITHDRAW_MODE;
+        String ageString = DEFAULT_END_AGE;
+        String withDrawAmount = DEFAULT_WITHDRAW_AMOUNT;
+        if(mROD != null) {
+            mode = mROD.getWithdrawMode();
+            String endAge = mROD.getEndAge();
+            AgeData age = SystemUtils.parseAgeString(endAge);
+            if(age != null) {
+                int year = age.getYear();
+                ageString = Integer.toString(year);
+            }
+            withDrawAmount = mROD.getWithdrawAmount();
+        }
 
-        // TODO add check in case rod is null
-        mEndAgeEditText.setText(mROD.getEndAge());
-        int mode = mROD.getWithdrawMode();
+        mEndAgeEditText.setText(ageString);
         switch(mode) {
             case RetirementConstants.WITHDRAW_MODE_AMOUNT:
                 mWithdrawModeRadioGroup.check(mWithdrawAmountButton.getId());
@@ -94,12 +106,9 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
                 mAmountTextView.setText(R.string.dollar_amount);
         }
 
-        mWithdrawAmount.setText(mROD.getWithdrawAmount());
+        mWithdrawAmount.setText(withDrawAmount);
     }
 
-    /**
-     * Send the data to the interested party.
-     */
     private void sendData() {
         String endAge = mEndAgeEditText.getText().toString();
         int withdrawMode;
@@ -114,9 +123,67 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
                 withdrawMode = RetirementConstants.WITHDRAW_MODE_AMOUNT;
         }
 
-        // TODO need to validate age
         String withdrawAmount = mWithdrawAmount.getText().toString();
+        if(withdrawAmount.isEmpty()) {
+            AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Withdraw amount requires a value.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            return;
+        }
+
+        withdrawAmount = SystemUtils.getFloatValue(withdrawAmount);
+        if(withdrawAmount == null) {
+            AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Invalid withdraw amount.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            return;
+        }
+
         AgeData age = SystemUtils.parseAgeString(endAge, "0");
+        if(age == null) {
+            AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Age is invalid");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            return;
+        }
+
+        String birthdate = mROD.getBirthdate();
+        AgeData nowAge = SystemUtils.getAge(birthdate);
+        if(age.isBefore(nowAge)) {
+            String message = "End age must be greater than\nyour current age: " + nowAge.toString();
+            AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage(message);
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            return;
+        }
         endAge = age.getUnformattedString();
 
         RetirementOptionsData rod = new RetirementOptionsData(mROD.getBirthdate(), endAge, withdrawMode, withdrawAmount);

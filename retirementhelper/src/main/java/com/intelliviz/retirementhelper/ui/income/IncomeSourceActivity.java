@@ -108,17 +108,16 @@ public class IncomeSourceActivity extends AppCompatActivity {
                 RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (rod != null) {
                     intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
+                    startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 }
-                startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
-
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
                 rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (rod != null) {
                     intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
+                    startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 }
-                startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 break;
         }
         return super.onOptionsItemSelected(item);

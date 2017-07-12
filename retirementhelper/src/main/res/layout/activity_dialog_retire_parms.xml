@@ -40,18 +40,19 @@
         android:layout_height="wrap_content">
 
         <RadioButton
-            android:id="@+id/withdraw_amount_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/withdraw_amount"
-            android:textSize="16sp" />
-
-        <RadioButton
             android:id="@+id/withdraw_percent_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/withdraw_percentage"
-            android:textSize="16sp" />
+            android:textSize="22sp" />
+
+        <RadioButton
+            android:id="@+id/withdraw_amount_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/withdraw_amount"
+            android:textSize="22sp" />
+
     </RadioGroup>
 
     <LinearLayout

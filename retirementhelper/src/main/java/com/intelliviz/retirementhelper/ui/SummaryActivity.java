@@ -100,16 +100,16 @@ public class SummaryActivity extends AppCompatActivity {
                 RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (rod != null) {
                     intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
+                    startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 }
-                startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
                 rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                 if (rod != null) {
                     intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+                    startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 }
-                startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 break;
             case R.id.sign_out_item:
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
