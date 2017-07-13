@@ -4,16 +4,16 @@ package com.intelliviz.retirementhelper.ui.income;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,8 +27,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 public class ViewPensionIncomeFragment extends Fragment {
     public static final String VIEW_PENSION_INCOME_FRAG_TAG = "view pension income frag tag";
     private PensionIncomeData mPID;
-    private RetirementOptionsData mROD;
-    private SummaryMilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.minimum_age_text_view) TextView mStartAge;
@@ -53,7 +51,6 @@ public class ViewPensionIncomeFragment extends Fragment {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
             if(intent != null) {
                 mPID = intent.getParcelableExtra(EXTRA_INCOME_DATA);
-                mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
             }
         }
     }
@@ -73,7 +70,15 @@ public class ViewPensionIncomeFragment extends Fragment {
         mIncomeSourceName.setText(mPID.getName());
         mStartAge.setText(mPID.getStartAge());
 
-        // TODO need to format
-        mMonthlyBenefit.setText(Double.toString(mPID.getMonthlyBenefit(0)));
+        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mPID.getMonthlyBenefit(0));
+        mMonthlyBenefit.setText(monthlyIncreaseString);
+
+        int type = mPID.getType();
+        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
+
+        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.setSubtitle(incomeSourceTypeString);
+        }
     }
 }

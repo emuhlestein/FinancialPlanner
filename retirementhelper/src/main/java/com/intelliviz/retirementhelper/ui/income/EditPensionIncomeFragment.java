@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.services.PensionDataService;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -104,6 +105,14 @@ public class EditPensionIncomeFragment extends Fragment {
         mIncomeSourceName.setText(name);
         mMinAge.setText(age);
         mMonthlyBenefit.setText(monthlyBenefit);
+
+        int type = mPID.getType();
+        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
+
+        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.setSubtitle(incomeSourceTypeString);
+        }
     }
 
     public void updateIncomeSourceData() {
@@ -112,12 +121,18 @@ public class EditPensionIncomeFragment extends Fragment {
         String value = mMonthlyBenefit.getText().toString();
         String benefit = getFloatValue(value);
         if(benefit == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Monthly benefit value is not valid " + value, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
 
-        // TODO need to validate age
+        age = SystemUtils.trimAge(age);
+        AgeData minAge = SystemUtils.parseAgeString(age);
+        if(minAge == null) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return;
+        }
 
         double dbenefit = Double.parseDouble(benefit);
         PensionIncomeData pid = new PensionIncomeData(mPID.getId(), name, mPID.getType(), age, dbenefit);

@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
@@ -181,8 +182,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
             actionBar.setSubtitle(SystemUtils.getIncomeSourceTypeString(getContext(), RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
         }
 
-        // TODO clean up strings
-
         String incomeSourceName = mTDI.getName();
         int type = mTDI.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
@@ -241,15 +240,23 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         value = mPenaltyAmount.getText().toString();
         String penaltyAmount = getFloatValue(value);
         if(penaltyAmount == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Penalty amount is not valid " + value, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return;
+        }
+
+        String minimumAge = mPenaltyAge.getText().toString();
+        minimumAge = SystemUtils.trimAge(minimumAge);
+        AgeData minAge = SystemUtils.parseAgeString(minimumAge);
+        if(minAge == null) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
 
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
-        String minimumAge = mPenaltyAge.getText().toString();
-        minimumAge = SystemUtils.trimAge(minimumAge);
+
         double annualInterest = Double.parseDouble(interest);
         double increase = Double.parseDouble(monthlyIncrease);
         double penalty = Double.parseDouble(penaltyAmount);
