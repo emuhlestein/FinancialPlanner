@@ -277,6 +277,12 @@ public class SystemUtils {
         return parseAgeString(sb.toString());
     }
 
+    public static String trimAge(String age) {
+        age = age.replace("y", "");
+        age = age.replace("m", "");
+        return age;
+    }
+
     /**
      * Convert a currency value to a number. Try parsing the value as a number first.
      * If this fails, try parsing as currency. If this fails, return null.

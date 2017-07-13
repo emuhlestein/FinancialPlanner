@@ -1,14 +1,11 @@
 package com.intelliviz.retirementhelper.ui.income;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -32,7 +29,6 @@ import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -56,13 +52,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         getActivity().finish();
     }
 
-    private BroadcastReceiver mTaxDeferredReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_DB_DATA);
-        }
-    };
-
     public EditTaxDeferredIncomeFragment() {
         // Required empty public constructor
     }
@@ -80,7 +69,9 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mTDI = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            if(intent != null) {
+                mTDI = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            }
         }
     }
 
@@ -141,7 +132,8 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
                     String interest = textView.getText().toString();
                     interest = getFloatValue(interest);
                     if(interest != null) {
-                        mAnnualInterest.setText(interest + "%");
+                        interest += "%";
+                        mAnnualInterest.setText(interest);
                     } else {
                         mAnnualInterest.setText("");
                     }
@@ -157,7 +149,8 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
                     String interest = textView.getText().toString();
                     interest = getFloatValue(interest);
                     if(interest != null) {
-                        mPenaltyAmount.setText(interest + "%");
+                        interest += "%";
+                        mPenaltyAmount.setText(interest);
                     } else {
                         mPenaltyAmount.setText("");
                     }
@@ -166,18 +159,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         });
 
         return view;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterReceiver();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerReceiver();
     }
 
     @Override
@@ -191,7 +172,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
-        if(mTDI.getId() == -1) {
+        if (mTDI == null || mTDI.getId() == -1) {
             return;
         }
 
@@ -208,7 +189,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
 
         String balanceString;
         List<BalanceData> bd = mTDI.getBalanceData();
-        if(bd == null) {
+        if (bd == null) {
             balanceString = "0.00";
         } else {
             balanceString = SystemUtils.getFormattedCurrency(bd.get(0).getBalance());
@@ -216,13 +197,17 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
 
         String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mTDI.getMonthAddition());
         String minimumAge = mTDI.getMinimumAge();
-        String penaltyAmount = mTDI.getPenalty()+"%";
+        String penaltyAmount = mTDI.getPenalty() + "%";
 
-        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        ab.setSubtitle(incomeSourceTypeString);
+        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.setSubtitle(incomeSourceTypeString);
+        }
         mIncomeSourceName.setText(incomeSourceName);
         mBalance.setText(balanceString);
-        mAnnualInterest.setText(mTDI.getInterestRate()+"%");
+
+        String interest = mTDI.getInterestRate()+"%";
+        mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(monthlyIncreaseString);
         mPenaltyAge.setText(minimumAge);
         mPenaltyAmount.setText(penaltyAmount);
@@ -231,7 +216,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     public void updateIncomeSourceData() {
         String value = mBalance.getText().toString();
         String balance = getFloatValue(value);
-        // TODO put all strings in string.xml
         if(balance == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.balance_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
@@ -265,6 +249,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         String name = mIncomeSourceName.getText().toString();
         String date = SystemUtils.getTodaysDate();
         String minimumAge = mPenaltyAge.getText().toString();
+        minimumAge = SystemUtils.trimAge(minimumAge);
         double annualInterest = Double.parseDouble(interest);
         double increase = Double.parseDouble(monthlyIncrease);
         double penalty = Double.parseDouble(penaltyAmount);
@@ -280,14 +265,5 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         intent.putExtra(EXTRA_DB_DATA, tdid);
         intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         getActivity().startService(intent);
-    }
-
-    private void registerReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mTaxDeferredReceiver, filter);
-    }
-
-    private void unregisterReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTaxDeferredReceiver);
     }
 }
