@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout android:id="@+id/coordinatorLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,20 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/view_tax_defered_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_layout_name"
@@ -60,9 +45,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:ems="10"
                     android:hint="@string/balance"
-                    android:inputType="number" />
+                    style="@style/CurrencyStyle"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -80,9 +64,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:ems="10"
                     android:hint="@string/annual_interest"
-                    android:inputType="number" />
+                    style="@style/ThreeDigitPositiveNumber" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -99,9 +82,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:ems="10"
                     android:hint="@string/monthly_increase"
-                    android:inputType="numberDecimal" />
+                    style="@style/CurrencyStyle" />
             </android.support.design.widget.TextInputLayout>
 
             <Button
@@ -113,11 +95,9 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
-                android:onClick="addIncomeSource"
                 android:text="@string/save_income_source" />
         </LinearLayout>
 
-    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
 
 

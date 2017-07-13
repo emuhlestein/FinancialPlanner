@@ -43,4 +43,14 @@
         <item name="android:minEms">4</item>
     </style>
 
+    <style name="SevenDigitPositiveNumber" parent="ThreeDigitPositiveNumber">
+        <item name="android:maxLength">7</item>
+        <item name="android:minEms">6</item>
+    </style>
+
+    <style name="CurrencyStyle" parent="ThreeDigitPositiveNumber">
+        <item name="android:maxLength">20</item>
+        <item name="android:minEms">9</item>
+    </style>
+
 </resources>
