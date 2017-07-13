@@ -53,7 +53,7 @@
                     android:layout_marginTop="30dp"
                     android:ems="10"
                     android:hint="@string/minimum_age"
-                    android:inputType="number" />
+                    style="@style/TwoDigitPositiveNumber"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout

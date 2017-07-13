@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.services.GovPensionDataService;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -61,13 +62,6 @@ public class EditGovPensionIncomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_gov_pension_income, container, false);
         ButterKnife.bind(this, view);
-        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
-
-        if(mGPID.getId() == -1) {
-            ab.setSubtitle("Savings");
-        } else {
-            updateUI();
-        }
 
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -84,6 +78,8 @@ public class EditGovPensionIncomeFragment extends Fragment {
             }
         });
 
+        updateUI();
+
         return view;
     }
 
@@ -92,11 +88,16 @@ public class EditGovPensionIncomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mGPID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            if(intent != null) {
+                mGPID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            }
         }
     }
 
     private void updateUI() {
+        if(mGPID == null || mGPID.getId() == -1) {
+            return;
+        }
         String name = mGPID.getName();
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getMonthlyBenefit());
         String age = mGPID.getStartAge();
@@ -104,11 +105,19 @@ public class EditGovPensionIncomeFragment extends Fragment {
         mIncomeSourceName.setText(name);
         mMinAge.setText(age);
         mMonthlyBenefit.setText(monthlyBenefit);
+
+        int type = mGPID.getType();
+        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
+
+        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.setSubtitle(incomeSourceTypeString);
+        }
     }
 
     private void updateIncomeSourceData() {
         String name = mIncomeSourceName.getText().toString();
-        String age = mMinAge.getText().toString();
+        String minimumAge = mMinAge.getText().toString();
         String value = mMonthlyBenefit.getText().toString();
         String benefit = getFloatValue(value);
         if(benefit == null) {
@@ -117,9 +126,16 @@ public class EditGovPensionIncomeFragment extends Fragment {
             return;
         }
         // TODO need to validate age
+        minimumAge = SystemUtils.trimAge(minimumAge);
+        AgeData minAge = SystemUtils.parseAgeString(minimumAge);
+        if(minAge == null) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return;
+        }
 
         double dbenefit = Double.parseDouble(benefit);
-        GovPensionIncomeData gpid = new GovPensionIncomeData(mGPID.getId(), name, mGPID.getType(), age, dbenefit);
+        GovPensionIncomeData gpid = new GovPensionIncomeData(mGPID.getId(), name, mGPID.getType(), minimumAge, dbenefit);
         updateGPID(gpid);
     }
 
