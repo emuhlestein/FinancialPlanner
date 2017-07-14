@@ -243,7 +243,7 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
             snackbar.show();
             return;
         }
-        RetirementOptionsHelper.addAge(getContext(), nowAge);
+        RetirementOptionsHelper.addAge(getContext(), newAge);
         SystemUtils.updateAppWidget(getContext());
         List<MilestoneAgeData> milestoneAges = getMilestoneAges(getContext(), mROD);
         mAdapter.update(milestoneAges);
