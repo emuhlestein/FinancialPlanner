@@ -1,36 +1,22 @@
 package com.intelliviz.retirementhelper.ui;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
+import butterknife.ButterKnife;
 
 /**
- * Created by edm on 6/20/2017.
+ * Class to enter birthdates.
+ * Created by Ed Muhlestein on 6/20/2017.
  */
 
-public class BirthdateDialog extends DialogFragment {
+public class BirthdateDialog extends AppCompatActivity {
     private static final String ARG_TITLE = "title";
     private EditText mBirthdateEditText;
-
-    public static BirthdateDialog newInstance(String title) {
-        BirthdateDialog dialog = new BirthdateDialog();
-        Bundle args = new Bundle();
-        args.putString(ARG_TITLE, title);
-        dialog.setArguments(args);
-        return dialog;
-    }
 
     public BirthdateDialog() {
         // Required empty public constructor
@@ -38,7 +24,12 @@ public class BirthdateDialog extends DialogFragment {
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.birthdate_layout);
+        ButterKnife.bind(this);
+
+        /*
         Bundle args = getArguments();
         String title = args.getString(ARG_TITLE);
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -59,14 +50,15 @@ public class BirthdateDialog extends DialogFragment {
 
         setCancelable(false);
 
-        Dialog dialog = builder.create();
-        return dialog;
+        return builder.create();
+        */
     }
-
+/*
     private void sendResult(int resultCode) {
         String birthdate = mBirthdateEditText.getText().toString();
         Intent intent = new Intent();
         intent.putExtra(EXTRA_BIRTHDATE, birthdate);
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
     }
+    */
 }

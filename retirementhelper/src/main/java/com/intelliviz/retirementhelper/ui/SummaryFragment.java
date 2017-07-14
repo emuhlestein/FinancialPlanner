@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -41,14 +40,16 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.DIALOG_BIRTHDATE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_SET_CANCELLABLE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
 
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
+    private static final String KEY_ROD = "keyRod";
     private RetirementOptionsData mROD;
     private SummaryMilestoneAdapter mMilestoneAdapter;
 
@@ -77,10 +78,10 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             if(mROD != null) {
                 String birthdate = mROD.getBirthdate();
                 if (!SystemUtils.validateBirthday(birthdate)) {
-                    FragmentManager fm = getActivity().getSupportFragmentManager();
-                    BirthdateDialog dialog = BirthdateDialog.newInstance(getString(R.string.enter_birthdate));
-                    dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
-                    dialog.show(fm, DIALOG_BIRTHDATE);
+                    intent = new Intent(getContext(), SimpleTextDialog.class);
+                    intent.putExtra(EXTRA_DIALOG_MESSAGE, getString(R.string.enter_birthdate));
+                    intent.putExtra(EXTRA_DIALOG_SET_CANCELLABLE, true);
+                    startActivityForResult(intent, REQUEST_BIRTHDATE);
                 }
             }
         }
@@ -97,6 +98,10 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        Intent intent = new Intent(getContext(), RetirementOptionsService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_QUERY);
+        getContext().startService(intent);
     }
 
     @Override
@@ -112,6 +117,9 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         }
 
         List<MilestoneData> milestones = new ArrayList<>();
+        if(mROD != null) {
+            milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
+        }
         mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -134,13 +142,10 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
 
         SystemUtils.updateAppWidget(getContext());
 
-        Intent intent = new Intent(getContext(), RetirementOptionsService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_QUERY);
-        getContext().startService(intent);
-
         return view;
     }
 
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -183,16 +188,18 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     }
 
     private void onHandleBirthdate(Intent intent) {
-        String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+        String birthdate = intent.getStringExtra(EXTRA_DIALOG_INPUT_TEXT);
         if (!SystemUtils.validateBirthday(birthdate)) {
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-            BirthdateDialog dialog = BirthdateDialog.newInstance(getString(R.string.enter_valid_birthdate));
-            dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
-            dialog.show(fm, DIALOG_BIRTHDATE);
+            intent = new Intent(getContext(), SimpleTextDialog.class);
+            intent.putExtra(EXTRA_DIALOG_MESSAGE, getString(R.string.enter_valid_birthdate));
+            intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, birthdate);
+            intent.putExtra(EXTRA_DIALOG_SET_CANCELLABLE, true);
+            startActivityForResult(intent, REQUEST_BIRTHDATE);
             return;
         }
-        RetirementOptionsHelper.saveBirthdate(getContext(), birthdate);
+
         RetirementOptionsData rod = new RetirementOptionsData(birthdate, mROD.getEndAge(), mROD.getWithdrawMode(), mROD.getWithdrawAmount());
+        RetirementOptionsHelper.saveBirthdate(getContext(), birthdate);
         List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), rod);
         mMilestoneAdapter.update(milestones);
 

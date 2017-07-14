@@ -25,8 +25,8 @@
         android:layout_marginStart="16sp"
         android:layout_marginEnd="16sp"
         android:layout_centerHorizontal="true"
-        android:inputType="number"
-        android:ems="3"
+        android:inputType="date"
+        android:ems="9"
         android:textSize="22sp" />
 
     <LinearLayout

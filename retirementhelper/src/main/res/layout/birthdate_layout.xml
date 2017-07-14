@@ -1,10 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<EditText android:id="@+id/birthdate_edit_text"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:gravity="center_horizontal"
-    android:ems="10"
-    android:inputType="date" />
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/message_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_marginStart="16sp"
+        android:textSize="22sp" />
+
+    <EditText android:id="@+id/birthdate_edit_text"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:gravity="center_horizontal"
+        android:inputType="date" />
+
+    <LinearLayout
+        android:id="@+id/balance_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/no_button"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16sp"
+            android:layout_marginStart="16sp"
+            android:layout_weight="1"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/no_text"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/yes_button"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16sp"
+            android:layout_weight="1"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/yes_text"
+            android:textSize="22sp" />
+    </LinearLayout>
+</LinearLayout>

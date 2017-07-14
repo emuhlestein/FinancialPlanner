@@ -67,14 +67,13 @@ public class SummaryActivity extends AppCompatActivity {
 
         initBottomNavigation();
 
-        MenuItem selectedItem;
-        if(savedInstanceState == null) {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.content_frame);
+        if(fragment == null) {
+            MenuItem selectedItem;
             selectedItem = mBottomNavigation.getMenu().getItem(0);
-        } else {
-            mStartFragment = savedInstanceState.getInt("START_FRAGMENT");
-            selectedItem = mBottomNavigation.getMenu().findItem(mStartFragment);
+            selectedNavFragment(selectedItem);
         }
-        selectedNavFragment(selectedItem);
     }
 
     @Override
@@ -141,6 +140,11 @@ public class SummaryActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override

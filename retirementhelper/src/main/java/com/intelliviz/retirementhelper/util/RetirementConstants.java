@@ -43,6 +43,7 @@ public class RetirementConstants {
     public static final String EXTRA_MILESTONEAGE_DATA = "milestoneagedata";
     public static final String EXTRA_DIALOG_MESSAGE = "dialog message";
     public static final String EXTRA_DIALOG_INPUT_TEXT = "dialog input text";
+    public static final String EXTRA_DIALOG_SET_CANCELLABLE = "dialog set cancellable";
     public static final String EXTRA_SELECTED_MENU_ITEM = "menu item";
 
     public static final int REQUEST_RETIRE_OPTIONS = 0;

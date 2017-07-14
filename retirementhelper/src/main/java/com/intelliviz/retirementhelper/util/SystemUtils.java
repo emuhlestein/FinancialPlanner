@@ -103,6 +103,9 @@ public class SystemUtils {
     }
 
     public static boolean validateBirthday(String birthdate) {
+        if(birthdate == null) {
+            return false;
+        }
         String[] tokens = birthdate.split("-");
         if(tokens.length != 3) {
             return false;
