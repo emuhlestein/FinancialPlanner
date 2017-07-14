@@ -21,6 +21,8 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
+
 public class PersonalInfoDialog extends AppCompatActivity {
     private RetirementOptionsData mROD;
     @Bind(R.id.coordinatorLayout)
@@ -101,7 +103,7 @@ public class PersonalInfoDialog extends AppCompatActivity {
         String birthday = mBirthDateEditText.getText().toString();
         if(!SystemUtils.validateBirthday(birthday)) {
             String errMsg = getResources().getString(R.string.birthday_not_valid);
-            String yearFormat = getResources().getString(R.string.year_format);
+            String yearFormat = DATE_FORMAT;
             StringBuilder sb = new StringBuilder();
             sb.append(errMsg);
             sb.append(" ");

@@ -31,6 +31,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 import static java.lang.Integer.parseInt;
@@ -111,11 +112,12 @@ public class SystemUtils {
             return false;
         }
 
-        // Validate year
-        if(tokens[0].length() != 4) {
+        // Validate day
+        if(tokens[0].length() != 2) {
             return false;
         }
-        if(!tokens[0].matches("[0-9][0-9][0-9][0-9]")) {
+
+        if(!tokens[0].matches("[0-9]{2}")) {
             return false;
         }
 
@@ -123,20 +125,21 @@ public class SystemUtils {
         if(tokens[1].length() != 2) {
             return false;
         }
-        if(!tokens[1].matches("[0-9][0-9]")) {
+        if(!tokens[1].matches("[0-9]{2}")) {
             return false;
         }
 
-        // Validate day
-        if(tokens[2].length() != 2) {
+        // Validate year
+        if(tokens[2].length() != 4) {
             return false;
         }
-        if(!tokens[2].matches("[0-9][0-9]")) {
+
+        if(!tokens[2].matches("[0-9]{4}")) {
             return false;
         }
 
         String date = tokens[0]+"-"+tokens[1]+"-"+tokens[2];
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         try {
             dateFormat.setLenient(false);
             dateFormat.parse(date);
@@ -205,17 +208,17 @@ public class SystemUtils {
             return new AgeData();
         }
 
-        int birthYear = parseInt(birthTokens[0]);
+        int birthDay = parseInt(birthTokens[0]);
         int birthMonth = parseInt(birthTokens[1]);
-        int birthDay = parseInt(birthTokens[2]);
+        int birthYear = parseInt(birthTokens[2]);
 
         String today = SystemUtils.getTodaysDate();
 
         String[] nowTokens = today.split("-");
 
-        int nowYear = parseInt(nowTokens[0]);
+        int nowDay = parseInt(nowTokens[0]);
         int nowMonth = parseInt(nowTokens[1]);
-        int nowDay = parseInt(nowTokens[2]);
+        int nowYear = parseInt(nowTokens[2]);
 
         int years = nowYear - birthYear;
 

@@ -40,6 +40,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
@@ -79,7 +80,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
                 String birthdate = mROD.getBirthdate();
                 if (!SystemUtils.validateBirthday(birthdate)) {
                     intent = new Intent(getContext(), SimpleTextDialog.class);
-                    intent.putExtra(EXTRA_DIALOG_MESSAGE, getString(R.string.enter_birthdate));
+                    String message = String.format(getString(R.string.enter_birthdate), DATE_FORMAT);
+                    intent.putExtra(EXTRA_DIALOG_MESSAGE, message);
                     intent.putExtra(EXTRA_DIALOG_SET_CANCELLABLE, true);
                     startActivityForResult(intent, REQUEST_BIRTHDATE);
                 }
@@ -191,7 +193,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         String birthdate = intent.getStringExtra(EXTRA_DIALOG_INPUT_TEXT);
         if (!SystemUtils.validateBirthday(birthdate)) {
             intent = new Intent(getContext(), SimpleTextDialog.class);
-            intent.putExtra(EXTRA_DIALOG_MESSAGE, getString(R.string.enter_valid_birthdate));
+            String message = String.format(getString(R.string.enter_valid_birthdate), DATE_FORMAT);
+            intent.putExtra(EXTRA_DIALOG_MESSAGE, message);
             intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, birthdate);
             intent.putExtra(EXTRA_DIALOG_SET_CANCELLABLE, true);
             startActivityForResult(intent, REQUEST_BIRTHDATE);

@@ -1,7 +1,8 @@
 package com.intelliviz.retirementhelper.util;
 
 /**
- * Created by edm on 4/13/2017.
+ * Class for constant values.
+ * Created by Ed Muhlestein on 4/13/2017.
  */
 
 public class RetirementConstants {
@@ -24,7 +25,7 @@ public class RetirementConstants {
     public static final int MILESTONE_AGE_DELETE = 1;
 
 
-    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
 
     // principle reduction mode
     public static final int WITHDRAW_MODE_AMOUNT = 1; // dollar amount
@@ -66,6 +67,4 @@ public class RetirementConstants {
     public static final String EXTRA_DB_EXTRA_DATA = "db extra data";
     public static final String EXTRA_DB_ROWS_UPDATED = "rows updated";
     public static final String EXTRA_DB_ID = "db id";
-
-    public static final String DIALOG_BIRTHDATE = "DialogBirthdate";
 }

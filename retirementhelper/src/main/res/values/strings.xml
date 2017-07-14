@@ -1,22 +1,47 @@
 <resources>
-    <string name="app_name">RetirementHelper</string>
-    <string name="login_string">Login</string>
-    <string name="new_user_label">New User</string>
-    <string name="forgot_password">Forgot Password</string>
-    <string name="resgistration_name">Name</string>
-    <string name="registration_birthdate">Birthdate</string>
-    <string name="email_hint">Email Address</string>
-    <string name="password_hint">Password</string>
-    <string name="reenter_password_hint">Reenter Password</string>
-    <string name="register">Register</string>
+<string name="app_name">RetirementHelper</string>
+    <string name="retirement_options">Retirement Options</string>
+    <string name="start_age">Start Age:</string>
+    <string name="end_age">End Age:</string>
+    <string name="withdraw_amount">Withdraw Amount:</string>
+    <string name="withdraw_percentage">Withdraw Percentage:</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
 
-    <string name="drawer_open">Open Drawer</string>
-    <string name="drawer_close">Close Drawer</string>
+    <string name="monthly_amount">Monthly Amount:</string>
+    <string name="start_balance">Start Balance:</string>
+    <string name="final_balance">Final Balance:</string>
+    <string name="length_of_retirement">Length of retirement:</string>
+    <string name="funds_will_last">Funds will last:</string>
+    <string name="personal_info">Personal Info</string>
+    <string name="birthday_year_format">Birthdate (dd-MM-yyyy)</string>
 
-    <string name="empty_list">LIST IS EMPTY</string>
+    <string name="retirement_helper">Retirement Helper</string>
+    <string name="register_new_user">Register New User</string>
+    <string name="no_text">No</string>
+    <string name="yes_text">Yes</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="name">Name: </string>
+    <string name="minimum_age">Minimum Age:</string>
+
+    <string name="monthly_benefit">Monthly Benefit:</string>
+    <string name="save_income_source">Save Income Source</string>
+    <string name="name_of_institution">Name of Institution:</string>
+    <string name="balance">Balance:</string>
+    <string name="annual_interest">Annual Interest:</string>
+    <string name="monthly_increase">Monthly Increase:</string>
+    <string name="minimum_withdraw_age">Minimum Withdraw Age:</string>
+    <string name="min_401k_age">59y 6m</string>
+    <string name="penalty_401k">10%</string>
+    <string name="early_withdraw_penalty">Early Withdraw Penalty:</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="monthly_benefit_noc">Monthly Benefit</string>
+    <string name="retirement_age">Retirement Age</string>
+    <string name="current_balance">Current Balance:</string>
+    <string name="full_retirement_age">Full Retirement Age</string>
+    <string name="penalty_amount">Penalty Amount:</string>
+
 
     <string name="savings_account">Savings Account</string>
     <string name="tax_deferred_account">Tax Deferred Account</string>
@@ -29,101 +54,42 @@
         <item>@string/social_security</item>
     </string-array>
 
-    <string name="income_source_view_action">View Details</string>
-    <string name="income_source_edit_action">Edit</string>
-    <string name="income_source_delete_action">Delete</string>
-    <string name="retirement_options">Retirement Options</string>
-    <string name="start_age">Start Age:</string>
-    <string name="end_age">End Age:</string>
-    <string name="withdraw_amount">Withdraw Amount:</string>
-    <string name="withdraw_percentage">Withdraw Percentage:</string>
-    <string name="cancel">Cancel</string>
-    <string name="ok">Ok</string>
-    <string name="dollar_amount">Dollar Amount:</string>
-    <string name="percent_amount">Percent:</string>
-    <string name="retirement_helper">Retirement Helper</string>
-    <string name="register_new_user">Register New User</string>
-    <string name="monthly_amount">Monthly Amount:</string>
-    <string name="monthly_benefit">Monthly Benefit:</string>
-    <string name="monthly_benefit_noc">Monthly Benefit</string>
-    <string name="start_balance">Start Balance:</string>
-    <string name="final_balance">Final Balance:</string>
-    <string name="length_of_retirement">Length of retirement:</string>
-    <string name="funds_will_last">Funds will last:</string>
-    <string name="name_hint">Name:</string>
-    <string name="year_format">(yyyy-MM-dd)</string>
-    <string name="personal_info">Personal Info</string>
-    <string name="name">Name: </string>
-    <string name="birth_date">Birth Date</string>
-    <string name="email">Email: </string>
-    <string name="change_password">Change Password</string>
-    <string name="change_email">Change Email</string>
-    <string name="change_pin">Change PIN</string>
-    <string name="enter_your_pin">Enter your PIN</string>
-    <string name="pin_1">1</string>
-    <string name="pin_2">2</string>
-    <string name="pin_3">3</string>
-    <string name="pin_4">4</string>
-    <string name="pin_5">5</string>
-    <string name="pin_6">6</string>
-    <string name="pin_7">7</string>
-    <string name="pin_8">8</string>
-    <string name="pin_9">9</string>
-    <string name="pin_0">0</string>
-    <string name="pin_null" />
-    <string name="pin_x">x</string>
-    <string name="name_of_institution">Name of Institution:</string>
-    <string name="balance">Balance:</string>
-    <string name="annual_interest">Annual Interest:</string>
-    <string name="monthly_increase">Monthly Increase:</string>
-    <string name="minimum_withdraw_age">Minimum Withdraw Age:</string>
-    <string name="early_withdraw_penalty">Early Withdraw Penalty:</string>
-    <string name="save_income_source">Save Income Source</string>
-    <string name="current_balance">Current Balance:</string>
-    <string name="minimum_age">Minimum Age:</string>
-    <string name="penalty_amount">Penalty Amount:</string>
-    <string-array name="income_source_actions">
-        <item>@string/income_source_edit_action</item>
-        <item>@string/income_source_delete_action</item>
-    </string-array>
-    <string-array name="age_actions">
-        <item>@string/income_source_delete_action</item>
-    </string-array>
-    <string name="penalty_applies">penalty applies before minimum age is reached.</string>
-    <string name="insufficient_funds">You do not have sufficient funds for the monthly amount desired.</string>
-    <string name="full_retirement_age">Full Retirement Age</string>
-
-
-    <string name="signed_in_fmt">Signed in as: %s</string>
-    <string name="birthday_not_valid">Birthday is not valid</string>
-    <string name="birthday_year_format">Birthdate (yyyy-MM-dd)</string>
-    <string name="summary_screen_subtitle">Monthly Benefit Summary</string>
-    <string name="income_source_subtitle">Income Source Summary</string>
-    <string name="milestone_age_subtitle">Retirement Milestone Ages</string>
-    <string name="retirement_age">Retirement Age</string>
-    <string name="home">Home</string>
-    <string name="income">Income</string>
-    <string name="add_income_source">Add Income Source</string>
-    <string name="sign_in">Sign In</string>
-    <string name="enter_birthdate">Please enter your birth date (yyyy-MM-dd).</string>
-    <string name="add_income_source_message">Please add some income sources on the income source screen</string>
-    <string name="dismiss">Dismiss</string>
-    <string name="enter_valid_birthdate">Please enter a valid birth date (yyyy-MM-dd).</string>
-    <string name="birthdate_format">Format (yyyy-MM-dd)</string>
-    <string name="add_age">Add a retirement age.</string>
-    <string name="invalid_age">Invalid age. Age cannot be less than your current age:</string>
-    <string name="no_text">No</string>
-    <string name="yes_text">Yes</string>
-    <string name="test_test">a test message</string>
-    <string name="delete_age">Delete retirement age?</string>
-    <string name="testtest">test</string>
-    <string name="select_income_source_type">Select an income source type</string>
-    <string name="min_401k_age">59y 6m</string>
-    <string name="penalty_401k">10%</string>
     <string name="age_not_valid">Age is not valid</string>
     <string name="balance_not_valid">Balance value is not valid</string>
     <string name="interest_not_valid">Interest value is not valid</string>
     <string name="value_not_valid">Monthly increase value is not valid</string>
+
+    <string name="empty_list">LIST IS EMPTY</string>
+    <string name="add_income_source">Add Income Source</string>
+
+    <string name="income_source_subtitle">Income Source Summary</string>
+    <string name="summary_screen_subtitle">Monthly Benefit Summary</string>
+    <string name="milestone_age_subtitle">Retirement Milestone Ages</string>
     <string name="delete_income_source">Delete income source?</string>
 
+    <string name="income_source_view_action">View Details</string>
+    <string name="income_source_edit_action">Edit</string>
+    <string name="income_source_delete_action">Delete</string>
+
+    <string-array name="income_source_actions">
+        <item>@string/income_source_edit_action</item>
+        <item>@string/income_source_delete_action</item>
+    </string-array>
+
+    <string name="add_age">Add a retirement age.</string>
+    <string name="delete_age">Delete retirement age?</string>
+    <string name="invalid_age">Invalid age. Age cannot be less than your current age:</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="birthday_not_valid">Birthday is not valid</string>
+    <string-array name="age_actions">
+        <item>@string/income_source_delete_action</item>
+    </string-array>
+
+    <string name="dollar_amount">Dollar Amount:</string>
+    <string name="percent_amount">Percent:</string>
+    <string name="sign_in">Sign In</string>
+
+    <string name="enter_birthdate">Please enter your birth date (%s).</string>
+    <string name="add_income_source_message">Please add some income sources on the income source screen</string>
+    <string name="enter_valid_birthdate">Please enter a valid birth date (%s).</string>
 </resources>
