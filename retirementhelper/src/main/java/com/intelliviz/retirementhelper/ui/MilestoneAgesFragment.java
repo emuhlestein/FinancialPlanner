@@ -45,12 +45,10 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESONTE_AGE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESTONEAGE_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_MILESTONE_AGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_DELETE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.MILESTONE_AGE_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ACTION_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ADD_AGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
@@ -186,18 +184,13 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
     }
 
     private void onHandleAction(Intent resultIntent) {
-        int action = resultIntent.getIntExtra(EXTRA_MILESONTE_AGE_ACTION, -1);
+        int action = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
 
-        switch(action) {
-            case MILESTONE_AGE_EDIT:
-                mSelectedAge = null;
-                break;
-            case MILESTONE_AGE_DELETE:
-                Intent intent = new Intent(getContext(), YesNoDialog.class);
-                String message = getString(R.string.delete_age);
-                intent.putExtra(EXTRA_DIALOG_MESSAGE, message);
-                startActivityForResult(intent, REQUEST_YES_NO);
-                break;
+        if (action == 0) {
+            Intent intent = new Intent(getContext(), YesNoDialog.class);
+            String message = getString(R.string.delete_age);
+            intent.putExtra(EXTRA_DIALOG_MESSAGE, message);
+            startActivityForResult(intent, REQUEST_YES_NO);
         }
     }
 
