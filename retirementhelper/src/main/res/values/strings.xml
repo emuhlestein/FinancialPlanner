@@ -99,6 +99,7 @@
     <string name="birthday_year_format">Birthdate (yyyy-MM-dd)</string>
     <string name="summary_screen_subtitle">Monthly Benefit Summary</string>
     <string name="income_source_subtitle">Income Source Summary</string>
+    <string name="milestone_age_subtitle">Retirement Milestone Ages</string>
     <string name="retirement_age">Retirement Age</string>
     <string name="home">Home</string>
     <string name="income">Income</string>
