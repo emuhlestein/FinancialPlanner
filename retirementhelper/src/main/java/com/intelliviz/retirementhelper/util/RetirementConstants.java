@@ -45,6 +45,7 @@ public class RetirementConstants {
     public static final String EXTRA_DIALOG_INPUT_TEXT = "dialog input text";
     public static final String EXTRA_DIALOG_SET_CANCELLABLE = "dialog set cancellable";
     public static final String EXTRA_SELECTED_MENU_ITEM = "menu item";
+    public static final String EXTRA_MENU_ITEM_LIST = "menu item list";
 
     public static final int REQUEST_RETIRE_OPTIONS = 0;
     public static final int REQUEST_PERSONAL_INFO = 1;

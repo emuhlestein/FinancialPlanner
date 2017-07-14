@@ -42,6 +42,7 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAge
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESONTE_AGE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESTONEAGE_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_MILESTONE_AGE;
@@ -171,6 +172,8 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
     public void onSelectMilestoneAge(MilestoneAgeData age) {
         mSelectedAge = age;
         Intent intent = new Intent(getContext(), ListMenuActivity.class);
+        String[] incomeActions = getResources().getStringArray(R.array.age_actions);
+        intent.putExtra(EXTRA_MENU_ITEM_LIST, incomeActions);
         startActivityForResult(intent, REQUEST_ACTION_MENU);
     }
 

@@ -14,6 +14,7 @@ import com.intelliviz.retirementhelper.R;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
 
 public class ListMenuActivity extends AppCompatActivity {
@@ -26,8 +27,9 @@ public class ListMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_menu);
         ButterKnife.bind(this);
 
-        final String[] incomeActions = getResources().getStringArray(R.array.age_actions);
-        ArrayAdapter adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, incomeActions);
+        Intent intent = getIntent();
+        String[] actions = intent.getStringArrayExtra(EXTRA_MENU_ITEM_LIST);
+        ArrayAdapter adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, actions);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
