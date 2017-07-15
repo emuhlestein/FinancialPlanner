@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.IncomeType;
@@ -66,6 +67,9 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
 
     @Bind(R.id.current_balance_text_view)
     TextView mCurrentBalanceTextView;
+
+    @Bind(R.id.adView)
+    com.google.android.gms.ads.AdView mBannerAdd;
 
     private BroadcastReceiver mRetirementOptionsReceiver = new BroadcastReceiver() {
         @Override
@@ -115,6 +119,9 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_summary, container, false);
         ButterKnife.bind(this, view);
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mBannerAdd.loadAd(adRequest);
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();

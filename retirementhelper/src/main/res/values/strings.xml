@@ -96,4 +96,6 @@
     <string name="savings_subtitle">Savings</string>
     <string name="penalty_min_age_message">penalty applies before minimum age is reached.</string>
     <string name="insufficient_funds_message">You do not have sufficient funds for the monthly amount desired.</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 </resources>
