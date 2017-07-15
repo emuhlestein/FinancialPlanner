@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,19 +39,37 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 
+/**
+ * Fragment used for viewing tax deferred income sources.
+ *
+ * @author Ed Muhlestein
+ */
 public class ViewTaxDeferredIncomeFragment extends Fragment implements SelectionMilestoneListener {
     public static final String VIEW_TAXDEF_INCOME_FRAG_TAG = "view taxdef income frag tag";
     private TaxDeferredIncomeData mTDID;
     private RetirementOptionsData mROD;
     private SummaryMilestoneAdapter mMilestoneAdapter;
 
-    @Bind(R.id.name_text_view) TextView mIncomeSourceName;
-    @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
-    @Bind(R.id.monthly_increase_text_view) TextView mMonthlyIncrease;
-    @Bind(R.id.current_balance_text_view) TextView mCurrentBalance;
-    @Bind(R.id.minimum_age_text_view) TextView mMinimumAge;
-    @Bind(R.id.penalty_amount_text_view) TextView mPenaltyAmount;
-    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
+    @Bind(R.id.name_text_view)
+    TextView mIncomeSourceName;
+
+    @Bind(R.id.annual_interest_text_view)
+    TextView mAnnualInterest;
+
+    @Bind(R.id.monthly_increase_text_view)
+    TextView mMonthlyIncrease;
+
+    @Bind(R.id.current_balance_text_view)
+    TextView mCurrentBalance;
+
+    @Bind(R.id.minimum_age_text_view)
+    TextView mMinimumAge;
+
+    @Bind(R.id.penalty_amount_text_view)
+    TextView mPenaltyAmount;
+
+    @Bind(R.id.recyclerview)
+    RecyclerView mRecyclerView;
 
     private BroadcastReceiver mRetirementOptionsReceiver = new BroadcastReceiver() {
         @Override
@@ -127,13 +144,15 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
 
         mIncomeSourceName.setText(mTDID.getName());
         String subTitle = SystemUtils.getIncomeSourceTypeString(getContext(), mTDID.getType());
-        SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), subTitle);
-        // TODO deal with % sign here and below
-        mAnnualInterest.setText(mTDID.getInterestRate()+"%");
-        // TODO getMonthAddition vs getMonthlyIncrease in SID - spelling consistency
+        SystemUtils.setToolbarSubtitle(getActivity(), subTitle);
+
+        String interest = mTDID.getInterestRate()+"%";
+        mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(SystemUtils.getFormattedCurrency(mTDID.getMonthAddition()));
         mMinimumAge.setText(mTDID.getMinimumAge());
-        mPenaltyAmount.setText(mTDID.getPenalty() +"%");
+
+        String penalty = mTDID.getPenalty() +"%";
+        mPenaltyAmount.setText(penalty);
 
         List<BalanceData> bd = mTDID.getBalanceData();
         String formattedAmount = "$0.00";

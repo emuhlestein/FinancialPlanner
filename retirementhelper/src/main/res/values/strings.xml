@@ -42,7 +42,6 @@
     <string name="full_retirement_age">Full Retirement Age</string>
     <string name="penalty_amount">Penalty Amount:</string>
 
-
     <string name="savings_account">Savings Account</string>
     <string name="tax_deferred_account">Tax Deferred Account</string>
     <string name="private_pension">Private Pension</string>
@@ -92,4 +91,8 @@
     <string name="enter_birthdate">Please enter your birth date (%s).</string>
     <string name="add_income_source_message">Please add some income sources on the income source screen</string>
     <string name="enter_valid_birthdate">Please enter a valid birth date (%s).</string>
+    <string name="monthly_benefit_not_valid">Monthly benefit value is not valid</string>
+    <string name="savings_subtitle">Savings</string>
+    <string name="penalty_min_age_message">penalty applies before minimum age is reached.</string>
+    <string name="insufficient_funds_message">You do not have sufficient funds for the monthly amount desired.</string>
 </resources>

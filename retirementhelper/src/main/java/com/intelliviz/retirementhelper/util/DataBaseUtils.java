@@ -30,6 +30,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TY
 import static com.intelliviz.retirementhelper.util.RetirementOptionsHelper.getRetirementOptionsData;
 
 /**
+ * Utility class for database access.
  * Created by edm on 4/25/2017.
  */
 
@@ -78,31 +79,13 @@ public class DataBaseUtils {
             listSummaryData.add(new SummaryData(msd.getStartAge().toString(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
         }
         Uri uri = RetirementContract.SummaryEntry.CONTENT_URI;
-        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        context.getContentResolver().delete(uri, null, null);
         for(SummaryData summaryData : listSummaryData) {
             ContentValues values = new ContentValues();
             values.put(RetirementContract.SummaryEntry.COLUMN_AGE, summaryData.getAge().toString());
             values.put(RetirementContract.SummaryEntry.COLUMN_AMOUNT, summaryData.getMonthlyBenefit());
-            uri = context.getContentResolver().insert(RetirementContract.SummaryEntry.CONTENT_URI, values);
+            context.getContentResolver().insert(RetirementContract.SummaryEntry.CONTENT_URI, values);
         }
-    }
-
-    public static List<SummaryData> getSummaryData(Context context) {
-        Uri uri = RetirementContract.SummaryEntry.CONTENT_URI;
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return Collections.emptyList();
-        }
-        List<SummaryData> summaryData = new ArrayList<>();
-        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            int ageIndex = cursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AGE);
-            int amountIndex = cursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AMOUNT);
-            String age = cursor.getString(ageIndex);
-            String amount = cursor.getString(amountIndex);
-            summaryData.add(new SummaryData(age, amount));
-        }
-
-        return summaryData;
     }
 
     public static List<IncomeType> getAllIncomeTypes(Context context) {
@@ -141,15 +124,11 @@ public class DataBaseUtils {
 
         return incomeTypes;
     }
-    //
-    // Methods for personal info table
-    //
-
 
     //
     // Methods for IncomeType table
     //
-    public static String addIncomeType(Context context, IncomeType incomeType) {
+    static String addIncomeType(Context context, IncomeType incomeType) {
         ContentValues values = new ContentValues();
         values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
         values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, incomeType.getType());
@@ -161,7 +140,7 @@ public class DataBaseUtils {
         }
     }
 
-    public static int saveIncomeType(Context context, IncomeType incomeType) {
+    static int saveIncomeType(Context context, IncomeType incomeType) {
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
         values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, incomeType.getType());
@@ -172,13 +151,6 @@ public class DataBaseUtils {
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
         return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
-    }
-
-    public static Cursor getIncomeType(Context context, String name) {
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        String selection = RetirementContract.IncomeTypeEntry.COLUMN_NAME+ " = ?";
-        String[] selectionArgs = {name};
-        return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
     }
 
     private static Cursor getIncomeType(Context context, long incomeId) {
@@ -209,7 +181,11 @@ public class DataBaseUtils {
         values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, amount);
         values.put(RetirementContract.BalanceEntry.COLUMN_DATE, date);
         Uri uri = context.getContentResolver().insert(RetirementContract.BalanceEntry.CONTENT_URI, values);
-        return uri.getLastPathSegment();
+        if(uri == null) {
+            return null;
+        } else {
+            return uri.getLastPathSegment();
+        }
     }
 
     static int saveBalanceData(Context context, long incomeId, double balance, String date) {
@@ -256,13 +232,6 @@ public class DataBaseUtils {
         return bd;
     }
 
-    public static int deleteBalance(Context context, long incomeId) {
-        String sid = String.valueOf(incomeId);
-        Uri uri = RetirementContract.BalanceEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        return context.getContentResolver().delete(uri, null, null);
-    }
-
     static class IncomeDataHelper {
         public String name;
         public int type;
@@ -270,11 +239,5 @@ public class DataBaseUtils {
             this.name = name;
             this.type = type;
         }
-    }
-
-    public static Cursor getMilestones(Context context) {
-        Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
-        String[] projection = null; // we want all columns
-        return context.getContentResolver().query(uri, projection, null, null, null);
     }
 }

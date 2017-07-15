@@ -14,14 +14,33 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+/**
+ * Activity for showing details about a milestone age.
+ *
+ * @author Ed Muhlestein
+ */
 public class MilestoneDetailsDialog extends AppCompatActivity {
-    @Bind(R.id.milestone_age_text_view) TextView mAge;
-    @Bind(R.id.monthly_amount_text_view) TextView mMonthlyAmount;
-    @Bind(R.id.start_balance_text_view) TextView mStartBalance;
-    @Bind(R.id.final_balance_text_view) TextView mFinalBalance;
-    @Bind(R.id.retire_length_text_view) TextView mRetirementDuration;
-    @Bind(R.id.money_last_text_view) TextView mFundsDuration;
-    @Bind(R.id.info_text_view) TextView mInfoText;
+
+    @Bind(R.id.milestone_age_text_view)
+    TextView mAge;
+
+    @Bind(R.id.monthly_amount_text_view)
+    TextView mMonthlyAmount;
+
+    @Bind(R.id.start_balance_text_view)
+    TextView mStartBalance;
+
+    @Bind(R.id.final_balance_text_view)
+    TextView mFinalBalance;
+
+    @Bind(R.id.retire_length_text_view)
+    TextView mRetirementDuration;
+
+    @Bind(R.id.money_last_text_view)
+    TextView mFundsDuration;
+
+    @Bind(R.id.info_text_view)
+    TextView mInfoText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +61,7 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
             sb.append("*");
             sb.append(msd.getPenaltyAmount());
             sb.append("% ");
-            sb.append("penalty applies before minimum age is reached.");
+            sb.append(getString(R.string.penalty_min_age_message));
 
             double monthlyAmount = msd.getMonthlyBenefit();
             double monthlyPenalty = monthlyAmount * penaltyAmount / 100.0;
@@ -59,7 +78,7 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
                 sb.append("\n");
             }
             sb.append("**");
-            sb.append("You do not have sufficient funds for the monthly amount desired.");
+            sb.append(getString(R.string.insufficient_funds_message));
         }
         mInfoText.setText(sb.toString());
         mMonthlyAmount.setText(formattedCurrency);
@@ -71,14 +90,7 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
         int numMonths = msd.getMonthsFundsFillLast();
         int years = numMonths / 12;
         int months = numMonths - years * 12;
-        AgeData age = new AgeData(
-
-
-
-
-
-
-                years, months);
+        AgeData age = new AgeData(years, months);
         mFundsDuration.setText(age.toString());
 
         mStartBalance.setText(SystemUtils.getFormattedCurrency(msd.getStartBalance()));

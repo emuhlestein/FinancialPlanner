@@ -33,6 +33,10 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RET
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
+/**
+ * The summary activity.
+ * @author Ed Muhlestein
+ */
 public class SummaryActivity extends AppCompatActivity {
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";

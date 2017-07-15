@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,15 +28,26 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used for adding and editing government pension income sources.
+ *
+ * @author Ed Muhlestein
  */
 public class EditGovPensionIncomeFragment extends Fragment {
     public static final String EDIT_GOVPENSION_INCOME_FRAG_TAG = "edit govpension income frag tag";
     private GovPensionIncomeData mGPID;
-    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
-    @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
-    @Bind(R.id.min_age_text) EditText mMinAge;
-    @Bind(R.id.monthly_benefit_text) EditText mMonthlyBenefit;
+
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+
+    @Bind(R.id.name_edit_text)
+    EditText mIncomeSourceName;
+
+    @Bind(R.id.min_age_text)
+    EditText mMinAge;
+
+    @Bind(R.id.monthly_benefit_text)
+    EditText mMonthlyBenefit;
+
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
         getActivity().finish();
@@ -108,11 +117,7 @@ public class EditGovPensionIncomeFragment extends Fragment {
 
         int type = mGPID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
-
-        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (ab != null) {
-            ab.setSubtitle(incomeSourceTypeString);
-        }
+        SystemUtils.setToolbarSubtitle(getActivity(), incomeSourceTypeString);
     }
 
     private void updateIncomeSourceData() {
@@ -121,11 +126,11 @@ public class EditGovPensionIncomeFragment extends Fragment {
         String value = mMonthlyBenefit.getText().toString();
         String benefit = getFloatValue(value);
         if(benefit == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Monthly benefit value is not valid " + value, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.monthly_benefit_not_valid) + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
-        // TODO need to validate age
+
         minimumAge = SystemUtils.trimAge(minimumAge);
         AgeData minAge = SystemUtils.parseAgeString(minimumAge);
         if(minAge == null) {

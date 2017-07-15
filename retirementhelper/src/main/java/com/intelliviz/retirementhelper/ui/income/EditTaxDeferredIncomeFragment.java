@@ -41,13 +41,27 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     public static final String EDIT_TAXDEF_INCOME_FRAG_TAG = "edit taxdef income frag tag";
     private TaxDeferredIncomeData mTDI;
 
-    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
-    @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
-    @Bind(R.id.balance_text) EditText mBalance;
-    @Bind(R.id.annual_interest_text) EditText mAnnualInterest;
-    @Bind(R.id.monthly_increase_text) EditText mMonthlyIncrease;
-    @Bind(R.id.penalty_age_text) EditText mPenaltyAge;
-    @Bind(R.id.penalty_amount_text) EditText mPenaltyAmount;
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+
+    @Bind(R.id.name_edit_text)
+    EditText mIncomeSourceName;
+
+    @Bind(R.id.balance_text)
+    EditText mBalance;
+
+    @Bind(R.id.annual_interest_text)
+    EditText mAnnualInterest;
+
+    @Bind(R.id.monthly_increase_text)
+    EditText mMonthlyIncrease;
+
+    @Bind(R.id.penalty_age_text)
+    EditText mPenaltyAge;
+
+    @Bind(R.id.penalty_amount_text)
+    EditText mPenaltyAmount;
+
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
         getActivity().finish();
@@ -177,14 +191,10 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
             return;
         }
 
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setSubtitle(SystemUtils.getIncomeSourceTypeString(getContext(), RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
-        }
-
         String incomeSourceName = mTDI.getName();
         int type = mTDI.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
+        SystemUtils.setToolbarSubtitle(getActivity(), incomeSourceTypeString);
 
         String balanceString;
         List<BalanceData> bd = mTDI.getBalanceData();

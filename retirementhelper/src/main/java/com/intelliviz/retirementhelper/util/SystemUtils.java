@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.util;
 
+import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -150,10 +151,12 @@ public class SystemUtils {
         return true;
     }
 
-    public static void setToolbarSubtitle(AppCompatActivity activity, String subtitle) {
-        ActionBar actionBar = activity.getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setSubtitle(subtitle);
+    public static void setToolbarSubtitle(Activity activity, String subtitle) {
+        if(activity instanceof AppCompatActivity) {
+            ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
+            if(actionBar != null) {
+                actionBar.setSubtitle(subtitle);
+            }
         }
     }
 

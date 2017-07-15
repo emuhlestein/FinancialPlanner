@@ -49,6 +49,10 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIA
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
 
+/**
+ * The summary fragment.
+ * @author Ed Muhlestein
+ */
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
     private static final String KEY_ROD = "keyRod";
     private RetirementOptionsData mROD;

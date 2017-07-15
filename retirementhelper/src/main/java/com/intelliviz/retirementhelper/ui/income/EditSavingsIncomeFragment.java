@@ -39,12 +39,25 @@ public class EditSavingsIncomeFragment extends Fragment {
     public static final String EDIT_SAVINGS_INCOME_FRAG_TAG = "edit savings income frag tag";
     private static final String EXTRA_INTENT = "extra intent";
     private SavingsIncomeData mSID;
-    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
-    @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
-    @Bind(R.id.balance_text) EditText mBalance;
-    @Bind(R.id.annual_interest_text) EditText mAnnualInterest;
-    @Bind(R.id.monthly_increase_text) EditText mMonthlyIncrease;
-    @Bind(R.id.add_income_source_button) Button mAddIncomeSource;
+
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+
+    @Bind(R.id.name_edit_text)
+    EditText mIncomeSourceName;
+
+    @Bind(R.id.balance_text)
+    EditText mBalance;
+
+    @Bind(R.id.annual_interest_text)
+    EditText mAnnualInterest;
+
+    @Bind(R.id.monthly_increase_text)
+    EditText mMonthlyIncrease;
+
+    @Bind(R.id.add_income_source_button)
+    Button mAddIncomeSource;
+
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
         getActivity().finish();
@@ -82,8 +95,8 @@ public class EditSavingsIncomeFragment extends Fragment {
 
         ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
 
-        if(mSID.getId() == -1) {
-            ab.setSubtitle("Savings");
+        if(ab != null && mSID != null && mSID.getId() == -1) {
+            ab.setSubtitle(getString(R.string.savings_subtitle));
         } else {
             updateUI();
         }
@@ -128,7 +141,8 @@ public class EditSavingsIncomeFragment extends Fragment {
                     String interest = textView.getText().toString();
                     interest = SystemUtils.getFloatValue(interest);
                     if(interest != null) {
-                        mAnnualInterest.setText(interest + "%");
+                        interest += "%";
+                        mAnnualInterest.setText(interest);
                     } else {
                         mAnnualInterest.setText("");
                     }
@@ -140,14 +154,14 @@ public class EditSavingsIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
-        if(mSID.getId() == -1) {
+        if(mSID == null || mSID.getId() == -1) {
             return;
         }
 
         String incomeSourceName = mSID.getName();
         int type = mSID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
-        SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), incomeSourceTypeString);
+        SystemUtils.setToolbarSubtitle(getActivity(), incomeSourceTypeString);
 
         String balanceString;
         List<BalanceData> bd =  mSID.getBalanceDataList();
@@ -174,17 +188,18 @@ public class EditSavingsIncomeFragment extends Fragment {
             return;
         }
 
-        String interest = mAnnualInterest.getText().toString();
-        interest = SystemUtils.getFloatValue(interest);
+        String value = mAnnualInterest.getText().toString();
+        String interest = SystemUtils.getFloatValue(value);
         if(interest == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout,  getString(R.string.interest_not_valid) + " " + interest, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout,  getString(R.string.interest_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
 
-        String monthlyIncrease = SystemUtils.getFloatValue(mMonthlyIncrease.getText().toString());
+        value = mMonthlyIncrease.getText().toString();
+        String monthlyIncrease = SystemUtils.getFloatValue(value);
         if(monthlyIncrease == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + monthlyIncrease, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }

@@ -4,8 +4,6 @@ package com.intelliviz.retirementhelper.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,7 +22,9 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_AC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Activity for providing menu.
+ *
+ * @author Ed Muhlestein
  */
 public class IncomeSourceListMenuFragment extends AppCompatActivity {
     private static final int MENU_EDIT = 0;
@@ -35,7 +35,6 @@ public class IncomeSourceListMenuFragment extends AppCompatActivity {
     @Bind(R.id.list_view)
     ListView mListView;
 
-    @NonNull
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

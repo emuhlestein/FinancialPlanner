@@ -73,10 +73,6 @@
             android:name=".ui.YesNoDialog"
             android:theme="@style/RetireDialog" />
 
-        <activity
-            android:name=".ui.BirthdateDialog"
-            android:theme="@style/RetireDialog" />
-
         <service
             android:name=".services.SummaryDataIntentService"
             android:exported="false" />

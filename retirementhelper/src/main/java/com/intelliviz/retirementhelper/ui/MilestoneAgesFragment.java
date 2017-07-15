@@ -54,6 +54,11 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_A
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getAge;
 
+/**
+ * Fragment for milestone retirement ages.
+ *
+ * @author Ed Muhlestein
+ */
 public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAgeListener {
     private MilestoneAgeData mSelectedAge = null;
     private MilestoneAgeAdapter mAdapter = null;

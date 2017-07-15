@@ -22,6 +22,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_
 import static java.lang.Double.parseDouble;
 
 /**
+ * Utility class.
  * Created by edm on 5/23/2017.
  */
 
@@ -124,21 +125,6 @@ public class BenefitHelper {
         return milestones;
     }
 
-    /**
-     * Get the number of months the principle will last given the withdraw rate.
-     */
-    private static int getNumMonthsByWidthdrawInterest(double balance, double interest, double withdrawInterest, double penalty) {
-        double newBalance = balance;
-        double monthlyAmount = getMonthlyAmountFromBalance(newBalance, withdrawInterest);
-        int numMonths = 0;
-        while(newBalance > 0) {
-            newBalance = getMonthlyAmountFromBalance(newBalance, interest);
-            newBalance = newBalance - monthlyAmount;
-            numMonths++;
-        }
-        return numMonths;
-    }
-
     private static List<MilestoneData> getMilestonesFromTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid,
                                                                           RetirementOptionsData rod) {
         double startBalance = tdid.getBalance();
@@ -199,15 +185,10 @@ public class BenefitHelper {
             return milestones;
         }
 
-        //AgeData minimumAge = new AgeData(gpid.getStartAge());
-
         String birthDate = rod.getBirthdate();
-
         int birthYear = SystemUtils.getBirthYear(birthDate);
-        AgeData fullAge = GovPensionHelper.getFullRetirementAge(birthYear);
         double monthlyBenefit = gpid.getMonthlyBenefit();
 
-        // TODO put this in a global place
         AgeData minimumAge = new AgeData(62, 0);
 
         MilestoneData milestone;

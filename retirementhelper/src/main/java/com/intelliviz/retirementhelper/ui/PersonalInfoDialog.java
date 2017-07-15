@@ -23,6 +23,11 @@ import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
 
+/**
+ * Activity for personal information.
+ *
+ * @author Ed Muhlestein
+ */
 public class PersonalInfoDialog extends AppCompatActivity {
     private RetirementOptionsData mROD;
     @Bind(R.id.coordinatorLayout)
@@ -84,9 +89,11 @@ public class PersonalInfoDialog extends AppCompatActivity {
         String displayName = "";
         if (user != null) {
             email = user.getEmail();
+            if(email != null) {
+                email = email.trim();
+            }
             displayName = user.getDisplayName();
         }
-        Intent intent = getIntent();
 
         mNameTextView.setText(displayName);
         mBirthDateEditText.setText(mROD.getBirthdate());
@@ -99,18 +106,13 @@ public class PersonalInfoDialog extends AppCompatActivity {
     }
 
     private void sendData() {
-        String name = mNameTextView.getText().toString();
         String birthday = mBirthDateEditText.getText().toString();
         if(!SystemUtils.validateBirthday(birthday)) {
+            String message;
             String errMsg = getResources().getString(R.string.birthday_not_valid);
-            String yearFormat = DATE_FORMAT;
-            StringBuilder sb = new StringBuilder();
-            sb.append(errMsg);
-            sb.append(" ");
-            sb.append(yearFormat);
-            sb.append(".");
+            message = errMsg + " " + DATE_FORMAT + ".";
 
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, sb.toString(), Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }

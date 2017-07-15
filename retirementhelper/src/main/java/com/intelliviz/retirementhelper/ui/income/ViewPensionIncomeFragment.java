@@ -4,8 +4,6 @@ package com.intelliviz.retirementhelper.ui.income;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +20,22 @@ import static android.content.Intent.EXTRA_INTENT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used for viewing pension income sources.
+ *
+ * @author Ed Muhlestein
  */
 public class ViewPensionIncomeFragment extends Fragment {
     public static final String VIEW_PENSION_INCOME_FRAG_TAG = "view pension income frag tag";
     private PensionIncomeData mPID;
 
-    @Bind(R.id.name_text_view) TextView mIncomeSourceName;
-    @Bind(R.id.minimum_age_text_view) TextView mStartAge;
-    @Bind(R.id.monthly_benefit_text_view) TextView mMonthlyBenefit;
+    @Bind(R.id.name_text_view)
+    TextView mIncomeSourceName;
+
+    @Bind(R.id.minimum_age_text_view)
+    TextView mStartAge;
+
+    @Bind(R.id.monthly_benefit_text_view)
+    TextView mMonthlyBenefit;
 
     public static ViewPensionIncomeFragment newInstance(Intent intent) {
         ViewPensionIncomeFragment fragment = new ViewPensionIncomeFragment();
@@ -66,6 +71,9 @@ public class ViewPensionIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
+        if(mPID == null) {
+            return;
+        }
 
         mIncomeSourceName.setText(mPID.getName());
         mStartAge.setText(mPID.getStartAge());
@@ -75,10 +83,6 @@ public class ViewPensionIncomeFragment extends Fragment {
 
         int type = mPID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
-
-        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (ab != null) {
-            ab.setSubtitle(incomeSourceTypeString);
-        }
+        SystemUtils.setToolbarSubtitle(getActivity(), incomeSourceTypeString);
     }
 }

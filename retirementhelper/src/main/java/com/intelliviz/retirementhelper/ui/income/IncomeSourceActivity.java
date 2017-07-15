@@ -26,7 +26,9 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_P
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 public class IncomeSourceActivity extends AppCompatActivity {
-    @Bind(R.id.income_source_toolbar) Toolbar mToolbar;
+
+    @Bind(R.id.income_source_toolbar)
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

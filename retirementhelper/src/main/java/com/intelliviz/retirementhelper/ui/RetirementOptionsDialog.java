@@ -25,7 +25,7 @@ import butterknife.OnClick;
 
 /**
  * Dialog for gathering user-selected retirement options.
- * Created by edm on 5/15/2017.
+ * Created by Ed Muhlestein on 5/15/2017.
  */
 
 public class RetirementOptionsDialog extends AppCompatActivity implements View.OnClickListener{
@@ -34,17 +34,34 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     private static final String DEFAULT_WITHDRAW_AMOUNT = "4";
     private RetirementOptionsData mROD;
 
-    @Bind(R.id.end_age_edit_text) EditText mEndAgeEditText;
-    @Bind(R.id.withdraw_amount_button) RadioButton mWithdrawAmountButton;
-    @Bind(R.id.withdraw_percent_button) RadioButton mWithdrawPercentButton;
-    @Bind(R.id.amount_text_view) TextView mAmountTextView;
-    @Bind(R.id.withdraw_mode_radio_group) RadioGroup mWithdrawModeRadioGroup;
-    @Bind(R.id.withdraw_percent_edit_text) EditText mWithdrawAmount;
-    @Bind(R.id.retirement_parms_ok) Button mOk;
-    @Bind(R.id.retirement_parms_cancel) Button mCancel;
+    @Bind(R.id.end_age_edit_text)
+    EditText mEndAgeEditText;
+
+    @Bind(R.id.withdraw_amount_button)
+    RadioButton mWithdrawAmountButton;
+
+    @Bind(R.id.withdraw_percent_button)
+    RadioButton mWithdrawPercentButton;
+
+    @Bind(R.id.amount_text_view)
+    TextView mAmountTextView;
+
+    @Bind(R.id.withdraw_mode_radio_group)
+    RadioGroup mWithdrawModeRadioGroup;
+
+    @Bind(R.id.withdraw_percent_edit_text)
+    EditText mWithdrawAmount;
+
+    @Bind(R.id.retirement_parms_ok)
+    Button mOk;
+
+    @Bind(R.id.retirement_parms_cancel)
+    Button mCancel;
+
     @OnClick(R.id.retirement_parms_ok) void onClickOk() {
         sendData();
     }
+
     @OnClick(R.id.retirement_parms_cancel) void onClickCancel() {
         Intent returnIntent = new Intent();
         setResult(Activity.RESULT_CANCELED, returnIntent);

@@ -25,6 +25,10 @@ import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
 
+/**
+ * The start activity
+ * @author Ed Muhlestein
+ */
 public class StartActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = StartActivity.class.getSimpleName();

@@ -33,20 +33,30 @@ import static android.content.Intent.EXTRA_INTENT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used for viewing government pension income sources.
+ *
+ * @author Ed Muhlestein
  */
 public class ViewGovPensionIncomeFragment extends Fragment implements SelectionMilestoneListener {
 
     public static final String VIEW_GOV_PENSION_INCOME_FRAG_TAG = "view gov pension income frag tag";
     private GovPensionIncomeData mGPID;
     private RetirementOptionsData mROD;
-    private SSMilestoneAdapter mMilestoneAdapter;
 
-    @Bind(R.id.name_text_view) TextView mIncomeSourceName;
-    @Bind(R.id.min_age_text_view) TextView mMinAge;
-    @Bind(R.id.full_age_text_view) TextView mFullAge;
-    @Bind(R.id.monthly_amount_text_view) TextView mMonthlyBenefit;
-    @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
+    @Bind(R.id.name_text_view)
+    TextView mIncomeSourceName;
+
+    @Bind(R.id.min_age_text_view)
+    TextView mMinAge;
+
+    @Bind(R.id.full_age_text_view)
+    TextView mFullAge;
+
+    @Bind(R.id.monthly_amount_text_view)
+    TextView mMonthlyBenefit;
+
+    @Bind(R.id.recyclerview)
+    RecyclerView mRecyclerView;
 
     public static ViewGovPensionIncomeFragment newInstance(Intent intent) {
         ViewGovPensionIncomeFragment fragment = new ViewGovPensionIncomeFragment();
@@ -79,19 +89,22 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
         ButterKnife.bind(this, view);
 
         List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mGPID, mROD);
-        mMilestoneAdapter = new SSMilestoneAdapter(getContext(), milestones, mROD);
+        SSMilestoneAdapter milestoneAdapter = new SSMilestoneAdapter(getContext(), milestones, mROD);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mMilestoneAdapter);
+        mRecyclerView.setAdapter(milestoneAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
                 linearLayoutManager.getOrientation()));
-        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
+        milestoneAdapter.setOnSelectionMilestoneListener(this);
 
         updateUI();
         return view;
     }
 
     private void updateUI() {
+        if(mGPID == null) {
+            return;
+        }
 
         mIncomeSourceName.setText(mGPID.getName());
         mMinAge.setText(mGPID.getStartAge());
@@ -100,8 +113,12 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
         AgeData fullAge = GovPensionHelper.getFullRetirementAge(birthYear);
         mFullAge.setText(fullAge.toString());
 
-        // TODO need to format
-        mMonthlyBenefit.setText(Double.toString(mGPID.getMonthlyBenefit(0)));
+        String formattedValue = SystemUtils.getFormattedCurrency(mGPID.getMonthlyBenefit(0));
+        mMonthlyBenefit.setText(formattedValue);
+
+        int type = mGPID.getType();
+        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
+        SystemUtils.setToolbarSubtitle(getActivity(), incomeSourceTypeString);
     }
 
     @Override

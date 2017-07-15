@@ -18,6 +18,10 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIA
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_SET_CANCELLABLE;
 
+/**
+ * Dialog for gathering simple text.
+ * @author Ed Muhlestein
+ */
 public class SimpleTextDialog extends AppCompatActivity {
     private boolean mSetCancellable;
 

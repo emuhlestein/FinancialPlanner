@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,19 +28,31 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used for adding and editing government pension income sources.
+ *
+ * @author Ed Muhlestein
  */
 public class EditPensionIncomeFragment extends Fragment {
     public static final String EDIT_PENSION_INCOME_FRAG_TAG = "edit pension income frag tag";
     private PensionIncomeData mPID;
-    @Bind(R.id.coordinatorLayout) CoordinatorLayout mCoordinatorLayout;
-    @Bind(R.id.name_edit_text) EditText mIncomeSourceName;
-    @Bind(R.id.age_text) EditText mMinAge;
-    @Bind(R.id.monthly_benefit_text) EditText mMonthlyBenefit;
+
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+
+    @Bind(R.id.name_edit_text)
+    EditText mIncomeSourceName;
+
+    @Bind(R.id.age_text)
+    EditText mMinAge;
+
+    @Bind(R.id.monthly_benefit_text)
+    EditText mMonthlyBenefit;
+
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
         getActivity().finish();
     }
+
     public static EditPensionIncomeFragment newInstance(Intent intent) {
         EditPensionIncomeFragment fragment = new EditPensionIncomeFragment();
         Bundle args = new Bundle();
@@ -60,7 +70,9 @@ public class EditPensionIncomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mPID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            if(intent != null) {
+                mPID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+            }
         }
     }
 
@@ -71,13 +83,8 @@ public class EditPensionIncomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit_pension_income, container, false);
         ButterKnife.bind(this, view);
 
-        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        updateUI();
 
-        if(mPID.getId() == -1) {
-            ab.setSubtitle("Savings");
-        } else {
-            updateUI();
-        }
 
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -98,6 +105,9 @@ public class EditPensionIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
+        if(mPID == null) {
+            return;
+        }
         String name = mPID.getName();
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mPID.getMonthlyBenefit(0));
         String age = mPID.getStartAge();
@@ -108,11 +118,7 @@ public class EditPensionIncomeFragment extends Fragment {
 
         int type = mPID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
-
-        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (ab != null) {
-            ab.setSubtitle(incomeSourceTypeString);
-        }
+        SystemUtils.setToolbarSubtitle(getActivity(), incomeSourceTypeString);
     }
 
     public void updateIncomeSourceData() {

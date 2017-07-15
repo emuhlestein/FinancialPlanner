@@ -1,14 +1,9 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,18 +29,16 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_SAVINGS;
-
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used for viewing savings income sources.
+ *
+ * @author Ed Muhlestein
  */
 public class ViewSavingsIncomeFragment extends Fragment implements SelectionMilestoneListener {
     public static final String VIEW_SAVINGS_INCOME_FRAG_TAG = "view savings income frag tag";
     private static final String EXTRA_INTENT = "extra intent";
     private SavingsIncomeData mSID;
     private RetirementOptionsData mROD;
-    private SummaryMilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
@@ -53,15 +46,6 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
     @Bind(R.id.current_balance_text_view) TextView mCurrentBalance;
     @Bind(R.id.monthly_amount_text_view) TextView mMonthlyAmount;
     @Bind(R.id.recyclerview) RecyclerView mRecyclerView;
-
-    private BroadcastReceiver mRetirementOptionsReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
-            mMilestoneAdapter.update(milestones);
-        }
-    };
 
     public static ViewSavingsIncomeFragment newInstance(Intent intent) {
         ViewSavingsIncomeFragment fragment = new ViewSavingsIncomeFragment();
@@ -96,17 +80,16 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
         View view = inflater.inflate(R.layout.fragment_view_savings_income, container, false);
         ButterKnife.bind(this, view);
         List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
-        mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
+        SummaryMilestoneAdapter milestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mMilestoneAdapter);
+        mRecyclerView.setAdapter(milestoneAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
                 linearLayoutManager.getOrientation()));
-        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
+        milestoneAdapter.setOnSelectionMilestoneListener(this);
 
         setHasOptionsMenu(true);
 
-        //((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
         updateUI();
         return view;
     }
@@ -118,11 +101,13 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
 
         mIncomeSourceName.setText(mSID.getName());
         String subTitle = SystemUtils.getIncomeSourceTypeString(getContext(), mSID.getType());
-        SystemUtils.setToolbarSubtitle((AppCompatActivity)getActivity(), subTitle);
-        mAnnualInterest.setText(mSID.getInterest()+"%");
+        SystemUtils.setToolbarSubtitle(getActivity(), subTitle);
+
+        String interest = mSID.getInterest() + "%";
+        mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(SystemUtils.getFormattedCurrency(mSID.getMonthlyIncrease()));
 
-        List<BalanceData> bd = mSID.getBalanceDataList(); //getBalanceData(getContext(), mIncomeId);
+        List<BalanceData> bd = mSID.getBalanceDataList();
         String formattedAmount = "$0.00";
         if(bd != null && !bd.isEmpty()) {
             formattedAmount = SystemUtils.getFormattedCurrency(bd.get(0).getBalance());
@@ -135,15 +120,6 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
         formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
 
         mMonthlyAmount.setText(formattedAmount);
-    }
-
-    private void registerReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_SAVINGS);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mRetirementOptionsReceiver, filter);
-    }
-
-    private void unregisterReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mRetirementOptionsReceiver);
     }
 
     @Override
