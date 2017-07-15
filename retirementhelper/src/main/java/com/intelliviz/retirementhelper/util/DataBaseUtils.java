@@ -71,7 +71,7 @@ public class DataBaseUtils {
         return ages;
     }
 
-    public static void updateSummaryData(Context context) {
+    static void updateSummaryData(Context context) {
         RetirementOptionsData rod = getRetirementOptionsData(context);
         List<MilestoneData> milestones = getAllMilestones(context, rod);
         List<SummaryData> listSummaryData = new ArrayList<>();

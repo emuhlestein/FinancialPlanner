@@ -12,7 +12,8 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import java.util.List;
 
 /**
- * Created by edm on 6/9/2017.
+ * Utility class for tax deferred income source.
+ * Created by Ed Muhlestein on 6/9/2017.
  */
 
 public class TaxDeferredHelper {
@@ -77,15 +78,13 @@ public class TaxDeferredHelper {
         String sid = String.valueOf(incomeId);
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.BalanceEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
-
-        return numRowsDeleted; // TODO return succeed or fail flag
+        return context.getContentResolver().delete(uri, null, null);
     }
 
     public static TaxDeferredIncomeData getTaxDeferredIncomeData(Context context, long incomeId) {

@@ -21,10 +21,6 @@ public class RetirementConstants {
     public static final int SERVICE_DB_QUERY = 1;
     public static final int SERVICE_DB_UPDATE = 2;
 
-    public static final int MILESTONE_AGE_EDIT = 0;
-    public static final int MILESTONE_AGE_DELETE = 1;
-
-
     public static final String DATE_FORMAT = "dd-MM-yyyy";
 
     // principle reduction mode
@@ -36,7 +32,6 @@ public class RetirementConstants {
 
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
     public static final String EXTRA_BIRTHDATE = "birthdate";
-    public static final String EXTRA_MILESONTE_AGE_ACTION = "milestone age action";
 
     public static final String EXTRA_INCOME_DATA = "extra income data";
     public static final String EXTRA_RETIREOPTIONS_DATA = "extra retire options data";

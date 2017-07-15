@@ -20,7 +20,11 @@ public class RetirementOptionsHelper {
         ContentValues values = new ContentValues();
         values.put(RetirementContract.MilestoneEntry.COLUMN_AGE, age.getUnformattedString());
         Uri uri = context.getContentResolver().insert(RetirementContract.MilestoneEntry.CONTENT_URI, values);
-        return uri.getLastPathSegment();
+        if(uri == null) {
+            return null;
+        } else {
+            return uri.getLastPathSegment();
+        }
     }
 
     public static int deleteAge(Context context, long id) {
@@ -32,7 +36,10 @@ public class RetirementOptionsHelper {
 
     public static RetirementOptionsData getRetirementOptionsData(Context context) {
         PersonalInfoData perid = getPersonalInfoData(context);
-        String birthdate = perid.getBirthdate();
+        String birthdate = "01-01-1970";
+        if(perid != null) {
+            birthdate = perid.getBirthdate();
+        }
 
         Cursor cursor = getRetirementOptions(context);
         if(cursor == null || !cursor.moveToFirst()) {

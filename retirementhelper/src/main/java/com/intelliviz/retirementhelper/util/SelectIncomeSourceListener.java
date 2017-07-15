@@ -1,9 +1,9 @@
 package com.intelliviz.retirementhelper.util;
 
 /**
+ * Income source listener.
  * Created by edm on 4/22/2017.
  */
-
 public interface SelectIncomeSourceListener {
     void onSelectIncomeSource(long id, int incomeSourceType, boolean showMenu);
 }

@@ -19,9 +19,9 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.saveBalanceData
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.saveIncomeType;
 
 /**
- * Created by edm on 6/10/2017.
+ * Utility class for savings.
+ * Created by Ed Muhlestein on 6/10/2017.
  */
-
 public class SavingsHelper {
     public static String addSavingsIncome(Context context, SavingsIncomeData sid) {
         String id = addIncomeType(context, sid);
@@ -34,7 +34,7 @@ public class SavingsHelper {
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD, sid.getMonthlyIncrease());
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST, sid.getInterest());
-        Uri uri = context.getContentResolver().insert(RetirementContract.SavingsIncomeEntry.CONTENT_URI, values);
+        context.getContentResolver().insert(RetirementContract.SavingsIncomeEntry.CONTENT_URI, values);
 
         List<BalanceData> balanceDataList = sid.getBalanceDataList();
         for(BalanceData bd : balanceDataList) {
@@ -61,7 +61,7 @@ public class SavingsHelper {
         return 0;
     }
 
-    public static Cursor getSavingsIncome(Context context, long incomeId) {
+    private static Cursor getSavingsIncome(Context context, long incomeId) {
         String id = String.valueOf(incomeId);
         Uri uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, id);
@@ -97,14 +97,12 @@ public class SavingsHelper {
         String sid = String.valueOf(incomeId);
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.BalanceEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
-
-        return numRowsDeleted; // TODO return succeed or fail flag
+        return context.getContentResolver().delete(uri, null, null);
     }
 }

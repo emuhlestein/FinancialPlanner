@@ -12,6 +12,7 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.getIncomeTypeData;
 
 /**
+ * Utility class for government pensions.
  * Created by edm on 6/12/2017.
  */
 
@@ -53,10 +54,10 @@ public class GovPensionHelper {
 
     /**
      * Get the percent credit per year.
-     * @param birthyear
-     * @return
+     * @param birthyear The birth year.
+     * @return THe delayed credit.
      */
-    public static double getDelayedCredit(int birthyear) {
+    private static double getDelayedCredit(int birthyear) {
         if(birthyear < 1925) {
             return 3;
         } else if(birthyear < 1927) {
@@ -82,7 +83,7 @@ public class GovPensionHelper {
         }
     }
 
-    public static double getSocialSecuretyAdjustment(String birthDate, AgeData startAge) {
+    static double getSocialSecuretyAdjustment(String birthDate, AgeData startAge) {
         int year = SystemUtils.getBirthYear(birthDate);
         AgeData retireAge = getFullRetirementAge(year);
         AgeData diffAge = retireAge.subtract(startAge);
@@ -101,9 +102,7 @@ public class GovPensionHelper {
         } else if(numMonths < 0) {
             // this is delayed retirement; the adjustment is a credit.
             double annualCredit = getDelayedCredit(year);
-            double monthlyCredit = numMonths * (annualCredit / 12.0);
-            return monthlyCredit;
-
+            return numMonths * (annualCredit / 12.0);
         } else {
             return 0; // exact retirement age
         }
@@ -170,14 +169,12 @@ public class GovPensionHelper {
         String sid = String.valueOf(incomeId);
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.BalanceEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
-
-        return numRowsDeleted; // TODO return succeed or fail flag
+        return context.getContentResolver().delete(uri, null, null);
     }
 }

@@ -9,7 +9,8 @@ import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
 /**
- * Created by edm on 6/10/2017.
+ * Utility class for pension.
+ * Created by Ed Muhlestein on 6/10/2017.
  */
 
 public class PensionHelper {
@@ -26,7 +27,11 @@ public class PensionHelper {
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(pid.getMonthlyBenefit(0)));
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_START_AGE, pid.getStartAge());
         Uri uri = context.getContentResolver().insert(RetirementContract.PensionIncomeEntry.CONTENT_URI, values);
-        return uri.getLastPathSegment();
+        if(uri == null) {
+            return null;
+        } else {
+            return uri.getLastPathSegment();
+        }
     }
 
     public static int savePensionData(Context context, PensionIncomeData pid) {
@@ -71,14 +76,12 @@ public class PensionHelper {
         String sid = String.valueOf(incomeId);
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        int numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.PensionIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
+        context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.BalanceEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        numRowsDeleted = context.getContentResolver().delete(uri, null, null);
-
-        return numRowsDeleted; // TODO return succeed or fail flag
+        return context.getContentResolver().delete(uri, null, null);
     }
 }

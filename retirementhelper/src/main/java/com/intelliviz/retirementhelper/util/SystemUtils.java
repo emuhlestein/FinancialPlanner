@@ -15,9 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.data.SummaryData;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.services.SummaryDataIntentService;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
@@ -25,10 +23,9 @@ import com.intelliviz.retirementhelper.widget.WidgetProvider;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
@@ -38,7 +35,8 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_R
 import static java.lang.Integer.parseInt;
 
 /**
- * Created by edm on 4/26/2017.
+ * Utility class.
+ * Created by Ed Muhlestein on 4/26/2017.
  */
 
 public class SystemUtils {
@@ -64,25 +62,11 @@ public class SystemUtils {
     }
 
     public static void updateAppWidget(Context context) {
-        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(context);
-        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(context, rod);
-
-        List<SummaryData> summaryData = getSummaryData(milestones);
         DataBaseUtils.updateSummaryData(context);
-
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         ComponentName appWidget = new ComponentName(context, WidgetProvider.class);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
-
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
-    }
-
-    private static List<SummaryData> getSummaryData(List<MilestoneData> milestoneData) {
-        List<SummaryData> summaryData = new ArrayList<>();
-        for(MilestoneData msd : milestoneData) {
-            summaryData.add(new SummaryData(msd.getStartAge().toString(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
-        }
-        return summaryData;
     }
 
     public static boolean onActivityResultForOptionMenu (Context context, int requestCode, int resultCode, Intent intent) {
@@ -140,7 +124,8 @@ public class SystemUtils {
         }
 
         String date = tokens[0]+"-"+tokens[1]+"-"+tokens[2];
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         try {
             dateFormat.setLenient(false);
             dateFormat.parse(date);
@@ -162,7 +147,7 @@ public class SystemUtils {
 
     public static String getTodaysDate() {
         Date date = Calendar.getInstance().getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat(RetirementConstants.DATE_FORMAT);
+        SimpleDateFormat sdf = new SimpleDateFormat(RetirementConstants.DATE_FORMAT, Locale.US);
         return sdf.format(date);
     }
 
@@ -173,8 +158,7 @@ public class SystemUtils {
         Number number = value;
         double dvalue = number.doubleValue();
         NumberFormat nf = NumberFormat.getCurrencyInstance(java.util.Locale.US);
-        String s = nf.format(dvalue);
-        return s;
+        return nf.format(dvalue);
     }
 
     public static String getFormattedCurrency(String value) {
@@ -186,8 +170,7 @@ public class SystemUtils {
             Number number = nf.parse(value);
             double dvalue = number.doubleValue();
             nf = NumberFormat.getCurrencyInstance(java.util.Locale.US);
-            String s = nf.format(dvalue);
-            return s;
+            return nf.format(dvalue);
         } catch (ParseException e) {
             return null;
         }
@@ -200,9 +183,7 @@ public class SystemUtils {
 
     public static int getBirthYear(String birthdate) {
         String[] birthTokens = birthdate.split("-");
-
-        int birthYear = parseInt(birthTokens[0]);
-        return birthYear;
+        return parseInt(birthTokens[0]);
     }
 
     public static AgeData getAge(String birthdate) {
@@ -251,13 +232,13 @@ public class SystemUtils {
      * The format for age is "Y M", where Y is an integer that is the year, and M
      * is an integer that is the month.
      *
-     * @param age
+     * @param age The age.
      * @return The AgeData;
      */
     // TODO make sure all callers chaeck for invalid age
     public static AgeData parseAgeString(String age) {
         String[] tokens = age.split(" ");
-        int year = 0;
+        int year;
         int month = 0;
         if(tokens.length == 1) {
             try {
