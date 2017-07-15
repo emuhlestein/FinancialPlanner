@@ -44,6 +44,7 @@ public class SavingsHelper {
     }
 
     public static int saveSavingsIncomeData(Context context, SavingsIncomeData sid) {
+        DataBaseUtils.updateIncomeTypeName(context, sid);
         saveIncomeType(context, sid);
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD, sid.getMonthlyIncrease());

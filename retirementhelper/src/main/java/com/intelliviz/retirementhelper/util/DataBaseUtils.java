@@ -153,6 +153,18 @@ public class DataBaseUtils {
         return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
     }
 
+    static int updateIncomeTypeName(Context context, IncomeType incomeType) {
+        ContentValues values  = new ContentValues();
+        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
+
+        String sid = String.valueOf(incomeType.getId());
+        String selectionClause = RetirementContract.IncomeTypeEntry._ID + " = ?";
+        String[] selectionArgs = new String[]{sid};
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
+    }
+
     private static Cursor getIncomeType(Context context, long incomeId) {
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         String selection = RetirementContract.IncomeTypeEntry._ID + " = ?";

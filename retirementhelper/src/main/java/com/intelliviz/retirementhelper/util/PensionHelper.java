@@ -35,6 +35,7 @@ public class PensionHelper {
     }
 
     public static int savePensionData(Context context, PensionIncomeData pid) {
+        DataBaseUtils.updateIncomeTypeName(context, pid);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(pid.getMonthlyBenefit(0)));
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_START_AGE, pid.getStartAge());

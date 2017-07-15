@@ -204,7 +204,7 @@ public class BenefitHelper {
             if(age.isBefore(minimumAge)) {
                 milestone = new MilestoneData(age, null, minimumAge, 0, 0, 0, 0, 0);
             } else {
-                double factor = GovPensionHelper.getSocialSecuretyAdjustment(birthDate, age);
+                double factor = GovPensionHelper.getSocialSecurityAdjustment(birthDate, age);
 
                 double factorAmount = (monthlyBenefit * factor) / 100.0;
                 double adjustedBenefit = monthlyBenefit - factorAmount;

@@ -83,7 +83,7 @@ public class GovPensionHelper {
         }
     }
 
-    static double getSocialSecuretyAdjustment(String birthDate, AgeData startAge) {
+    static double getSocialSecurityAdjustment(String birthDate, AgeData startAge) {
         int year = SystemUtils.getBirthYear(birthDate);
         AgeData retireAge = getFullRetirementAge(year);
         AgeData diffAge = retireAge.subtract(startAge);
@@ -126,6 +126,7 @@ public class GovPensionHelper {
     }
 
     public static int saveGovPensionData(Context context, GovPensionIncomeData gpid) {
+        DataBaseUtils.updateIncomeTypeName(context, gpid);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getMonthlyBenefit()));
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getStartAge());

@@ -46,6 +46,7 @@ public class TaxDeferredHelper {
     }
 
     public static int saveTaxDeferredData(Context context, TaxDeferredIncomeData tdid) {
+        DataBaseUtils.updateIncomeTypeName(context, tdid);
         DataBaseUtils.saveIncomeType(context, tdid);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE, tdid.getMinimumAge());
