@@ -183,7 +183,7 @@ public class SystemUtils {
 
     public static int getBirthYear(String birthdate) {
         String[] birthTokens = birthdate.split("-");
-        return parseInt(birthTokens[0]);
+        return parseInt(birthTokens[2]);
     }
 
     public static AgeData getAge(String birthdate) {
