@@ -113,7 +113,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements SelectionM
         AgeData fullAge = GovPensionHelper.getFullRetirementAge(birthYear);
         mFullAge.setText(fullAge.toString());
 
-        String formattedValue = SystemUtils.getFormattedCurrency(mGPID.getMonthlyBenefit(0));
+        String formattedValue = SystemUtils.getFormattedCurrency(mGPID.getMonthlyBenefit());
         mMonthlyBenefit.setText(formattedValue);
 
         int type = mGPID.getType();

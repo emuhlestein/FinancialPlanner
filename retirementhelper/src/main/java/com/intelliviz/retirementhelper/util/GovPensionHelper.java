@@ -117,7 +117,7 @@ public class GovPensionHelper {
         long incomeId = Long.parseLong(id);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getMonthlyBenefit(0)));
+        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getMonthlyBenefit()));
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getStartAge());
         Uri uri = context.getContentResolver().insert(RetirementContract.GovPensionIncomeEntry.CONTENT_URI, values);
         if (uri == null) {
