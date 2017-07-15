@@ -188,7 +188,9 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
 
     @Override
     public void onSelectMilestone(MilestoneData msd) {
-
+        Intent intent = new Intent(getContext(), MilestoneDetailsDialog.class);
+        intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, msd);
+        startActivity(intent);
     }
 
     private void registerReceiver() {

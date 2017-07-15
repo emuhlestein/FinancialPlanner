@@ -52,6 +52,8 @@ public class BenefitHelper {
             sumStartBalance[i] = 0;
             sumEndBalance[i] = 0;
         }
+
+        int numMonthsFundsWillLast = 0;
         List<MilestoneData> saveMilestones = null;
         for(IncomeType incomeType : incomeTypes) {
             List<MilestoneData> milestones = getMilestones(context, incomeType, rod);
@@ -74,6 +76,11 @@ public class BenefitHelper {
                 sumStartBalance[i] += startBalance;
                 endBalance = milestoneData.getEndBalance();
                 sumEndBalance[i] += endBalance;
+
+                int numMonths = milestoneData.getMonthsFundsFillLast();
+                if(numMonths > numMonthsFundsWillLast) {
+                    numMonthsFundsWillLast = numMonths;
+                }
             }
         }
 
@@ -81,7 +88,7 @@ public class BenefitHelper {
         AgeData minimumAge = saveMilestones.get(0).getMinimumAge();
         for(int i = 0; i < msad.size(); i++) {
             AgeData startAge = msad.get(i).getAge();
-            MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i], sumStartBalance[i], sumEndBalance[i], 0, 0);
+            MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i], sumStartBalance[i], sumEndBalance[i], 0, numMonthsFundsWillLast);
             sumMilestones.add(milestoneData);
         }
 
