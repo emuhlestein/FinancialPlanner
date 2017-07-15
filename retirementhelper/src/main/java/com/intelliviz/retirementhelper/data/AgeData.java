@@ -102,6 +102,41 @@ public class AgeData implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+
+        if(obj == this) {
+            return true;
+        }
+
+        if(!(obj instanceof AgeData)) {
+            return false;
+        }
+
+        AgeData ageData = (AgeData)obj;
+
+        if(ageData.mYear != mYear) {
+            return false;
+        }
+
+        if(ageData.mMonth != mMonth) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + mYear;
+        result = 31 * result + mMonth;
+        return result;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

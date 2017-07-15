@@ -248,9 +248,32 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
             snackbar.show();
             return;
         }
+        List<MilestoneAgeData> milestoneAges = getMilestoneAges(getContext(), mROD);
+        boolean foundAge = false;
+        for(MilestoneAgeData msad : milestoneAges) {
+            if(newAge.equals(msad.getAge())) {
+                foundAge = true;
+                break;
+            }
+        }
+
+        if(foundAge) {
+            String message = getString(R.string.duplicate_age);
+            message += newAge.toString();
+            final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snackbar.dismiss();
+                }
+            });
+            snackbar.show();
+            return;
+        }
+
         RetirementOptionsHelper.addAge(getContext(), newAge);
         SystemUtils.updateAppWidget(getContext());
-        List<MilestoneAgeData> milestoneAges = getMilestoneAges(getContext(), mROD);
+        milestoneAges = getMilestoneAges(getContext(), mROD);
         mAdapter.update(milestoneAges);
     }
 }

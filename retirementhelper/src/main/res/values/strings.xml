@@ -78,6 +78,7 @@
     <string name="add_age">Add a retirement age.</string>
     <string name="delete_age">Delete retirement age?</string>
     <string name="invalid_age">Invalid age. Age cannot be less than your current age:</string>
+    <string name="duplicate_age">Duplicate age. Age already exists:</string>
     <string name="dismiss">Dismiss</string>
     <string name="birthday_not_valid">Birthday is not valid</string>
     <string-array name="age_actions">

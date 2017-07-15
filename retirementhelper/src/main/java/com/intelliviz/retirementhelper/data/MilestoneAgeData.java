@@ -44,6 +44,33 @@ public class MilestoneAgeData implements Parcelable, Comparable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+
+        if(obj == this) {
+            return true;
+        }
+
+        if(!(obj instanceof MilestoneAgeData)) {
+            return false;
+        }
+
+        MilestoneAgeData milestoneAgeData = (MilestoneAgeData)obj;
+
+        return milestoneAgeData.mId == mId && mAge.equals(milestoneAgeData.mAge);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + (int)mId;
+        result = 31 * result + mAge.hashCode();
+        return result;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
