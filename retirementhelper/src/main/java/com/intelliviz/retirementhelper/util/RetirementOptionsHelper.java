@@ -28,6 +28,9 @@ public class RetirementOptionsHelper {
     }
 
     public static int deleteAge(Context context, long id) {
+        if(id == -1) {
+            return 0;
+        }
         String sid = String.valueOf(id);
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
