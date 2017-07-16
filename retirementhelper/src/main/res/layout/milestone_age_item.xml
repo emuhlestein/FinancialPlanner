@@ -35,7 +35,8 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="8dp"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_menu_moreoverflow_normal_holo_light" />
+                android:src="@mipmap/ic_menu_moreoverflow_normal_holo_light"
+                android:contentDescription="@string/overflow_menu"/>
 
         </RelativeLayout>
 

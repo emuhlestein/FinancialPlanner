@@ -86,7 +86,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:onClick="addIncomeSource"
-                android:text="@string/save_income_source" />
+                android:text="@string/save_income_source"
+                android:contentDescription="@string/save_income_source"/>
         </LinearLayout>
 
     </LinearLayout>

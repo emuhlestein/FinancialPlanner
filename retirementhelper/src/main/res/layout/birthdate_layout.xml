@@ -39,7 +39,8 @@
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:text="@string/no_text"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            android:contentDescription="@string/no_text"/>
 
         <Button
             android:id="@+id/yes_button"
@@ -50,6 +51,7 @@
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:text="@string/yes_text"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            android:contentDescription="@string/yes_text"/>
     </LinearLayout>
 </LinearLayout>
