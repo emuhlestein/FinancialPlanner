@@ -3,11 +3,11 @@
 
     <item
         android:id="@+id/action_edit"
-        android:title="Edit"
+        android:title="@string/edit"
         app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/action_add_balance"
-        android:title="Add Balance"
+        android:title="@string/add_balance"
         app:showAsAction="never"/>
 
 </menu>

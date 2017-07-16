@@ -143,9 +143,9 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         String withdrawAmount = mWithdrawAmount.getText().toString();
         if(withdrawAmount.isEmpty()) {
             AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
-            alertDialog.setTitle("Alert");
-            alertDialog.setMessage("Withdraw amount requires a value.");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+            alertDialog.setTitle(getString(R.string.alert));
+            alertDialog.setMessage(getString(R.string.withdraw_requires_value));
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -158,9 +158,9 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         withdrawAmount = SystemUtils.getFloatValue(withdrawAmount);
         if(withdrawAmount == null) {
             AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
-            alertDialog.setTitle("Alert");
-            alertDialog.setMessage("Invalid withdraw amount.");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+            alertDialog.setTitle(getString(R.string.alert));
+            alertDialog.setMessage(getString(R.string.invalid_widthdraw_amount));
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -173,9 +173,9 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         AgeData age = SystemUtils.parseAgeString(endAge, "0");
         if(age == null) {
             AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
-            alertDialog.setTitle("Alert");
-            alertDialog.setMessage("Age is invalid");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+            alertDialog.setTitle(getString(R.string.alert));
+            alertDialog.setMessage(getString(R.string.age_invalid));
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -188,11 +188,11 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         String birthdate = mROD.getBirthdate();
         AgeData nowAge = SystemUtils.getAge(birthdate);
         if(age.isBefore(nowAge)) {
-            String message = "End age must be greater than\nyour current age: " + nowAge.toString();
+            String message = getString(R.string.age_greater_thna_your_age) + nowAge.toString();
             AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
-            alertDialog.setTitle("Alert");
+            alertDialog.setTitle(getString(R.string.alert));
             alertDialog.setMessage(message);
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();

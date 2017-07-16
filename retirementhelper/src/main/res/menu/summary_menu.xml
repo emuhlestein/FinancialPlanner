@@ -4,21 +4,21 @@
     <item
         android:id="@+id/personal_info_item"
         android:orderInCategory="100"
-        android:title="Personal Info"
+        android:title="@string/personal_info"
         app:showAsAction="never" />
     <item
         android:id="@+id/retirement_options_item"
         android:orderInCategory="200"
-        android:title="Retirement Options"
+        android:title="@string/retirement_options"
         app:showAsAction="never" />
     <item
         android:id="@+id/sign_out_item"
         android:orderInCategory="200"
-        android:title="Sign Out"
+        android:title="@string/sign_out"
         app:showAsAction="never" />
     <item
         android:id="@+id/revoke_item"
         android:orderInCategory="200"
-        android:title="Revoke"
+        android:title="@string/revoke"
         app:showAsAction="never" />
 </menu>

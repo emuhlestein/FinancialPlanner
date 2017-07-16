@@ -98,4 +98,19 @@
     <string name="insufficient_funds_message">You do not have sufficient funds for the monthly amount desired.</string>
 
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_income">Income</string>
+    <string name="nav_milestones">Milestones</string>
+    <string name="no_results">No Results</string>
+    <string name="retirement_nmilestones">Retirement Milestones</string>
+    <string name="text_view">TextView</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="revoke">Revoke</string>
+    <string name="edit">Edit</string>
+    <string name="add_balance">Add Balance</string>
+    <string name="alert">Alert</string>
+    <string name="withdraw_requires_value">Withdraw amount requires a value.</string>
+    <string name="invalid_widthdraw_amount">Invalid withdraw amount.</string>
+    <string name="age_invalid">Age is invalid</string>
+    <string name="age_greater_thna_your_age">End age must be greater than your current age:</string>
 </resources>
