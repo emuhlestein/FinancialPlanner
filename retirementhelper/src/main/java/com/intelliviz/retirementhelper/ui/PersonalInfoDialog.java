@@ -100,7 +100,7 @@ public class PersonalInfoDialog extends AppCompatActivity {
         mEmailTextView.setText(email);
 
         if(!SystemUtils.validateBirthday(mROD.getBirthdate())) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Please enter your birthdate", Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.enter_birthdate), Snackbar.LENGTH_LONG);
             snackbar.show();
         }
     }
