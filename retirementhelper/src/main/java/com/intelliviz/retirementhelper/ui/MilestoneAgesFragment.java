@@ -10,6 +10,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -62,6 +63,7 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getAge;
 public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAgeListener {
     private MilestoneAgeData mSelectedAge = null;
     private MilestoneAgeAdapter mAdapter = null;
+    private static final String DIALOG_YESNO = "DialogYesNo";
     private RetirementOptionsData mROD;
 
     @Bind(R.id.recyclerview)
@@ -192,10 +194,10 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
         int action = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
 
         if (action == 0) {
-            Intent intent = new Intent(getContext(), YesNoDialog.class);
-            String message = getString(R.string.delete_age);
-            intent.putExtra(EXTRA_DIALOG_MESSAGE, message);
-            startActivityForResult(intent, REQUEST_YES_NO);
+            FragmentManager fm = getFragmentManager();
+            YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_age));
+            dialog.setTargetFragment(this, REQUEST_YES_NO);
+            dialog.show(fm, DIALOG_YESNO);
         }
     }
 

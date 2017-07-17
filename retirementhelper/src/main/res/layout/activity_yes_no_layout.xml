@@ -14,37 +14,4 @@
         android:layout_marginStart="16sp"
         android:textSize="22sp" />
 
-    <LinearLayout
-        android:id="@+id/balance_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/no_button"
-            android:layout_width="0px"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:layout_marginStart="16sp"
-            android:layout_marginEnd="16sp"
-            android:text="@string/no_text"
-            android:textSize="22sp"
-            android:contentDescription="@string/no_text"/>
-
-        <Button
-            android:id="@+id/yes_button"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:layout_marginEnd="16sp"
-            android:layout_weight="1"
-            android:text="@string/yes_text"
-            android:textSize="22sp"
-            android:contentDescription="@string/yes_text"/>
-    </LinearLayout>
-
-
 </LinearLayout>

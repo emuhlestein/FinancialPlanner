@@ -12,6 +12,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -59,7 +60,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
@@ -92,6 +92,7 @@ public class IncomeSourceListFragment extends Fragment implements
     public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
     private IncomeSourceAdapter mIncomeSourceAdapter;
     private static final int INCOME_TYPE_LOADER = 0;
+    private static final String DIALOG_YESNO = "DialogYesNo";
     private long mSelectedId;
     private int mIncomeAction;
     private int mIncomeSourceType;
@@ -455,9 +456,10 @@ public class IncomeSourceListFragment extends Fragment implements
                     getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
-                    intent = new Intent(getContext(), YesNoDialog.class);
-                    intent.putExtra(EXTRA_DIALOG_MESSAGE, getString(R.string.delete_income_source));
-                    startActivityForResult(intent, REQUEST_YES_NO);
+                    FragmentManager fm = getFragmentManager();
+                    YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
+                    dialog.setTargetFragment(this, REQUEST_YES_NO);
+                    dialog.show(fm, DIALOG_YESNO);
                 }
                 break;
             case INCOME_TYPE_TAX_DEFERRED:
@@ -469,9 +471,10 @@ public class IncomeSourceListFragment extends Fragment implements
                     getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
-                    intent = new Intent(getContext(), YesNoDialog.class);
-                    intent.putExtra(EXTRA_DIALOG_MESSAGE, getString(R.string.delete_income_source));
-                    startActivityForResult(intent, REQUEST_YES_NO);
+                    FragmentManager fm = getFragmentManager();
+                    YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
+                    dialog.setTargetFragment(this, REQUEST_YES_NO);
+                    dialog.show(fm, DIALOG_YESNO);
                 }
                 break;
             case INCOME_TYPE_PENSION:
@@ -483,9 +486,10 @@ public class IncomeSourceListFragment extends Fragment implements
                     getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
-                    intent = new Intent(getContext(), YesNoDialog.class);
-                    intent.putExtra(EXTRA_DIALOG_MESSAGE, getString(R.string.delete_income_source));
-                    startActivityForResult(intent, REQUEST_YES_NO);
+                    FragmentManager fm = getFragmentManager();
+                    YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
+                    dialog.setTargetFragment(this, REQUEST_YES_NO);
+                    dialog.show(fm, DIALOG_YESNO);
                 }
                 break;
             case INCOME_TYPE_GOV_PENSION:
@@ -497,9 +501,10 @@ public class IncomeSourceListFragment extends Fragment implements
                     getActivity().startService(localIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
-                    intent = new Intent(getContext(), YesNoDialog.class);
-                    intent.putExtra(EXTRA_DIALOG_MESSAGE, getString(R.string.delete_income_source));
-                    startActivityForResult(intent, REQUEST_YES_NO);
+                    FragmentManager fm = getFragmentManager();
+                    YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
+                    dialog.setTargetFragment(this, REQUEST_YES_NO);
+                    dialog.show(fm, DIALOG_YESNO);
                 }
                 break;
         }

@@ -69,9 +69,6 @@
         <activity
             android:name=".ui.ListMenuActivity"
             android:theme="@style/RetireDialog" />
-        <activity
-            android:name=".ui.YesNoDialog"
-            android:theme="@style/RetireDialog" />
 
         <service
             android:name=".services.SummaryDataIntentService"
