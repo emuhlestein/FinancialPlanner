@@ -44,7 +44,6 @@ import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MILESTONEAGE_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
@@ -64,6 +63,7 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
     private MilestoneAgeData mSelectedAge = null;
     private MilestoneAgeAdapter mAdapter = null;
     private static final String DIALOG_YESNO = "DialogYesNo";
+    private static final String DIALOG_INPUT_TEXT = "DialogInputText";
     private RetirementOptionsData mROD;
 
     @Bind(R.id.recyclerview)
@@ -129,9 +129,10 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
                 Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.add_age, Snackbar.LENGTH_LONG);
                 snackbar.show();
 
-                Intent intent = new Intent(getContext(), SimpleTextDialog.class);
-                intent.putExtra(EXTRA_DIALOG_MESSAGE, getString(R.string.add_age));
-                startActivityForResult(intent, REQUEST_ADD_AGE);
+                FragmentManager fm = getFragmentManager();
+                SimpleTextDialog dialog = SimpleTextDialog.newInstance(getString(R.string.add_age), "");
+                dialog.setTargetFragment(MilestoneAgesFragment.this, REQUEST_ADD_AGE);
+                dialog.show(fm, DIALOG_INPUT_TEXT);
             }
         });
 

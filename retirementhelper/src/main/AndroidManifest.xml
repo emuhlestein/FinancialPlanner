@@ -42,7 +42,6 @@
         <activity
             android:name=".ui.IncomeSourceListMenuFragment"
             android:theme="@style/RetireDialog" />
-
         <service
             android:name=".services.TaxDeferredIntentService"
             android:exported="false" />
@@ -62,14 +61,9 @@
         <service
             android:name=".widget.MilestonesRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
-
-        <activity
-            android:name=".ui.SimpleTextDialog"
-            android:theme="@style/RetireDialog" />
         <activity
             android:name=".ui.ListMenuActivity"
             android:theme="@style/RetireDialog" />
-
         <service
             android:name=".services.SummaryDataIntentService"
             android:exported="false" />

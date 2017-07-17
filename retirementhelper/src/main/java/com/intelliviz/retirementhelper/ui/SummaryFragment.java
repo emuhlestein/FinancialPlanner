@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -45,8 +46,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORM
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_SET_CANCELLABLE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
 
@@ -56,6 +55,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_B
  */
 public class SummaryFragment extends Fragment implements SelectionMilestoneListener {
     private static final String KEY_ROD = "keyRod";
+    private static final String DIALOG_INPUT_TEXT = "DialogInputText";
     private RetirementOptionsData mROD;
     private SummaryMilestoneAdapter mMilestoneAdapter;
 
@@ -87,11 +87,11 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
             if(mROD != null) {
                 String birthdate = mROD.getBirthdate();
                 if (!SystemUtils.validateBirthday(birthdate)) {
-                    intent = new Intent(getContext(), SimpleTextDialog.class);
-                    String message = String.format(getString(R.string.enter_birthdate), DATE_FORMAT);
-                    intent.putExtra(EXTRA_DIALOG_MESSAGE, message);
-                    intent.putExtra(EXTRA_DIALOG_SET_CANCELLABLE, true);
-                    startActivityForResult(intent, REQUEST_BIRTHDATE);
+                    String message = String.format(getString(R.string.enter_valid_birthdate), DATE_FORMAT);
+                    FragmentManager fm = getFragmentManager();
+                    SimpleTextDialog dialog = SimpleTextDialog.newInstance(message, birthdate);
+                    dialog.setTargetFragment(SummaryFragment.this, REQUEST_BIRTHDATE);
+                    dialog.show(fm, DIALOG_INPUT_TEXT);
                 }
             }
         }
@@ -205,12 +205,11 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
     private void onHandleBirthdate(Intent intent) {
         String birthdate = intent.getStringExtra(EXTRA_DIALOG_INPUT_TEXT);
         if (!SystemUtils.validateBirthday(birthdate)) {
-            intent = new Intent(getContext(), SimpleTextDialog.class);
             String message = String.format(getString(R.string.enter_valid_birthdate), DATE_FORMAT);
-            intent.putExtra(EXTRA_DIALOG_MESSAGE, message);
-            intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, birthdate);
-            intent.putExtra(EXTRA_DIALOG_SET_CANCELLABLE, true);
-            startActivityForResult(intent, REQUEST_BIRTHDATE);
+            FragmentManager fm = getFragmentManager();
+            SimpleTextDialog dialog = SimpleTextDialog.newInstance(message, birthdate);
+            dialog.setTargetFragment(this, REQUEST_BIRTHDATE);
+            dialog.show(fm, DIALOG_INPUT_TEXT);
             return;
         }
 

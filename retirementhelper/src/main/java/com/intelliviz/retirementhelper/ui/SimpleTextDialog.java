@@ -1,83 +1,77 @@
 package com.intelliviz.retirementhelper.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.text.InputType;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import com.intelliviz.retirementhelper.R;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_MESSAGE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_SET_CANCELLABLE;
 
 /**
  * Dialog for gathering simple text.
  * @author Ed Muhlestein
  */
-public class SimpleTextDialog extends AppCompatActivity {
-    private boolean mSetCancellable;
+public class SimpleTextDialog extends DialogFragment {
 
-    @Bind(R.id.message_text_view)
-    TextView mMessageTextView;
+    private static final String ARG_MESSAGE = "message";
+    private static final String ARG_INPUT = "input";
+    private EditText mInputText;
 
-    @Bind(R.id.message_edit_text)
-    EditText mMessageEditText;
-
-    @Bind(R.id.cancel_button)
-    Button mCancelButton;
-
-    @OnClick(R.id.cancel_button) void onCancelClick() {
-        finish();
+    public static SimpleTextDialog newInstance(String message, String inputText) {
+        Bundle args = new Bundle();
+        args.putString(ARG_MESSAGE, message);
+        args.putString(ARG_INPUT, inputText);
+        SimpleTextDialog fragment = new SimpleTextDialog();
+        fragment.setArguments(args);
+        return fragment;
     }
 
-    @OnClick(R.id.yes_button) void onYesClick() {
-        sendResult();
-        finish();
-    }
-
+    @NonNull
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_simple_text);
-        ButterKnife.bind(this);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        String message = getArguments().getString(ARG_MESSAGE);
+        String inputText = getArguments().getString(ARG_INPUT);
 
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(EXTRA_DIALOG_MESSAGE);
-        if(message != null) {
-            mMessageTextView.setText(message);
-        }
+        setCancelable(false);
+        mInputText = new EditText(getContext());
+        mInputText.setEms(9);
+        mInputText.setText(inputText);
+        mInputText.setInputType(InputType.TYPE_CLASS_DATETIME);
 
-        String inputText = intent.getStringExtra(EXTRA_DIALOG_INPUT_TEXT);
-        if(inputText != null) {
-            mMessageEditText.setText(inputText);
-        }
-
-        mSetCancellable = intent.getBooleanExtra(EXTRA_DIALOG_SET_CANCELLABLE, false);
-        if(mSetCancellable) {
-            setFinishOnTouchOutside(false);
-            mCancelButton.setEnabled(false);
-        }
+        return new AlertDialog.Builder(getActivity())
+                .setMessage(message)
+                .setView(mInputText)
+                .setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                sendResult();
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel,
+                        new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                .create();
     }
 
     private void sendResult() {
-        String enteredText = mMessageEditText.getText().toString();
+        if(getTargetFragment() == null) {
+            return;
+        }
+        String enteredText = mInputText.getText().toString();
         Intent intent = new Intent();
         intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, enteredText);
-        setResult(Activity.RESULT_OK, intent);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if(!mSetCancellable) {
-            super.onBackPressed();
-        }
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
     }
 }
