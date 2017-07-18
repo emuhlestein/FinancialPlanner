@@ -2,10 +2,15 @@ package com.intelliviz.retirementhelper.ui.income;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -18,9 +23,11 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
 import java.util.List;
 
@@ -29,7 +36,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
+import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -37,9 +46,12 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditTaxDeferredIncomeFragment extends Fragment {
+public class EditTaxDeferredIncomeFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor> {
     public static final String EDIT_TAXDEF_INCOME_FRAG_TAG = "edit taxdef income frag tag";
-    private TaxDeferredIncomeData mTDI;
+    private TaxDeferredIncomeData mTDID;
+    public static final int TDID_LOADER = 0;
+    private long mId;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -84,8 +96,9 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
+            mId = -1;
             if(intent != null) {
-                mTDI = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
+                mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
             }
         }
     }
@@ -97,15 +110,10 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
 
-        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-
-        if(mTDI.getId() == -1) {
-            if(actionBar != null) {
-                actionBar.setSubtitle(SystemUtils.getIncomeSourceTypeString(getContext(), RetirementConstants.INCOME_TYPE_TAX_DEFERRED));
-            }
-        } else {
-            updateUI();
-        }
+        mTDID = null;
+        Bundle bundle = new Bundle();
+        bundle.putString(ID_ARGS, Long.toString(mId));
+        getLoaderManager().initLoader(TDID_LOADER, bundle, this);
 
         mBalance.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -187,26 +195,29 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
-        if (mTDI == null || mTDI.getId() == -1) {
+        if (mTDID == null || mTDID.getId() == -1) {
             return;
         }
 
-        String incomeSourceName = mTDI.getName();
-        int type = mTDI.getType();
+        String incomeSourceName = mTDID.getName();
+        int type = mTDID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(getContext(), type);
         SystemUtils.setToolbarSubtitle(getActivity(), incomeSourceTypeString);
 
         String balanceString;
-        List<BalanceData> bd = mTDI.getBalanceData();
+        List<BalanceData> bd = mTDID.getBalanceData();
         if (bd == null) {
             balanceString = "0.00";
         } else {
             balanceString = SystemUtils.getFormattedCurrency(bd.get(0).getBalance());
         }
 
-        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mTDI.getMonthAddition());
-        String minimumAge = mTDI.getMinimumAge();
-        String penaltyAmount = mTDI.getPenalty() + "%";
+        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mTDID.getMonthAddition());
+        String minimumAge = mTDID.getMinimumAge();
+        AgeData age = SystemUtils.parseAgeString(minimumAge);
+        minimumAge = SystemUtils.getFormattedAge(age);
+
+        String penaltyAmount = mTDID.getPenalty() + "%";
 
         ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null) {
@@ -215,7 +226,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         mIncomeSourceName.setText(incomeSourceName);
         mBalance.setText(balanceString);
 
-        String interest = mTDI.getInterestRate()+"%";
+        String interest = mTDID.getInterestRate()+"%";
         mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(monthlyIncreaseString);
         mPenaltyAge.setText(minimumAge);
@@ -271,7 +282,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         double increase = Double.parseDouble(monthlyIncrease);
         double penalty = Double.parseDouble(penaltyAmount);
         double dbalance = Double.parseDouble(balance);
-        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(mTDI.getId(), name, mTDI.getType(), minimumAge, annualInterest, increase, penalty, 1);
+        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(mTDID.getId(), name, mTDID.getType(), minimumAge, annualInterest, increase, penalty, 1);
         tdid.addBalanceData(new BalanceData(dbalance, date));
         updateTDID(tdid);
     }
@@ -282,5 +293,45 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         intent.putExtra(EXTRA_DB_DATA, tdid);
         intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         getActivity().startService(intent);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        Loader<Cursor> loader;
+        Uri uri;
+        switch (loaderId) {
+            case TDID_LOADER:
+                String id = args.getString(ID_ARGS);
+                uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
+                if(uri != null) {
+                    uri = Uri.withAppendedPath(uri, id);
+                }
+
+                loader = new CursorLoader(getActivity(),
+                        uri,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            default:
+                loader = null;
+        }
+
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch(loader.getId()) {
+            case TDID_LOADER:
+                mTDID = TaxDeferredHelper.extractData(cursor);
+                updateUI();
+                break;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
     }
 }

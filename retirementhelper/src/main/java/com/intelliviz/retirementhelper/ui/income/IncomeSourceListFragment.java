@@ -39,7 +39,6 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.services.GovPensionDataService;
 import com.intelliviz.retirementhelper.services.PensionDataService;
 import com.intelliviz.retirementhelper.services.SavingsDataService;
-import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.ListMenuActivity;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
@@ -336,12 +335,6 @@ public class IncomeSourceListFragment extends Fragment implements
                     getActivity().startService(intent);
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:
-                    /*
-                    intent = new Intent(getContext(), TaxDeferredIntentService.class);
-                    intent.putExtra(RetirementConstants.EXTRA_DB_ID, id);
-                    intent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
-                    getActivity().startService(intent);
-                    */
                     Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
@@ -471,11 +464,19 @@ public class IncomeSourceListFragment extends Fragment implements
                 break;
             case INCOME_TYPE_TAX_DEFERRED:
                 if(action == INCOME_ACTION_EDIT) {
+                    /*
                     mIncomeAction = INCOME_ACTION_EDIT;
                     Intent localIntent = new Intent(getContext(), TaxDeferredIntentService.class);
                     localIntent.putExtra(EXTRA_DB_ID, incomeSourceId);
                     localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
                     getActivity().startService(localIntent);
+                    */
+
+                    Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
+                    startActivity(newIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
                     FragmentManager fm = getFragmentManager();
