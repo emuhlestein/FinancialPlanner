@@ -336,10 +336,17 @@ public class IncomeSourceListFragment extends Fragment implements
                     getActivity().startService(intent);
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:
+                    /*
                     intent = new Intent(getContext(), TaxDeferredIntentService.class);
                     intent.putExtra(RetirementConstants.EXTRA_DB_ID, id);
                     intent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
                     getActivity().startService(intent);
+                    */
+                    Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
+                    startActivity(newIntent);
                     break;
                 case INCOME_TYPE_PENSION:
                     intent = new Intent(getContext(), PensionDataService.class);

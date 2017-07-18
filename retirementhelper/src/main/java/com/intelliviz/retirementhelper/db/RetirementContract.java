@@ -13,7 +13,6 @@ public class RetirementContract {
             "com.intelliviz.retirementhelper.db.RetirementProvider";
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    static final String PATH_PERSONALINFO = "personalinfo";
     static final String PATH_RETIREMENT_PARMS = "retirement_parms";
     static final String PATH_INCOME_TYPE = "income_type";
     static final String PATH_SAVINGS_INCOME = "savings_income";
@@ -25,22 +24,6 @@ public class RetirementContract {
     static final String PATH_SUMMARY = "summary";
 
     private RetirementContract() {
-    }
-
-    /**
-     * Class for personal info table.
-     */
-    public static final class PersonalInfoEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PERSONALINFO).build();
-
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PERSONALINFO;
-        static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PERSONALINFO;
-
-        static final String TABLE_NAME = PATH_PERSONALINFO;
-        // yyyy-MM-dd
-        public static final String COLUMN_BIRTHDATE = "birthdate";
     }
 
     /**
@@ -58,6 +41,7 @@ public class RetirementContract {
         public static final String COLUMN_END_AGE = "end_age";
         public static final String COLUMN_WITHDRAW_MODE = "withdraw_mode";
         public static final String COLUMN_WITHDRAW_AMOUNT = "withdraw_amount";
+        public static final String COLUMN_BIRTHDATE = "birthdate";
     }
 
     /**

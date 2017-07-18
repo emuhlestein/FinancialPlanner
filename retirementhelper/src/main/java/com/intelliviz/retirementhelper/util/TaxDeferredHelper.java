@@ -71,8 +71,9 @@ public class TaxDeferredHelper {
         Uri uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
         String selection = RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
         String sid = String.valueOf(incomeId);
+        uri = uri.withAppendedPath(uri, sid);
         String[] selectionArgs = {sid};
-        return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
+        return context.getContentResolver().query(uri, null, null, null, null);
     }
 
     public static int deleteTaxDeferredIncome(Context context, long incomeId) {
@@ -117,6 +118,43 @@ public class TaxDeferredHelper {
                 tdid.addBalanceData(bd);
             }
         }
+        return tdid;
+    }
+
+    public static TaxDeferredIncomeData extractData(Cursor cursor) {
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        int incomeIdIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID);
+        int nameIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
+        int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
+
+        int minAgeIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE);
+        int interestIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST);
+        int monthlyAddIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD);
+        int penaltyIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY);
+        int is401KIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K);
+
+        int balanceIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
+        int balanceDateIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_DATE);
+
+        long incomeId = cursor.getLong(incomeIdIndex);
+        String name = cursor.getString(nameIndex);
+        int incomeType = cursor.getInt(typeIndex);
+
+        String minAge = cursor.getString(minAgeIndex);
+        double interest = Double.parseDouble(cursor.getString(interestIndex));
+        double monthAdd = Double.parseDouble(cursor.getString(monthlyAddIndex));
+        double penalty = Double.parseDouble(cursor.getString(penaltyIndex));
+        int is401k = cursor.getInt(is401KIndex);
+
+        String amount = cursor.getString(balanceIndex);
+        String date = cursor.getString(balanceDateIndex);
+        double balance = Double.parseDouble(amount);
+        BalanceData bd = new BalanceData(balance, date);
+
+        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(incomeId, name, incomeType, minAge, interest, monthAdd, penalty, is401k);
+        tdid.addBalanceData(bd);
         return tdid;
     }
 }

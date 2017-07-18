@@ -1,13 +1,14 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,30 +23,37 @@ import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.content.Intent.EXTRA_INTENT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_RETIRE_OPTIONS;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 /**
  * Fragment used for viewing tax deferred income sources.
  *
  * @author Ed Muhlestein
  */
-public class ViewTaxDeferredIncomeFragment extends Fragment implements SelectionMilestoneListener {
+public class ViewTaxDeferredIncomeFragment extends Fragment implements
+        SelectionMilestoneListener,
+        LoaderManager.LoaderCallbacks<Cursor>{
     public static final String VIEW_TAXDEF_INCOME_FRAG_TAG = "view taxdef income frag tag";
+    public static final String ID_ARGS = "id";
+    public static final int ROD_LOADER = 0;
+    public static final int TDID_LOADER = 1;
+    private long mId;
     private TaxDeferredIncomeData mTDID;
     private RetirementOptionsData mROD;
     private SummaryMilestoneAdapter mMilestoneAdapter;
@@ -71,16 +79,6 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
     @Bind(R.id.recyclerview)
     RecyclerView mRecyclerView;
 
-    private BroadcastReceiver mRetirementOptionsReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-            mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
-            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
-            mMilestoneAdapter.update(milestones);
-        }
-    };
-
     public ViewTaxDeferredIncomeFragment() {
         // Required empty public constructor
     }
@@ -98,9 +96,9 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
+            mId = -1;
             if(intent != null) {
-                mTDID = intent.getParcelableExtra(EXTRA_INCOME_DATA);
-                mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
             }
         }
     }
@@ -112,7 +110,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         View view = inflater.inflate(R.layout.fragment_view_tax_deferred_income, container, false);
         ButterKnife.bind(this, view);
 
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
+        List<MilestoneData> milestones = new ArrayList<>();
         mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -121,20 +119,14 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
                 linearLayoutManager.getOrientation()));
         mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
-        updateUI();
+        mROD = null;
+        mTDID = null;
+        Bundle bundle = new Bundle();
+        bundle.putString(ID_ARGS, Long.toString(mId));
+        getLoaderManager().initLoader(ROD_LOADER, null, this);
+        getLoaderManager().initLoader(TDID_LOADER, bundle, this);
+
         return view;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterReceiver();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerReceiver();
     }
 
     private void updateUI() {
@@ -170,12 +162,60 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements Selection
         startActivity(intent);
     }
 
-    private void registerReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_RETIRE_OPTIONS);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mRetirementOptionsReceiver, filter);
+    @Override
+    public android.support.v4.content.Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        Loader<Cursor> loader;
+        Uri uri;
+        switch (loaderId) {
+            case ROD_LOADER:
+                uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
+                loader = new CursorLoader(getActivity(),
+                        uri,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            case TDID_LOADER:
+                String id = args.getString(ID_ARGS);
+                uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
+                if(uri != null) {
+                    uri = Uri.withAppendedPath(uri, id);
+                }
+
+                loader = new CursorLoader(getActivity(),
+                        uri,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            default:
+                loader = null;
+        }
+
+        return loader;
     }
 
-    private void unregisterReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mRetirementOptionsReceiver);
+    @Override
+    public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
+        switch(loader.getId()) {
+            case ROD_LOADER:
+                mROD = RetirementOptionsHelper.extractData(cursor);
+                break;
+            case TDID_LOADER:
+                mTDID = TaxDeferredHelper.extractData(cursor);
+                updateUI();
+                break;
+        }
+
+        if(mROD != null && mTDID != null) {
+            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
+            mMilestoneAdapter.update(milestones);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
     }
 }

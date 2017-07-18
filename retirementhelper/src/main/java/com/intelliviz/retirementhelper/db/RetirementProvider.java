@@ -24,7 +24,6 @@ public class RetirementProvider extends ContentProvider {
     private SqliteHelper mSqliteHelper;
     private static final String DBASE_NAME = "retirement";
     private static final int DBASE_VERSION = 1;
-    private static final int PERSONALINFO_ID = 101;
     private static final int RETIREMENT_OPTIONS_ID = 102;
     private static final int INCOME_TYPE_LIST = 401;
     private static final int INCOME_TYPE_ID = 402;
@@ -42,12 +41,26 @@ public class RetirementProvider extends ContentProvider {
     private static final int MILESTONE_ID = 1002;
     private static final int SUMMARY_LIST = 1101;
 
+    private static final String QUERY_TABLES_FOR_TAX_DEFERRED_ITEM =
+            RetirementContract.IncomeTypeEntry.TABLE_NAME +
+                    " INNER JOIN " +
+                    RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME + " ON " +
+                    RetirementContract.IncomeTypeEntry.TABLE_NAME + "." +
+                    RetirementContract.IncomeTypeEntry._ID + " = " +
+                    RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME + "." +
+                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + " " +
+                    " INNER JOIN " +
+                    RetirementContract.BalanceEntry.TABLE_NAME + " ON " +
+                    RetirementContract.IncomeTypeEntry.TABLE_NAME + "." +
+                    RetirementContract.IncomeTypeEntry._ID + " = " +
+                    RetirementContract.BalanceEntry.TABLE_NAME + "." +
+                    RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID;
+
+
     private static UriMatcher sUriMatcher;
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_PERSONALINFO, PERSONALINFO_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_RETIREMENT_PARMS, RETIREMENT_OPTIONS_ID);
 
@@ -93,8 +106,6 @@ public class RetirementProvider extends ContentProvider {
     @Override
     public String getType(@NonNull Uri uri) {
         switch(sUriMatcher.match(uri)) {
-            case PERSONALINFO_ID:
-                return RetirementContract.PersonalInfoEntry.CONTENT_ITEM_TYPE;
             case RETIREMENT_OPTIONS_ID:
                 return RetirementContract.RetirementParmsEntry.CONTENT_ITEM_TYPE;
             case INCOME_TYPE_LIST:
@@ -137,10 +148,6 @@ public class RetirementProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
         switch(sUriMatcher.match(uri)) {
-            case PERSONALINFO_ID:
-                // get the personal info table, there should be only one.
-                sqLiteQueryBuilder.setTables(RetirementContract.PersonalInfoEntry.TABLE_NAME);
-                break;
             case RETIREMENT_OPTIONS_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.RetirementParmsEntry.TABLE_NAME);
                 break;
@@ -164,12 +171,16 @@ public class RetirementProvider extends ContentProvider {
                 sqLiteQueryBuilder.setTables(RetirementContract.SummaryEntry.TABLE_NAME);
                 break;
             case TAX_DEFERRED_INCOME_ID:
+                /*
                 sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
                 if(TextUtils.isEmpty(selection)) {
                     sqLiteQueryBuilder.appendWhere(RetirementContract.TaxDeferredIncomeEntry._ID +
                             "=" + uri.getLastPathSegment());
                 }
                 break;
+                */
+                Cursor cursor = getTaxDeferredIncomeSource(uri, projection, selection, selectionArgs, sortOrder);
+                return cursor;
             case TAX_DEFERRED_INCOME_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
                 break;
@@ -408,10 +419,6 @@ public class RetirementProvider extends ContentProvider {
         String id;
 
         switch(sUriMatcher.match(uri)) {
-            case PERSONALINFO_ID:
-                rowsUpdated = db.update(RetirementContract.PersonalInfoEntry.TABLE_NAME,
-                        values, null, null);
-                break;
             case RETIREMENT_OPTIONS_ID:
                 rowsUpdated = db.update(RetirementContract.RetirementParmsEntry.TABLE_NAME,
                         values, null, null);
@@ -549,19 +556,13 @@ public class RetirementProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            // create the personal info table
-            String sql = "CREATE TABLE " + RetirementContract.PersonalInfoEntry.TABLE_NAME +
-                    " ( " + RetirementContract.PersonalInfoEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.PersonalInfoEntry.COLUMN_BIRTHDATE + " TEXT);";
-
-            db.execSQL(sql);
-
             // create the retirement parms table
-            sql = "CREATE TABLE " + RetirementContract.RetirementParmsEntry.TABLE_NAME +
+            String sql = "CREATE TABLE " + RetirementContract.RetirementParmsEntry.TABLE_NAME +
                     " ( " + RetirementContract.RetirementParmsEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     RetirementContract.RetirementParmsEntry.COLUMN_END_AGE + " TEXT NOT NULL, " +
                     RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_MODE + " INTEGER NOT NULL, " +
-                    RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT + " TEXT NOT NULL);";
+                    RetirementContract.RetirementParmsEntry.COLUMN_WITHDRAW_AMOUNT + " TEXT NOT NULL, " +
+                    RetirementContract.RetirementParmsEntry.COLUMN_BIRTHDATE + " TEXT NOT NULL);";
 
             db.execSQL(sql);
 
@@ -653,16 +654,12 @@ public class RetirementProvider extends ContentProvider {
                     " Values ('4', '70 0');";
             db.execSQL(ROW);
 
-            ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '90 0', '0', '4');";
-            db.execSQL(ROW);
-
-            ROW = "INSERT INTO " + RetirementContract.PersonalInfoEntry.TABLE_NAME + " Values ('0','0');";
+            ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '90 0', '0', '4', 0);";
             db.execSQL(ROW);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PersonalInfoEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.RetirementParmsEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.IncomeTypeEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.SavingsIncomeEntry.TABLE_NAME);
@@ -675,5 +672,19 @@ public class RetirementProvider extends ContentProvider {
 
             onCreate(db);
         }
+    }
+
+    private Cursor getTaxDeferredIncomeSource(
+            Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(QUERY_TABLES_FOR_TAX_DEFERRED_ITEM);
+
+        return builder.query(mSqliteHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
     }
 }

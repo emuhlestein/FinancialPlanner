@@ -7,7 +7,7 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 /**
  * Class for pension income data.
- * Created by Ed Muhlestein muhlestein on 5/11/2017.
+ * Created by Ed Muhlestein on 5/11/2017.
  */
 
 public class PensionIncomeData extends IncomeTypeData {
@@ -16,7 +16,6 @@ public class PensionIncomeData extends IncomeTypeData {
 
     /**
      * Constructor.
-     * @param type The income type.
      */
     public PensionIncomeData() {
         super(RetirementConstants.INCOME_TYPE_PENSION);
