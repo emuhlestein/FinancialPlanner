@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
@@ -141,7 +142,11 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements
         String interest = mTDID.getInterestRate()+"%";
         mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(SystemUtils.getFormattedCurrency(mTDID.getMonthAddition()));
-        mMinimumAge.setText(mTDID.getMinimumAge());
+
+        String minAge = mTDID.getMinimumAge();
+        AgeData age = SystemUtils.parseAgeString(minAge);
+        minAge = SystemUtils.getFormattedAge(age);
+        mMinimumAge.setText(minAge);
 
         String penalty = mTDID.getPenalty() +"%";
         mPenaltyAmount.setText(penalty);
