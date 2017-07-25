@@ -22,7 +22,7 @@ public class RetirementContract {
     static final String PATH_BALANCE = "balance";
     static final String PATH_MILESTONE = "milestone";
     static final String PATH_SUMMARY = "summary";
-    static final String PATH_TAX_DEFERRED_STATUS = "tax_deferred_status";
+    static final String PATH_TRANSACTION_STATUS = "transaction_status";
 
     private RetirementContract() {
     }
@@ -184,8 +184,8 @@ public class RetirementContract {
     /**
      * Class for status table
      */
-    public static final class TaxDeferredStatusEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TAX_DEFERRED_STATUS).build();
+    public static final class TransactionStatusEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRANSACTION_STATUS).build();
         public static final int STATUS_NONE = 0;
         public static final int STATUS_UPDATED = 1;
         public static final int STATUS_UPDATING = 2;
@@ -197,13 +197,14 @@ public class RetirementContract {
         public static final int ACTION_DELETE = 3;
 
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED_STATUS;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRANSACTION_STATUS;
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED_STATUS;
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRANSACTION_STATUS;
 
-        public static final String TABLE_NAME = PATH_TAX_DEFERRED_STATUS;
+        public static final String TABLE_NAME = PATH_TRANSACTION_STATUS;
         public static final String COLUMN_STATUS = "status";
         public static final String COLUMN_RESULT = "result";
         public static final String COLUMN_ACTION = "action";
+        public static final String COLUMN_TYPE = "type";
     }
 }

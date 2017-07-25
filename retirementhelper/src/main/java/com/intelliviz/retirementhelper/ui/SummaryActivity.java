@@ -39,8 +39,9 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static com.intelliviz.retirementhelper.ui.income.EditTaxDeferredIncomeFragment.TDID_STATUS_LOADER;
+import static com.intelliviz.retirementhelper.ui.income.EditTaxDeferredIncomeFragment.STATUS_LOADER;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
@@ -85,7 +86,7 @@ public class SummaryActivity extends AppCompatActivity implements
 
         mTaxDeferredStatusAsyncHandler = new TaxDeferredStatusAsyncHandler(getContentResolver());
 
-        getSupportLoaderManager().initLoader(TDID_STATUS_LOADER, null, this);
+        getSupportLoaderManager().initLoader(STATUS_LOADER, null, this);
 
         initBottomNavigation();
 
@@ -249,12 +250,12 @@ public class SummaryActivity extends AppCompatActivity implements
         Loader<Cursor> loader;
         Uri uri;
         switch (loaderId) {
-            case TDID_STATUS_LOADER:
+            case STATUS_LOADER:
                 loader = new CursorLoader(this,
-                        RetirementContract.TaxDeferredStatusEntry.CONTENT_URI,
+                        RetirementContract.TransactionStatusEntry.CONTENT_URI,
                         null,
-                        null,
-                        null,
+                        RetirementContract.TransactionStatusEntry.COLUMN_TYPE + " =? ",
+                        new String[]{Integer.toString(INCOME_TYPE_TAX_DEFERRED)},
                         null);
                 break;
             default:
@@ -267,27 +268,27 @@ public class SummaryActivity extends AppCompatActivity implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         switch(loader.getId()) {
-            case TDID_STATUS_LOADER:
+            case STATUS_LOADER:
                 if(cursor.moveToFirst()) {
-                    int statusIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredStatusEntry.COLUMN_STATUS);
-                    int resultIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredStatusEntry.COLUMN_RESULT);
-                    int actionIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredStatusEntry.COLUMN_ACTION);
+                    int statusIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_STATUS);
+                    int resultIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_RESULT);
+                    int actionIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_ACTION);
                     if(statusIndex != -1) {
                         int status = cursor.getInt(statusIndex);
-                        if(status == RetirementContract.TaxDeferredStatusEntry.STATUS_UPDATED) {
+                        if(status == RetirementContract.TransactionStatusEntry.STATUS_UPDATED) {
                             if(actionIndex != -1 && resultIndex != -1) {
                                 int action = cursor.getInt(actionIndex);
                                 int numRows;
                                 switch(action) {
-                                    case RetirementContract.TaxDeferredStatusEntry.ACTION_DELETE:
+                                    case RetirementContract.TransactionStatusEntry.ACTION_DELETE:
                                         numRows = Integer.parseInt(cursor.getString(resultIndex));
                                         Log.d(TAG, numRows + " deleted");
                                         break;
-                                    case RetirementContract.TaxDeferredStatusEntry.ACTION_UPDATE:
+                                    case RetirementContract.TransactionStatusEntry.ACTION_UPDATE:
                                         numRows = Integer.parseInt(cursor.getString(resultIndex));
                                         Log.d(TAG, numRows + " update");
                                         break;
-                                    case RetirementContract.TaxDeferredStatusEntry.ACTION_INSERT:
+                                    case RetirementContract.TransactionStatusEntry.ACTION_INSERT:
                                         String uri = cursor.getString(resultIndex);
                                         Log.d(TAG, uri + " inserted");
                                         break;
@@ -314,13 +315,13 @@ public class SummaryActivity extends AppCompatActivity implements
         }
 
         public void clear() {
-            Uri uri = RetirementContract.TaxDeferredStatusEntry.CONTENT_URI;
+            Uri uri = RetirementContract.TransactionStatusEntry.CONTENT_URI;
             ContentValues values = new ContentValues();
-            values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_STATUS,
-                    RetirementContract.TaxDeferredStatusEntry.STATUS_NONE);
-            values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_ACTION,
-                    RetirementContract.TaxDeferredStatusEntry.ACTION_NONE);
-            values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_RESULT, "");
+            values.put(RetirementContract.TransactionStatusEntry.COLUMN_STATUS,
+                    RetirementContract.TransactionStatusEntry.STATUS_NONE);
+            values.put(RetirementContract.TransactionStatusEntry.COLUMN_ACTION,
+                    RetirementContract.TransactionStatusEntry.ACTION_NONE);
+            values.put(RetirementContract.TransactionStatusEntry.COLUMN_RESULT, "");
             startUpdate(0, null, uri, values, null, null);
         }
 

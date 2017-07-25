@@ -89,7 +89,7 @@ public class RetirementProvider extends ContentProvider {
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_SUMMARY, SUMMARY_LIST);
 
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_TAX_DEFERRED_STATUS, TAX_DEFERRED_STATUS);
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_TRANSACTION_STATUS, TAX_DEFERRED_STATUS);
     }
 
     @Override
@@ -205,7 +205,7 @@ public class RetirementProvider extends ContentProvider {
                 sqLiteQueryBuilder.setTables(RetirementContract.MilestoneEntry.TABLE_NAME);
                 break;
             case TAX_DEFERRED_STATUS:
-                sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredStatusEntry.TABLE_NAME);
+                sqLiteQueryBuilder.setTables(RetirementContract.TransactionStatusEntry.TABLE_NAME);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
@@ -524,7 +524,7 @@ public class RetirementProvider extends ContentProvider {
                 }
                 break;
             case TAX_DEFERRED_STATUS:
-                rowsUpdated = db.update(RetirementContract.TaxDeferredStatusEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated = db.update(RetirementContract.TransactionStatusEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
@@ -633,11 +633,12 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL(sql);
 
             // create the tax deferred status table
-            sql = "CREATE TABLE " + RetirementContract.TaxDeferredStatusEntry.TABLE_NAME +
-                    " ( " + RetirementContract.TaxDeferredStatusEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.TaxDeferredStatusEntry.COLUMN_STATUS + " INTEGER NOT NULL, " +
-                    RetirementContract.TaxDeferredStatusEntry.COLUMN_ACTION + " INTEGER NOT NULL, " +
-            RetirementContract.TaxDeferredStatusEntry.COLUMN_RESULT + " TEXT NOT NULL);";
+            sql = "CREATE TABLE " + RetirementContract.TransactionStatusEntry.TABLE_NAME +
+                    " ( " + RetirementContract.TransactionStatusEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.TransactionStatusEntry.COLUMN_STATUS + " INTEGER, " +
+                    RetirementContract.TransactionStatusEntry.COLUMN_ACTION + " INTEGER, " +
+                    RetirementContract.TransactionStatusEntry.COLUMN_RESULT + " TEXT, " +
+                    RetirementContract.TransactionStatusEntry.COLUMN_TYPE + " INTEGER);";
 
             db.execSQL(sql);
 
@@ -661,7 +662,7 @@ public class RetirementProvider extends ContentProvider {
             ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '90 0', '0', '4', 0);";
             db.execSQL(ROW);
 
-            ROW = "INSERT INTO " + RetirementContract.TaxDeferredStatusEntry.TABLE_NAME + " Values ('0', '0', '0', '0');";
+            ROW = "INSERT INTO " + RetirementContract.TransactionStatusEntry.TABLE_NAME + " Values ('0', '0', '0', '0', '0');";
             db.execSQL(ROW);
         }
 
@@ -676,7 +677,7 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.BalanceEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.MilestoneEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.SummaryEntry.TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.TaxDeferredStatusEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.TransactionStatusEntry.TABLE_NAME);
 
             onCreate(db);
         }

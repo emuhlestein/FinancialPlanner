@@ -1,6 +1,8 @@
 package com.intelliviz.retirementhelper.util;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
@@ -11,6 +13,7 @@ import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.db.RetirementContract;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +30,25 @@ import static java.lang.Double.parseDouble;
  */
 
 public class BenefitHelper {
+    public static void clearStatus(Context context) {
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.TransactionStatusEntry.COLUMN_STATUS, 0);
+        values.put(RetirementContract.TransactionStatusEntry.COLUMN_RESULT, 0);
+        values.put(RetirementContract.TransactionStatusEntry.COLUMN_ACTION, 0);
+        values.put(RetirementContract.TransactionStatusEntry.COLUMN_TYPE, 0);
+        Uri uri = RetirementContract.TransactionStatusEntry.CONTENT_URI;
+        context.getContentResolver().update(uri, values, null, null);
+    }
+
+    public static void updateStatus(Context context, int status, int action, String result, int incomeType) {
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.TransactionStatusEntry.COLUMN_STATUS, status);
+        values.put(RetirementContract.TransactionStatusEntry.COLUMN_ACTION, action);
+        values.put(RetirementContract.TransactionStatusEntry.COLUMN_RESULT, result);
+        values.put(RetirementContract.TransactionStatusEntry.COLUMN_TYPE, incomeType);
+        Uri uri = RetirementContract.TransactionStatusEntry.CONTENT_URI;
+        context.getContentResolver().update(uri, values, null, null);
+    }
 
     public static List<MilestoneData> getAllMilestones(Context context, RetirementOptionsData rod) {
         List<MilestoneData> sumMilestones = new ArrayList<>();

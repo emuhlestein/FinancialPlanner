@@ -14,22 +14,6 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
  */
 
 public class TaxDeferredHelper {
-    public static void clearStatus(Context context) {
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_STATUS, 0);
-        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_RESULT, 0);
-        Uri uri = RetirementContract.TaxDeferredStatusEntry.CONTENT_URI;
-        context.getContentResolver().update(uri, values, null, null);
-    }
-
-    public static void updateStatus(Context context, int status, int action, String result) {
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_STATUS, status);
-        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_ACTION, action);
-        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_RESULT, result);
-        Uri uri = RetirementContract.TaxDeferredStatusEntry.CONTENT_URI;
-        context.getContentResolver().update(uri, values, null, null);
-    }
 
     public static String addTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid) {
         String id = DataBaseUtils.addIncomeType(context, tdid);
