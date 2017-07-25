@@ -20,6 +20,8 @@ public class RetirementConstants {
     public static final String EXTRA_DB_ACTION = "service action";
     public static final int SERVICE_DB_QUERY = 1;
     public static final int SERVICE_DB_UPDATE = 2;
+    public static final int SERVICE_DB_DELETE = 3;
+
 
     public static final String DATE_FORMAT = "dd-MM-yyyy";
 

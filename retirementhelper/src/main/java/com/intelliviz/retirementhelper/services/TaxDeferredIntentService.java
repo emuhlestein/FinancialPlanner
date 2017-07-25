@@ -2,19 +2,15 @@ package com.intelliviz.retirementhelper.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
+import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ID;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
@@ -36,32 +32,31 @@ public class TaxDeferredIntentService extends IntentService {
         if (intent != null) {
             int action = intent.getIntExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
             long id = intent.getLongExtra(EXTRA_DB_ID, -1);
-            if(action == SERVICE_DB_QUERY) {
-                if(id == -1) {
-                    return; // error
-                }
-                TaxDeferredIncomeData tdid = TaxDeferredHelper.getTaxDeferredIncomeData(this, id);
-                RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
-                if (tdid != null && rod != null) {
-                    Intent localIntent = new Intent(LOCAL_TAX_DEFERRED);
-                    localIntent.putExtra(EXTRA_DB_DATA, tdid);
-                    localIntent.putExtra(EXTRA_DB_EXTRA_DATA, rod);
-                    localIntent.putExtra(EXTRA_DB_ACTION, action);
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-                }
-            } else if(action == SERVICE_DB_UPDATE) {
+            if(action == SERVICE_DB_UPDATE) {
                 TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_DB_DATA);
                 if(tdid != null) {
                     if(id == -1) {
-                        TaxDeferredHelper.addTaxDeferredIncome(this, tdid);
+                        TaxDeferredHelper.updateStatus(this, RetirementContract.TaxDeferredStatusEntry.STATUS_UPDATING,
+                                RetirementContract.TaxDeferredStatusEntry.ACTION_INSERT, "");
+                        String result = TaxDeferredHelper.addTaxDeferredIncome(this, tdid);
+                        TaxDeferredHelper.updateStatus(this, RetirementContract.TaxDeferredStatusEntry.STATUS_UPDATED,
+                                RetirementContract.TaxDeferredStatusEntry.ACTION_INSERT, result);
                     } else {
+                        TaxDeferredHelper.updateStatus(this, RetirementContract.TaxDeferredStatusEntry.STATUS_UPDATING,
+                                RetirementContract.TaxDeferredStatusEntry.ACTION_UPDATE, "");
                         int rowsUpdated = TaxDeferredHelper.saveTaxDeferredData(this, tdid);
-                        Intent localIntent = new Intent(LOCAL_TAX_DEFERRED);
-                        localIntent.putExtra(EXTRA_DB_ROWS_UPDATED, rowsUpdated);
-                        localIntent.putExtra(EXTRA_DB_ACTION, action);
-                        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+                        String rows = Integer.toString(rowsUpdated);
+                        TaxDeferredHelper.updateStatus(this, RetirementContract.TaxDeferredStatusEntry.STATUS_UPDATED,
+                                RetirementContract.TaxDeferredStatusEntry.ACTION_UPDATE, rows);
                     }
                 }
+            } else if(action == SERVICE_DB_DELETE) {
+                TaxDeferredHelper.updateStatus(this, RetirementContract.TaxDeferredStatusEntry.STATUS_UPDATING,
+                        RetirementContract.TaxDeferredStatusEntry.ACTION_DELETE, "");
+                int rowsUpdated = TaxDeferredHelper.deleteTaxDeferredIncome(this, id);
+                String rows = Integer.toString(rowsUpdated);
+                TaxDeferredHelper.updateStatus(this, RetirementContract.TaxDeferredStatusEntry.STATUS_UPDATED,
+                        RetirementContract.TaxDeferredStatusEntry.ACTION_DELETE, rows);
             }
         }
     }

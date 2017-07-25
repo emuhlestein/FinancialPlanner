@@ -5,9 +5,6 @@ import android.os.Parcelable;
 
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Class to manager tax deferred income sources.
  * Created by Ed Muhlestein on 5/1/2017.
@@ -20,8 +17,8 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
     private double mInterestRate;
     private double mMonthAdd;
     private double mPenalty;
+    private double mBalance;
     private int mIs401k;
-    private List<BalanceData> mBalanceDataList = new ArrayList<>();
 
     /**
      * Default constructor.
@@ -43,22 +40,20 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
      * @param penalty The penalty.
      * @param is401k Is this a 401k.
      */
-    public TaxDeferredIncomeData(long id, String name, int type, String minimumAge, double annualRate, double monthlyAdd, double penalty, int is401k) {
+    public TaxDeferredIncomeData(long id, String name, int type, String minimumAge,
+                                 double annualRate, double monthlyAdd, double penalty, double balance, int is401k) {
         super(id, name, type);
         mMinimumAge = minimumAge;
         mInterestRate = annualRate;
         mMonthAdd = monthlyAdd;
         mPenalty = penalty;
+        mBalance = balance;
         mIs401k = is401k;
     }
 
     @Override
     public double getBalance() {
-        if(mBalanceDataList.isEmpty()) {
-            return 0;
-        } else {
-            return mBalanceDataList.get(0).getBalance();
-        }
+        return mBalance;
     }
 
     @Override
@@ -100,22 +95,6 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
     }
 
     /**
-     * Add a balance.
-     * @param bd The balance data to add.
-     */
-    public void addBalanceData(BalanceData bd) {
-        mBalanceDataList.add(bd);
-    }
-
-    /**
-     * Get the list of balance data.
-     * @return The list of balance data.
-     */
-    public List<BalanceData> getBalanceData() {
-        return mBalanceDataList;
-    }
-
-    /**
      * Is this income source a 401k.
      * @return True if 401k, otherwise false.
      */
@@ -139,8 +118,8 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
         dest.writeDouble(mInterestRate);
         dest.writeDouble(mMonthAdd);
         dest.writeDouble(mPenalty);
+        dest.writeDouble(mBalance);
         dest.writeInt(mIs401k);
-        dest.writeTypedList(mBalanceDataList);
     }
 
     @Override
@@ -150,8 +129,8 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
         mInterestRate = in.readDouble();
         mMonthAdd = in.readDouble();
         mPenalty = in.readDouble();
+        mBalance = in.readDouble();
         mIs401k = in.readInt();
-        in.readTypedList(mBalanceDataList, BalanceData.CREATOR);
     }
 
     public static final Parcelable.Creator<TaxDeferredIncomeData> CREATOR = new Parcelable.Creator<TaxDeferredIncomeData>()

@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
@@ -151,11 +150,8 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements
         String penalty = mTDID.getPenalty() +"%";
         mPenaltyAmount.setText(penalty);
 
-        List<BalanceData> bd = mTDID.getBalanceData();
-        String formattedAmount = "$0.00";
-        if(bd != null && !bd.isEmpty()) {
-            formattedAmount = SystemUtils.getFormattedCurrency(bd.get(0).getBalance());
-        }
+        double balance = mTDID.getBalance();
+        String formattedAmount = SystemUtils.getFormattedCurrency(balance);
 
         mCurrentBalance.setText(String.valueOf(formattedAmount));
     }

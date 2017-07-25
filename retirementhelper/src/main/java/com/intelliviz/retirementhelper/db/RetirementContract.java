@@ -22,6 +22,7 @@ public class RetirementContract {
     static final String PATH_BALANCE = "balance";
     static final String PATH_MILESTONE = "milestone";
     static final String PATH_SUMMARY = "summary";
+    static final String PATH_TAX_DEFERRED_STATUS = "tax_deferred_status";
 
     private RetirementContract() {
     }
@@ -95,6 +96,7 @@ public class RetirementContract {
         public static final String COLUMN_PENALTY = "penalty";
         public static final String COLUMN_MIN_AGE = "min_age";
         public static final String COLUMN_IS_401K = "is_401k";
+        public static final String COLUMN_BALANCE = "balance";
     }
 
     /**
@@ -177,5 +179,31 @@ public class RetirementContract {
         static final String TABLE_NAME = PATH_SUMMARY;
         public static final String COLUMN_AGE = "age";
         public static final String COLUMN_AMOUNT = "amount";
+    }
+
+    /**
+     * Class for status table
+     */
+    public static final class TaxDeferredStatusEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TAX_DEFERRED_STATUS).build();
+        public static final int STATUS_NONE = 0;
+        public static final int STATUS_UPDATED = 1;
+        public static final int STATUS_UPDATING = 2;
+        public static final int STATUS_ERROR = 3;
+
+        public static final int ACTION_NONE = 0;
+        public static final int ACTION_INSERT = 1;
+        public static final int ACTION_UPDATE = 2;
+        public static final int ACTION_DELETE = 3;
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED_STATUS;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TAX_DEFERRED_STATUS;
+
+        public static final String TABLE_NAME = PATH_TAX_DEFERRED_STATUS;
+        public static final String COLUMN_STATUS = "status";
+        public static final String COLUMN_RESULT = "result";
+        public static final String COLUMN_ACTION = "action";
     }
 }

@@ -40,6 +40,7 @@ public class RetirementProvider extends ContentProvider {
     private static final int MILESTONE_LIST = 1001;
     private static final int MILESTONE_ID = 1002;
     private static final int SUMMARY_LIST = 1101;
+    private static final int TAX_DEFERRED_STATUS = 1110;
 
     private static final String QUERY_TABLES_FOR_TAX_DEFERRED_ITEM =
             RetirementContract.IncomeTypeEntry.TABLE_NAME +
@@ -48,13 +49,7 @@ public class RetirementProvider extends ContentProvider {
                     RetirementContract.IncomeTypeEntry.TABLE_NAME + "." +
                     RetirementContract.IncomeTypeEntry._ID + " = " +
                     RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME + "." +
-                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + " " +
-                    " INNER JOIN " +
-                    RetirementContract.BalanceEntry.TABLE_NAME + " ON " +
-                    RetirementContract.IncomeTypeEntry.TABLE_NAME + "." +
-                    RetirementContract.IncomeTypeEntry._ID + " = " +
-                    RetirementContract.BalanceEntry.TABLE_NAME + "." +
-                    RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID;
+                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID;
 
 
     private static UriMatcher sUriMatcher;
@@ -93,6 +88,8 @@ public class RetirementProvider extends ContentProvider {
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE + "/#", MILESTONE_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_SUMMARY, SUMMARY_LIST);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_TAX_DEFERRED_STATUS, TAX_DEFERRED_STATUS);
     }
 
     @Override
@@ -171,16 +168,7 @@ public class RetirementProvider extends ContentProvider {
                 sqLiteQueryBuilder.setTables(RetirementContract.SummaryEntry.TABLE_NAME);
                 break;
             case TAX_DEFERRED_INCOME_ID:
-                /*
-                sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
-                if(TextUtils.isEmpty(selection)) {
-                    sqLiteQueryBuilder.appendWhere(RetirementContract.TaxDeferredIncomeEntry._ID +
-                            "=" + uri.getLastPathSegment());
-                }
-                break;
-                */
-                Cursor cursor = getTaxDeferredIncomeSource(uri, projection, selection, selectionArgs, sortOrder);
-                return cursor;
+                return getTaxDeferredIncomeSource(uri, projection, selection, selectionArgs, sortOrder);
             case TAX_DEFERRED_INCOME_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
                 break;
@@ -216,8 +204,11 @@ public class RetirementProvider extends ContentProvider {
             case MILESTONE_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.MilestoneEntry.TABLE_NAME);
                 break;
+            case TAX_DEFERRED_STATUS:
+                sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredStatusEntry.TABLE_NAME);
+                break;
             default:
-                throw new IllegalArgumentException("Unknown uri");
+                throw new IllegalArgumentException("Unknown uri: " + uri);
         }
 
         SQLiteDatabase db = mSqliteHelper.getWritableDatabase();
@@ -402,7 +393,7 @@ public class RetirementProvider extends ContentProvider {
                 rowsDeleted = db.delete(RetirementContract.SummaryEntry.TABLE_NAME, null, null);
                 break;
             default:
-                throw new IllegalArgumentException("Unknown uri");
+                throw new IllegalArgumentException("Unknown uri: " + uri);
         }
 
         if(rowsDeleted > 0) {
@@ -532,8 +523,11 @@ public class RetirementProvider extends ContentProvider {
                             selectionArgs);
                 }
                 break;
+            case TAX_DEFERRED_STATUS:
+                rowsUpdated = db.update(RetirementContract.TaxDeferredStatusEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
             default:
-                throw new IllegalArgumentException("Unknown uri");
+                throw new IllegalArgumentException("Unknown uri: " + uri);
         }
         if (rowsUpdated != 0) {
             notifyChanges(uri);
@@ -591,6 +585,7 @@ public class RetirementProvider extends ContentProvider {
                     RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD + " TEXT NOT NULL, " +
                     RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE + " TEXT NOT NULL, " +
                     RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY + " TEXT NOT NULL, " +
+                    RetirementContract.TaxDeferredIncomeEntry.COLUMN_BALANCE + " TEXT NOT NULL, " +
                     RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K + " INTEGER NOT NULL);";
 
             db.execSQL(sql);
@@ -637,6 +632,15 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
+            // create the tax deferred status table
+            sql = "CREATE TABLE " + RetirementContract.TaxDeferredStatusEntry.TABLE_NAME +
+                    " ( " + RetirementContract.TaxDeferredStatusEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.TaxDeferredStatusEntry.COLUMN_STATUS + " INTEGER NOT NULL, " +
+                    RetirementContract.TaxDeferredStatusEntry.COLUMN_ACTION + " INTEGER NOT NULL, " +
+            RetirementContract.TaxDeferredStatusEntry.COLUMN_RESULT + " TEXT NOT NULL);";
+
+            db.execSQL(sql);
+
             // add default ages
             String ROW = "INSERT INTO " + RetirementContract.MilestoneEntry.TABLE_NAME +
                     " Values ('1', '60 0');";
@@ -656,6 +660,9 @@ public class RetirementProvider extends ContentProvider {
 
             ROW = "INSERT INTO " + RetirementContract.RetirementParmsEntry.TABLE_NAME + " Values ('0', '90 0', '0', '4', 0);";
             db.execSQL(ROW);
+
+            ROW = "INSERT INTO " + RetirementContract.TaxDeferredStatusEntry.TABLE_NAME + " Values ('0', '0', '0', '0');";
+            db.execSQL(ROW);
         }
 
         @Override
@@ -669,6 +676,7 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.BalanceEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.MilestoneEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.SummaryEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.TaxDeferredStatusEntry.TABLE_NAME);
 
             onCreate(db);
         }
@@ -676,8 +684,11 @@ public class RetirementProvider extends ContentProvider {
 
     private Cursor getTaxDeferredIncomeSource(
             Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(QUERY_TABLES_FOR_TAX_DEFERRED_ITEM);
+        builder.appendWhere(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID +
+                "=" + uri.getLastPathSegment());
 
         return builder.query(mSqliteHelper.getReadableDatabase(),
                 projection,

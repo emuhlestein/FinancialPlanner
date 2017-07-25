@@ -140,19 +140,6 @@ public class DataBaseUtils {
         }
     }
 
-    static int saveIncomeType(Context context, IncomeType incomeType) {
-        ContentValues values  = new ContentValues();
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, incomeType.getType());
-
-        String sid = String.valueOf(incomeType.getId());
-        String selectionClause = RetirementContract.IncomeTypeEntry._ID + " = ?";
-        String[] selectionArgs = new String[]{sid};
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
-    }
-
     static int updateIncomeTypeName(Context context, IncomeType incomeType) {
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());

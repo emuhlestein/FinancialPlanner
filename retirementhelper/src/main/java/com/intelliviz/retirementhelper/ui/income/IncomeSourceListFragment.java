@@ -1,7 +1,9 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
+import android.content.AsyncQueryHandler;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -48,7 +50,8 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SavingsHelper;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -464,14 +467,6 @@ public class IncomeSourceListFragment extends Fragment implements
                 break;
             case INCOME_TYPE_TAX_DEFERRED:
                 if(action == INCOME_ACTION_EDIT) {
-                    /*
-                    mIncomeAction = INCOME_ACTION_EDIT;
-                    Intent localIntent = new Intent(getContext(), TaxDeferredIntentService.class);
-                    localIntent.putExtra(EXTRA_DB_ID, incomeSourceId);
-                    localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
-                    getActivity().startService(localIntent);
-                    */
-
                     Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
@@ -525,7 +520,10 @@ public class IncomeSourceListFragment extends Fragment implements
                     SavingsHelper.deleteSavingsIncome(getContext(), mSelectedId);
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:
-                    TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), mSelectedId);
+                    //TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), mSelectedId);
+                    TaxDeferredAsyncHandler taxDeferredAsyncHandler =
+                            new TaxDeferredAsyncHandler(getActivity().getContentResolver());
+                    taxDeferredAsyncHandler.delete(mSelectedId);
                     break;
                 case INCOME_TYPE_PENSION:
                     PensionHelper.deleteSavingsIncome(getContext(), mSelectedId);
@@ -536,6 +534,61 @@ public class IncomeSourceListFragment extends Fragment implements
             }
 
             SystemUtils.updateAppWidget(getContext());
+        }
+    }
+
+    public static class IncomeSourceAsyncHandler extends AsyncQueryHandler {
+        private InsertCompleteListener mInsertCompleteListener;
+        interface InsertCompleteListener {
+            void onDeleteComplete(int result);
+        }
+
+        public IncomeSourceAsyncHandler(ContentResolver cr, InsertCompleteListener insertCompleteListener) {
+            super(cr);
+            mInsertCompleteListener = insertCompleteListener;
+        }
+
+        public void delete(long id) {
+            Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+            uri = Uri.withAppendedPath(uri, Long.toString(id));
+            String selection = RetirementContract.IncomeTypeEntry._ID + " = ?";
+            String[] selectionArgs = new String[]{Long.toString(id)};
+            startDelete(0, null, uri, selection, selectionArgs);
+        }
+
+        @Override
+        protected void onDeleteComplete(int token, Object cookie, int result) {
+            if(mInsertCompleteListener != null) {
+                mInsertCompleteListener.onDeleteComplete(result);
+            }
+        }
+    }
+
+    public static class TaxDeferredAsyncHandler extends AsyncQueryHandler implements
+            IncomeSourceAsyncHandler.InsertCompleteListener {
+        private long mId;
+
+        final WeakReference<ContentResolver> mResolver;
+
+        public TaxDeferredAsyncHandler(ContentResolver cr) {
+            super(cr);
+            mResolver = new WeakReference<ContentResolver>(cr);
+        }
+
+        public void delete(long id) {
+            mId = id;
+            final ContentResolver resolver = mResolver.get();
+            IncomeSourceAsyncHandler incomeSourceAsyncHandler = new IncomeSourceAsyncHandler(resolver, this);
+            incomeSourceAsyncHandler.delete(id);
+        }
+
+        @Override
+        public void onDeleteComplete(int result) {
+            Uri uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
+            uri = Uri.withAppendedPath(uri, Long.toString(mId));
+            String selection = RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
+            String[] selectionArgs = new String[]{Long.toString(mId)};
+            startDelete(0, null, uri, selection, selectionArgs);
         }
     }
 }

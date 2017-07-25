@@ -16,7 +16,6 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.addIncomeType;
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.getBalanceData;
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.getIncomeTypeData;
 import static com.intelliviz.retirementhelper.util.DataBaseUtils.saveBalanceData;
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.saveIncomeType;
 
 /**
  * Utility class for savings.
@@ -45,7 +44,6 @@ public class SavingsHelper {
 
     public static int saveSavingsIncomeData(Context context, SavingsIncomeData sid) {
         DataBaseUtils.updateIncomeTypeName(context, sid);
-        saveIncomeType(context, sid);
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD, sid.getMonthlyIncrease());
         values.put(RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST, sid.getInterest());

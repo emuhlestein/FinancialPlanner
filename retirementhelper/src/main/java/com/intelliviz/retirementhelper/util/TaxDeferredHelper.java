@@ -5,11 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
-
-import java.util.List;
 
 /**
  * Utility class for tax deferred income source.
@@ -17,6 +14,23 @@ import java.util.List;
  */
 
 public class TaxDeferredHelper {
+    public static void clearStatus(Context context) {
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_STATUS, 0);
+        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_RESULT, 0);
+        Uri uri = RetirementContract.TaxDeferredStatusEntry.CONTENT_URI;
+        context.getContentResolver().update(uri, values, null, null);
+    }
+
+    public static void updateStatus(Context context, int status, int action, String result) {
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_STATUS, status);
+        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_ACTION, action);
+        values.put(RetirementContract.TaxDeferredStatusEntry.COLUMN_RESULT, result);
+        Uri uri = RetirementContract.TaxDeferredStatusEntry.CONTENT_URI;
+        context.getContentResolver().update(uri, values, null, null);
+    }
+
     public static String addTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid) {
         String id = DataBaseUtils.addIncomeType(context, tdid);
         if(id == null) {
@@ -30,13 +44,9 @@ public class TaxDeferredHelper {
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST, Double.toString(tdid.getInterestRate()));
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD, Double.toString(tdid.getMonthAddition()));
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY, Double.toString(tdid.getPenalty()));
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_BALANCE, Double.toString(tdid.getBalance()));
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K, tdid.getIs401k());
         Uri uri = context.getContentResolver().insert(RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI, values);
-
-        List<BalanceData> balanceDataList = tdid.getBalanceData();
-        for(BalanceData bd : balanceDataList) {
-            DataBaseUtils.addBalanceData(context, incomeId, bd.getBalance(), bd.getDate());
-        }
 
         if(uri == null) {
             return null;
@@ -47,22 +57,18 @@ public class TaxDeferredHelper {
 
     public static int saveTaxDeferredData(Context context, TaxDeferredIncomeData tdid) {
         DataBaseUtils.updateIncomeTypeName(context, tdid);
-        DataBaseUtils.saveIncomeType(context, tdid);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE, tdid.getMinimumAge());
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST, Double.toString(tdid.getInterestRate()));
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD, Double.toString(tdid.getMonthAddition()));
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY, Double.toString(tdid.getPenalty()));
+        values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_BALANCE, Double.toString(tdid.getBalance()));
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K, tdid.getIs401k());
 
         String id = String.valueOf(tdid.getId());
         Uri uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, id);
         context.getContentResolver().update(uri, values, null, null);
-        List<BalanceData> balanceDataList = tdid.getBalanceData();
-        for(BalanceData bd : balanceDataList) {
-            DataBaseUtils.saveBalanceData(context, tdid.getId(), bd.getBalance(), bd.getDate());
-        }
 
         return 0;
     }
@@ -103,22 +109,16 @@ public class TaxDeferredHelper {
         int interestIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INTEREST);
         int monthAddIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MONTH_ADD);
         int penaltyIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY);
+        int balanceIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_BALANCE);
         int is401kIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K);
         String minAge = cursor.getString(minAgeIndex);
         double interest = Double.parseDouble(cursor.getString(interestIndex));
         double monthAdd = Double.parseDouble(cursor.getString(monthAddIndex));
         double penalty = Double.parseDouble(cursor.getString(penaltyIndex));
+        double balance = Double.parseDouble(cursor.getString(balanceIndex));
         int is401k = cursor.getInt(is401kIndex);
         cursor.close();
-        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, is401k);
-
-        BalanceData[] bds = DataBaseUtils.getBalanceData(context, incomeId);
-        if(bds != null) {
-            for (BalanceData bd : bds) {
-                tdid.addBalanceData(bd);
-            }
-        }
-        return tdid;
+        return new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, balance, is401k);
     }
 
     public static TaxDeferredIncomeData extractData(Cursor cursor) {
@@ -135,8 +135,7 @@ public class TaxDeferredHelper {
         int penaltyIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_PENALTY);
         int is401KIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_IS_401K);
 
-        int balanceIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
-        int balanceDateIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_DATE);
+        int balanceIndex = cursor.getColumnIndex(RetirementContract.TaxDeferredIncomeEntry.COLUMN_BALANCE);
 
         long incomeId = cursor.getLong(incomeIdIndex);
         String name = cursor.getString(nameIndex);
@@ -149,12 +148,9 @@ public class TaxDeferredHelper {
         int is401k = cursor.getInt(is401KIndex);
 
         String amount = cursor.getString(balanceIndex);
-        String date = cursor.getString(balanceDateIndex);
         double balance = Double.parseDouble(amount);
-        BalanceData bd = new BalanceData(balance, date);
 
-        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(incomeId, name, incomeType, minAge, interest, monthAdd, penalty, is401k);
-        tdid.addBalanceData(bd);
+        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(incomeId, name, incomeType, minAge, interest, monthAdd, penalty, balance, is401k);
         return tdid;
     }
 }
