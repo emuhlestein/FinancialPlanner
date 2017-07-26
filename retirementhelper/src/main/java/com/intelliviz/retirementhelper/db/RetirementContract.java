@@ -76,6 +76,7 @@ public class RetirementContract {
         public static final String COLUMN_INCOME_TYPE_ID = "income_type_id";
         public static final String COLUMN_INTEREST = "interest";
         public static final String COLUMN_MONTH_ADD = "month_add";
+        public static final String COLUMN_BALANCE = "balance";
     }
 
     /**

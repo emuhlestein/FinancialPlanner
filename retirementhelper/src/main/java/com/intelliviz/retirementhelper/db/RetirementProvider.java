@@ -51,6 +51,15 @@ public class RetirementProvider extends ContentProvider {
                     RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME + "." +
                     RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID;
 
+    private static final String QUERY_TABLES_FOR_SAVINGS_ITEM =
+            RetirementContract.IncomeTypeEntry.TABLE_NAME +
+                    " INNER JOIN " +
+                    RetirementContract.SavingsIncomeEntry.TABLE_NAME + " ON " +
+                    RetirementContract.IncomeTypeEntry.TABLE_NAME + "." +
+                    RetirementContract.IncomeTypeEntry._ID + " = " +
+                    RetirementContract.SavingsIncomeEntry.TABLE_NAME + "." +
+                    RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID;
+
 
     private static UriMatcher sUriMatcher;
 
@@ -157,10 +166,7 @@ public class RetirementProvider extends ContentProvider {
                 sqLiteQueryBuilder.setTables(RetirementContract.IncomeTypeEntry.TABLE_NAME);
                 break;
             case SAVINGS_INCOME_ID:
-                sqLiteQueryBuilder.setTables(RetirementContract.SavingsIncomeEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID +
-                        "=" + uri.getLastPathSegment());
-                break;
+                return getSavingsIncomeSource(uri, projection, selection, selectionArgs, sortOrder);
             case SAVINGS_INCOME_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.SavingsIncomeEntry.TABLE_NAME);
                 break;
@@ -573,7 +579,8 @@ public class RetirementProvider extends ContentProvider {
                     " ( " + RetirementContract.SavingsIncomeEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID + " INTEGER NOT NULL, " +
                     RetirementContract.SavingsIncomeEntry.COLUMN_MONTH_ADD + " TEXT NOT NULL, " +
-                    RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST + " TEXT NOT NULL);";
+                    RetirementContract.SavingsIncomeEntry.COLUMN_INTEREST + " TEXT NOT NULL, " +
+                    RetirementContract.SavingsIncomeEntry.COLUMN_BALANCE + " TEXT NOT NULL);";
 
             db.execSQL(sql);
 
@@ -689,6 +696,23 @@ public class RetirementProvider extends ContentProvider {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(QUERY_TABLES_FOR_TAX_DEFERRED_ITEM);
         builder.appendWhere(RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID +
+                "=" + uri.getLastPathSegment());
+
+        return builder.query(mSqliteHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    private Cursor getSavingsIncomeSource(
+            Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(QUERY_TABLES_FOR_SAVINGS_ITEM);
+        builder.appendWhere(RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID +
                 "=" + uri.getLastPathSegment());
 
         return builder.query(mSqliteHelper.getReadableDatabase(),

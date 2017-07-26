@@ -2,8 +2,13 @@ package com.intelliviz.retirementhelper.ui.income;
 
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,31 +19,43 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
-import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
+import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
 import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
+import com.intelliviz.retirementhelper.util.SavingsIncomeHelper;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 /**
  * Fragment used for viewing savings income sources.
  *
  * @author Ed Muhlestein
  */
-public class ViewSavingsIncomeFragment extends Fragment implements SelectionMilestoneListener {
+public class ViewSavingsIncomeFragment extends Fragment implements
+        SelectionMilestoneListener,
+        LoaderManager.LoaderCallbacks<Cursor>{
     public static final String VIEW_SAVINGS_INCOME_FRAG_TAG = "view savings income frag tag";
     private static final String EXTRA_INTENT = "extra intent";
+    public static final int ROD_LOADER = 0;
+    public static final int SID_LOADER = 1;
     private SavingsIncomeData mSID;
     private RetirementOptionsData mROD;
+    private long mId;
+    private SummaryMilestoneAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
@@ -64,11 +81,10 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
+            mId = -1;
             if(intent != null) {
-                mSID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
-                mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
             }
-
         }
         setHasOptionsMenu(true);
     }
@@ -79,18 +95,24 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_savings_income, container, false);
         ButterKnife.bind(this, view);
-        List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
-        SummaryMilestoneAdapter milestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
+        List<MilestoneData> milestones = new ArrayList<>();
+        mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(milestoneAdapter);
+        mRecyclerView.setAdapter(mMilestoneAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
                 linearLayoutManager.getOrientation()));
-        milestoneAdapter.setOnSelectionMilestoneListener(this);
+        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
         setHasOptionsMenu(true);
 
-        updateUI();
+        mROD = null;
+        mSID = null;
+        Bundle bundle = new Bundle();
+        bundle.putString(ID_ARGS, Long.toString(mId));
+        getLoaderManager().initLoader(ROD_LOADER, null, this);
+        getLoaderManager().initLoader(SID_LOADER, bundle, this);
+
         return view;
     }
 
@@ -107,19 +129,17 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
         mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(SystemUtils.getFormattedCurrency(mSID.getMonthlyIncrease()));
 
-        List<BalanceData> bd = mSID.getBalanceDataList();
-        String formattedAmount = "$0.00";
-        if(bd != null && !bd.isEmpty()) {
-            formattedAmount = SystemUtils.getFormattedCurrency(bd.get(0).getBalance());
-        }
+        double balance = mSID.getBalance();
+        String formattedAmount = SystemUtils.getFormattedCurrency(balance);
 
         mCurrentBalance.setText(String.valueOf(formattedAmount));
-
+/*
         List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
         double monthlyAmount = milestones.get(0).getMonthlyBenefit();
         formattedAmount = SystemUtils.getFormattedCurrency(monthlyAmount);
 
         mMonthlyAmount.setText(formattedAmount);
+        */
     }
 
     @Override
@@ -127,5 +147,63 @@ public class ViewSavingsIncomeFragment extends Fragment implements SelectionMile
         Intent intent = new Intent(getContext(), MilestoneDetailsDialog.class);
         intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, msd);
         startActivity(intent);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        Loader<Cursor> loader;
+        Uri uri;
+        switch (loaderId) {
+            case ROD_LOADER:
+                uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
+                loader = new CursorLoader(getActivity(),
+                        uri,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            case SID_LOADER:
+                String id = args.getString(ID_ARGS);
+                uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
+                if(uri != null) {
+                    uri = Uri.withAppendedPath(uri, id);
+                }
+
+                loader = new CursorLoader(getActivity(),
+                        uri,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            default:
+                loader = null;
+        }
+
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch(loader.getId()) {
+            case ROD_LOADER:
+                mROD = RetirementOptionsHelper.extractData(cursor);
+                break;
+            case SID_LOADER:
+                mSID = SavingsIncomeHelper.extractData(cursor);
+                updateUI();
+                break;
+        }
+
+        if(mROD != null && mSID != null) {
+            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
+            mMilestoneAdapter.update(milestones);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

@@ -103,7 +103,7 @@ public class DataBaseUtils {
             int type = Integer.parseInt(cursor.getString(typeIndex));
             switch(type) {
                 case INCOME_TYPE_SAVINGS:
-                    SavingsIncomeData sid = SavingsHelper.getSavingsIncomeData(context, id);
+                    SavingsIncomeData sid = SavingsIncomeHelper.getData(context, id);
                     incomeTypes.add(sid);
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:

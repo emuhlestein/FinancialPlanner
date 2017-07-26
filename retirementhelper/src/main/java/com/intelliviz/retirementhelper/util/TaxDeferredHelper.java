@@ -59,10 +59,8 @@ public class TaxDeferredHelper {
 
     private static Cursor getTaxDeferredIncome(Context context, long incomeId) {
         Uri uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
-        String selection = RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
         String sid = String.valueOf(incomeId);
         uri = uri.withAppendedPath(uri, sid);
-        String[] selectionArgs = {sid};
         return context.getContentResolver().query(uri, null, null, null, null);
     }
 

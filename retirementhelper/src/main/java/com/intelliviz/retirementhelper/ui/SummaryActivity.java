@@ -41,7 +41,6 @@ import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.ui.income.EditTaxDeferredIncomeFragment.STATUS_LOADER;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
@@ -254,8 +253,8 @@ public class SummaryActivity extends AppCompatActivity implements
                 loader = new CursorLoader(this,
                         RetirementContract.TransactionStatusEntry.CONTENT_URI,
                         null,
-                        RetirementContract.TransactionStatusEntry.COLUMN_TYPE + " =? ",
-                        new String[]{Integer.toString(INCOME_TYPE_TAX_DEFERRED)},
+                        null,
+                        null,
                         null);
                 break;
             default:
@@ -273,6 +272,7 @@ public class SummaryActivity extends AppCompatActivity implements
                     int statusIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_STATUS);
                     int resultIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_RESULT);
                     int actionIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_ACTION);
+                    int typeIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_TYPE);
                     if(statusIndex != -1) {
                         int status = cursor.getInt(statusIndex);
                         if(status == RetirementContract.TransactionStatusEntry.STATUS_UPDATED) {

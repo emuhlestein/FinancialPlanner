@@ -5,9 +5,6 @@ import android.os.Parcelable;
 
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Class to manage savings income.
  * Created by Ed Muhlestein on 5/1/2017.
@@ -15,7 +12,7 @@ import java.util.List;
 public class SavingsIncomeData extends IncomeTypeData {
     private double mInterest;
     private double mMonthlyIncrease;
-    private List<BalanceData> mBalanceDataList = new ArrayList<>();
+    private double mBalance;
 
     /**
      * Default constructor.
@@ -31,20 +28,18 @@ public class SavingsIncomeData extends IncomeTypeData {
      * @param type The income source type.
      * @param interest The interest.
      * @param monthlyIncrease The monthly increase.
+     * @param balance The balance.
      */
-    public SavingsIncomeData(long id, String name, int type, double interest, double monthlyIncrease) {
+    public SavingsIncomeData(long id, String name, int type, double interest, double monthlyIncrease, double balance) {
         super(id, name, type);
         mInterest = interest;
         mMonthlyIncrease = monthlyIncrease;
+        mBalance = balance;
     }
 
     @Override
     public double getBalance() {
-        if(mBalanceDataList.isEmpty()) {
-            return 0;
-        } else {
-            return mBalanceDataList.get(0).getBalance();
-        }
+        return mBalance;
     }
 
     @Override
@@ -69,22 +64,6 @@ public class SavingsIncomeData extends IncomeTypeData {
         return mMonthlyIncrease;
     }
 
-    /**
-     * Add a balance.
-     * @param bd The balance data to add.
-     */
-    public void addBalance(BalanceData bd) {
-        mBalanceDataList.add(bd);
-    }
-
-    /**
-     * Get the list of balance data.
-     * @return THe list of balance data.
-     */
-    public List<BalanceData> getBalanceDataList() {
-        return mBalanceDataList;
-    }
-
     private SavingsIncomeData(Parcel in) {
         readFromParcel(in);
     }
@@ -99,7 +78,7 @@ public class SavingsIncomeData extends IncomeTypeData {
         super.writeToParcel(dest, flags);
         dest.writeDouble(mInterest);
         dest.writeDouble(mMonthlyIncrease);
-        dest.writeTypedList(mBalanceDataList);
+        dest.writeDouble(mBalance);
     }
 
     @Override
@@ -107,7 +86,7 @@ public class SavingsIncomeData extends IncomeTypeData {
         super.readFromParcel(in);
         mInterest = in.readDouble();
         mMonthlyIncrease = in.readDouble();
-        in.readTypedList(mBalanceDataList, BalanceData.CREATOR);
+        mBalance = in.readDouble();
     }
 
     public static final Parcelable.Creator<SavingsIncomeData> CREATOR = new Parcelable.Creator<SavingsIncomeData>()
