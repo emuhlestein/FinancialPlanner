@@ -15,7 +15,7 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 
 public class PensionHelper {
 
-    public static String addPensionData(Context context, PensionIncomeData pid) {
+    public static String addData(Context context, PensionIncomeData pid) {
         String id = DataBaseUtils.addIncomeType(context, pid);
         if(id == null) {
             return null;
@@ -34,18 +34,16 @@ public class PensionHelper {
         }
     }
 
-    public static int savePensionData(Context context, PensionIncomeData pid) {
+    public static int saveData(Context context, PensionIncomeData pid) {
         DataBaseUtils.updateIncomeTypeName(context, pid);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(pid.getMonthlyBenefit(0)));
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_START_AGE, pid.getStartAge());
 
-        String sid = String.valueOf(pid.getId());
-        String selectionClause = RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
-        String[] selectionArgs = new String[]{sid};
+        String id = String.valueOf(pid.getId());
         Uri uri = RetirementContract.PensionIncomeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
+        uri = Uri.withAppendedPath(uri, id);
+        return context.getContentResolver().update(uri, values, null, null);
     }
 
     private static Cursor getPensionIncome(Context context, long incomeId) {
@@ -73,16 +71,34 @@ public class PensionHelper {
         return new PensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
     }
 
-    public static int deleteSavingsIncome(Context context, long incomeId) {
+    public static int deleteData(Context context, long incomeId) {
         String sid = String.valueOf(incomeId);
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
         context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.PensionIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        context.getContentResolver().delete(uri, null, null);
-        uri = RetirementContract.BalanceEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
         return context.getContentResolver().delete(uri, null, null);
+    }
+
+    public static PensionIncomeData extractData(Cursor cursor) {
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        int incomeIdIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID);
+        int nameIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
+        int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
+
+        int startAgeIndex = cursor.getColumnIndex(RetirementContract.PensionIncomeEntry.COLUMN_START_AGE);
+        int monthlyBenefitIndex = cursor.getColumnIndex(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT);
+
+        long incomeId = cursor.getLong(incomeIdIndex);
+        String name = cursor.getString(nameIndex);
+        int incomeType = cursor.getInt(typeIndex);
+
+        String startAge = cursor.getString(startAgeIndex);
+        double monthlyBenefit = Double.parseDouble(cursor.getString(monthlyBenefitIndex));
+
+        return new PensionIncomeData(incomeId, name, incomeType, startAge, monthlyBenefit);
     }
 }

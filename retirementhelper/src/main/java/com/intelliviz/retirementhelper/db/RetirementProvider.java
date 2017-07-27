@@ -60,6 +60,15 @@ public class RetirementProvider extends ContentProvider {
                     RetirementContract.SavingsIncomeEntry.TABLE_NAME + "." +
                     RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID;
 
+    private static final String QUERY_TABLES_FOR_PENSION_ITEM =
+            RetirementContract.IncomeTypeEntry.TABLE_NAME +
+                    " INNER JOIN " +
+                    RetirementContract.PensionIncomeEntry.TABLE_NAME + " ON " +
+                    RetirementContract.IncomeTypeEntry.TABLE_NAME + "." +
+                    RetirementContract.IncomeTypeEntry._ID + " = " +
+                    RetirementContract.PensionIncomeEntry.TABLE_NAME + "." +
+                    RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID;
+
 
     private static UriMatcher sUriMatcher;
 
@@ -179,10 +188,7 @@ public class RetirementProvider extends ContentProvider {
                 sqLiteQueryBuilder.setTables(RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
                 break;
             case PENSION_INCOME_ID:
-                sqLiteQueryBuilder.setTables(RetirementContract.PensionIncomeEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.PensionIncomeEntry._ID +
-                        "=" + uri.getLastPathSegment());
-                break;
+                return getPensionIncomeSource(uri, projection, selection, selectionArgs, sortOrder);
             case PENSION_INCOME_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.PensionIncomeEntry.TABLE_NAME);
                 break;
@@ -713,6 +719,23 @@ public class RetirementProvider extends ContentProvider {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(QUERY_TABLES_FOR_SAVINGS_ITEM);
         builder.appendWhere(RetirementContract.SavingsIncomeEntry.COLUMN_INCOME_TYPE_ID +
+                "=" + uri.getLastPathSegment());
+
+        return builder.query(mSqliteHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    private Cursor getPensionIncomeSource(
+            Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(QUERY_TABLES_FOR_PENSION_ITEM);
+        builder.appendWhere(RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID +
                 "=" + uri.getLastPathSegment());
 
         return builder.query(mSqliteHelper.getReadableDatabase(),

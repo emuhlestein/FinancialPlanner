@@ -46,7 +46,7 @@ public class TaxDeferredIntentService extends IntentService {
                     } else {
                         BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
                                 RetirementContract.TransactionStatusEntry.ACTION_UPDATE, "", INCOME_TYPE_TAX_DEFERRED);
-                        int rowsUpdated = TaxDeferredHelper.saveTaxDeferredData(this, tdid);
+                        int rowsUpdated = TaxDeferredHelper.saveData(this, tdid);
                         String rows = Integer.toString(rowsUpdated);
                         BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
                                 RetirementContract.TransactionStatusEntry.ACTION_UPDATE, rows, INCOME_TYPE_TAX_DEFERRED);

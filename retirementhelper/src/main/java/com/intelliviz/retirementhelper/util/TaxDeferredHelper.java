@@ -39,7 +39,7 @@ public class TaxDeferredHelper {
         }
     }
 
-    public static int saveTaxDeferredData(Context context, TaxDeferredIncomeData tdid) {
+    public static int saveData(Context context, TaxDeferredIncomeData tdid) {
         DataBaseUtils.updateIncomeTypeName(context, tdid);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.TaxDeferredIncomeEntry.COLUMN_MIN_AGE, tdid.getMinimumAge());
@@ -52,9 +52,7 @@ public class TaxDeferredHelper {
         String id = String.valueOf(tdid.getId());
         Uri uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, id);
-        context.getContentResolver().update(uri, values, null, null);
-
-        return 0;
+        return context.getContentResolver().update(uri, values, null, null);
     }
 
     private static Cursor getTaxDeferredIncome(Context context, long incomeId) {
@@ -70,9 +68,6 @@ public class TaxDeferredHelper {
         uri = Uri.withAppendedPath(uri, sid);
         context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        context.getContentResolver().delete(uri, null, null);
-        uri = RetirementContract.BalanceEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
         return context.getContentResolver().delete(uri, null, null);
     }

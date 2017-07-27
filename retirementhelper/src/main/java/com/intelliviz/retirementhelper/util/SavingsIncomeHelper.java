@@ -82,9 +82,6 @@ public class SavingsIncomeHelper {
         context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        context.getContentResolver().delete(uri, null, null);
-        uri = RetirementContract.BalanceEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
         return context.getContentResolver().delete(uri, null, null);
     }
 

@@ -39,7 +39,7 @@ import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.services.GovPensionDataService;
-import com.intelliviz.retirementhelper.services.PensionDataService;
+import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.ListMenuActivity;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
@@ -345,10 +345,11 @@ public class IncomeSourceListFragment extends Fragment implements
                     startActivity(newIntent);
                     break;
                 case INCOME_TYPE_PENSION:
-                    newIntent = new Intent(getContext(), PensionDataService.class);
-                    newIntent.putExtra(RetirementConstants.EXTRA_DB_ID, id);
-                    newIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
-                    getActivity().startService(newIntent);
+                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
+                    startActivity(newIntent);
                     break;
                 case INCOME_TYPE_GOV_PENSION:
                     newIntent = new Intent(getContext(), GovPensionDataService.class);
@@ -363,14 +364,14 @@ public class IncomeSourceListFragment extends Fragment implements
     private void registerReceiver() {
         //registerSavingsReceiver();
         //registerTaxDeferredReceiver();
-        registerPensionReceiver();
+        //registerPensionReceiver();
         registerGovPensionReceiver();
     }
 
     private void unregisterReceiver() {
         //unregisterSavingsReceiver();
         //unregisterTaxDeferredReceiver();
-        unregisterPensionReceiver();
+        //unregisterPensionReceiver();
         unregisterGovPensionReceiver();
     }
 
@@ -484,10 +485,11 @@ public class IncomeSourceListFragment extends Fragment implements
             case INCOME_TYPE_PENSION:
                 if(action == INCOME_ACTION_EDIT) {
                     mIncomeAction = INCOME_ACTION_EDIT;
-                    Intent localIntent = new Intent(getContext(), PensionDataService.class);
-                    localIntent.putExtra(EXTRA_DB_ID, incomeSourceId);
-                    localIntent.putExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
-                    getActivity().startService(localIntent);
+                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
+                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
+                    startActivity(newIntent);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
                     FragmentManager fm = getFragmentManager();
@@ -521,13 +523,10 @@ public class IncomeSourceListFragment extends Fragment implements
                     SavingsIncomeHelper.deleteSavingsIncome(getContext(), mSelectedId);
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:
-                    //TaxDeferredHelper.deleteTaxDeferredIncome(getContext(), mSelectedId);
-                    TaxDeferredAsyncHandler taxDeferredAsyncHandler =
-                            new TaxDeferredAsyncHandler(getActivity().getContentResolver());
-                    taxDeferredAsyncHandler.delete(mSelectedId);
+                    deleteTDID();
                     break;
                 case INCOME_TYPE_PENSION:
-                    PensionHelper.deleteSavingsIncome(getContext(), mSelectedId);
+                    PensionHelper.deleteData(getContext(), mSelectedId);
                     break;
                 case INCOME_TYPE_GOV_PENSION:
                     GovPensionHelper.deleteSavingsIncome(getContext(), mSelectedId);
@@ -536,6 +535,13 @@ public class IncomeSourceListFragment extends Fragment implements
 
             SystemUtils.updateAppWidget(getContext());
         }
+    }
+
+    private void deleteTDID() {
+        Intent intent = new Intent(getContext(), TaxDeferredIntentService.class);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ID, mSelectedId);
+        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_DELETE);
+        getActivity().startService(intent);
     }
 
     public static class IncomeSourceAsyncHandler extends AsyncQueryHandler {
