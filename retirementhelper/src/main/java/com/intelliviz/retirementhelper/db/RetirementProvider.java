@@ -35,8 +35,6 @@ public class RetirementProvider extends ContentProvider {
     private static final int PENSION_INCOME_ID = 702;
     private static final int GOV_PENSION_INCOME_LIST = 801;
     private static final int GOV_PENSION_INCOME_ID = 802;
-    private static final int BALANCE_LIST = 901;
-    private static final int BALANCE_ID = 902;
     private static final int MILESTONE_LIST = 1001;
     private static final int MILESTONE_ID = 1002;
     private static final int SUMMARY_LIST = 1101;
@@ -69,6 +67,15 @@ public class RetirementProvider extends ContentProvider {
                     RetirementContract.PensionIncomeEntry.TABLE_NAME + "." +
                     RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID;
 
+    private static final String QUERY_TABLES_FOR_GOV_PENSION_ITEM =
+            RetirementContract.IncomeTypeEntry.TABLE_NAME +
+                    " INNER JOIN " +
+                    RetirementContract.GovPensionIncomeEntry.TABLE_NAME + " ON " +
+                    RetirementContract.IncomeTypeEntry.TABLE_NAME + "." +
+                    RetirementContract.IncomeTypeEntry._ID + " = " +
+                    RetirementContract.GovPensionIncomeEntry.TABLE_NAME + "." +
+                    RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID;
+
 
     private static UriMatcher sUriMatcher;
 
@@ -96,10 +103,6 @@ public class RetirementProvider extends ContentProvider {
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_GOV_PENSION_INCOME, GOV_PENSION_INCOME_LIST);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_GOV_PENSION_INCOME + "/#", GOV_PENSION_INCOME_ID);
-
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_BALANCE, BALANCE_LIST);
-
-        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_BALANCE + "/#", BALANCE_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE, MILESTONE_LIST);
 
@@ -143,10 +146,6 @@ public class RetirementProvider extends ContentProvider {
                 return RetirementContract.GovPensionIncomeEntry.CONTENT_TYPE;
             case GOV_PENSION_INCOME_ID:
                 return RetirementContract.GovPensionIncomeEntry.CONTENT_ITEM_TYPE;
-            case BALANCE_LIST:
-                return RetirementContract.BalanceEntry.CONTENT_TYPE;
-            case BALANCE_ID:
-                return RetirementContract.BalanceEntry.CONTENT_ITEM_TYPE;
             case SUMMARY_LIST:
                 return RetirementContract.SummaryEntry.CONTENT_TYPE;
             case TAX_DEFERRED_INCOME_LIST:
@@ -193,20 +192,9 @@ public class RetirementProvider extends ContentProvider {
                 sqLiteQueryBuilder.setTables(RetirementContract.PensionIncomeEntry.TABLE_NAME);
                 break;
             case GOV_PENSION_INCOME_ID:
-                sqLiteQueryBuilder.setTables(RetirementContract.GovPensionIncomeEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.GovPensionIncomeEntry._ID +
-                        "=" + uri.getLastPathSegment());
-                break;
+                return getGovPensionIncomeSource(uri, projection, selection, selectionArgs, sortOrder);
             case GOV_PENSION_INCOME_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.GovPensionIncomeEntry.TABLE_NAME);
-                break;
-            case BALANCE_ID:
-                sqLiteQueryBuilder.setTables(RetirementContract.BalanceEntry.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(RetirementContract.BalanceEntry._ID +
-                        "=" + uri.getLastPathSegment());
-                break;
-            case BALANCE_LIST:
-                sqLiteQueryBuilder.setTables(RetirementContract.BalanceEntry.TABLE_NAME);
                 break;
             case MILESTONE_ID:
                 sqLiteQueryBuilder.setTables(RetirementContract.MilestoneEntry.TABLE_NAME);
@@ -300,16 +288,6 @@ public class RetirementProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
-            case BALANCE_LIST:
-                // The second parameter will allow an empty row to be inserted. If it was null, then no row
-                // can be inserted if values is empty.
-                rowId = db.insert(RetirementContract.BalanceEntry.TABLE_NAME, null, values);
-                if (rowId > -1) {
-                    returnUri = ContentUris.withAppendedId(uri, rowId);
-                } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
-                }
-                break;
             case MILESTONE_LIST:
                 // The second parameter will allow an empty row to be inserted. If it was null, then no row
                 // can be inserted if values is empty.
@@ -363,25 +341,6 @@ public class RetirementProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 rowsDeleted = db.delete(RetirementContract.GovPensionIncomeEntry.TABLE_NAME,
                         RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + "=" + id, null);
-                break;
-
-            case BALANCE_ID:
-                id = uri.getLastPathSegment();
-                if (TextUtils.isEmpty(selection)) {
-                    rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
-                            RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " = ?", new String[]{id});
-                } else {
-                    rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME, selection, selectionArgs);
-                }
-                break;
-            case BALANCE_LIST:
-                id = uri.getLastPathSegment();
-                if (TextUtils.isEmpty(selection)) {
-                    rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME, selection, selectionArgs);
-                } else {
-                    rowsDeleted = db.delete(RetirementContract.BalanceEntry.TABLE_NAME,
-                            RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " = ?", new String[]{id});
-                }
                 break;
             case MILESTONE_ID:
                 id = uri.getLastPathSegment();
@@ -502,23 +461,6 @@ public class RetirementProvider extends ContentProvider {
                             selectionArgs);
                 }
                 break;
-
-            case BALANCE_ID:
-                id = uri.getLastPathSegment();
-                if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = db.update(RetirementContract.BalanceEntry.TABLE_NAME,
-                            values,
-                            RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + "=?",
-                            new String[]{id});
-                } else {
-                    rowsUpdated = db.update(RetirementContract.BalanceEntry.TABLE_NAME,
-                            values,
-                            RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + "=" + id
-                                    + " and "
-                                    + selection,
-                            selectionArgs);
-                }
-                break;
             case MILESTONE_ID:
                 id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
@@ -621,15 +563,6 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
-            // create the balance table
-            sql = "CREATE TABLE " + RetirementContract.BalanceEntry.TABLE_NAME +
-                    " ( " + RetirementContract.BalanceEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " INTEGER NOT NULL, " +
-                    RetirementContract.BalanceEntry.COLUMN_AMOUNT + " TEXT NOT NULL, " +
-                    RetirementContract.BalanceEntry.COLUMN_DATE + " TEXT NOT NULL);";
-
-            db.execSQL(sql);
-
             // create the milestone table
             sql = "CREATE TABLE " + RetirementContract.MilestoneEntry.TABLE_NAME +
                     " ( " + RetirementContract.MilestoneEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -687,7 +620,6 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.TaxDeferredIncomeEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.PensionIncomeEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.GovPensionIncomeEntry.TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.BalanceEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.MilestoneEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.SummaryEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.TransactionStatusEntry.TABLE_NAME);
@@ -735,6 +667,23 @@ public class RetirementProvider extends ContentProvider {
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(QUERY_TABLES_FOR_PENSION_ITEM);
+        builder.appendWhere(RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID +
+                "=" + uri.getLastPathSegment());
+
+        return builder.query(mSqliteHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    private Cursor getGovPensionIncomeSource(
+            Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(QUERY_TABLES_FOR_GOV_PENSION_ITEM);
         builder.appendWhere(RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID +
                 "=" + uri.getLastPathSegment());
 

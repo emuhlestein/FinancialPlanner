@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BalanceData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
@@ -171,64 +170,6 @@ public class DataBaseUtils {
         int type = cursor.getInt(typeIndex);
         cursor.close();
         return new IncomeDataHelper(name, type);
-    }
-
-    static String addBalanceData(Context context, long incomeId, double balance, String date) {
-        String amount = Double.toString(balance);
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID, incomeId);
-        values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, amount);
-        values.put(RetirementContract.BalanceEntry.COLUMN_DATE, date);
-        Uri uri = context.getContentResolver().insert(RetirementContract.BalanceEntry.CONTENT_URI, values);
-        if(uri == null) {
-            return null;
-        } else {
-            return uri.getLastPathSegment();
-        }
-    }
-
-    static int saveBalanceData(Context context, long incomeId, double balance, String date) {
-        String amount = Double.toString(balance);
-        ContentValues values  = new ContentValues();
-        values.put(RetirementContract.BalanceEntry.COLUMN_AMOUNT, amount);
-        values.put(RetirementContract.BalanceEntry.COLUMN_DATE, date);
-
-        String sid = String.valueOf(incomeId);
-        String selectionClause = RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " = ?";
-        String[] selectionArgs = new String[]{sid};
-        Uri uri = RetirementContract.BalanceEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
-    }
-
-    private static Cursor getBalances(Context context, long incomeId) {
-        Uri uri = RetirementContract.BalanceEntry.CONTENT_URI;
-        String selection = RetirementContract.BalanceEntry.COLUMN_INCOME_TYPE_ID + " = ?";
-        String id = String.valueOf(incomeId);
-        String[] selectionArgs = {id};
-        String sortOrder = RetirementContract.BalanceEntry.COLUMN_DATE + " DESC";
-        return context.getContentResolver().query(uri, null, selection, selectionArgs, sortOrder);
-    }
-
-    static BalanceData[] getBalanceData(Context context, long incomeId) {
-        Cursor cursor = getBalances(context, incomeId);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return null;
-        }
-
-        BalanceData bd[] = new BalanceData[cursor.getCount()];
-        int index = 0;
-        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            int balanceIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_AMOUNT);
-            int dateIndex = cursor.getColumnIndex(RetirementContract.BalanceEntry.COLUMN_DATE);
-            String amount = cursor.getString(balanceIndex);
-            String date = cursor.getString(dateIndex);
-
-            double balance = Double.parseDouble(amount);
-            bd[index++] = new BalanceData(balance, date);
-        }
-        cursor.close();
-        return bd;
     }
 
     static class IncomeDataHelper {

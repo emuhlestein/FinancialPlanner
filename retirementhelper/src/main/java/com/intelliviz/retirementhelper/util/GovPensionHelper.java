@@ -173,9 +173,27 @@ public class GovPensionHelper {
         context.getContentResolver().delete(uri, null, null);
         uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        context.getContentResolver().delete(uri, null, null);
-        uri = RetirementContract.BalanceEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
         return context.getContentResolver().delete(uri, null, null);
+    }
+
+    public static GovPensionIncomeData extractData(Cursor cursor) {
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        int incomeIdIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID);
+        int nameIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
+        int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
+
+        int minAgeIndex = cursor.getColumnIndex(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE);
+        int monthlyBenefitIndex = cursor.getColumnIndex(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT);
+
+        long incomeId = cursor.getLong(incomeIdIndex);
+        String name = cursor.getString(nameIndex);
+        int incomeType = cursor.getInt(typeIndex);
+
+        String minAge = cursor.getString(minAgeIndex);
+        double monthlyBenefit = Double.parseDouble(cursor.getString(monthlyBenefitIndex));
+
+        return new GovPensionIncomeData(incomeId, name, incomeType, minAge, monthlyBenefit);
     }
 }

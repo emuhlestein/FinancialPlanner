@@ -32,14 +32,10 @@ public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.
      * Constructor.
      * @param context The context.
      * @param milestones The list of milestones.
-     * @param rod The retirement options data.
      */
-    public SSMilestoneAdapter(Context context, List<MilestoneData> milestones, RetirementOptionsData rod) {
+    public SSMilestoneAdapter(Context context, List<MilestoneData> milestones) {
         mContext = context;
         mMilestones = milestones;
-        String birthdate = rod.getBirthdate();
-        int year = SystemUtils.getBirthYear(birthdate);
-        mFullAge = GovPensionHelper.getFullRetirementAge(year);
 
         // TODO refactor
         mMinimumAge = new AgeData(62, 0);
@@ -82,6 +78,12 @@ public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.
      */
     public void setOnSelectionMilestoneListener (SelectionMilestoneListener listener) {
         mListener = listener;
+    }
+
+    public void setROD(RetirementOptionsData rod) {
+        String birthdate = rod.getBirthdate();
+        int year = SystemUtils.getBirthYear(birthdate);
+        mFullAge = GovPensionHelper.getFullRetirementAge(year);
     }
 
     class SSMilestoneHolder extends RecyclerView.ViewHolder

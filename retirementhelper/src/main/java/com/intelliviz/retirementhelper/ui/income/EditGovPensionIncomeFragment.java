@@ -2,10 +2,16 @@ package com.intelliviz.retirementhelper.ui.income;
 
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +21,9 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
+import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.services.GovPensionDataService;
+import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -24,7 +32,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
+import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -32,9 +44,14 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditGovPensionIncomeFragment extends Fragment {
+public class EditGovPensionIncomeFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>{
+    private static final String TAG = EditGovPensionIncomeFragment.class.getSimpleName();
     public static final String EDIT_GOVPENSION_INCOME_FRAG_TAG = "edit govpension income frag tag";
     private GovPensionIncomeData mGPID;
+    public static final int GPID_LOADER = 0;
+    public static final int STATUS_LOADER = 1;
+    private long mId;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -65,12 +82,35 @@ public class EditGovPensionIncomeFragment extends Fragment {
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            Intent intent = getArguments().getParcelable(EXTRA_INTENT);
+            mId = -1;
+            if(intent != null) {
+                mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_gov_pension_income, container, false);
         ButterKnife.bind(this, view);
+
+        mGPID = null;
+
+        if(mId != -1) {
+            Bundle bundle = new Bundle();
+            bundle.putString(ID_ARGS, Long.toString(mId));
+            getLoaderManager().initLoader(GPID_LOADER, bundle, this);
+        }
+
+        getLoaderManager().initLoader(STATUS_LOADER, null, this);
 
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -87,21 +127,9 @@ public class EditGovPensionIncomeFragment extends Fragment {
             }
         });
 
-        updateUI();
-
         return view;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            if(intent != null) {
-                mGPID = intent.getParcelableExtra(RetirementConstants.EXTRA_INCOME_DATA);
-            }
-        }
-    }
 
     private void updateUI() {
         if(mGPID == null || mGPID.getId() == -1) {
@@ -140,7 +168,7 @@ public class EditGovPensionIncomeFragment extends Fragment {
         }
 
         double dbenefit = Double.parseDouble(benefit);
-        GovPensionIncomeData gpid = new GovPensionIncomeData(mGPID.getId(), name, mGPID.getType(), minimumAge, dbenefit);
+        GovPensionIncomeData gpid = new GovPensionIncomeData(mId, name, INCOME_TYPE_GOV_PENSION, minimumAge, dbenefit);
         updateGPID(gpid);
     }
 
@@ -150,5 +178,84 @@ public class EditGovPensionIncomeFragment extends Fragment {
         intent.putExtra(EXTRA_DB_DATA, gpid);
         intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
         getActivity().startService(intent);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        Loader<Cursor> loader;
+        Uri uri;
+        switch (loaderId) {
+            case GPID_LOADER:
+                String id = args.getString(ID_ARGS);
+                uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
+                if(uri != null) {
+                    uri = Uri.withAppendedPath(uri, id);
+                }
+
+                loader = new CursorLoader(getActivity(),
+                        uri,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            case STATUS_LOADER:
+                loader = new CursorLoader(getActivity(),
+                        RetirementContract.TransactionStatusEntry.CONTENT_URI,
+                        null,
+                        RetirementContract.TransactionStatusEntry.COLUMN_TYPE + " =? ",
+                        new String[]{Integer.toString(INCOME_TYPE_TAX_DEFERRED)},
+                        null);
+                break;
+            default:
+                loader = null;
+        }
+
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch(loader.getId()) {
+            case GPID_LOADER:
+                mGPID = GovPensionHelper.extractData(cursor);
+                updateUI();
+                break;
+            case STATUS_LOADER:
+                if(cursor.moveToFirst()) {
+                    int statusIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_STATUS);
+                    int resultIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_RESULT);
+                    int actionIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_ACTION);
+                    if(statusIndex != -1) {
+                        int status = cursor.getInt(statusIndex);
+                        if(status == RetirementContract.TransactionStatusEntry.STATUS_UPDATED) {
+                            if(actionIndex != -1 && resultIndex != -1) {
+                                int action = cursor.getInt(actionIndex);
+                                int numRows;
+                                switch(action) {
+                                    case RetirementContract.TransactionStatusEntry.ACTION_DELETE:
+                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
+                                        Log.d(TAG, numRows + " deleted");
+                                        break;
+                                    case RetirementContract.TransactionStatusEntry.ACTION_UPDATE:
+                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
+                                        Log.d(TAG, numRows + " update");
+                                        break;
+                                    case RetirementContract.TransactionStatusEntry.ACTION_INSERT:
+                                        String uri = cursor.getString(resultIndex);
+                                        Log.d(TAG, uri + " inserted");
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

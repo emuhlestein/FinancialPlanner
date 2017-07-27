@@ -135,23 +135,6 @@ public class RetirementContract {
     }
 
     /**
-     * Class for balance table.
-     */
-    public static final class BalanceEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_BALANCE).build();
-
-        static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_BALANCE;
-        static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_BALANCE;
-
-        static final String TABLE_NAME = PATH_BALANCE;
-        public static final String COLUMN_INCOME_TYPE_ID = "income_type_id";
-        public static final String COLUMN_AMOUNT = "amount";
-        public static final String COLUMN_DATE = "date";
-    }
-
-    /**
      * Class for milestone table.
      */
     public static final class MilestoneEntry implements BaseColumns {
