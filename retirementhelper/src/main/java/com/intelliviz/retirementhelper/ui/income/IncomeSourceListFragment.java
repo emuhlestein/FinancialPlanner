@@ -1,12 +1,7 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
-import android.content.AsyncQueryHandler;
-import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,13 +13,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +27,6 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
@@ -49,22 +41,15 @@ import com.intelliviz.retirementhelper.util.SavingsIncomeHelper;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
-import java.lang.ref.WeakReference;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_EXTRA_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
@@ -73,14 +58,9 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TY
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_GOV_PENSION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_PENSION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_SAVINGS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ACTION_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_INCOME_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_UPDATE;
 
 /**
  * CLass for handling the list of income sources.
@@ -106,98 +86,6 @@ public class IncomeSourceListFragment extends Fragment implements
 
     @Bind(R.id.addIncomeTypeFAB)
     FloatingActionButton mAddIncomeSourceFAB;
-
-    private BroadcastReceiver mSavingsReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int action = intent.getIntExtra(EXTRA_DB_ACTION, -1);
-            if(action == SERVICE_DB_UPDATE) {
-                int numRows = intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-                if(numRows != 1) {
-                    Log.e(TAG, "Savings table failed to update");
-                }
-            } else if(mIncomeAction == INCOME_ACTION_VIEW || mIncomeAction == INCOME_ACTION_EDIT) {
-                SavingsIncomeData sid = intent.getParcelableExtra(EXTRA_DB_DATA);
-                RetirementOptionsData rod = intent.getParcelableExtra(EXTRA_DB_EXTRA_DATA);
-                Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, sid.getId());
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, sid.getType());
-                newIntent.putExtra(EXTRA_INCOME_DATA, sid);
-                newIntent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
-                startActivity(newIntent);
-            }
-        }
-    };
-
-    private BroadcastReceiver mTaxDeferredReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int action = intent.getIntExtra(EXTRA_DB_ACTION, -1);
-            if(action == SERVICE_DB_UPDATE) {
-                int numRows = intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-                if(numRows != 1) {
-                    Log.e(TAG, "Tax deferred table failed to update");
-                }
-            } else if(mIncomeAction == INCOME_ACTION_VIEW || mIncomeAction == INCOME_ACTION_EDIT) {
-                TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_DB_DATA);
-                RetirementOptionsData rod = intent.getParcelableExtra(EXTRA_DB_EXTRA_DATA);
-                Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, tdid.getId());
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, tdid.getType());
-                newIntent.putExtra(EXTRA_INCOME_DATA, tdid);
-                newIntent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
-                startActivity(newIntent);
-            }
-        }
-    };
-
-    private BroadcastReceiver mPensionReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int action = intent.getIntExtra(EXTRA_DB_ACTION, -1);
-            if(action == SERVICE_DB_UPDATE) {
-                int numRows = intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-                if(numRows != 1) {
-                    Log.e(TAG, "Pension table failed to update");
-                }
-            } else if(mIncomeAction == INCOME_ACTION_VIEW || mIncomeAction == INCOME_ACTION_EDIT) {
-                PensionIncomeData pid = intent.getParcelableExtra(EXTRA_DB_DATA);
-                RetirementOptionsData rod = intent.getParcelableExtra(EXTRA_DB_EXTRA_DATA);
-                Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, pid.getId());
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, pid.getType());
-                newIntent.putExtra(EXTRA_INCOME_DATA, pid);
-                newIntent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
-                startActivity(newIntent);
-            }
-        }
-    };
-
-    private BroadcastReceiver mGovPensionReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int action = intent.getIntExtra(EXTRA_DB_ACTION, -1);
-            if(action == SERVICE_DB_UPDATE) {
-                int numRows = intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
-                if(numRows != 1) {
-                    Log.e(TAG, "GOv pension table failed to update");
-                }
-            } else if(mIncomeAction == INCOME_ACTION_VIEW || mIncomeAction == INCOME_ACTION_EDIT) {
-                GovPensionIncomeData gpid = intent.getParcelableExtra(EXTRA_DB_DATA);
-                RetirementOptionsData rod = intent.getParcelableExtra(EXTRA_DB_EXTRA_DATA);
-                Intent newIntent = new Intent(getContext(), IncomeSourceActivity.class);
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, gpid.getId());
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, gpid.getType());
-                newIntent.putExtra(EXTRA_INCOME_DATA, gpid);
-                newIntent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
-                startActivity(newIntent);
-            }
-        }
-    };
 
     /**
      * Default constructor.
@@ -303,18 +191,6 @@ public class IncomeSourceListFragment extends Fragment implements
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        registerReceiver();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterReceiver();
-    }
-
-    @Override
     public void onSelectIncomeSource(long id, int type, boolean showMenu) {
         if(showMenu) {
             // edit, delete
@@ -357,56 +233,6 @@ public class IncomeSourceListFragment extends Fragment implements
                     break;
             }
         }
-    }
-
-    private void registerReceiver() {
-        //registerSavingsReceiver();
-        //registerTaxDeferredReceiver();
-        //registerPensionReceiver();
-        //registerGovPensionReceiver();
-    }
-
-    private void unregisterReceiver() {
-        //unregisterSavingsReceiver();
-        //unregisterTaxDeferredReceiver();
-        //unregisterPensionReceiver();
-        //unregisterGovPensionReceiver();
-    }
-
-    private void registerSavingsReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_SAVINGS);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mSavingsReceiver, filter);
-    }
-
-    private void unregisterSavingsReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mSavingsReceiver);
-    }
-
-    private void registerTaxDeferredReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mTaxDeferredReceiver, filter);
-    }
-
-    private void unregisterTaxDeferredReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTaxDeferredReceiver);
-    }
-
-    private void registerPensionReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_PENSION);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mPensionReceiver, filter);
-    }
-
-    private void unregisterPensionReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mPensionReceiver);
-    }
-
-    private void registerGovPensionReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_GOV_PENSION);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mGovPensionReceiver, filter);
-    }
-
-    private void unregisterGovPensionReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mGovPensionReceiver);
     }
 
     private void onHandleIncomeSourceSelection(Intent resultIntent) {
@@ -541,60 +367,5 @@ public class IncomeSourceListFragment extends Fragment implements
         intent.putExtra(RetirementConstants.EXTRA_DB_ID, mSelectedId);
         intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_DELETE);
         getActivity().startService(intent);
-    }
-
-    public static class IncomeSourceAsyncHandler extends AsyncQueryHandler {
-        private InsertCompleteListener mInsertCompleteListener;
-        interface InsertCompleteListener {
-            void onDeleteComplete(int result);
-        }
-
-        public IncomeSourceAsyncHandler(ContentResolver cr, InsertCompleteListener insertCompleteListener) {
-            super(cr);
-            mInsertCompleteListener = insertCompleteListener;
-        }
-
-        public void delete(long id) {
-            Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-            uri = Uri.withAppendedPath(uri, Long.toString(id));
-            String selection = RetirementContract.IncomeTypeEntry._ID + " = ?";
-            String[] selectionArgs = new String[]{Long.toString(id)};
-            startDelete(0, null, uri, selection, selectionArgs);
-        }
-
-        @Override
-        protected void onDeleteComplete(int token, Object cookie, int result) {
-            if(mInsertCompleteListener != null) {
-                mInsertCompleteListener.onDeleteComplete(result);
-            }
-        }
-    }
-
-    public static class TaxDeferredAsyncHandler extends AsyncQueryHandler implements
-            IncomeSourceAsyncHandler.InsertCompleteListener {
-        private long mId;
-
-        final WeakReference<ContentResolver> mResolver;
-
-        public TaxDeferredAsyncHandler(ContentResolver cr) {
-            super(cr);
-            mResolver = new WeakReference<ContentResolver>(cr);
-        }
-
-        public void delete(long id) {
-            mId = id;
-            final ContentResolver resolver = mResolver.get();
-            IncomeSourceAsyncHandler incomeSourceAsyncHandler = new IncomeSourceAsyncHandler(resolver, this);
-            incomeSourceAsyncHandler.delete(id);
-        }
-
-        @Override
-        public void onDeleteComplete(int result) {
-            Uri uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
-            uri = Uri.withAppendedPath(uri, Long.toString(mId));
-            String selection = RetirementContract.TaxDeferredIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
-            String[] selectionArgs = new String[]{Long.toString(mId)};
-            startDelete(0, null, uri, selection, selectionArgs);
-        }
     }
 }
