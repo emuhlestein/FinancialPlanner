@@ -21,8 +21,8 @@
             android:theme="@style/RetireDialog" />
 
         <provider
-            android:name=".db.RetirementProvider"
-            android:authorities="com.intelliviz.retirementhelper.db.RetirementProvider"
+            android:name="com.intelliviz.retirementhelper.db.RetirementProvider"
+            android:authorities="${applicationId}.RetirementProvider"
             android:exported="true"
             android:label="my provider" />
 

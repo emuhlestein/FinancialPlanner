@@ -4,13 +4,14 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.intelliviz.retirementhelper.BuildConfig;
+
 /**
  * Class that describes the sqlite table schemas.
  * Created by Ed Muhlestein on 3/27/2017.
  */
 public class RetirementContract {
-    static final String CONTENT_AUTHORITY =
-            "com.intelliviz.retirementhelper.db.RetirementProvider";
+    static final String CONTENT_AUTHORITY = BuildConfig.AUTHORITY;
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     static final String PATH_RETIREMENT_PARMS = "retirement_parms";
@@ -19,7 +20,6 @@ public class RetirementContract {
     static final String PATH_TAX_DEFERRED_INCOME = "tax_deferred_income";
     static final String PATH_PENSION_INCOME = "pension_income";
     static final String PATH_GOV_PENSION_INCOME = "gov_pension_income";
-    static final String PATH_BALANCE = "balance";
     static final String PATH_MILESTONE = "milestone";
     static final String PATH_SUMMARY = "summary";
     static final String PATH_TRANSACTION_STATUS = "transaction_status";

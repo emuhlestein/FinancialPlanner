@@ -1,0 +1,130 @@
+{
+  "project_info": {
+    "project_number": "570307509313",
+    "firebase_url": "https://retirementhelper-675b0.firebaseio.com",
+    "project_id": "retirementhelper-675b0",
+    "storage_bucket": "retirementhelper-675b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570307509313:android:2a1920b06e91fa9f",
+        "android_client_info": {
+          "package_name": "com.intelliviz.retirementhelper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "570307509313-prfah3jra7h578abbpj761ejbg6a9qsj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.intelliviz.retirementhelper",
+            "certificate_hash": "cd5060e689628249ab28525762989974a7e5b59d"
+          }
+        },
+        {
+          "client_id": "570307509313-h1dst0ifrupcdfq7kvhng8n6jso447f6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg-ZHhUYxNH_Fm-ewwm_VJb50WRmZgBOU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "570307509313-h1dst0ifrupcdfq7kvhng8n6jso447f6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570307509313:android:6ee22c0520696d05",
+        "android_client_info": {
+          "package_name": "com.intelliviz.retirementhelper.free"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "570307509313-2irhp3gf46goobbpnjefles34ruqn1vf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.intelliviz.retirementhelper.free",
+            "certificate_hash": "cd5060e689628249ab28525762989974a7e5b59d"
+          }
+        },
+        {
+          "client_id": "570307509313-h1dst0ifrupcdfq7kvhng8n6jso447f6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg-ZHhUYxNH_Fm-ewwm_VJb50WRmZgBOU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "570307509313-h1dst0ifrupcdfq7kvhng8n6jso447f6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570307509313:android:c32284ee4e20dd70",
+        "android_client_info": {
+          "package_name": "com.intelliviz.retirementhelper.paid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "570307509313-h1dst0ifrupcdfq7kvhng8n6jso447f6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg-ZHhUYxNH_Fm-ewwm_VJb50WRmZgBOU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

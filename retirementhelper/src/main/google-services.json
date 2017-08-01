@@ -49,6 +49,68 @@
           "status": 2
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570307509313:android:6ee22c0520696d05",
+        "android_client_info": {
+          "package_name": "com.intelliviz.retirementhelper.free"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "570307509313-h1dst0ifrupcdfq7kvhng8n6jso447f6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg-ZHhUYxNH_Fm-ewwm_VJb50WRmZgBOU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570307509313:android:c32284ee4e20dd70",
+        "android_client_info": {
+          "package_name": "com.intelliviz.retirementhelper.paid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "570307509313-h1dst0ifrupcdfq7kvhng8n6jso447f6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg-ZHhUYxNH_Fm-ewwm_VJb50WRmZgBOU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
     }
   ],
   "configuration_version": "1"

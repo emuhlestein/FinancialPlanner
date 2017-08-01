@@ -4,9 +4,21 @@ android {
     signingConfigs {
         config {
             keyAlias 'CapstoneKey'
-            keyPassword 'androidrocks'
-            storeFile file('capstone.jks')
-            storePassword 'androidrocks'
+            keyPassword 'android'
+            storeFile file('C:/Users/edm/AndroidStudioProjects/Capstone-Project/retirementhelper/retirementhelper.jks')
+            storePassword 'android'
+        }
+        freeConfig {
+            keyAlias 'FreeRetirementHelperKey'
+            keyPassword 'android'
+            storeFile file('C:/Users/edm/AndroidStudioProjects/Capstone-Project/retirementhelper/retirementhelper.jks')
+            storePassword 'android'
+        }
+        paidConfig {
+            keyAlias 'PaidRetirementHelperKey'
+            keyPassword 'android'
+            storeFile file('C:/Users/edm/AndroidStudioProjects/Capstone-Project/retirementhelper/retirementhelper.jks')
+            storePassword 'android'
         }
     }
     compileSdkVersion 25
@@ -28,6 +40,21 @@ android {
             signingConfig signingConfigs.config
         }
     }
+
+    productFlavors {
+        free {
+            applicationIdSuffix ".free"
+            buildConfigField 'String', 'AUTHORITY', '"com.intelliviz.retirementhelper.free.RetirementProvider"'
+            minSdkVersion 17
+            signingConfig signingConfigs.freeConfig
+        }
+        paid {
+            applicationIdSuffix ".paid"
+            buildConfigField 'String', 'AUTHORITY', '"com.intelliviz.retirementhelper.paid.RetirementProvider"'
+            minSdkVersion 17
+            signingConfig signingConfigs.paidConfig
+        }
+    }
 }
 
 dependencies {
@@ -41,11 +68,11 @@ dependencies {
     compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.google.firebase:firebase-core:11.0.1'
-    compile 'com.google.firebase:firebase-auth:11.0.1'
-    compile 'com.google.firebase:firebase-ads:11.0.1'
+    compile 'com.google.firebase:firebase-core:11.0.2'
+    compile 'com.google.firebase:firebase-auth:11.0.2'
+    compile 'com.google.firebase:firebase-ads:11.0.2'
     compile 'com.firebaseui:firebase-ui-auth:2.0.1'
-    compile 'com.google.android.gms:play-services-auth:11.0.1'
+    compile 'com.google.android.gms:play-services-auth:11.0.2'
     testCompile 'junit:junit:4.12'
 }
 
