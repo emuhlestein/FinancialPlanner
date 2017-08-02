@@ -118,7 +118,7 @@ public class StartActivity extends AppCompatActivity implements
     }
 
     private void startSignedInActivity(IdpResponse response) {
-        Intent newIntent = new Intent(this, SummaryActivity.class);
+        Intent newIntent = new Intent(this, NavigationActivity.class);
         newIntent.putExtra(EXTRA_LOGIN_RESPONSE, response);
         startActivity(newIntent);
         finish();

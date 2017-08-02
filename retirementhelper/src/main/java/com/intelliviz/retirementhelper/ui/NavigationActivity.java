@@ -48,9 +48,9 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_R
  * The summary activity.
  * @author Ed Muhlestein
  */
-public class SummaryActivity extends AppCompatActivity implements
+public class NavigationActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>{
-    private static final String TAG = SummaryActivity.class.getSimpleName();
+    private static final String TAG = NavigationActivity.class.getSimpleName();
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
@@ -140,7 +140,7 @@ public class SummaryActivity extends AppCompatActivity implements
                                 FirebaseAuth  auth = FirebaseAuth.getInstance();
                                 auth.signOut();
                                 mGoogleApiClient.disconnect();
-                                Intent intent = new Intent(SummaryActivity.this, StartActivity.class);
+                                Intent intent = new Intent(NavigationActivity.this, StartActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
@@ -154,7 +154,7 @@ public class SummaryActivity extends AppCompatActivity implements
                                 FirebaseAuth  auth = FirebaseAuth.getInstance();
                                 auth.signOut();
                                 mGoogleApiClient.disconnect();
-                                Intent intent = new Intent(SummaryActivity.this, StartActivity.class);
+                                Intent intent = new Intent(NavigationActivity.this, StartActivity.class);
                                 startActivity(intent);
                                 finish();
                             }

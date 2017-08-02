@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.ui.SummaryActivity;
+import com.intelliviz.retirementhelper.ui.NavigationActivity;
 
 /**
  * Class for keeping appwidget updated.
@@ -27,7 +27,7 @@ public class WidgetProvider extends AppWidgetProvider {
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             views.setRemoteAdapter(R.id.collection_widget_list_view, intent);
 
-            Intent templateIntent = new Intent(context, SummaryActivity.class);
+            Intent templateIntent = new Intent(context, NavigationActivity.class);
             templateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             PendingIntent templatePendingIntent = PendingIntent.getActivity(context, 0, templateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setPendingIntentTemplate(R.id.collection_widget_list_view, templatePendingIntent);
