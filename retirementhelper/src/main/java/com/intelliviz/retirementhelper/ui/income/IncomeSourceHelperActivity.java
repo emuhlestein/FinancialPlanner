@@ -33,7 +33,7 @@ public class IncomeSourceHelperActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_income_source);
+        setContentView(R.layout.activity_income_source_helper);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
