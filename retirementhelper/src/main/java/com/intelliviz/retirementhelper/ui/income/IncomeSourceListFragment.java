@@ -204,28 +204,28 @@ public class IncomeSourceListFragment extends Fragment implements
             mIncomeAction = INCOME_ACTION_VIEW;
             switch(type) {
                 case INCOME_TYPE_SAVINGS:
-                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
                     startActivity(newIntent);
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:
-                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
                     startActivity(newIntent);
                     break;
                 case INCOME_TYPE_PENSION:
-                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
                     startActivity(newIntent);
                     break;
                 case INCOME_TYPE_GOV_PENSION:
-                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
@@ -237,7 +237,7 @@ public class IncomeSourceListFragment extends Fragment implements
 
     private void onHandleIncomeSourceSelection(Intent resultIntent) {
         int item = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
-        Intent intent = new Intent(getContext(), IncomeSourceActivity.class);
+        Intent intent = new Intent(getContext(), IncomeSourceHelperActivity.class);
         intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
         intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, item);
@@ -278,7 +278,7 @@ public class IncomeSourceListFragment extends Fragment implements
             case INCOME_TYPE_SAVINGS:
                 if(action == INCOME_ACTION_EDIT) {
                     mIncomeAction = INCOME_ACTION_EDIT;
-                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
@@ -293,7 +293,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 break;
             case INCOME_TYPE_TAX_DEFERRED:
                 if(action == INCOME_ACTION_EDIT) {
-                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
@@ -309,7 +309,7 @@ public class IncomeSourceListFragment extends Fragment implements
             case INCOME_TYPE_PENSION:
                 if(action == INCOME_ACTION_EDIT) {
                     mIncomeAction = INCOME_ACTION_EDIT;
-                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
@@ -325,7 +325,7 @@ public class IncomeSourceListFragment extends Fragment implements
             case INCOME_TYPE_GOV_PENSION:
                 if(action == INCOME_ACTION_EDIT) {
                     mIncomeAction = INCOME_ACTION_EDIT;
-                    newIntent = new Intent(getContext(), IncomeSourceActivity.class);
+                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
                     newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);

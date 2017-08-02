@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
-public class IncomeSourceActivity extends AppCompatActivity {
+public class IncomeSourceHelperActivity extends AppCompatActivity {
 
     @Bind(R.id.income_source_toolbar)
     Toolbar mToolbar;
