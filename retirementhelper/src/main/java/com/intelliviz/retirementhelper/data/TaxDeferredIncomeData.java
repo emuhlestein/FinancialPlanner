@@ -10,7 +10,6 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
 import static java.lang.Double.parseDouble;
 
 /**
@@ -110,11 +109,11 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
         return mIs401k;
     }
 
-    public List<MilestoneData> getMilestones(Context context, RetirementOptionsData rod) {
+    @Override
+    public List<MilestoneData> getMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod) {
         String endAge = rod.getEndAge();
         double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
-        List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
         if(ages.isEmpty()) {
             return milestones;
         }

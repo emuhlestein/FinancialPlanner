@@ -10,8 +10,6 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
-
 /**
  * Class for pension income data.
  * Created by Ed Muhlestein on 5/11/2017.
@@ -60,9 +58,8 @@ public class PensionIncomeData extends IncomeTypeData {
         return mStartAge;
     }
 
-    public List<MilestoneData> getMilestones(Context context, RetirementOptionsData rod) {
+    public List<MilestoneData> getMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod) {
         List<MilestoneData> milestones = new ArrayList<>();
-        List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
         if(ages.isEmpty()) {
             return milestones;
         }

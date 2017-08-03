@@ -21,9 +21,11 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SSMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
+import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
@@ -193,7 +195,8 @@ public class ViewGovPensionIncomeFragment extends Fragment implements
         }
 
         if(mROD != null && mGPID != null) {
-            List<MilestoneData> milestones = mGPID.getMilestones(getContext(), mROD);
+            ArrayList<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(getContext(), mROD);
+            List<MilestoneData> milestones = mGPID.getMilestones(getContext(), ages, mROD);
             mMilestoneAdapter.update(milestones);
             updateUI();
         }

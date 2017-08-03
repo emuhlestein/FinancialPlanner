@@ -10,7 +10,6 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
 import static java.lang.Double.parseDouble;
 
 /**
@@ -72,20 +71,19 @@ public class SavingsIncomeData extends IncomeTypeData {
         return mMonthlyIncrease;
     }
 
-    public List<MilestoneData> getMilestones(Context context, RetirementOptionsData rod) {
+    public List<MilestoneData> getMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod) {
         String endAge = rod.getEndAge();
         double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
-        List<MilestoneAgeData> msad = getMilestoneAges(context, rod);
-        if(msad.isEmpty()) {
+        if(ages.isEmpty()) {
             return milestones;
         }
 
         AgeData endOfLifeAge = SystemUtils.parseAgeString(endAge);
 
-        List<Double> milestoneBalances = getMilestoneBalances(msad, mBalance, mInterest, mMonthlyIncrease);
+        List<Double> milestoneBalances = getMilestoneBalances(ages, mBalance, mInterest, mMonthlyIncrease);
 
-        milestones = getMilestones(endOfLifeAge, null, mInterest, 0, rod.getWithdrawMode(), withdrawAmount, msad, milestoneBalances);
+        milestones = getMilestones(endOfLifeAge, null, mInterest, 0, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
         return milestones;
     }
 

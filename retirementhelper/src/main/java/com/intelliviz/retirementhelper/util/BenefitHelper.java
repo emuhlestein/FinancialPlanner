@@ -61,7 +61,7 @@ public class BenefitHelper {
         int numMonthsFundsWillLast = 0;
         List<MilestoneData> saveMilestones = null;
         for(IncomeType incomeType : incomeTypes) {
-            List<MilestoneData> milestones = incomeType.getMilestones(context, rod);
+            List<MilestoneData> milestones = incomeType.getMilestones(context, msad, rod);
             if(milestones == null || milestones.isEmpty()) {
                 continue;
             }

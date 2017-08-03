@@ -19,11 +19,13 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
+import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SavingsIncomeHelper;
@@ -189,7 +191,8 @@ public class ViewSavingsIncomeFragment extends Fragment implements
         }
 
         if(mROD != null && mSID != null) {
-            List<MilestoneData> milestones = mSID.getMilestones(getContext(), mROD);
+            ArrayList<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(getContext(), mROD);
+            List<MilestoneData> milestones = mSID.getMilestones(getContext(), ages, mROD);
             mMilestoneAdapter.update(milestones);
         }
     }

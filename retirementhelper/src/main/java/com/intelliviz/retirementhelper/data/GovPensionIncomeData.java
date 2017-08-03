@@ -10,7 +10,6 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
 import static com.intelliviz.retirementhelper.util.GovPensionHelper.getFullRetirementAge;
 
 /**
@@ -62,9 +61,9 @@ public class GovPensionIncomeData extends IncomeTypeData {
         return mMonthlyBenefit;
     }
 
-    public List<MilestoneData> getMilestones(Context context, RetirementOptionsData rod) {
+    @Override
+    public List<MilestoneData> getMilestones(Context context,  List<MilestoneAgeData> ages, RetirementOptionsData rod) {
         List<MilestoneData> milestones = new ArrayList<>();
-        List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
         if(ages.isEmpty()) {
             return milestones;
         }
