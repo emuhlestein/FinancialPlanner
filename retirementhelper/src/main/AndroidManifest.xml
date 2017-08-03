@@ -21,7 +21,7 @@
             android:theme="@style/RetireDialog" />
 
         <provider
-            android:name="com.intelliviz.retirementhelper.db.RetirementProvider"
+            android:name=".db.RetirementProvider"
             android:authorities="${applicationId}.RetirementProvider"
             android:exported="true"
             android:label="my provider" />
@@ -42,6 +42,7 @@
         <activity
             android:name=".ui.IncomeSourceListMenuFragment"
             android:theme="@style/RetireDialog" />
+
         <service
             android:name=".services.TaxDeferredIntentService"
             android:exported="false" />
@@ -61,15 +62,18 @@
         <service
             android:name=".widget.MilestonesRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <activity
             android:name=".ui.ListMenuActivity"
             android:theme="@style/RetireDialog" />
+
         <service
             android:name=".services.SummaryDataIntentService"
             android:exported="false" />
         <service
             android:name=".services.MilestoneAgeIntentService"
-            android:exported="false"/>
+            android:exported="false" />
+
     </application>
 
 </manifest>
