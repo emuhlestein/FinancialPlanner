@@ -2,6 +2,12 @@ package com.intelliviz.retirementhelper.data;
 
 import android.os.Parcel;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_AMOUNT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
+
 /**
  * Class for a basic income type.
  * Created by Ed Muhlestein on 5/12/2017.
@@ -68,6 +74,119 @@ abstract class IncomeTypeData implements IncomeType {
     public int getType() {
         return mType;
     }
+
+    /**
+     * Get the balances for each milestone.
+     * @param balance The beginning balance.
+     * @param interest The annual interest rate.
+     * @param monthlyIncrease The monthly increase.
+     * @return The list of balances.
+     */
+    protected static List<Double> getMilestoneBalances(List<MilestoneAgeData> ages, double balance, double interest, double monthlyIncrease) {
+        List<Double> balances = new ArrayList<>();
+        if(ages.isEmpty()) {
+            return balances;
+        }
+        AgeData refAge = ages.get(0).getAge();
+        double newBalance = balance;
+        balances.add(newBalance);
+        for (int i = 1; i < ages.size(); i++) {
+            AgeData age = ages.get(i).getAge();
+            AgeData diffAge = age.subtract(refAge);
+            int numMonths = diffAge.getNumberOfMonths();
+            newBalance = getFutureBalance(newBalance, numMonths, interest, monthlyIncrease);
+            balances.add(newBalance);
+            refAge = age;
+        }
+
+        return balances;
+    }
+
+    private static double getFutureBalance(double balance, int numMonths, double interest, double monthlyIncrease) {
+        double cumulativeBalance = balance;
+        for(int i = 0; i < numMonths; i++) {
+            cumulativeBalance = getBalance(cumulativeBalance, interest, monthlyIncrease);
+        }
+        return cumulativeBalance;
+    }
+
+    private static double getBalance(double balance, double interest, double monthlyIncrease) {
+        double interestEarned = getMonthlyAmountFromBalance(balance, interest);
+        return monthlyIncrease + interestEarned + balance;
+    }
+
+    private static double getMonthlyAmountFromBalance(double balance, double interest) {
+        double monthlyInterest = interest / 1200.0;
+        return balance * monthlyInterest;
+    }
+
+    protected static List<MilestoneData> getMilestones(AgeData endOfLifeAge, AgeData minimumAge,
+                                                     double interestRate, double penalty, int withdrawMode, double withdrawAmount,
+                                                     List<MilestoneAgeData> ages, List<Double> milestoneBalances) {
+
+        List<MilestoneData> milestones = new ArrayList<>();
+
+        for(int i = 0; i < ages.size(); i++) {
+            AgeData startAge = ages.get(i).getAge();
+            if(minimumAge == null) {
+                penalty = 0;
+            } else {
+                if (!startAge.isBefore(minimumAge)) {
+                    penalty = 0;
+                }
+            }
+            double startBalance = milestoneBalances.get(i);
+            double monthlyAmount = getMonthlyAmount(startBalance, withdrawMode, withdrawAmount);
+            MilestoneData milestoneData = getMonthlyBalances(startAge, endOfLifeAge, minimumAge,
+                    startBalance, interestRate, monthlyAmount, penalty);
+            milestones.add(milestoneData);
+        }
+        return milestones;
+    }
+
+    private static double getMonthlyAmount(double balance, int withdrawMode, double withdrawAmount) {
+        double monthlyAmount;
+        switch(withdrawMode) {
+            case WITHDRAW_MODE_AMOUNT:
+                monthlyAmount = withdrawAmount;
+                break;
+            case WITHDRAW_MODE_PERCENT:
+                monthlyAmount = getMonthlyAmountFromBalance(balance, withdrawAmount);
+                break;
+            default:
+                monthlyAmount = withdrawAmount;
+        }
+        return monthlyAmount;
+    }
+
+    private static MilestoneData getMonthlyBalances(AgeData startAge, AgeData endAge, AgeData minimumAge,
+                                                    double startBalance, double interestRate, double monthlyAmount,
+                                                    double penalty) {
+        AgeData age = endAge.subtract(startAge);
+        int numMonthsInRetirement = age.getNumberOfMonths();
+        double lastBalance = startBalance;
+        double monthlyInterest = interestRate / 1200;
+
+        int numMonths = 0;
+        for(int mon = 0; mon < numMonthsInRetirement; mon++) {
+            if(lastBalance <= 0) {
+                break;
+            }
+
+            lastBalance = lastBalance - monthlyAmount;
+            double monthlyIncrease = lastBalance * monthlyInterest;
+            lastBalance = lastBalance + monthlyIncrease;
+            numMonths++;
+        }
+
+        if(lastBalance < 0) {
+            lastBalance = 0;
+            numMonths--;
+        }
+
+        return new MilestoneData(startAge, endAge, minimumAge, monthlyAmount, startBalance, lastBalance, penalty, numMonths);
+    }
+
 
     @Override
     public int describeContents() {

@@ -1,9 +1,17 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
+import static java.lang.Double.parseDouble;
 
 /**
  * Class to manager tax deferred income sources.
@@ -101,6 +109,24 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
     public int getIs401k() {
         return mIs401k;
     }
+
+    public List<MilestoneData> getMilestones(Context context, RetirementOptionsData rod) {
+        String endAge = rod.getEndAge();
+        double withdrawAmount = parseDouble(rod.getWithdrawAmount());
+        List<MilestoneData> milestones = new ArrayList<>();
+        List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
+        if(ages.isEmpty()) {
+            return milestones;
+        }
+        AgeData minimumAge = SystemUtils.parseAgeString(mMinimumAge);
+        AgeData endOfLifeAge = SystemUtils.parseAgeString(endAge);
+
+        List<Double> milestoneBalances = getMilestoneBalances(ages, mBalance, mInterestRate, mMonthAdd);
+
+        milestones = getMilestones(endOfLifeAge, minimumAge, mInterestRate, mPenalty, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
+        return milestones;
+    }
+
 
     private TaxDeferredIncomeData(Parcel in) {
         readFromParcel(in);
