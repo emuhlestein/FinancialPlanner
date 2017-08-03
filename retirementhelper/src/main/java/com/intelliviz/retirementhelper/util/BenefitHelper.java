@@ -121,7 +121,7 @@ public class BenefitHelper {
                                                     IncomeType incomeType,
                                                     RetirementOptionsData rod) {
         if(incomeType instanceof SavingsIncomeData) {
-            return getMilestonesFromSavingsIncome(context, (SavingsIncomeData)incomeType, rod);
+            return ((SavingsIncomeData)incomeType).getMilestones(context, rod);
         } else if(incomeType instanceof TaxDeferredIncomeData) {
             return ((TaxDeferredIncomeData)incomeType).getMilestones(context, rod);
         } else if(incomeType instanceof PensionIncomeData){

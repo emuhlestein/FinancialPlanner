@@ -1,9 +1,17 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
+import static java.lang.Double.parseDouble;
 
 /**
  * Class to manage savings income.
@@ -62,6 +70,23 @@ public class SavingsIncomeData extends IncomeTypeData {
      */
     public double getMonthlyIncrease() {
         return mMonthlyIncrease;
+    }
+
+    public List<MilestoneData> getMilestones(Context context, RetirementOptionsData rod) {
+        String endAge = rod.getEndAge();
+        double withdrawAmount = parseDouble(rod.getWithdrawAmount());
+        List<MilestoneData> milestones = new ArrayList<>();
+        List<MilestoneAgeData> msad = getMilestoneAges(context, rod);
+        if(msad.isEmpty()) {
+            return milestones;
+        }
+
+        AgeData endOfLifeAge = SystemUtils.parseAgeString(endAge);
+
+        List<Double> milestoneBalances = getMilestoneBalances(msad, mBalance, mInterest, mMonthlyIncrease);
+
+        milestones = getMilestones(endOfLifeAge, null, mInterest, 0, rod.getWithdrawMode(), withdrawAmount, msad, milestoneBalances);
+        return milestones;
     }
 
     private SavingsIncomeData(Parcel in) {
