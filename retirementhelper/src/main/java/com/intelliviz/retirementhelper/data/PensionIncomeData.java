@@ -1,9 +1,16 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
 
 /**
  * Class for pension income data.
@@ -51,6 +58,33 @@ public class PensionIncomeData extends IncomeTypeData {
      */
     public String getStartAge() {
         return mStartAge;
+    }
+
+    public List<MilestoneData> getMilestones(Context context, RetirementOptionsData rod) {
+        List<MilestoneData> milestones = new ArrayList<>();
+        List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
+        if(ages.isEmpty()) {
+            return milestones;
+        }
+
+        AgeData minimumAge = SystemUtils.parseAgeString(mStartAge);
+        AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
+        double monthlyBenefit = mMonthlyBenefit;
+
+        MilestoneData milestone;
+        for(MilestoneAgeData msad : ages) {
+            AgeData age = msad.getAge();
+            if(age.isBefore(minimumAge)) {
+                milestone = new MilestoneData(age, endAge, minimumAge, 0, 0, 0, 0, 0);
+            } else {
+                AgeData diffAge = endAge.subtract(age);
+                int numMonths = diffAge.getNumberOfMonths();
+
+                milestone = new MilestoneData(age, endAge, minimumAge, monthlyBenefit, 0, 0, 0, numMonths);
+            }
+            milestones.add(milestone);
+        }
+        return milestones;
     }
 
     private PensionIncomeData(Parcel in) {

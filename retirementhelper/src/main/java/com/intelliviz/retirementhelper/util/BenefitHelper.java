@@ -125,9 +125,9 @@ public class BenefitHelper {
         } else if(incomeType instanceof TaxDeferredIncomeData) {
             return ((TaxDeferredIncomeData)incomeType).getMilestones(context, rod);
         } else if(incomeType instanceof PensionIncomeData){
-            return getMilestonesFromPensionIncome(context, (PensionIncomeData)incomeType, rod);
+            return ((PensionIncomeData)incomeType).getMilestones(context, rod);
         } else if(incomeType instanceof GovPensionIncomeData) {
-            return getMilestonesFromGovPensionIncome(context, (GovPensionIncomeData)incomeType, rod);
+            return ((GovPensionIncomeData)incomeType).getMilestones(context, rod);
         } else {
             return Collections.emptyList();
         }
