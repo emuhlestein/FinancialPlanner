@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SummaryData;
@@ -15,6 +16,8 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
 
 /**
  * Service for handling database access to summarydata table.
@@ -33,7 +36,8 @@ public class SummaryDataIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
-            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(this, rod);
+            List<MilestoneAgeData> ages = getMilestoneAges(this, rod);
+            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(this, ages, rod);
             List<SummaryData> listSummaryData = new ArrayList<>();
             for(MilestoneData msd : milestones) {
                 listSummaryData.add(new SummaryData(msd.getStartAge().toString(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));

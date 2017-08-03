@@ -14,8 +14,6 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
-
 /**
  * Utility class.
  * Created by edm on 5/23/2017.
@@ -33,26 +31,26 @@ public class BenefitHelper {
         context.getContentResolver().update(uri, values, null, null);
     }
 
-    public static List<MilestoneData> getAllMilestones(Context context, RetirementOptionsData rod) {
+    public static List<MilestoneData> getAllMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod) {
         List<MilestoneData> sumMilestones = new ArrayList<>();
         List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
+        if(ages.isEmpty()) {
+            return sumMilestones;
+        }
+
         if(incomeTypes == null || incomeTypes.isEmpty()) {
-            List<MilestoneAgeData> milestoneAges = getMilestoneAges(context, rod);
-            for(MilestoneAgeData msad : milestoneAges) {
+
+            for(MilestoneAgeData msad : ages) {
                 MilestoneData msd = new MilestoneData(msad.getAge());
                 sumMilestones.add(msd);
             }
             return sumMilestones;
         }
-        List<MilestoneAgeData> msad = getMilestoneAges(context, rod);
-        if(msad.isEmpty()) {
-            return sumMilestones;
-        }
 
-        double[] sumMonthlyAmount = new double[msad.size()];
-        double[] sumStartBalance = new double[msad.size()];
-        double[] sumEndBalance = new double[msad.size()];
-        for(int i = 0; i < msad.size(); i++) {
+        double[] sumMonthlyAmount = new double[ages.size()];
+        double[] sumStartBalance = new double[ages.size()];
+        double[] sumEndBalance = new double[ages.size()];
+        for(int i = 0; i < ages.size(); i++) {
             sumMonthlyAmount[i] = 0;
             sumStartBalance[i] = 0;
             sumEndBalance[i] = 0;
@@ -61,7 +59,7 @@ public class BenefitHelper {
         int numMonthsFundsWillLast = 0;
         List<MilestoneData> saveMilestones = null;
         for(IncomeType incomeType : incomeTypes) {
-            List<MilestoneData> milestones = incomeType.getMilestones(context, msad, rod);
+            List<MilestoneData> milestones = incomeType.getMilestones(context, ages, rod);
             if(milestones == null || milestones.isEmpty()) {
                 continue;
             }
@@ -91,8 +89,8 @@ public class BenefitHelper {
 
         AgeData endAge = saveMilestones.get(0).getEndAge();
         AgeData minimumAge = saveMilestones.get(0).getMinimumAge();
-        for(int i = 0; i < msad.size(); i++) {
-            AgeData startAge = msad.get(i).getAge();
+        for(int i = 0; i < ages.size(); i++) {
+            AgeData startAge = ages.get(i).getAge();
             MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i], sumStartBalance[i], sumEndBalance[i], 0, numMonthsFundsWillLast);
             sumMilestones.add(milestoneData);
         }

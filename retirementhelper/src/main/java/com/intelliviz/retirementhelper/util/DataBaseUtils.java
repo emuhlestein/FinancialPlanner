@@ -72,7 +72,8 @@ public class DataBaseUtils {
 
     static void updateSummaryData(Context context) {
         RetirementOptionsData rod = getRetirementOptionsData(context);
-        List<MilestoneData> milestones = getAllMilestones(context, rod);
+        List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
+        List<MilestoneData> milestones = getAllMilestones(context, ages, rod);
         List<SummaryData> listSummaryData = new ArrayList<>();
         for(MilestoneData msd : milestones) {
             listSummaryData.add(new SummaryData(msd.getStartAge().toString(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));

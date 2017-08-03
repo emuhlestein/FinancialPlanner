@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.IncomeType;
+import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
@@ -41,6 +42,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ROWS_UPDATED;
@@ -72,7 +74,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
         public void onReceive(Context context, Intent intent) {
             intent.getIntExtra(EXTRA_DB_ROWS_UPDATED, -1);
             mROD = intent.getParcelableExtra(EXTRA_DB_DATA);
-            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
+            List<MilestoneAgeData> ages = getMilestoneAges(context, mROD);
+            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), ages, mROD);
             mMilestoneAdapter.update(milestones);
 
             double currentBalance = milestones.get(0).getStartBalance();
@@ -124,7 +127,8 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
 
         List<MilestoneData> milestones = new ArrayList<>();
         if(mROD != null) {
-            milestones = BenefitHelper.getAllMilestones(getContext(), mROD);
+            List<MilestoneAgeData> ages = getMilestoneAges(getContext(), mROD);
+            milestones = BenefitHelper.getAllMilestones(getContext(), ages, mROD);
         }
         mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -208,7 +212,9 @@ public class SummaryFragment extends Fragment implements SelectionMilestoneListe
 
         RetirementOptionsData rod = new RetirementOptionsData(birthdate, mROD.getEndAge(), mROD.getWithdrawMode(), mROD.getWithdrawAmount());
         RetirementOptionsHelper.saveBirthdate(getContext(), birthdate);
-        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), rod);
+
+        List<MilestoneAgeData> ages = getMilestoneAges(getContext(), rod);
+        List<MilestoneData> milestones = BenefitHelper.getAllMilestones(getContext(), ages, rod);
         mMilestoneAdapter.update(milestones);
 
         SystemUtils.updateAppWidget(getContext());
