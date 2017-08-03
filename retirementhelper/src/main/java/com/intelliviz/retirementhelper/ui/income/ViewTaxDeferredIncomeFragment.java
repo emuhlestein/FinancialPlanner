@@ -211,7 +211,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements
         }
 
         if(mROD != null && mTDID != null) {
-            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mTDID, mROD);
+            List<MilestoneData> milestones = mTDID.getMilestones(getContext(), mROD);
             mMilestoneAdapter.update(milestones);
         }
     }

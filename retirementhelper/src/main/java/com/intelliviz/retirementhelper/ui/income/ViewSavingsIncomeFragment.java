@@ -24,7 +24,6 @@ import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
-import com.intelliviz.retirementhelper.util.BenefitHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SavingsIncomeHelper;
@@ -190,7 +189,7 @@ public class ViewSavingsIncomeFragment extends Fragment implements
         }
 
         if(mROD != null && mSID != null) {
-            List<MilestoneData> milestones = BenefitHelper.getMilestones(getContext(), mSID, mROD);
+            List<MilestoneData> milestones = mSID.getMilestones(getContext(), mROD);
             mMilestoneAdapter.update(milestones);
         }
     }
