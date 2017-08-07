@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.util.BenefitHelper;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
@@ -38,28 +38,30 @@ public class TaxDeferredIntentService extends IntentService {
                 TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_DB_DATA);
                 if(tdid != null) {
                     if(id == -1) {
-                        BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
+                        DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
                                 RetirementContract.TransactionStatusEntry.ACTION_INSERT, "", INCOME_TYPE_TAX_DEFERRED);
                         String result = TaxDeferredHelper.addTaxDeferredIncome(this, tdid);
-                        BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
+                        DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
                                 RetirementContract.TransactionStatusEntry.ACTION_INSERT, result, INCOME_TYPE_TAX_DEFERRED);
                     } else {
-                        BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
+                        DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
                                 RetirementContract.TransactionStatusEntry.ACTION_UPDATE, "", INCOME_TYPE_TAX_DEFERRED);
                         int rowsUpdated = TaxDeferredHelper.saveData(this, tdid);
                         String rows = Integer.toString(rowsUpdated);
-                        BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
+                        DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
                                 RetirementContract.TransactionStatusEntry.ACTION_UPDATE, rows, INCOME_TYPE_TAX_DEFERRED);
                     }
                 }
             } else if(action == SERVICE_DB_DELETE) {
-                BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
+                DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
                         RetirementContract.TransactionStatusEntry.ACTION_DELETE, "", INCOME_TYPE_TAX_DEFERRED);
                 int rowsUpdated = TaxDeferredHelper.deleteTaxDeferredIncome(this, id);
                 String rows = Integer.toString(rowsUpdated);
-                BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
+                DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
                         RetirementContract.TransactionStatusEntry.ACTION_DELETE, rows, INCOME_TYPE_TAX_DEFERRED);
             }
+
+            DataBaseUtils.updateMilestoneData(this);
         }
     }
 }

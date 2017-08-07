@@ -73,7 +73,9 @@
         <service
             android:name=".services.MilestoneAgeIntentService"
             android:exported="false" />
-
+        <service
+            android:name=".services.MilestoneSummaryIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

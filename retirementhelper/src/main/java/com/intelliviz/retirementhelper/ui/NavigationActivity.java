@@ -32,6 +32,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -198,7 +199,9 @@ public class NavigationActivity extends AppCompatActivity implements
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
                     String birthdate = intent.getStringExtra(RetirementConstants.EXTRA_BIRTHDATE);
-                    SystemUtils.updateBirthdate(this, birthdate);
+                    //SystemUtils.updateBirthdate(this, birthdate);
+                    RetirementOptionsHelper.saveBirthdate(this, birthdate);
+                    DataBaseUtils.updateMilestoneData(this);
                 }
                 break;
             default:

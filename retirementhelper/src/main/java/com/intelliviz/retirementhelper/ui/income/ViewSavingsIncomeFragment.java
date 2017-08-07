@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
+import com.intelliviz.retirementhelper.adapter.MilestoneDataAdapter;
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
@@ -29,7 +29,7 @@ import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SavingsIncomeHelper;
-import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
+import com.intelliviz.retirementhelper.util.SelectionMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
  * @author Ed Muhlestein
  */
 public class ViewSavingsIncomeFragment extends Fragment implements
-        SelectionMilestoneListener,
+        SelectionMilestoneDataListener,
         LoaderManager.LoaderCallbacks<Cursor>{
     public static final String VIEW_SAVINGS_INCOME_FRAG_TAG = "view savings income frag tag";
     private static final String EXTRA_INTENT = "extra intent";
@@ -56,7 +56,7 @@ public class ViewSavingsIncomeFragment extends Fragment implements
     private SavingsIncomeData mSID;
     private RetirementOptionsData mROD;
     private long mId;
-    private SummaryMilestoneAdapter mMilestoneAdapter;
+    private MilestoneDataAdapter mMilestoneDataAdapter;
 
     @Bind(R.id.name_text_view) TextView mIncomeSourceName;
     @Bind(R.id.annual_interest_text_view) TextView mAnnualInterest;
@@ -97,13 +97,13 @@ public class ViewSavingsIncomeFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_view_savings_income, container, false);
         ButterKnife.bind(this, view);
         List<MilestoneData> milestones = new ArrayList<>();
-        mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
+        mMilestoneDataAdapter = new MilestoneDataAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mMilestoneAdapter);
+        mRecyclerView.setAdapter(mMilestoneDataAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
                 linearLayoutManager.getOrientation()));
-        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
+        mMilestoneDataAdapter.setOnSelectionMilestoneDataListener(this);
 
         setHasOptionsMenu(true);
 
@@ -191,9 +191,9 @@ public class ViewSavingsIncomeFragment extends Fragment implements
         }
 
         if(mROD != null && mSID != null) {
-            ArrayList<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(getContext(), mROD);
+            List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(getContext(), mROD);
             List<MilestoneData> milestones = mSID.getMilestones(getContext(), ages, mROD);
-            mMilestoneAdapter.update(milestones);
+            mMilestoneDataAdapter.update(milestones);
         }
     }
 

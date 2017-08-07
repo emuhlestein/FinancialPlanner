@@ -9,47 +9,36 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
 /**
- * Created by Ed Muhlestein on 6/12/2017.
+ * @author Ed Muhlestein
+ * Created on 8/5/2017.
  */
-public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.SSMilestoneHolder> {
-    private List<MilestoneData> mMilestones;
-    private SelectionMilestoneDataListener mListener;
-    private Context mContext;
-    private AgeData mFullAge;
-    private AgeData mMinimumAge;
 
-    /**
-     * Constructor.
-     * @param context The context.
-     * @param milestones The list of milestones.
-     */
-    public SSMilestoneAdapter(Context context, List<MilestoneData> milestones) {
+public class MilestoneDataAdapter extends RecyclerView.Adapter<MilestoneDataAdapter.MilestoneDataHolder> {
+    private List<MilestoneData> mMilestones;
+    private Context mContext;
+    private SelectionMilestoneDataListener mListener;
+
+    public MilestoneDataAdapter(Context context, List<MilestoneData> milestones) {
         mContext = context;
         mMilestones = milestones;
-
-        // TODO refactor
-        mMinimumAge = new AgeData(62, 0);
     }
 
     @Override
-    public SSMilestoneHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MilestoneDataHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.milestone_item_layout, parent, false);
-        return new SSMilestoneHolder(view);
+        return new MilestoneDataHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(SSMilestoneHolder holder, int position) {
+    public void onBindViewHolder(MilestoneDataHolder holder, int position) {
         holder.bindMilestone(position);
     }
 
@@ -62,67 +51,57 @@ public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.
         }
     }
 
-    /**
-     * Update the milestones.
-     * @param milestones The milestoens.
-     */
     public void update(List<MilestoneData> milestones) {
         mMilestones.clear();
         mMilestones.addAll(milestones);
         notifyDataSetChanged();
     }
 
-    /**
-     * Set the listerner for milestones selection.
-     * @param listener THe listener.
-     */
-    public void setOnSelectionMilestoneListener (SelectionMilestoneDataListener listener) {
+    public void setOnSelectionMilestoneDataListener (SelectionMilestoneDataListener listener) {
         mListener = listener;
     }
 
-    public void setROD(RetirementOptionsData rod) {
-        String birthdate = rod.getBirthdate();
-        int year = SystemUtils.getBirthYear(birthdate);
-        mFullAge = GovPensionHelper.getFullRetirementAge(year);
-    }
-
-    class SSMilestoneHolder extends RecyclerView.ViewHolder
+    class MilestoneDataHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         private TextView mMilestoneTextView;
         private TextView mMonthlyAmountTextView;
         private LinearLayout mLinearLayout;
         private MilestoneData mMSD;
 
-        private SSMilestoneHolder(View itemView) {
+        private MilestoneDataHolder(View itemView) {
             super(itemView);
             mLinearLayout = (LinearLayout) itemView.findViewById(R.id.milestone_item_layout);
             mMilestoneTextView = (TextView) itemView.findViewById(R.id.milestone_text_view);
             mMonthlyAmountTextView = (TextView) itemView.findViewById(R.id.monthly_amount_text_view);
             itemView.setOnClickListener(this);
-
         }
 
         private void bindMilestone(int position) {
             mMSD = mMilestones.get(position);
-            AgeData startAge = mMSD.getStartAge();
 
+            double monthlyBenefit = mMSD.getMonthlyBenefit();
+            double endBalance = mMSD.getEndBalance();
             final int sdk = android.os.Build.VERSION.SDK_INT;
+            double annualAmount = monthlyBenefit * 12;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-
-                if(startAge.isBefore(mMinimumAge)) {
+                if(endBalance == 0) {
                     mLinearLayout.setBackground( mContext.getResources().getDrawable(R.drawable.red_ripple_effect) );
-                } else if(startAge.isBefore(mFullAge)) {
+                } else {
+                    if(endBalance < annualAmount) {
                         mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
                     } else {
                         mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
                     }
+                }
             } else {
-                if(startAge.isBefore(mMinimumAge)) {
+                if(endBalance == 0) {
                     mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.red_ripple_effect));
-                } else if(startAge.isBefore(mFullAge)) {
-                    mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
                 } else {
-                    mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
+                    if(endBalance < annualAmount) {
+                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
+                    } else {
+                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
+                    }
                 }
             }
 

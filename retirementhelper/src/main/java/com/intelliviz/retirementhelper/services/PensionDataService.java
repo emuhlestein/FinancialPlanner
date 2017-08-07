@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.util.BenefitHelper;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.PensionHelper;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ACTION;
@@ -38,28 +38,30 @@ public class PensionDataService extends IntentService {
                 PensionIncomeData pid = intent.getParcelableExtra(EXTRA_DB_DATA);
                 if(pid != null) {
                     if(id == -1) {
-                        BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
+                        DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
                                 RetirementContract.TransactionStatusEntry.ACTION_INSERT, "", INCOME_TYPE_PENSION);
                         String result = PensionHelper.addData(this, pid);
-                        BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
+                        DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
                                 RetirementContract.TransactionStatusEntry.ACTION_INSERT, result, INCOME_TYPE_PENSION);
                     } else {
-                        BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
+                        DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
                                 RetirementContract.TransactionStatusEntry.ACTION_UPDATE, "", INCOME_TYPE_PENSION);
                         int rowsUpdated = PensionHelper.saveData(this, pid);
                         String rows = Integer.toString(rowsUpdated);
-                        BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
+                        DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
                                 RetirementContract.TransactionStatusEntry.ACTION_UPDATE, rows, INCOME_TYPE_PENSION);
                     }
                 }
             } else if(action == SERVICE_DB_DELETE) {
-                BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
+                DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
                         RetirementContract.TransactionStatusEntry.ACTION_DELETE, "", INCOME_TYPE_PENSION);
                 int rowsUpdated = PensionHelper.deleteData(this, id);
                 String rows = Integer.toString(rowsUpdated);
-                BenefitHelper.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
+                DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
                         RetirementContract.TransactionStatusEntry.ACTION_DELETE, rows, INCOME_TYPE_PENSION);
             }
+
+            DataBaseUtils.updateMilestoneData(this);
         }
     }
 }

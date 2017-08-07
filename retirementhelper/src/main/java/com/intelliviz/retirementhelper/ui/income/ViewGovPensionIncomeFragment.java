@@ -28,7 +28,7 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
-import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
+import com.intelliviz.retirementhelper.util.SelectionMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
  * @author Ed Muhlestein
  */
 public class ViewGovPensionIncomeFragment extends Fragment implements
-        SelectionMilestoneListener,
+        SelectionMilestoneDataListener,
         LoaderManager.LoaderCallbacks<Cursor>{
 
     public static final String VIEW_GOV_PENSION_INCOME_FRAG_TAG = "view gov pension income frag tag";
@@ -195,7 +195,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements
         }
 
         if(mROD != null && mGPID != null) {
-            ArrayList<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(getContext(), mROD);
+            List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(getContext(), mROD);
             List<MilestoneData> milestones = mGPID.getMilestones(getContext(), ages, mROD);
             mMilestoneAdapter.update(milestones);
             updateUI();

@@ -10,7 +10,7 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SummaryData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.util.BenefitHelper;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -37,11 +37,13 @@ public class SummaryDataIntentService extends IntentService {
         if (intent != null) {
             RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
             List<MilestoneAgeData> ages = getMilestoneAges(this, rod);
-            List<MilestoneData> milestones = BenefitHelper.getAllMilestones(this, ages, rod);
+            List<MilestoneData> milestones = DataBaseUtils.getAllMilestones(this, ages, rod);
             List<SummaryData> listSummaryData = new ArrayList<>();
             for(MilestoneData msd : milestones) {
                 listSummaryData.add(new SummaryData(msd.getStartAge().toString(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
             }
+
+            // delete all summary tables, then readd them.
             Uri uri = RetirementContract.SummaryEntry.CONTENT_URI;
             getContentResolver().delete(uri, null, null);
             for(SummaryData summaryData : listSummaryData) {

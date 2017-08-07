@@ -38,6 +38,8 @@ public class RetirementProvider extends ContentProvider {
     private static final int MILESTONE_LIST = 1001;
     private static final int MILESTONE_ID = 1002;
     private static final int SUMMARY_LIST = 1101;
+    private static final int MILESTONE_SUMMARY_LIST = 1201;
+    private static final int MILESTONE_SUMMARY_ID = 1202;
     private static final int TAX_DEFERRED_STATUS = 1110;
 
     private static final String QUERY_TABLES_FOR_TAX_DEFERRED_ITEM =
@@ -107,6 +109,10 @@ public class RetirementProvider extends ContentProvider {
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE, MILESTONE_LIST);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE + "/#", MILESTONE_ID);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE_SUMMARY, MILESTONE_SUMMARY_LIST);
+
+        sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_MILESTONE_SUMMARY + "/#", MILESTONE_SUMMARY_ID);
 
         sUriMatcher.addURI(RetirementContract.CONTENT_AUTHORITY, RetirementContract.PATH_SUMMARY, SUMMARY_LIST);
 
@@ -204,6 +210,9 @@ public class RetirementProvider extends ContentProvider {
             case MILESTONE_LIST:
                 sqLiteQueryBuilder.setTables(RetirementContract.MilestoneEntry.TABLE_NAME);
                 break;
+            case MILESTONE_SUMMARY_LIST:
+                sqLiteQueryBuilder.setTables(RetirementContract.MilestoneSummaryEntry.TABLE_NAME);
+                break;
             case TAX_DEFERRED_STATUS:
                 sqLiteQueryBuilder.setTables(RetirementContract.TransactionStatusEntry.TABLE_NAME);
                 break;
@@ -298,6 +307,16 @@ public class RetirementProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
+            case MILESTONE_SUMMARY_LIST:
+                // The second parameter will allow an empty row to be inserted. If it was null, then no row
+                // can be inserted if values is empty.
+                rowId = db.insert(RetirementContract.MilestoneSummaryEntry.TABLE_NAME, null, values);
+                if (rowId > -1) {
+                    returnUri = ContentUris.withAppendedId(uri, rowId);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri.toString());
         }
@@ -359,6 +378,9 @@ public class RetirementProvider extends ContentProvider {
                     rowsDeleted = db.delete(RetirementContract.MilestoneEntry.TABLE_NAME,
                             RetirementContract.MilestoneEntry._ID + " = ?", new String[]{id});
                 }
+                break;
+            case MILESTONE_SUMMARY_LIST:
+                rowsDeleted = db.delete(RetirementContract.MilestoneSummaryEntry.TABLE_NAME, null, null);
                 break;
             case SUMMARY_LIST:
                 rowsDeleted = db.delete(RetirementContract.SummaryEntry.TABLE_NAME, null, null);
@@ -578,6 +600,20 @@ public class RetirementProvider extends ContentProvider {
 
             db.execSQL(sql);
 
+            // create the milestone summary table
+            sql = "CREATE TABLE " + RetirementContract.MilestoneSummaryEntry.TABLE_NAME +
+                    " ( " + RetirementContract.MilestoneSummaryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    RetirementContract.MilestoneSummaryEntry.COLUMN_MONTHLY_BENEFIT + " TEXT NOT NULL, " +
+                    RetirementContract.MilestoneSummaryEntry.COLUMN_START_AGE + " TEXT NOT NULL, " +
+                    RetirementContract.MilestoneSummaryEntry.COLUMN_END_AGE + " TEXT NOT NULL, " +
+                    RetirementContract.MilestoneSummaryEntry.COLUMN_MINIMUM_AGE + " TEXT NOT NULL, " +
+                    RetirementContract.MilestoneSummaryEntry.COLUMN_START_BALANCE + " TEXT NOT NULL, " +
+                    RetirementContract.MilestoneSummaryEntry.COLUMN_END_BALANCE + " TEXT NOT NULL, " +
+                    RetirementContract.MilestoneSummaryEntry.COLUMN_PENALTY_AMOUNT + " TEXT NOT NULL, " +
+                    RetirementContract.MilestoneSummaryEntry.COLUMN_MONTHS + " INTEGER NOT NULL);";
+
+            db.execSQL(sql);
+
             // create the tax deferred status table
             sql = "CREATE TABLE " + RetirementContract.TransactionStatusEntry.TABLE_NAME +
                     " ( " + RetirementContract.TransactionStatusEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -622,6 +658,7 @@ public class RetirementProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.GovPensionIncomeEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.MilestoneEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.SummaryEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.MilestoneSummaryEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + RetirementContract.TransactionStatusEntry.TABLE_NAME);
 
             onCreate(db);

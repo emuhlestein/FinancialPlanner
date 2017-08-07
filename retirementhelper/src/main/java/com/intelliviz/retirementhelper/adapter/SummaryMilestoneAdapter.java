@@ -1,6 +1,7 @@
 package com.intelliviz.retirementhelper.adapter;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
+import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-
-import java.util.List;
 
 /**
  * Milestone summary adapter.
@@ -21,18 +20,16 @@ import java.util.List;
  */
 
 public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilestoneAdapter.MilestoneHolder> {
-    private List<MilestoneData> mMilestones;
-    private SelectionMilestoneListener mListener;
     private Context mContext;
+    private Cursor mCursor;
+    private SelectionMilestoneListener mListener;
 
-    /**
-     * Constructor.
-     * @param context The contexte.
-     * @param milestones The milestones.
-     */
-    public SummaryMilestoneAdapter(Context context, List<MilestoneData> milestones) {
+    public interface SelectionMilestoneListener {
+        void onSelectMilestone(Cursor cursor);
+    }
+
+    public SummaryMilestoneAdapter(Context context) {
         mContext = context;
-        mMilestones = milestones;
     }
 
     @Override
@@ -45,25 +42,27 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
 
     @Override
     public void onBindViewHolder(MilestoneHolder holder, int position) {
-        holder.bindMilestone(position);
+        if (mCursor == null || !mCursor.moveToPosition(position)) {
+            return;
+        }
+        holder.bindMilestone(mCursor);
     }
 
     @Override
     public int getItemCount() {
-        if(mMilestones != null) {
-            return mMilestones.size();
+        if(mCursor != null) {
+            return mCursor.getCount();
         } else {
             return 0;
         }
     }
 
     /**
-     * Update the milestone ages.
-     * @param milestones The new milestone.
+     * Update the cursor.
+     * @param cursor The new cursor.
      */
-    public void update(List<MilestoneData> milestones) {
-        mMilestones.clear();
-        mMilestones.addAll(milestones);
+    public void swapCursor(Cursor cursor) {
+        mCursor = cursor;
         notifyDataSetChanged();
     }
 
@@ -80,7 +79,6 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
         private TextView mMilestoneTextView;
         private TextView mMonthlyAmountTextView;
         private LinearLayout mLinearLayout;
-        private MilestoneData mMSD;
 
         private MilestoneHolder(View itemView) {
             super(itemView);
@@ -90,26 +88,44 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
             itemView.setOnClickListener(this);
         }
 
-        private void bindMilestone(int position) {
-            mMSD = mMilestones.get(position);
+        private void bindMilestone(Cursor cursor) {
+            int monthlyBenefitIndex = cursor.getColumnIndex(RetirementContract.MilestoneSummaryEntry.COLUMN_MONTHLY_BENEFIT);
+            int endBalanceIndex = cursor.getColumnIndex(RetirementContract.MilestoneSummaryEntry.COLUMN_END_BALANCE);
+            int penaltyIndex = cursor.getColumnIndex(RetirementContract.MilestoneSummaryEntry.COLUMN_PENALTY_AMOUNT);
+            int startAgeIndex = cursor.getColumnIndex(RetirementContract.MilestoneSummaryEntry.COLUMN_START_AGE);
+            if(monthlyBenefitIndex == -1 || endBalanceIndex == -1 || penaltyIndex== -1 || startAgeIndex == -1) {
+                return;
+            }
+
+            String value = cursor.getString(monthlyBenefitIndex);
+            double monthlyBenefit = Double.parseDouble(value);
+
+            value = cursor.getString(endBalanceIndex);
+            double endBalance = Double.parseDouble(value);
+
+            value = cursor.getString(penaltyIndex);
+            double penalty = Double.parseDouble(value);
+
+            value = cursor.getString(startAgeIndex);
+            AgeData startAge = SystemUtils.parseAgeString(value);
 
             final int sdk = android.os.Build.VERSION.SDK_INT;
-            double annualAmount = mMSD.getMonthlyBenefit() * 12;
+            double annualAmount = monthlyBenefit * 12;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                if(mMSD.getEndBalance() == 0) {
+                if(endBalance == 0) {
                     mLinearLayout.setBackground( mContext.getResources().getDrawable(R.drawable.red_ripple_effect) );
                 } else {
-                    if(mMSD.getEndBalance() < annualAmount) {
+                    if(endBalance < annualAmount) {
                         mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
                     } else {
                         mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
                     }
                 }
             } else {
-                if(mMSD.getEndBalance() == 0) {
+                if(endBalance == 0) {
                     mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.red_ripple_effect));
                 } else {
-                    if(mMSD.getEndBalance() < annualAmount) {
+                    if(endBalance < annualAmount) {
                         mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
                     } else {
                         mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
@@ -117,24 +133,22 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
                 }
             }
 
-            double monthlyAmount = mMSD.getMonthlyBenefit();
-            String formattedCurrency = SystemUtils.getFormattedCurrency(monthlyAmount);
-            double penalty = mMSD.getPenaltyAmount();
+            String formattedCurrency = SystemUtils.getFormattedCurrency(monthlyBenefit);
             if(penalty > 0) {
-                double monthlyPenalty = monthlyAmount * penalty / 100.0;
-                monthlyAmount = monthlyAmount - monthlyPenalty;
-                formattedCurrency = SystemUtils.getFormattedCurrency(monthlyAmount);
+                double monthlyPenalty = monthlyBenefit * penalty / 100.0;
+                monthlyBenefit = monthlyBenefit - monthlyPenalty;
+                formattedCurrency = SystemUtils.getFormattedCurrency(monthlyBenefit);
                 formattedCurrency = formattedCurrency + "*";
             }
 
             mMonthlyAmountTextView.setText(formattedCurrency);
-            mMilestoneTextView.setText(SystemUtils.getFormattedAge(mMSD.getStartAge()));
+            mMilestoneTextView.setText(SystemUtils.getFormattedAge(startAge));
         }
 
         @Override
         public void onClick(View v) {
             if(mListener != null) {
-                mListener.onSelectMilestone(mMSD);
+                mListener.onSelectMilestone(mCursor);
             }
         }
     }

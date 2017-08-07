@@ -22,6 +22,7 @@ public class RetirementContract {
     static final String PATH_GOV_PENSION_INCOME = "gov_pension_income";
     static final String PATH_MILESTONE = "milestone";
     static final String PATH_SUMMARY = "summary";
+    static final String PATH_MILESTONE_SUMMARY = "milestone_summary";
     static final String PATH_TRANSACTION_STATUS = "transaction_status";
 
     private RetirementContract() {
@@ -163,6 +164,25 @@ public class RetirementContract {
         static final String TABLE_NAME = PATH_SUMMARY;
         public static final String COLUMN_AGE = "age";
         public static final String COLUMN_AMOUNT = "amount";
+    }
+
+    public static final class MilestoneSummaryEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MILESTONE_SUMMARY).build();
+
+        static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MILESTONE_SUMMARY;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MILESTONE_SUMMARY;
+
+        static final String TABLE_NAME = PATH_MILESTONE_SUMMARY;
+        public static final String COLUMN_MONTHLY_BENEFIT = "monthly_benefit";
+        public static final String COLUMN_START_AGE = "start_age";
+        public static final String COLUMN_END_AGE = "end_age";
+        public static final String COLUMN_MINIMUM_AGE = "minimum_age";
+        public static final String COLUMN_START_BALANCE = "start_balance";
+        public static final String COLUMN_END_BALANCE = "end_balance";
+        public static final String COLUMN_PENALTY_AMOUNT = "penalty_amount";
+        public static final String COLUMN_MONTHS = "months";
     }
 
     /**

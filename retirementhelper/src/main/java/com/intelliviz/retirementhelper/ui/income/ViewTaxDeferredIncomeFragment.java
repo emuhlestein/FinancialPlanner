@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
+import com.intelliviz.retirementhelper.adapter.MilestoneDataAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
@@ -29,7 +29,7 @@ import com.intelliviz.retirementhelper.ui.MilestoneDetailsDialog;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
-import com.intelliviz.retirementhelper.util.SelectionMilestoneListener;
+import com.intelliviz.retirementhelper.util.SelectionMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
@@ -48,7 +48,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
  * @author Ed Muhlestein
  */
 public class ViewTaxDeferredIncomeFragment extends Fragment implements
-        SelectionMilestoneListener,
+        SelectionMilestoneDataListener,
         LoaderManager.LoaderCallbacks<Cursor>{
     public static final String VIEW_TAXDEF_INCOME_FRAG_TAG = "view taxdef income frag tag";
     public static final String ID_ARGS = "id";
@@ -57,7 +57,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements
     private long mId;
     private TaxDeferredIncomeData mTDID;
     private RetirementOptionsData mROD;
-    private SummaryMilestoneAdapter mMilestoneAdapter;
+    private MilestoneDataAdapter mMilestoneAdapter;
 
     @Bind(R.id.name_text_view)
     TextView mIncomeSourceName;
@@ -112,13 +112,13 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements
         ButterKnife.bind(this, view);
 
         List<MilestoneData> milestones = new ArrayList<>();
-        mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), milestones);
+        mMilestoneAdapter = new MilestoneDataAdapter(getContext(), milestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
                 linearLayoutManager.getOrientation()));
-        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
+        mMilestoneAdapter.setOnSelectionMilestoneDataListener(this);
 
         mROD = null;
         mTDID = null;
@@ -200,7 +200,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements
     }
 
     @Override
-    public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         switch(loader.getId()) {
             case ROD_LOADER:
                 mROD = RetirementOptionsHelper.extractData(cursor);
@@ -212,7 +212,7 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements
         }
 
         if(mROD != null && mTDID != null) {
-            ArrayList<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(getContext(), mROD);
+            List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(getContext(), mROD);
             List<MilestoneData> milestones = mTDID.getMilestones(getContext(), ages, mROD);
             mMilestoneAdapter.update(milestones);
         }

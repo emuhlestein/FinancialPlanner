@@ -6,6 +6,6 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
  * Listener for milestones
  * Created by Ed Muhlestein on 5/29/2017.
  */
-public interface SelectionMilestoneListener {
+public interface SelectionMilestoneDataListener {
     void onSelectMilestone(MilestoneData msd);
 }
