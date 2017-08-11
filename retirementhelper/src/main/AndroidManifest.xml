@@ -75,7 +75,9 @@
             android:exported="false" />
         <service
             android:name=".services.MilestoneSummaryIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity android:name=".ui.BirthdateActivity"></activity>
     </application>
 
 </manifest>
