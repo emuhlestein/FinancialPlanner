@@ -1,6 +1,10 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +18,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
@@ -23,6 +29,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
 
 /**
@@ -30,11 +37,13 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_LOG
  * @author Ed Muhlestein
  */
 public class StartActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, QueryCompleteListener {
     private static final String TAG = StartActivity.class.getSimpleName();
     private static final String FIREBASE_TOS_URL = "https://firebase.google.com/terms/";
     private static final String FIREBASE_PRIVACY_POLICY_URL = "https://firebase.google.com/terms/analytics/#7_privacy";
     private static final int REQUEST_SIGN_IN = 1;
+    private static final int REQUEST_BIRTHDATE = 2;
+    private IdpResponse mResponse;
     private GoogleApiClient mGoogleApiClient;
 
     @Bind(R.id.login_button)
@@ -49,7 +58,7 @@ public class StartActivity extends AppCompatActivity implements
         // need to see if user is already logged in
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
-            startSignedInActivity(null);
+            prepareToStartNavigateActivity(null);
             return;
         }
         startActivityForResult(
@@ -78,14 +87,28 @@ public class StartActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == REQUEST_SIGN_IN) {
-            if(resultCode == RESULT_OK) {
-                IdpResponse response = IdpResponse.fromResultIntent(data);
-                handleSignInResult(response);
+        if(resultCode == RESULT_OK) {
+            // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+            switch (requestCode) {
+                case REQUEST_SIGN_IN:
+                    IdpResponse response = IdpResponse.fromResultIntent(intent);
+                    handleSignInResult(response);
+                    break;
+                case REQUEST_BIRTHDATE:
+                    String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+                    if(SystemUtils.validateBirthday(birthdate)) {
+                        BirthdateQueryHandler queryHandler = new BirthdateQueryHandler(getContentResolver(), this);
+                        ContentValues values = new ContentValues();
+                        values.put(RetirementContract.RetirementParmsEntry.COLUMN_BIRTHDATE, birthdate);
+                        queryHandler.startUpdate(0, null, RetirementContract.RetirementParmsEntry.CONTENT_URI, values, null, null);
+                    } else {
+                        Intent newIntent = new Intent(this, BirthdateActivity.class);
+                        startActivityForResult(newIntent, REQUEST_BIRTHDATE);
+                    }
+                    break;
             }
         }
     }
@@ -96,7 +119,7 @@ public class StartActivity extends AppCompatActivity implements
             if(mGoogleApiClient != null) {
                 mGoogleApiClient.connect();
             }
-            startSignedInActivity(response);
+            prepareToStartNavigateActivity(response);
         }
     }
 
@@ -117,15 +140,61 @@ public class StartActivity extends AppCompatActivity implements
         return new ArrayList<>();
     }
 
-    private void startSignedInActivity(IdpResponse response) {
-        Intent newIntent = new Intent(this, BirthdateActivity.class);
-        newIntent.putExtra(EXTRA_LOGIN_RESPONSE, response);
-        startActivity(newIntent);
-        finish();
+    private void prepareToStartNavigateActivity(IdpResponse response) {
+        mResponse = response;
+
+        BirthdateQueryHandler queryHandler = new BirthdateQueryHandler(getContentResolver(), this);
+        queryHandler.startQuery(0, null, RetirementContract.RetirementParmsEntry.CONTENT_URI,
+                new String[]{RetirementContract.RetirementParmsEntry.COLUMN_BIRTHDATE}, null, null, null);
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e(TAG, "Failed to connect");
+    }
+
+    private static final class BirthdateQueryHandler extends AsyncQueryHandler {
+        private QueryCompleteListener mListener;
+
+        BirthdateQueryHandler(ContentResolver cr, QueryCompleteListener listener) {
+            super(cr);
+            mListener = listener;
+        }
+
+        @Override
+        protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+            String birthdate = DataBaseUtils.extractBirthDate(cursor);
+            if(SystemUtils.validateBirthday(birthdate)) {
+                if(mListener != null) {
+                    mListener.onStartNavigationActivity();
+                }
+            } else {
+                if(mListener != null) {
+                    mListener.onStartBirthdateActivity("");
+                }
+            }
+        }
+
+        @Override
+        protected void onUpdateComplete(int token, Object cookie, int result) {
+            if(mListener != null) {
+                mListener.onStartNavigationActivity();
+            }
+        }
+    }
+
+    @Override
+    public void onStartNavigationActivity() {
+        Intent newIntent = new Intent(this, NavigationActivity.class);
+        newIntent.putExtra(EXTRA_LOGIN_RESPONSE, mResponse);
+        startActivity(newIntent);
+        finish();
+    }
+
+    @Override
+    public void onStartBirthdateActivity(String birthdate) {
+        Intent newIntent = new Intent(this, BirthdateActivity.class);
+        newIntent.putExtra(EXTRA_BIRTHDATE, birthdate);
+        startActivityForResult(newIntent, REQUEST_BIRTHDATE);
     }
 }

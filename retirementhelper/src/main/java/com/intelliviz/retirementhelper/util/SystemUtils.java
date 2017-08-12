@@ -89,7 +89,7 @@ public class SystemUtils {
     }
 
     public static boolean validateBirthday(String birthdate) {
-        if(birthdate == null) {
+        if(birthdate == null || birthdate.isEmpty()) {
             return false;
         }
         String[] tokens = birthdate.split("-");
@@ -186,6 +186,16 @@ public class SystemUtils {
         return parseInt(birthTokens[2]);
     }
 
+    public static int getBirthMonth(String birthdate) {
+        String[] birthTokens = birthdate.split("-");
+        return parseInt(birthTokens[1]);
+    }
+
+    public static int getBirthDay(String birthdate) {
+        String[] birthTokens = birthdate.split("-");
+        return parseInt(birthTokens[0]);
+    }
+
     public static AgeData getAge(String birthdate) {
         String[] birthTokens = birthdate.split("-");
         if(birthTokens.length != 3) {
@@ -237,6 +247,10 @@ public class SystemUtils {
      */
     // TODO make sure all callers chaeck for invalid age
     public static AgeData parseAgeString(String age) {
+        if(age == null || age.isEmpty()) {
+            return null;
+        }
+
         String[] tokens = age.split(" ");
         int year;
         int month = 0;

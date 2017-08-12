@@ -37,6 +37,21 @@ import static com.intelliviz.retirementhelper.util.RetirementOptionsHelper.getRe
 
 public class DataBaseUtils {
 
+    public static String extractBirthDate(Cursor cursor) {
+        if(cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+
+        int birthdateIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_BIRTHDATE);
+        if(birthdateIndex != -1) {
+            String birthDate = cursor.getString(birthdateIndex);
+            if(SystemUtils.validateBirthday(birthDate)) {
+                return birthDate;
+            }
+        }
+        return null;
+    }
+
     public static MilestoneData extractData(Cursor cursor) {
         if(cursor == null || !cursor.moveToFirst()) {
             return null;

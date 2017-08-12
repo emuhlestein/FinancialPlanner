@@ -103,6 +103,7 @@
 
 
         <Button
+            android:id="@+id/save_birthdate_button"
             android:layout_width="351dp"
             android:layout_height="91dp"
             android:layout_marginBottom="120dp"

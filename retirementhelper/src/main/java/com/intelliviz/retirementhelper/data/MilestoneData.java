@@ -23,7 +23,7 @@ public class MilestoneData implements Parcelable {
      * @param startAge The start age.
      */
     public MilestoneData(AgeData startAge) {
-        this(startAge, null, null, 0, 0, 0, 0, 0);
+        this(startAge, startAge, startAge, 0, 0, 0, 0, 0);
     }
 
     /**
