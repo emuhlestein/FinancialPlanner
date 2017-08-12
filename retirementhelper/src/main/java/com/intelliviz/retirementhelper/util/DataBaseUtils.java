@@ -22,6 +22,7 @@ import com.intelliviz.retirementhelper.services.MilestoneSummaryIntentService;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
@@ -190,12 +191,14 @@ public class DataBaseUtils {
     }
 
     public static List<MilestoneAgeData> getMilestoneAges(Context context, RetirementOptionsData rod) {
-        ArrayList<MilestoneAgeData> ages = new ArrayList<>();
+
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if(cursor == null || !cursor.moveToFirst()) {
-            return ages;
+            return Collections.emptyList();
         }
+
+        HashSet<MilestoneAgeData> ages = new HashSet<>();
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             int idIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry._ID);
             int ageIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry.COLUMN_AGE);
@@ -220,8 +223,10 @@ public class DataBaseUtils {
         AgeData min401kAge = new AgeData(59, 6);
         ages.add(new MilestoneAgeData(-1, min401kAge));
 
-        Collections.sort(ages);
-        return ages;
+        List<MilestoneAgeData> sortedAges = new ArrayList<>(ages);
+        Collections.sort(sortedAges);
+
+        return sortedAges;
     }
 
     static void updateSummaryData(Context context) {
