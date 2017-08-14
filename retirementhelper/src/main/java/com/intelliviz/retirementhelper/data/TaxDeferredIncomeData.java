@@ -126,6 +126,12 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
         return milestones;
     }
 
+    @Override
+    public List<AgeData> getAges() {
+        List<AgeData> ages = new ArrayList<>();
+        ages.add(SystemUtils.parseAgeString(mMinimumAge));
+        return ages;
+    }
 
     private TaxDeferredIncomeData(Parcel in) {
         readFromParcel(in);

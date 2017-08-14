@@ -8,6 +8,7 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.lang.Double.parseDouble;
@@ -85,6 +86,11 @@ public class SavingsIncomeData extends IncomeTypeData {
 
         milestones = getMilestones(endOfLifeAge, null, mInterest, 0, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
         return milestones;
+    }
+
+    @Override
+    public List<AgeData> getAges() {
+        return Collections.emptyList();
     }
 
     private SavingsIncomeData(Parcel in) {

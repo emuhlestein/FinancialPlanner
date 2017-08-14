@@ -192,6 +192,8 @@ public class DataBaseUtils {
 
     public static List<MilestoneAgeData> getMilestoneAges(Context context, RetirementOptionsData rod) {
 
+
+
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if(cursor == null || !cursor.moveToFirst()) {
@@ -199,6 +201,14 @@ public class DataBaseUtils {
         }
 
         HashSet<MilestoneAgeData> ages = new HashSet<>();
+        List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
+        for(IncomeType incomeType : incomeTypes) {
+            List<AgeData> allAges = incomeType.getAges();
+            for(AgeData anAge : allAges) {
+                ages.add(new MilestoneAgeData(-1, anAge));
+            }
+        }
+
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             int idIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry._ID);
             int ageIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry.COLUMN_AGE);

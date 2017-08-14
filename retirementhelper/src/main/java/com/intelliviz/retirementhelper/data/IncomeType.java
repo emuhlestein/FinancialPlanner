@@ -43,4 +43,6 @@ public interface IncomeType extends Parcelable {
     double getMonthlyBenefit(double withdrawalRate);
 
     List<MilestoneData> getMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod);
+
+    List<AgeData> getAges();
 }

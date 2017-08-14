@@ -91,6 +91,13 @@ public class GovPensionIncomeData extends IncomeTypeData {
         return milestones;
     }
 
+    @Override
+    public List<AgeData> getAges() {
+        List<AgeData> ages = new ArrayList<>();
+        ages.add(SystemUtils.parseAgeString(mStartAge));
+        return ages;
+    }
+
     private static double getSocialSecurityAdjustment(String birthDate, AgeData startAge) {
         int year = SystemUtils.getBirthYear(birthDate);
         AgeData retireAge = getFullRetirementAge(year);
@@ -146,8 +153,6 @@ public class GovPensionIncomeData extends IncomeTypeData {
             return 8.0; // the max
         }
     }
-
-
 
     private GovPensionIncomeData(Parcel in) {
         readFromParcel(in);

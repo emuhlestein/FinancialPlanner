@@ -84,6 +84,13 @@ public class PensionIncomeData extends IncomeTypeData {
         return milestones;
     }
 
+    @Override
+    public List<AgeData> getAges() {
+        List<AgeData> ages = new ArrayList<>();
+        ages.add(SystemUtils.parseAgeString(mStartAge));
+        return ages;
+    }
+
     private PensionIncomeData(Parcel in) {
         readFromParcel(in);
     }
