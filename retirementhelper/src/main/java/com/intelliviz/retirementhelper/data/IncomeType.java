@@ -35,12 +35,14 @@ public interface IncomeType extends Parcelable {
     double getBalance();
 
     /**
-     * Get the monthly benefit base on rate of withdraw.
+     * Get the monthly benefit.
      *
-     * @param withdrawalRate The monthly benefit.
+     * @param age The age.
      * @return The monthly benefir.
      */
-    double getMonthlyBenefit(double withdrawalRate);
+    double getMonthlyBenefitForAge(AgeData age);
+
+    double getFullMonthlyBenefit();
 
     List<MilestoneData> getMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod);
 

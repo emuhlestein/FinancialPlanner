@@ -97,7 +97,7 @@ public class ViewPensionIncomeFragment extends Fragment implements
         mIncomeSourceName.setText(mPID.getName());
         mStartAge.setText(mPID.getStartAge());
 
-        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mPID.getMonthlyBenefit(0));
+        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mPID.getFullMonthlyBenefit());
         mMonthlyBenefit.setText(monthlyIncreaseString);
 
         int type = mPID.getType();

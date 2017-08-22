@@ -51,7 +51,13 @@ public class SavingsIncomeData extends IncomeTypeData {
     }
 
     @Override
-    public double getMonthlyBenefit(double withdrawalRate) {
+    public double getMonthlyBenefitForAge(AgeData age) {
+        return 0;
+    }
+
+    @Override
+    public double getFullMonthlyBenefit() {
+        double withdrawalRate = 4; // TODO need to move into rules class.
         double monthlyInterest = withdrawalRate / 1200.0;
         return getBalance() * monthlyInterest;
     }

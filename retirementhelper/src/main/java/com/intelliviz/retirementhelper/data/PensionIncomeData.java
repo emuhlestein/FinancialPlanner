@@ -10,6 +10,8 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
+
 /**
  * Class for pension income data.
  * Created by Ed Muhlestein on 5/11/2017.
@@ -46,7 +48,17 @@ public class PensionIncomeData extends IncomeTypeData {
     }
 
     @Override
-    public double getMonthlyBenefit(double withdrawalRate) {
+    public double getMonthlyBenefitForAge(AgeData age) {
+        AgeData startAge = SystemUtils.parseAgeString(mStartAge);
+        if(age.isBefore(startAge)) {
+            return 0;
+        } else {
+            return mMonthlyBenefit;
+        }
+    }
+
+    @Override
+    public double getFullMonthlyBenefit() {
         return mMonthlyBenefit;
     }
 
@@ -64,8 +76,8 @@ public class PensionIncomeData extends IncomeTypeData {
             return milestones;
         }
 
-        AgeData minimumAge = SystemUtils.parseAgeString(mStartAge);
-        AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
+        AgeData minimumAge = parseAgeString(mStartAge);
+        AgeData endAge = parseAgeString(rod.getEndAge());
         double monthlyBenefit = mMonthlyBenefit;
 
         MilestoneData milestone;
@@ -87,7 +99,7 @@ public class PensionIncomeData extends IncomeTypeData {
     @Override
     public List<AgeData> getAges() {
         List<AgeData> ages = new ArrayList<>();
-        ages.add(SystemUtils.parseAgeString(mStartAge));
+        ages.add(parseAgeString(mStartAge));
         return ages;
     }
 

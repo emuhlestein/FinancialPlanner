@@ -136,7 +136,7 @@ public class EditGovPensionIncomeFragment extends Fragment implements
             return;
         }
         String name = mGPID.getName();
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getMonthlyBenefit());
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getFullMonthlyBenefit());
         String age = mGPID.getStartAge();
 
         mIncomeSourceName.setText(name);

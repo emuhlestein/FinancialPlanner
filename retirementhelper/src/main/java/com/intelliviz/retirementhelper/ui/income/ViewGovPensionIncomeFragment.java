@@ -131,10 +131,10 @@ public class ViewGovPensionIncomeFragment extends Fragment implements
         mMinAge.setText(mGPID.getStartAge());
 
         int birthYear = SystemUtils.getBirthYear(mROD.getBirthdate());
-        AgeData fullAge = GovPensionHelper.getFullRetirementAge(birthYear);
+        AgeData fullAge = mGPID.getFullRetirementAge();
         mFullAge.setText(fullAge.toString());
 
-        String formattedValue = SystemUtils.getFormattedCurrency(mGPID.getMonthlyBenefit());
+        String formattedValue = SystemUtils.getFormattedCurrency(mGPID.getFullMonthlyBenefit());
         mMonthlyBenefit.setText(formattedValue);
 
         int type = mGPID.getType();
@@ -187,7 +187,6 @@ public class ViewGovPensionIncomeFragment extends Fragment implements
         switch(loader.getId()) {
             case ROD_LOADER:
                 mROD = RetirementOptionsHelper.extractData(cursor);
-                mMilestoneAdapter.setROD(mROD);
                 break;
             case GPID_LOADER:
                 mGPID = GovPensionHelper.extractData(cursor);
@@ -197,6 +196,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements
         if(mROD != null && mGPID != null) {
             List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(getContext(), mROD);
             List<MilestoneData> milestones = mGPID.getMilestones(getContext(), ages, mROD);
+            mMilestoneAdapter.setGovenmentPensionIncomeData(mGPID);
             mMilestoneAdapter.update(milestones);
             updateUI();
         }

@@ -134,7 +134,7 @@ public class EditPensionIncomeFragment extends Fragment implements
             return;
         }
         String name = mPID.getName();
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPID.getMonthlyBenefit(0));
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPID.getFullMonthlyBenefit());
         String age = mPID.getStartAge();
 
         mIncomeSourceName.setText(name);

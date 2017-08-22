@@ -24,7 +24,7 @@ public class PensionHelper {
         long incomeId = Long.parseLong(id);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
-        values.put(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(pid.getMonthlyBenefit(0)));
+        values.put(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(pid.getFullMonthlyBenefit()));
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_START_AGE, pid.getStartAge());
         Uri uri = context.getContentResolver().insert(RetirementContract.PensionIncomeEntry.CONTENT_URI, values);
         if(uri == null) {
@@ -37,7 +37,7 @@ public class PensionHelper {
     public static int saveData(Context context, PensionIncomeData pid) {
         DataBaseUtils.updateIncomeTypeName(context, pid);
         ContentValues values = new ContentValues();
-        values.put(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(pid.getMonthlyBenefit(0)));
+        values.put(RetirementContract.PensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(pid.getFullMonthlyBenefit()));
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_START_AGE, pid.getStartAge());
 
         String id = String.valueOf(pid.getId());
@@ -54,7 +54,7 @@ public class PensionHelper {
         return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
     }
 
-    public static PensionIncomeData getPensionIncomeData(Context context, long incomeId) {
+    static PensionIncomeData getPensionIncomeData(Context context, long incomeId) {
         DataBaseUtils.IncomeDataHelper idh = DataBaseUtils.getIncomeTypeData(context, incomeId);
         if(idh == null) {
             return null;

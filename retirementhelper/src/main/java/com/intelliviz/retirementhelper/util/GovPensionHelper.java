@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 
@@ -17,6 +16,7 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.getIncomeTypeDa
  */
 
 public class GovPensionHelper {
+    /*
     private static double MAX_SS_PENALTY = 30.0;
 
     public static AgeData getFullRetirementAge(int birthYear) {
@@ -51,12 +51,14 @@ public class GovPensionHelper {
 
         return fullAge;
     }
+    */
 
     /**
      * Get the percent credit per year.
      * @param birthyear The birth year.
      * @return THe delayed credit.
      */
+    /*
     private static double getDelayedCredit(int birthyear) {
         if(birthyear < 1925) {
             return 3;
@@ -107,6 +109,7 @@ public class GovPensionHelper {
             return 0; // exact retirement age
         }
     }
+    */
 
     public static String addGovPensionData(Context context, GovPensionIncomeData gpid) {
         String id = DataBaseUtils.addIncomeType(context, gpid);
@@ -116,7 +119,7 @@ public class GovPensionHelper {
         long incomeId = Long.parseLong(id);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getMonthlyBenefit()));
+        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getFullMonthlyBenefit()));
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getStartAge());
         Uri uri = context.getContentResolver().insert(RetirementContract.GovPensionIncomeEntry.CONTENT_URI, values);
         if (uri == null) {
@@ -128,7 +131,7 @@ public class GovPensionHelper {
     public static int saveGovPensionData(Context context, GovPensionIncomeData gpid) {
         DataBaseUtils.updateIncomeTypeName(context, gpid);
         ContentValues values = new ContentValues();
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getMonthlyBenefit()));
+        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getFullMonthlyBenefit()));
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getStartAge());
 
         String sid = String.valueOf(gpid.getId());

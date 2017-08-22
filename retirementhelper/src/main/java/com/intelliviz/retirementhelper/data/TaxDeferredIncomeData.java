@@ -64,7 +64,13 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
     }
 
     @Override
-    public double getMonthlyBenefit(double withdrawalRate) {
+    public double getMonthlyBenefitForAge(AgeData age) {
+        return 0;
+    }
+
+    @Override
+    public double getFullMonthlyBenefit() {
+        double withdrawalRate = 4; // TODO needs to move into the rules class
         double monthlyInterest = withdrawalRate / 1200.0;
         return getBalance() * monthlyInterest;
     }

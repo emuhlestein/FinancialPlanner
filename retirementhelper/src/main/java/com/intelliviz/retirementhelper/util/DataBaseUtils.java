@@ -192,8 +192,7 @@ public class DataBaseUtils {
 
     public static List<MilestoneAgeData> getMilestoneAges(Context context, RetirementOptionsData rod) {
 
-
-
+        // ages from data base
         Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if(cursor == null || !cursor.moveToFirst()) {
@@ -201,14 +200,6 @@ public class DataBaseUtils {
         }
 
         HashSet<MilestoneAgeData> ages = new HashSet<>();
-        List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
-        for(IncomeType incomeType : incomeTypes) {
-            List<AgeData> allAges = incomeType.getAges();
-            for(AgeData anAge : allAges) {
-                ages.add(new MilestoneAgeData(-1, anAge));
-            }
-        }
-
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             int idIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry._ID);
             int ageIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry.COLUMN_AGE);
@@ -219,19 +210,30 @@ public class DataBaseUtils {
         }
         cursor.close();
 
+        // add ages from income types
+        List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
+        for(IncomeType incomeType : incomeTypes) {
+            List<AgeData> allAges = incomeType.getAges();
+            for(AgeData anAge : allAges) {
+                ages.add(new MilestoneAgeData(-1, anAge));
+            }
+        }
+
         String birthdate = rod.getBirthdate();
         if(SystemUtils.validateBirthday(birthdate)) {
+            // add birth date
             AgeData nowAge = SystemUtils.getAge(birthdate);
             ages.add(new MilestoneAgeData(-1, nowAge));
 
-            int year = SystemUtils.getBirthYear(birthdate);
-            AgeData fullRetirementAge = GovPensionHelper.getFullRetirementAge(year);
-            ages.add(new MilestoneAgeData(-1, fullRetirementAge));
+            // add full retirement age
+            //int year = SystemUtils.getBirthYear(birthdate);
+            //AgeData fullRetirementAge = GovPensionHelper.getFullRetirementAge(year);
+            //ages.add(new MilestoneAgeData(-1, fullRetirementAge));
         }
 
         // Need to get this age from deferred tax income source
-        AgeData min401kAge = new AgeData(59, 6);
-        ages.add(new MilestoneAgeData(-1, min401kAge));
+        //AgeData min401kAge = new AgeData(59, 6);
+        //ages.add(new MilestoneAgeData(-1, min401kAge));
 
         List<MilestoneAgeData> sortedAges = new ArrayList<>(ages);
         Collections.sort(sortedAges);

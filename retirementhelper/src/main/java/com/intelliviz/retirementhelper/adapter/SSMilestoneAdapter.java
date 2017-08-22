@@ -10,9 +10,8 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.SelectionMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -74,16 +73,14 @@ public class SSMilestoneAdapter extends RecyclerView.Adapter<SSMilestoneAdapter.
 
     /**
      * Set the listerner for milestones selection.
-     * @param listener THe listener.
+     * @param listener The listener.
      */
     public void setOnSelectionMilestoneListener (SelectionMilestoneDataListener listener) {
         mListener = listener;
     }
 
-    public void setROD(RetirementOptionsData rod) {
-        String birthdate = rod.getBirthdate();
-        int year = SystemUtils.getBirthYear(birthdate);
-        mFullAge = GovPensionHelper.getFullRetirementAge(year);
+    public void setGovenmentPensionIncomeData(GovPensionIncomeData GPID) {
+        mFullAge = GPID.getFullRetirementAge();
     }
 
     class SSMilestoneHolder extends RecyclerView.ViewHolder
