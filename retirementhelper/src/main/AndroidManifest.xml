@@ -77,7 +77,8 @@
             android:name=".services.MilestoneSummaryIntentService"
             android:exported="false" />
 
-        <activity android:name=".ui.BirthdateActivity"></activity>
+        <activity android:name=".ui.BirthdateActivity" />
+        <activity android:name=".ui.income.TaxDeferredIncomeActivity"></activity>
     </application>
 
 </manifest>

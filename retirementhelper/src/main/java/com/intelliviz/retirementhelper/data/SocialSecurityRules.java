@@ -1,12 +1,15 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 /**
  * Created by edm on 8/14/2017.
  */
 
-public class SocialSecurityRules implements IncomeTypeRules {
+public class SocialSecurityRules implements IncomeTypeRules, Parcelable {
     private static final double MAX_SS_PENALTY = 30.0;
     private int mBirthYear;
     private AgeData mMinAge;
@@ -153,4 +156,41 @@ public class SocialSecurityRules implements IncomeTypeRules {
             return 0; // exact retirement age
         }
     }
+
+    private SocialSecurityRules(Parcel in) {
+        readFromParcel(in);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mBirthYear);
+        dest.writeDouble(mFullRetirementBenefit);
+        dest.writeParcelable(mMinAge, flags);
+        dest.writeParcelable(mMaxAge, flags);
+    }
+
+    private void readFromParcel(Parcel in) {
+        mBirthYear = in.readInt();
+        mFullRetirementBenefit = in.readDouble();
+        mMinAge = in.readParcelable(AgeData.class.getClassLoader());
+        mMaxAge = in.readParcelable(AgeData.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<SocialSecurityRules> CREATOR = new Parcelable.Creator<SocialSecurityRules>()
+    {
+        @Override
+        public SocialSecurityRules createFromParcel(Parcel in) {
+            return new SocialSecurityRules(in);
+        }
+
+        @Override
+        public SocialSecurityRules[] newArray(int size) {
+            return new SocialSecurityRules[size];
+        }
+    };
 }

@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 public class GovPensionIncomeData extends IncomeTypeData {
-    private IncomeTypeRules mRules;
+    private SocialSecurityRules mRules;
     private String mStartAge;
     private double mMonthlyBenefit;
 
@@ -67,7 +67,11 @@ public class GovPensionIncomeData extends IncomeTypeData {
     }
 
     public void setRules(IncomeTypeRules rules) {
-        mRules = rules;
+        if(rules instanceof SocialSecurityRules) {
+            mRules = (SocialSecurityRules)rules;
+        } else {
+            mRules = null;
+        }
     }
 
     public String getStartAge() {
@@ -131,6 +135,7 @@ public class GovPensionIncomeData extends IncomeTypeData {
         super.writeToParcel(dest, flags);
         dest.writeString(mStartAge);
         dest.writeDouble(mMonthlyBenefit);
+        dest.writeParcelable(mRules, flags);
     }
 
     @Override
@@ -138,6 +143,7 @@ public class GovPensionIncomeData extends IncomeTypeData {
         super.readFromParcel(in);
         mStartAge = in.readString();
         mMonthlyBenefit = in.readDouble();
+        mRules = in.readParcelable(SocialSecurityRules.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<GovPensionIncomeData> CREATOR = new Parcelable.Creator<GovPensionIncomeData>()

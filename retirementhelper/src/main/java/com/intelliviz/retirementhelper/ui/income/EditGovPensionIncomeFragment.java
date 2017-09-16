@@ -168,6 +168,10 @@ public class EditGovPensionIncomeFragment extends Fragment implements
         }
 
         double dbenefit = Double.parseDouble(benefit);
+        /*
+        String birthDate, minAge, new AgeData(70, 0), dbenefit);
+        SocialSecurityRules ssr = new SocialSecurityRules();
+        */
         GovPensionIncomeData gpid = new GovPensionIncomeData(mId, name, INCOME_TYPE_GOV_PENSION, minimumAge, dbenefit);
         updateGPID(gpid);
     }

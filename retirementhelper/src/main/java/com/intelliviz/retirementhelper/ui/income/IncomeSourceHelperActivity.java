@@ -22,6 +22,8 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
@@ -39,8 +41,8 @@ public class IncomeSourceHelperActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         Intent intent = getIntent();
-        int mIncomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_TYPE_SAVINGS);
-        int mIncomeSourceAction = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
+        int mIncomeSourceType = intent.getIntExtra(EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_TYPE_SAVINGS);
+        int mIncomeSourceAction = intent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
 
         if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_ADD) {
             // Add a new income source
@@ -49,7 +51,7 @@ public class IncomeSourceHelperActivity extends AppCompatActivity {
                     addSavingsIncomeSourceFragment(false, intent);
                     break;
                 case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                    addTaxDeferredIncomeSourceFragmnet(false, intent);
+                    addTaxDeferredIncomeSourceFragment(false, intent);
                     break;
                 case RetirementConstants.INCOME_TYPE_PENSION:
                     addPensionIncomeSourceFragmnet(false, intent);
@@ -66,7 +68,7 @@ public class IncomeSourceHelperActivity extends AppCompatActivity {
                         addSavingsIncomeSourceFragment(false, intent);
                         break;
                     case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                        addTaxDeferredIncomeSourceFragmnet(false, intent);
+                        addTaxDeferredIncomeSourceFragment(false, intent);
                         break;
                     case RetirementConstants.INCOME_TYPE_PENSION:
                         addPensionIncomeSourceFragmnet(false, intent);
@@ -81,7 +83,7 @@ public class IncomeSourceHelperActivity extends AppCompatActivity {
                         addSavingsIncomeSourceFragment(true, intent);
                         break;
                     case RetirementConstants.INCOME_TYPE_TAX_DEFERRED:
-                        addTaxDeferredIncomeSourceFragmnet(true, intent);
+                        addTaxDeferredIncomeSourceFragment(true, intent);
                         break;
                     case RetirementConstants.INCOME_TYPE_PENSION:
                         addPensionIncomeSourceFragmnet(true, intent);
@@ -149,7 +151,7 @@ public class IncomeSourceHelperActivity extends AppCompatActivity {
         }
     }
 
-    private void addTaxDeferredIncomeSourceFragmnet(boolean viewMode, Intent intent) {
+    private void addTaxDeferredIncomeSourceFragment(boolean viewMode, Intent intent) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft;
         Fragment fragment;

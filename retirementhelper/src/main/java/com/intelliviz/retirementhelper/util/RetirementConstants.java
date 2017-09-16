@@ -23,6 +23,7 @@ public class RetirementConstants {
     public static final int SERVICE_DB_QUERY = 1;
     public static final int SERVICE_DB_UPDATE = 2;
     public static final int SERVICE_DB_DELETE = 3;
+    public static final int SERVICE_DB_GET_MILESTONES = 4;
 
 
     public static final String DATE_FORMAT = "dd-MM-yyyy";
@@ -66,4 +67,5 @@ public class RetirementConstants {
     public static final String EXTRA_DB_EXTRA_DATA = "db extra data";
     public static final String EXTRA_DB_ROWS_UPDATED = "rows updated";
     public static final String EXTRA_DB_ID = "db id";
+    public static final String EXTRA_DB_MILESTONES = "milestones";
 }
