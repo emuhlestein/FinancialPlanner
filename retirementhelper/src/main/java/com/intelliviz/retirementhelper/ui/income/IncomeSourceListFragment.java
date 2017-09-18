@@ -212,13 +212,6 @@ public class IncomeSourceListFragment extends Fragment implements
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:
                     startTaxDeferredIncomeSourceActivity(id, RetirementConstants.INCOME_ACTION_VIEW);
-                    /*
-                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
-                    startActivity(newIntent);
-                    */
                     break;
                 case INCOME_TYPE_PENSION:
                     newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
@@ -295,14 +288,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 break;
             case INCOME_TYPE_TAX_DEFERRED:
                 if(action == INCOME_ACTION_EDIT) {
-                    startTaxDeferredIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_EDIT);
-                    /*
-                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
-                    startActivity(newIntent);
-                    */
+                    startTaxDeferredIncomeSourceActivity(mSelectedId, RetirementConstants.INCOME_ACTION_EDIT);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
                     FragmentManager fm = getFragmentManager();

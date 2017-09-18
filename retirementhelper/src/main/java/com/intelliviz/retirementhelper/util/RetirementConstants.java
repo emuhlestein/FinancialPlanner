@@ -18,6 +18,7 @@ public class RetirementConstants {
     public static final int INCOME_ACTION_VIEW = 1;
     public static final int INCOME_ACTION_EDIT = 2;
     public static final int INCOME_ACTION_DELETE = 3;
+    public static final int INCOME_ACTION_UPDATE = 4;
 
     public static final String EXTRA_DB_ACTION = "service action";
     public static final int SERVICE_DB_QUERY = 1;
@@ -58,6 +59,7 @@ public class RetirementConstants {
 
     public static final String LOCAL_SAVINGS = "savingsDataBroadcast";
     public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";
+    public static final String LOCAL_TAX_DEFERRED_RESULT = "viewTaxDeferredBroadcastResult";
     public static final String LOCAL_PENSION = "pensionBroadcast";
     public static final String LOCAL_GOV_PENSION = "govPensionBroadcast";
     public static final String LOCAL_RETIRE_OPTIONS = "retireOptionsBroadcast";
@@ -68,4 +70,10 @@ public class RetirementConstants {
     public static final String EXTRA_DB_ROWS_UPDATED = "rows updated";
     public static final String EXTRA_DB_ID = "db id";
     public static final String EXTRA_DB_MILESTONES = "milestones";
+    public static final String EXTRA_DB_RESULT = "result";
+    public static final String EXTRA_DB_RESULT_TYPE = "result type";
+
+    public static final String EXTRA_DB_RESULT_TYPE_NUM_ROWS = "result type num ows";
+    public static final String EXTRA_DB_RESULT_TYPE_ID = "result id";
+
 }

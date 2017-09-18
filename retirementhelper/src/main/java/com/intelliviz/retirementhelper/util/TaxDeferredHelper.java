@@ -15,10 +15,10 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 
 public class TaxDeferredHelper {
 
-    public static String addTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid) {
+    public static long addTaxDeferredIncome(Context context, TaxDeferredIncomeData tdid) {
         String id = DataBaseUtils.addIncomeType(context, tdid);
         if(id == null) {
-            return null;
+            return -1;
         }
 
         long incomeId = Long.parseLong(id);
@@ -33,9 +33,9 @@ public class TaxDeferredHelper {
         Uri uri = context.getContentResolver().insert(RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI, values);
 
         if(uri == null) {
-            return null;
+            return -1;
         } else {
-            return uri.toString();
+            return Long.parseLong(uri.getLastPathSegment());
         }
     }
 

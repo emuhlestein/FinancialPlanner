@@ -1,7 +1,9 @@
 package com.intelliviz.retirementhelper.ui.income;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,8 +39,10 @@ import butterknife.OnClick;
 import static android.content.Intent.EXTRA_INTENT;
 import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_RESULT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED_RESULT;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -79,6 +84,14 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
         updateIncomeSourceData();
         getActivity().finish();
     }
+
+    private BroadcastReceiver mResultsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long result = intent.getLongExtra(EXTRA_DB_RESULT, -1);
+            // TODO check result
+        }
+    };
 
     public EditTaxDeferredIncomeFragment() {
         // Required empty public constructor
@@ -201,6 +214,19 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
         super.onDetach();
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceivers();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceivers();
+    }
+
     private void updateUI() {
         if (mTDID == null || mTDID.getId() == -1) {
             return;
@@ -290,9 +316,12 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
 
     private void updateTDID(TaxDeferredIncomeData tdid) {
         Intent intent = new Intent(getContext(), TaxDeferredIntentService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ID, tdid.getId());
         intent.putExtra(EXTRA_DB_DATA, tdid);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        if(tdid.getId() == -1) {
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
+        } else {
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_UPDATE);
+        }
         getActivity().startService(intent);
     }
 
@@ -372,5 +401,22 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    private void registerReceivers() {
+        registerMilestoneReceiver();
+    }
+
+    private void unregisterReceivers() {
+        unregisterMilestoneReceiver();
+    }
+
+    private void registerMilestoneReceiver() {
+        IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED_RESULT);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mResultsReceiver, filter);
+    }
+
+    private void unregisterMilestoneReceiver() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mResultsReceiver);
     }
 }
