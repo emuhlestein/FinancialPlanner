@@ -8,7 +8,6 @@ import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
-import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
@@ -23,12 +22,12 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_RESULT_TYPE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_RESULT_TYPE_NUM_ROWS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_ADD;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_UPDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_VIEW;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED_RESULT;
 
@@ -49,11 +48,9 @@ public class TaxDeferredIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             int action = intent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
-            TaxDeferredIncomeData tdid = intent.getParcelableExtra(EXTRA_DB_DATA);
-            long id = -1;
-            if(tdid != null) {
-                id = tdid.getId();
-            }
+            TaxDeferredIncomeData tdid;
+
+            long id = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
             Intent localIntent;
             int rowsUpdated;
             switch(action) {
@@ -75,12 +72,10 @@ public class TaxDeferredIntentService extends IntentService {
                     LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                     break;
                 case INCOME_ACTION_DELETE:
-                    DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
-                            RetirementContract.TransactionStatusEntry.ACTION_DELETE, "", INCOME_TYPE_TAX_DEFERRED);
-                    rowsUpdated = TaxDeferredHelper.deleteTaxDeferredIncome(this, id);
-                    String rows = Integer.toString(rowsUpdated);
-                    DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
-                            RetirementContract.TransactionStatusEntry.ACTION_DELETE, rows, INCOME_TYPE_TAX_DEFERRED);
+                    if(id != -1) {
+                        rowsUpdated = TaxDeferredHelper.deleteTaxDeferredIncome(this, id);
+                        String rows = Integer.toString(rowsUpdated);
+                    }
                     break;
                 case INCOME_ACTION_VIEW:
                     if(id != -1) {

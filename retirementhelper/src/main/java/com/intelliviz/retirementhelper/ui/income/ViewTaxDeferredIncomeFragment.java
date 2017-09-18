@@ -41,7 +41,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.content.Intent.EXTRA_INTENT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_MILESTONES;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
@@ -136,8 +135,8 @@ public class ViewTaxDeferredIncomeFragment extends Fragment implements
         getLoaderManager().initLoader(TDID_LOADER, bundle, this);
 
         Intent intent = new Intent(getContext(), TaxDeferredIntentService.class);
-        intent.putExtra(EXTRA_DB_ID, mId);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.EXTRA_DB_MILESTONES);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ID, mId);
+        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
         getActivity().startService(intent);
 
         return view;
