@@ -221,9 +221,13 @@ public class EditSavingsIncomeFragment extends Fragment implements
 
     private void updateSID(SavingsIncomeData sid) {
         Intent intent = new Intent(getContext(), SavingsDataService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ID, sid.getId());
         intent.putExtra(EXTRA_DB_DATA, sid);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        if(sid.getId() == -1) {
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
+        } else {
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_UPDATE);
+        }
+
         getActivity().startService(intent);
     }
 

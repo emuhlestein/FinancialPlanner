@@ -27,7 +27,6 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
-import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
@@ -204,11 +203,7 @@ public class IncomeSourceListFragment extends Fragment implements
             mIncomeAction = INCOME_ACTION_VIEW;
             switch(type) {
                 case INCOME_TYPE_SAVINGS:
-                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
-                    startActivity(newIntent);
+                    startSavingsIncomeSourceActivity(id, RetirementConstants.INCOME_ACTION_VIEW);
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:
                     startTaxDeferredIncomeSourceActivity(id, RetirementConstants.INCOME_ACTION_VIEW);
@@ -239,8 +234,7 @@ public class IncomeSourceListFragment extends Fragment implements
         intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, item);
         switch (item) {
             case INCOME_TYPE_SAVINGS:
-                intent.putExtra(EXTRA_INCOME_DATA, new SavingsIncomeData());
-                startActivity(intent);
+                startSavingsIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
                 break;
             case INCOME_TYPE_TAX_DEFERRED:
                 startTaxDeferredIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
@@ -272,12 +266,7 @@ public class IncomeSourceListFragment extends Fragment implements
         switch(incomeSourceType) {
             case INCOME_TYPE_SAVINGS:
                 if(action == INCOME_ACTION_EDIT) {
-                    mIncomeAction = INCOME_ACTION_EDIT;
-                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
-                    startActivity(newIntent);
+                    startSavingsIncomeSourceActivity(mSelectedId, RetirementConstants.INCOME_ACTION_EDIT);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
                     FragmentManager fm = getFragmentManager();
@@ -362,6 +351,13 @@ public class IncomeSourceListFragment extends Fragment implements
 
     private void startTaxDeferredIncomeSourceActivity(long id, int action) {
         Intent intent = new Intent(getContext(), TaxDeferredIncomeActivity.class);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+        startActivity(intent);
+    }
+
+    private void startSavingsIncomeSourceActivity(long id, int action) {
+        Intent intent = new Intent(getContext(), SavingsIncomeActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
         startActivity(intent);

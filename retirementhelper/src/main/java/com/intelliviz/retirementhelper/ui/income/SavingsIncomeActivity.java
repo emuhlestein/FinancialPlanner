@@ -14,7 +14,7 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class TaxDeferredIncomeActivity extends AppCompatActivity {
+public class SavingsIncomeActivity extends AppCompatActivity {
 
     @Bind(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -22,7 +22,8 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tax_deferred_income);
+        setContentView(R.layout.activity_savings_income);
+
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -50,19 +51,19 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
         Fragment fragment;
 
         if (viewMode) {
-            fragment = fm.findFragmentByTag(ViewTaxDeferredIncomeFragment.VIEW_TAXDEF_INCOME_FRAG_TAG);
+            fragment = fm.findFragmentByTag(ViewSavingsIncomeFragment.VIEW_SAVINGS_INCOME_FRAG_TAG);
             if (fragment == null) {
-                fragment = ViewTaxDeferredIncomeFragment.newInstance(intent);
+                fragment = ViewSavingsIncomeFragment.newInstance(intent);
                 ft = fm.beginTransaction();
-                ft.add(R.id.content_frame, fragment, ViewTaxDeferredIncomeFragment.VIEW_TAXDEF_INCOME_FRAG_TAG);
+                ft.add(R.id.content_frame, fragment, ViewSavingsIncomeFragment.VIEW_SAVINGS_INCOME_FRAG_TAG);
                 ft.commit();
             }
         } else {
-            fragment = fm.findFragmentByTag(EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
+            fragment = fm.findFragmentByTag(EditSavingsIncomeFragment.EDIT_SAVINGS_INCOME_FRAG_TAG);
             if (fragment == null) {
-                fragment = EditTaxDeferredIncomeFragment.newInstance(intent);
+                fragment = EditSavingsIncomeFragment.newInstance(intent);
                 ft = fm.beginTransaction();
-                ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
+                ft.add(R.id.content_frame, fragment, EditSavingsIncomeFragment.EDIT_SAVINGS_INCOME_FRAG_TAG);
                 ft.commit();
             }
         }

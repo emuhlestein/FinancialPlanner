@@ -79,10 +79,10 @@ public class TaxDeferredIntentService extends IntentService {
                     break;
                 case INCOME_ACTION_VIEW:
                     if(id != -1) {
-                        TaxDeferredIncomeData tid = TaxDeferredHelper.getTaxDeferredIncomeData(this, id);
+                        tdid = TaxDeferredHelper.getTaxDeferredIncomeData(this, id);
                         RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(this, rod);
-                        List<MilestoneData> milestones = tid.getMilestones(this, ages, rod);
+                        List<MilestoneData> milestones = tdid.getMilestones(this, ages, rod);
                         ArrayList<MilestoneData> listMilestones = new ArrayList<>(milestones);
                         localIntent = new Intent(LOCAL_TAX_DEFERRED);
                         localIntent.putParcelableArrayListExtra(EXTRA_DB_MILESTONES, listMilestones);

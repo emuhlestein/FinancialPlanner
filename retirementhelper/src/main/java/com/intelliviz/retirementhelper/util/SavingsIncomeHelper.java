@@ -16,10 +16,10 @@ import static com.intelliviz.retirementhelper.util.DataBaseUtils.getIncomeTypeDa
  * Created by Ed Muhlestein on 6/10/2017.
  */
 public class SavingsIncomeHelper {
-    public static String addData(Context context, SavingsIncomeData sid) {
+    public static long addData(Context context, SavingsIncomeData sid) {
         String id = addIncomeType(context, sid);
         if(id == null) {
-            return null;
+            return -1;
         }
 
         long incomeId = Long.parseLong(id);
@@ -31,9 +31,9 @@ public class SavingsIncomeHelper {
         Uri uri = context.getContentResolver().insert(RetirementContract.SavingsIncomeEntry.CONTENT_URI, values);
 
         if(uri == null) {
-            return null;
+            return -1;
         } else {
-            return uri.toString();
+            return Long.parseLong(uri.getLastPathSegment());
         }
     }
 

@@ -58,6 +58,7 @@ public class RetirementConstants {
     public static final int REQUEST_ACTION_MENU = 10;
 
     public static final String LOCAL_SAVINGS = "savingsDataBroadcast";
+    public static final String LOCAL_SAVINGS_RESULT = "savingsDataBroadcastResult";
     public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";
     public static final String LOCAL_TAX_DEFERRED_RESULT = "viewTaxDeferredBroadcastResult";
     public static final String LOCAL_PENSION = "pensionBroadcast";
