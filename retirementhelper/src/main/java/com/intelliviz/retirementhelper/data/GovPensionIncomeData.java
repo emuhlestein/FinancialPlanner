@@ -63,7 +63,7 @@ public class GovPensionIncomeData extends IncomeTypeData {
     }
 
     public AgeData getFullRetirementAge() {
-        return mRules.getFullRetirementAge();
+        return new AgeData(); //mRules.getFullRetirementAge();
     }
 
     public void setRules(IncomeTypeRules rules) {
@@ -94,8 +94,9 @@ public class GovPensionIncomeData extends IncomeTypeData {
         MilestoneData milestone;
         for(MilestoneAgeData msad : ages) {
             AgeData age = msad.getAge();
-            monthlyBenefit = mRules.getMonthlyBenefitForAge(age);
-            milestone = new MilestoneData(age, null, minimumAge, monthlyBenefit, 0, 0, 0, 0);
+            if(mRules != null) {
+                monthlyBenefit = mRules.getMonthlyBenefitForAge(age);
+                milestone = new MilestoneData(age, null, minimumAge, monthlyBenefit, 0, 0, 0, 0);
             /*
             if(age.isBefore(minimumAge)) {
                 milestone = new MilestoneData(age, null, minimumAge, 0, 0, 0, 0, 0);
@@ -107,7 +108,8 @@ public class GovPensionIncomeData extends IncomeTypeData {
                 milestone = new MilestoneData(age, null, minimumAge, adjustedBenefit, 0, 0, 0, 0);
             }
             */
-            milestones.add(milestone);
+            }
+            //milestones.add(milestone);
         }
         return milestones;
     }
@@ -115,9 +117,11 @@ public class GovPensionIncomeData extends IncomeTypeData {
     @Override
     public List<AgeData> getAges() {
         List<AgeData> ages = new ArrayList<>();
-        ages.add(mRules.getFullRetirementAge());
-        ages.add(mRules.getMinimumAge());
-        ages.add(mRules.getMaximumAge());
+        if(mRules != null) {
+            ages.add(mRules.getFullRetirementAge());
+            ages.add(mRules.getMinimumAge());
+            ages.add(mRules.getMaximumAge());
+        }
         return ages;
     }
 

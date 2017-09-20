@@ -40,7 +40,7 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static com.intelliviz.retirementhelper.ui.income.EditTaxDeferredIncomeFragment.STATUS_LOADER;
+
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
@@ -55,6 +55,7 @@ public class NavigationActivity extends AppCompatActivity implements
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
+    private static final int STATUS_LOADER = 1;
     private GoogleApiClient mGoogleApiClient;
     private boolean mNeedToStartSummaryFragment;
     private int mStartFragment;

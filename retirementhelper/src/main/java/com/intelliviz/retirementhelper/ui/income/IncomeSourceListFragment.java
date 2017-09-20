@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
-import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
@@ -216,11 +215,7 @@ public class IncomeSourceListFragment extends Fragment implements
                     startActivity(newIntent);
                     break;
                 case INCOME_TYPE_GOV_PENSION:
-                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
-                    startActivity(newIntent);
+                    startGovPensionIncomeSourceActivity(id, RetirementConstants.INCOME_ACTION_VIEW);
                     break;
             }
         }
@@ -244,8 +239,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 startActivity(intent);
                 break;
             case INCOME_TYPE_GOV_PENSION:
-                intent.putExtra(EXTRA_INCOME_DATA, new GovPensionIncomeData());
-                startActivity(intent);
+                startGovPensionIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
                 break;
         }
     }
@@ -304,12 +298,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 break;
             case INCOME_TYPE_GOV_PENSION:
                 if(action == INCOME_ACTION_EDIT) {
-                    mIncomeAction = INCOME_ACTION_EDIT;
-                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
-                    startActivity(newIntent);
+                    startGovPensionIncomeSourceActivity(mSelectedId, RetirementConstants.INCOME_ACTION_EDIT);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
                     FragmentManager fm = getFragmentManager();
@@ -358,6 +347,13 @@ public class IncomeSourceListFragment extends Fragment implements
 
     private void startSavingsIncomeSourceActivity(long id, int action) {
         Intent intent = new Intent(getContext(), SavingsIncomeActivity.class);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+        startActivity(intent);
+    }
+
+    private void startGovPensionIncomeSourceActivity(long id, int action) {
+        Intent intent = new Intent(getContext(), GovPensionIncomeActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
         startActivity(intent);

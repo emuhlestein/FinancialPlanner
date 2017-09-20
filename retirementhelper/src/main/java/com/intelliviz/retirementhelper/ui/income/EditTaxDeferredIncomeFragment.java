@@ -16,7 +16,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
     public static final String EDIT_TAXDEF_INCOME_FRAG_TAG = "edit taxdef income frag tag";
     private TaxDeferredIncomeData mTDID;
     public static final int TDID_LOADER = 0;
-    public static final int STATUS_LOADER = 1;
     private long mId;
 
     @Bind(R.id.coordinatorLayout)
@@ -132,8 +130,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
             bundle.putString(ID_ARGS, Long.toString(mId));
             getLoaderManager().initLoader(TDID_LOADER, bundle, this);
         }
-
-        getLoaderManager().initLoader(STATUS_LOADER, null, this);
 
         mBalance.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -344,14 +340,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
                         null,
                         null);
                 break;
-            case STATUS_LOADER:
-                loader = new CursorLoader(getActivity(),
-                        RetirementContract.TransactionStatusEntry.CONTENT_URI,
-                        null,
-                        RetirementContract.TransactionStatusEntry.COLUMN_TYPE + " =? ",
-                        new String[]{Integer.toString(INCOME_TYPE_TAX_DEFERRED)},
-                        null);
-                break;
             default:
                 loader = null;
         }
@@ -365,36 +353,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
             case TDID_LOADER:
                 mTDID = TaxDeferredHelper.extractData(cursor);
                 updateUI();
-                break;
-            case STATUS_LOADER:
-                if(cursor.moveToFirst()) {
-                    int statusIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_STATUS);
-                    int resultIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_RESULT);
-                    int actionIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_ACTION);
-                    if(statusIndex != -1) {
-                        int status = cursor.getInt(statusIndex);
-                        if(status == RetirementContract.TransactionStatusEntry.STATUS_UPDATED) {
-                            if(actionIndex != -1 && resultIndex != -1) {
-                                int action = cursor.getInt(actionIndex);
-                                int numRows;
-                                switch(action) {
-                                    case RetirementContract.TransactionStatusEntry.ACTION_DELETE:
-                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
-                                        Log.d(TAG, numRows + " deleted");
-                                        break;
-                                    case RetirementContract.TransactionStatusEntry.ACTION_UPDATE:
-                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
-                                        Log.d(TAG, numRows + " update");
-                                        break;
-                                    case RetirementContract.TransactionStatusEntry.ACTION_INSERT:
-                                        String uri = cursor.getString(resultIndex);
-                                        Log.d(TAG, uri + " inserted");
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
                 break;
         }
     }

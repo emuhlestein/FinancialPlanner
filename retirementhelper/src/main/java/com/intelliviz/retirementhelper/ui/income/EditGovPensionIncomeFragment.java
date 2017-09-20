@@ -1,7 +1,10 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,7 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,9 +37,10 @@ import butterknife.OnClick;
 import static android.content.Intent.EXTRA_INTENT;
 import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_RESULT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED_RESULT;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -50,7 +54,6 @@ public class EditGovPensionIncomeFragment extends Fragment implements
     public static final String EDIT_GOVPENSION_INCOME_FRAG_TAG = "edit govpension income frag tag";
     private GovPensionIncomeData mGPID;
     public static final int GPID_LOADER = 0;
-    public static final int STATUS_LOADER = 1;
     private long mId;
 
     @Bind(R.id.coordinatorLayout)
@@ -64,6 +67,14 @@ public class EditGovPensionIncomeFragment extends Fragment implements
 
     @Bind(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
+
+    private BroadcastReceiver mResultsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long result = intent.getLongExtra(EXTRA_DB_RESULT, -1);
+            // TODO check result
+        }
+    };
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
@@ -110,8 +121,6 @@ public class EditGovPensionIncomeFragment extends Fragment implements
             getLoaderManager().initLoader(GPID_LOADER, bundle, this);
         }
 
-        getLoaderManager().initLoader(STATUS_LOADER, null, this);
-
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -130,6 +139,18 @@ public class EditGovPensionIncomeFragment extends Fragment implements
         return view;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceivers();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceivers();
+    }
 
     private void updateUI() {
         if(mGPID == null || mGPID.getId() == -1) {
@@ -180,7 +201,11 @@ public class EditGovPensionIncomeFragment extends Fragment implements
         Intent intent = new Intent(getContext(), GovPensionDataService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_ID, gpid.getId());
         intent.putExtra(EXTRA_DB_DATA, gpid);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
+        if(gpid.getId() == -1) {
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
+        } else {
+            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_UPDATE);
+        }
         getActivity().startService(intent);
     }
 
@@ -203,14 +228,6 @@ public class EditGovPensionIncomeFragment extends Fragment implements
                         null,
                         null);
                 break;
-            case STATUS_LOADER:
-                loader = new CursorLoader(getActivity(),
-                        RetirementContract.TransactionStatusEntry.CONTENT_URI,
-                        null,
-                        RetirementContract.TransactionStatusEntry.COLUMN_TYPE + " =? ",
-                        new String[]{Integer.toString(INCOME_TYPE_TAX_DEFERRED)},
-                        null);
-                break;
             default:
                 loader = null;
         }
@@ -225,41 +242,27 @@ public class EditGovPensionIncomeFragment extends Fragment implements
                 mGPID = GovPensionHelper.extractData(cursor);
                 updateUI();
                 break;
-            case STATUS_LOADER:
-                if(cursor.moveToFirst()) {
-                    int statusIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_STATUS);
-                    int resultIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_RESULT);
-                    int actionIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_ACTION);
-                    if(statusIndex != -1) {
-                        int status = cursor.getInt(statusIndex);
-                        if(status == RetirementContract.TransactionStatusEntry.STATUS_UPDATED) {
-                            if(actionIndex != -1 && resultIndex != -1) {
-                                int action = cursor.getInt(actionIndex);
-                                int numRows;
-                                switch(action) {
-                                    case RetirementContract.TransactionStatusEntry.ACTION_DELETE:
-                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
-                                        Log.d(TAG, numRows + " deleted");
-                                        break;
-                                    case RetirementContract.TransactionStatusEntry.ACTION_UPDATE:
-                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
-                                        Log.d(TAG, numRows + " update");
-                                        break;
-                                    case RetirementContract.TransactionStatusEntry.ACTION_INSERT:
-                                        String uri = cursor.getString(resultIndex);
-                                        Log.d(TAG, uri + " inserted");
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
 
+    private void registerReceivers() {
+        registerMilestoneReceiver();
+    }
+
+    private void unregisterReceivers() {
+        unregisterMilestoneReceiver();
+    }
+
+    private void registerMilestoneReceiver() {
+        IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED_RESULT);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mResultsReceiver, filter);
+    }
+
+    private void unregisterMilestoneReceiver() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mResultsReceiver);
     }
 }
