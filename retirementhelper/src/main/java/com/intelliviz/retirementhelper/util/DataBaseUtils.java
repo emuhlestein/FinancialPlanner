@@ -282,7 +282,7 @@ public class DataBaseUtils {
                     incomeTypes.add(tdid);
                     break;
                 case INCOME_TYPE_PENSION:
-                    PensionIncomeData pid = PensionHelper.getPensionIncomeData(context, id);
+                    PensionIncomeData pid = PensionHelper.getData(context, id);
                     incomeTypes.add(pid);
                     break;
                 case INCOME_TYPE_GOV_PENSION:

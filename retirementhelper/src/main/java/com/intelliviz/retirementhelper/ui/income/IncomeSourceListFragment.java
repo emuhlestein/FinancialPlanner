@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
-import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
@@ -42,7 +41,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
@@ -208,11 +206,7 @@ public class IncomeSourceListFragment extends Fragment implements
                     startTaxDeferredIncomeSourceActivity(id, RetirementConstants.INCOME_ACTION_VIEW);
                     break;
                 case INCOME_TYPE_PENSION:
-                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, type);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, mIncomeAction);
-                    startActivity(newIntent);
+                    startPensionIncomeSourceActivity(id, RetirementConstants.INCOME_ACTION_VIEW);
                     break;
                 case INCOME_TYPE_GOV_PENSION:
                     startGovPensionIncomeSourceActivity(id, RetirementConstants.INCOME_ACTION_VIEW);
@@ -235,8 +229,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 startTaxDeferredIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
                 break;
             case INCOME_TYPE_PENSION:
-                intent.putExtra(EXTRA_INCOME_DATA, new PensionIncomeData());
-                startActivity(intent);
+                startPensionIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
                 break;
             case INCOME_TYPE_GOV_PENSION:
                 startGovPensionIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
@@ -282,12 +275,7 @@ public class IncomeSourceListFragment extends Fragment implements
                 break;
             case INCOME_TYPE_PENSION:
                 if(action == INCOME_ACTION_EDIT) {
-                    mIncomeAction = INCOME_ACTION_EDIT;
-                    newIntent = new Intent(getContext(), IncomeSourceHelperActivity.class);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedId);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_TYPE, mIncomeSourceType);
-                    newIntent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_EDIT);
-                    startActivity(newIntent);
+                    startPensionIncomeSourceActivity(mSelectedId, RetirementConstants.INCOME_ACTION_EDIT);
                 } else if(action == INCOME_ACTION_DELETE) {
                     mIncomeAction = INCOME_ACTION_DELETE;
                     FragmentManager fm = getFragmentManager();
@@ -354,6 +342,13 @@ public class IncomeSourceListFragment extends Fragment implements
 
     private void startGovPensionIncomeSourceActivity(long id, int action) {
         Intent intent = new Intent(getContext(), GovPensionIncomeActivity.class);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+        startActivity(intent);
+    }
+
+    private void startPensionIncomeSourceActivity(long id, int action) {
+        Intent intent = new Intent(getContext(), PensionIncomeActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
         startActivity(intent);

@@ -35,7 +35,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 public class ViewPensionIncomeFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
     public static final String VIEW_PENSION_INCOME_FRAG_TAG = "view pension income frag tag";
-    public static final int ROD_LOADER = 0;
     public static final int PID_LOADER = 1;
     private long mId;
     private PensionIncomeData mPID;
@@ -83,7 +82,6 @@ public class ViewPensionIncomeFragment extends Fragment implements
         mPID = null;
         Bundle bundle = new Bundle();
         bundle.putString(ID_ARGS, Long.toString(mId));
-        getLoaderManager().initLoader(ROD_LOADER, null, this);
         getLoaderManager().initLoader(PID_LOADER, bundle, this);
 
         return view;

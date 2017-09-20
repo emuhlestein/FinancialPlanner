@@ -15,10 +15,10 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 
 public class PensionHelper {
 
-    public static String addData(Context context, PensionIncomeData pid) {
+    public static long addData(Context context, PensionIncomeData pid) {
         String id = DataBaseUtils.addIncomeType(context, pid);
         if(id == null) {
-            return null;
+            return -1;
         }
 
         long incomeId = Long.parseLong(id);
@@ -28,9 +28,9 @@ public class PensionHelper {
         values.put(RetirementContract.PensionIncomeEntry.COLUMN_START_AGE, pid.getStartAge());
         Uri uri = context.getContentResolver().insert(RetirementContract.PensionIncomeEntry.CONTENT_URI, values);
         if(uri == null) {
-            return null;
+            return -1;
         } else {
-            return uri.getLastPathSegment();
+            return Long.parseLong(uri.getLastPathSegment());
         }
     }
 
@@ -54,7 +54,7 @@ public class PensionHelper {
         return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
     }
 
-    static PensionIncomeData getPensionIncomeData(Context context, long incomeId) {
+    public static PensionIncomeData getData(Context context, long incomeId) {
         DataBaseUtils.IncomeDataHelper idh = DataBaseUtils.getIncomeTypeData(context, incomeId);
         if(idh == null) {
             return null;
