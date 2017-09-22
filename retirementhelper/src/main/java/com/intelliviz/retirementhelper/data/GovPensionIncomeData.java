@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.data;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,7 +16,7 @@ import java.util.List;
 
 public class GovPensionIncomeData extends IncomeTypeData {
     private SocialSecurityRules mRules;
-    private String mStartAge;
+    private String mMinAge;
     private double mMonthlyBenefit;
 
     /**
@@ -32,12 +31,12 @@ public class GovPensionIncomeData extends IncomeTypeData {
      * @param id The database id.
      * @param name The income type name.
      * @param type The income type.
-     * @param startAge The start age.
+     * @param minAge The start age.
      * @param monthlyBenefit The monthly benefit.
      */
-    public GovPensionIncomeData(long id, String name, int type, String startAge, double monthlyBenefit) {
+    public GovPensionIncomeData(long id, String name, int type, String minAge, double monthlyBenefit) {
         super(id, name, type);
-        mStartAge = startAge;
+        mMinAge = minAge;
         mMonthlyBenefit = monthlyBenefit;
     }
 
@@ -49,7 +48,7 @@ public class GovPensionIncomeData extends IncomeTypeData {
     @Override
     public double getMonthlyBenefitForAge(AgeData age) {
         if(mRules != null) {
-            AgeData startAge = SystemUtils.parseAgeString(mStartAge);
+            AgeData startAge = SystemUtils.parseAgeString(mMinAge);
             return mRules.getMonthlyBenefitForAge(startAge);
         } else {
 
@@ -74,12 +73,12 @@ public class GovPensionIncomeData extends IncomeTypeData {
         }
     }
 
-    public String getStartAge() {
-        return mStartAge;
+    public String getMinAge() {
+        return mMinAge;
     }
 
     @Override
-    public List<MilestoneData> getMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod) {
+    public List<MilestoneData> getMilestones(List<MilestoneAgeData> ages, RetirementOptionsData rod) {
         List<MilestoneData> milestones = new ArrayList<>();
         if(ages.isEmpty()) {
             return milestones;
@@ -137,7 +136,7 @@ public class GovPensionIncomeData extends IncomeTypeData {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeString(mStartAge);
+        dest.writeString(mMinAge);
         dest.writeDouble(mMonthlyBenefit);
         dest.writeParcelable(mRules, flags);
     }
@@ -145,7 +144,7 @@ public class GovPensionIncomeData extends IncomeTypeData {
     @Override
     public void readFromParcel(Parcel in) {
         super.readFromParcel(in);
-        mStartAge = in.readString();
+        mMinAge = in.readString();
         mMonthlyBenefit = in.readDouble();
         mRules = in.readParcelable(SocialSecurityRules.class.getClassLoader());
     }

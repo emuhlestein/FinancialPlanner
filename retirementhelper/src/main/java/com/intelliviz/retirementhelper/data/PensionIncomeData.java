@@ -70,7 +70,7 @@ public class PensionIncomeData extends IncomeTypeData {
         return mStartAge;
     }
 
-    public List<MilestoneData> getMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod) {
+    public List<MilestoneData> getMilestones(List<MilestoneAgeData> ages, RetirementOptionsData rod) {
         List<MilestoneData> milestones = new ArrayList<>();
         if(ages.isEmpty()) {
             return milestones;

@@ -29,22 +29,15 @@ public class SocialSecurityRules implements IncomeTypeRules, Parcelable {
         AgeData diffAge = retireAge.subtract(startAge);
         int numMonths = diffAge.getNumberOfMonths();
         if(numMonths > 0) {
-            // this is early retirement; the adjustment will be a penalty.
-            if(numMonths < 37) {
-                return (numMonths * 5.0) / 9.0;
-            } else {
-                double penalty = (numMonths * 5.0) / 12.0;
-                if(penalty > MAX_SS_PENALTY) {
-                    penalty = MAX_SS_PENALTY;
-                }
-                return penalty;
-            }
+            double adjustment = getSocialSecurityAdjustment(mBirthYear, startAge);
+            return (1.0 - adjustment) * mFullRetirementBenefit;
         } else if(numMonths < 0) {
-
+            double adjustment = getSocialSecurityAdjustment(mBirthYear, startAge);
+            adjustment += 1.0;
+            return mFullRetirementBenefit * adjustment;
         } else {
             return mFullRetirementBenefit;
         }
-        return 0;
     }
 
     @Override
@@ -100,7 +93,6 @@ public class SocialSecurityRules implements IncomeTypeRules, Parcelable {
         return fullAge;
     }
 
-
     /**
      * Get the percent credit per year.
      * @param birthyear The birth year.
@@ -132,9 +124,8 @@ public class SocialSecurityRules implements IncomeTypeRules, Parcelable {
         }
     }
 
-    private double getSocialSecurityAdjustment(String birthDate, AgeData startAge) {
-        int year = SystemUtils.getBirthYear(birthDate);
-        AgeData retireAge = getFullRetirementAge(year);
+    private double getSocialSecurityAdjustment(int birthYear, AgeData startAge) {
+        AgeData retireAge = getFullRetirementAge(birthYear);
         AgeData diffAge = retireAge.subtract(startAge);
         int numMonths = diffAge.getNumberOfMonths();
         if(numMonths > 0) {
@@ -146,11 +137,11 @@ public class SocialSecurityRules implements IncomeTypeRules, Parcelable {
                 if(penalty > MAX_SS_PENALTY) {
                     penalty = MAX_SS_PENALTY;
                 }
-                return penalty;
+                return penalty / 100;
             }
         } else if(numMonths < 0) {
             // this is delayed retirement; the adjustment is a credit.
-            double annualCredit = getDelayedCredit(year);
+            double annualCredit = getDelayedCredit(birthYear);
             return numMonths * (annualCredit / 12.0);
         } else {
             return 0; // exact retirement age

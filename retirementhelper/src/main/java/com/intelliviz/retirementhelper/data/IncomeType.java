@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.data;
 
-import android.content.Context;
 import android.os.Parcelable;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public interface IncomeType extends Parcelable {
 
     double getFullMonthlyBenefit();
 
-    List<MilestoneData> getMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod);
+    List<MilestoneData> getMilestones(List<MilestoneAgeData> ages, RetirementOptionsData rod);
 
     List<AgeData> getAges();
 }

@@ -81,7 +81,7 @@ public class PensionDataService extends IntentService {
                         pid = PensionHelper.getData(this, id);
                         RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(this, rod);
-                        List<MilestoneData> milestones = pid.getMilestones(this, ages, rod);
+                        List<MilestoneData> milestones = pid.getMilestones(ages, rod);
                         ArrayList<MilestoneData> listMilestones = new ArrayList<>(milestones);
                         localIntent = new Intent(LOCAL_PENSION);
                         localIntent.putParcelableArrayListExtra(EXTRA_DB_MILESTONES, listMilestones);

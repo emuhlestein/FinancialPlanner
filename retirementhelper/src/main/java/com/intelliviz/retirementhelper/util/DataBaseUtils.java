@@ -151,7 +151,7 @@ public class DataBaseUtils {
         int numMonthsFundsWillLast = 0;
         List<MilestoneData> saveMilestones = null;
         for(IncomeType incomeType : incomeTypes) {
-            List<MilestoneData> milestones = incomeType.getMilestones(context, ages, rod);
+            List<MilestoneData> milestones = incomeType.getMilestones(ages, rod);
             if(milestones == null || milestones.isEmpty()) {
                 continue;
             }

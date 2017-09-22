@@ -64,6 +64,7 @@ public class RetirementConstants {
     public static final String LOCAL_PENSION = "pensionBroadcast";
     public static final String LOCAL_PENSION_RESULT = "pensionBroadcastResult";
     public static final String LOCAL_GOV_PENSION = "govPensionBroadcast";
+    public static final String LOCAL_GOV_PENSION_RESULT = "govPensionBroadcast";
     public static final String LOCAL_RETIRE_OPTIONS = "retireOptionsBroadcast";
     public static final String LOCAL_MILESTONE_AGE = "milestoneAgeBroadcast";
 

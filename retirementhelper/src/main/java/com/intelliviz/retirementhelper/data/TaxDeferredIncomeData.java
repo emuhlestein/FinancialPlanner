@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.data;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -116,7 +115,7 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
     }
 
     @Override
-    public List<MilestoneData> getMilestones(Context context, List<MilestoneAgeData> ages, RetirementOptionsData rod) {
+    public List<MilestoneData> getMilestones(List<MilestoneAgeData> ages, RetirementOptionsData rod) {
         String endAge = rod.getEndAge();
         double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();

@@ -82,7 +82,7 @@ public class SavingsDataService extends IntentService {
                         sid = SavingsIncomeHelper.getData(this, id);
                         RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(this, rod);
-                        List<MilestoneData> milestones = sid.getMilestones(this, ages, rod);
+                        List<MilestoneData> milestones = sid.getMilestones(ages, rod);
                         ArrayList<MilestoneData> listMilestones = new ArrayList<>(milestones);
                         localIntent = new Intent(LOCAL_SAVINGS);
                         localIntent.putParcelableArrayListExtra(EXTRA_DB_MILESTONES, listMilestones);

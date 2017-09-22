@@ -120,7 +120,7 @@ public class GovPensionHelper {
         ContentValues values = new ContentValues();
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getFullMonthlyBenefit()));
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getStartAge());
+        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getMinAge());
         Uri uri = context.getContentResolver().insert(RetirementContract.GovPensionIncomeEntry.CONTENT_URI, values);
         if (uri == null) {
             return null;
@@ -132,7 +132,7 @@ public class GovPensionHelper {
         DataBaseUtils.updateIncomeTypeName(context, gpid);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getFullMonthlyBenefit()));
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getStartAge());
+        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getMinAge());
 
         String sid = String.valueOf(gpid.getId());
         String selectionClause = RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";

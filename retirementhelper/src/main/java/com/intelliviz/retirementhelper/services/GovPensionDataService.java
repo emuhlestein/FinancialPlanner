@@ -4,13 +4,16 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
 import java.util.ArrayList;
@@ -30,7 +33,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_AC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_UPDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_VIEW;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_GOV_PENSION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_GOV_PENSION_RESULT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED_RESULT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.SERVICE_DB_QUERY;
 
@@ -85,9 +88,14 @@ public class GovPensionDataService extends IntentService {
                         gpid = GovPensionHelper.getGovPensionIncomeData(this, id);
                         RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(this, rod);
-                        List<MilestoneData> milestones = gpid.getMilestones(this, ages, rod);
+                        String birthDate = rod.getBirthdate();
+                        AgeData minAge = SystemUtils.parseAgeString(gpid.getMinAge());
+                        AgeData maxAge = new AgeData(70, 0);
+                        SocialSecurityRules rules = new SocialSecurityRules(birthDate, minAge, maxAge, gpid.getFullMonthlyBenefit());
+                        List<MilestoneData> milestones = gpid.getMilestones(ages, rod);
+                        gpid.setRules(rules);
                         ArrayList<MilestoneData> listMilestones = new ArrayList<>(milestones);
-                        localIntent = new Intent(LOCAL_TAX_DEFERRED);
+                        localIntent = new Intent(LOCAL_GOV_PENSION_RESULT);
                         localIntent.putParcelableArrayListExtra(EXTRA_DB_MILESTONES, listMilestones);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                     }
