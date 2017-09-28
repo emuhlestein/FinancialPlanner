@@ -82,7 +82,7 @@ public class TaxDeferredIntentService extends IntentService {
                         tdid = TaxDeferredHelper.getTaxDeferredIncomeData(this, id);
                         RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
                         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(this, rod);
-                        List<MilestoneData> milestones = tdid.getMilestones(this, ages, rod);
+                        List<MilestoneData> milestones = tdid.getMilestones(ages, rod);
                         ArrayList<MilestoneData> listMilestones = new ArrayList<>(milestones);
                         localIntent = new Intent(LOCAL_TAX_DEFERRED);
                         localIntent.putParcelableArrayListExtra(EXTRA_DB_MILESTONES, listMilestones);

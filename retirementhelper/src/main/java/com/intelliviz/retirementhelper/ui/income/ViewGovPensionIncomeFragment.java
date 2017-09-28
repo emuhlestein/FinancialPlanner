@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 import static android.content.Intent.EXTRA_INTENT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_MILESTONES;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED_RESULT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_GOV_PENSION_RESULT;
 
 /**
  * Fragment used for viewing government pension income sources.
@@ -146,7 +146,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements
         }
 
         mIncomeSourceName.setText(mGPID.getName());
-        mMinAge.setText(mGPID.getStartAge());
+        mMinAge.setText(mGPID.getMinAge());
 
         AgeData fullAge = mGPID.getFullRetirementAge();
         mFullAge.setText(fullAge.toString());
@@ -214,7 +214,7 @@ public class ViewGovPensionIncomeFragment extends Fragment implements
     }
 
     private void registerMilestoneReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED_RESULT);
+        IntentFilter filter = new IntentFilter(LOCAL_GOV_PENSION_RESULT);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mMilestoneReceiver, filter);
     }
 

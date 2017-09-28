@@ -1,6 +1,9 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,19 +11,21 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.intelliviz.retirementhelper.GovPensionViewModel;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
@@ -48,7 +53,7 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditGovPensionIncomeFragment extends Fragment implements
+public class EditGovPensionIncomeFragment extends LifecycleFragment implements
         LoaderManager.LoaderCallbacks<Cursor>{
     private static final String TAG = EditGovPensionIncomeFragment.class.getSimpleName();
     public static final String EDIT_GOVPENSION_INCOME_FRAG_TAG = "edit govpension income frag tag";
@@ -114,6 +119,15 @@ public class EditGovPensionIncomeFragment extends Fragment implements
         ButterKnife.bind(this, view);
 
         mGPID = null;
+
+        GovPensionViewModel model =
+                ViewModelProviders.of(this).get(GovPensionViewModel.class);
+        model.getData(mId).observe(this, new Observer<GovPensionIncomeData>() {
+            @Override
+            public void onChanged(@Nullable GovPensionIncomeData govPensionIncomeData) {
+                Log.d(TAG, "Made it here!!!!!!");
+            }
+        });
 
         if(mId != -1) {
             Bundle bundle = new Bundle();

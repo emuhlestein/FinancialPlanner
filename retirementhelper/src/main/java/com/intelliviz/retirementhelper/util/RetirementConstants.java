@@ -19,6 +19,7 @@ public class RetirementConstants {
     public static final int INCOME_ACTION_EDIT = 2;
     public static final int INCOME_ACTION_DELETE = 3;
     public static final int INCOME_ACTION_UPDATE = 4;
+    public static final int INCOME_ACTION_GET = 5;
 
     public static final String EXTRA_DB_ACTION = "service action";
     public static final int SERVICE_DB_QUERY = 1;
