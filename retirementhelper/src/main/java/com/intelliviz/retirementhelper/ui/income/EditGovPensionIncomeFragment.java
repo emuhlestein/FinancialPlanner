@@ -4,21 +4,11 @@ package com.intelliviz.retirementhelper.ui.income;
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +19,6 @@ import com.intelliviz.retirementhelper.GovPensionViewModel;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
-import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.services.GovPensionDataService;
-import com.intelliviz.retirementhelper.util.GovPensionHelper;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
@@ -41,11 +27,8 @@ import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
 import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_RESULT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED_RESULT;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -53,13 +36,12 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditGovPensionIncomeFragment extends LifecycleFragment implements
-        LoaderManager.LoaderCallbacks<Cursor>{
+public class EditGovPensionIncomeFragment extends LifecycleFragment {
     private static final String TAG = EditGovPensionIncomeFragment.class.getSimpleName();
     public static final String EDIT_GOVPENSION_INCOME_FRAG_TAG = "edit govpension income frag tag";
     private GovPensionIncomeData mGPID;
-    public static final int GPID_LOADER = 0;
     private long mId;
+    private GovPensionViewModel mViewModel;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -72,14 +54,6 @@ public class EditGovPensionIncomeFragment extends LifecycleFragment implements
 
     @Bind(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
-
-    private BroadcastReceiver mResultsReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            long result = intent.getLongExtra(EXTRA_DB_RESULT, -1);
-            // TODO check result
-        }
-    };
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
@@ -120,19 +94,9 @@ public class EditGovPensionIncomeFragment extends LifecycleFragment implements
 
         mGPID = null;
 
-        GovPensionViewModel model =
-                ViewModelProviders.of(this).get(GovPensionViewModel.class);
-        model.getData(mId).observe(this, new Observer<GovPensionIncomeData>() {
-            @Override
-            public void onChanged(@Nullable GovPensionIncomeData govPensionIncomeData) {
-                Log.d(TAG, "Made it here!!!!!!");
-            }
-        });
-
         if(mId != -1) {
             Bundle bundle = new Bundle();
             bundle.putString(ID_ARGS, Long.toString(mId));
-            getLoaderManager().initLoader(GPID_LOADER, bundle, this);
         }
 
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -153,17 +117,21 @@ public class EditGovPensionIncomeFragment extends LifecycleFragment implements
         return view;
     }
 
-
     @Override
-    public void onResume() {
-        super.onResume();
-        registerReceivers();
-    }
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        GovPensionViewModel.Factory factory = new
+                GovPensionViewModel.Factory(getActivity().getApplication(), mId);
+        mViewModel = ViewModelProviders.of(this, factory).
+                get(GovPensionViewModel.class);
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterReceivers();
+        mViewModel.getData().observe(this, new Observer<GovPensionIncomeData>() {
+            @Override
+            public void onChanged(@Nullable GovPensionIncomeData govPensionIncomeData) {
+                mGPID = govPensionIncomeData;
+                updateUI();
+            }
+        });
     }
 
     private void updateUI() {
@@ -204,75 +172,6 @@ public class EditGovPensionIncomeFragment extends LifecycleFragment implements
 
         double dbenefit = Double.parseDouble(benefit);
         GovPensionIncomeData gpid = new GovPensionIncomeData(mId, name, INCOME_TYPE_GOV_PENSION, minimumAge, dbenefit);
-        updateGPID(gpid);
-    }
-
-    private void updateGPID(GovPensionIncomeData gpid) {
-        Intent intent = new Intent(getContext(), GovPensionDataService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ID, gpid.getId());
-        intent.putExtra(EXTRA_DB_DATA, gpid);
-        if(gpid.getId() == -1) {
-            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
-        } else {
-            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_UPDATE);
-        }
-        getActivity().startService(intent);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-        Loader<Cursor> loader;
-        Uri uri;
-        switch (loaderId) {
-            case GPID_LOADER:
-                String id = args.getString(ID_ARGS);
-                uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
-                if(uri != null) {
-                    uri = Uri.withAppendedPath(uri, id);
-                }
-
-                loader = new CursorLoader(getActivity(),
-                        uri,
-                        null,
-                        null,
-                        null,
-                        null);
-                break;
-            default:
-                loader = null;
-        }
-
-        return loader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        switch(loader.getId()) {
-            case GPID_LOADER:
-                mGPID = GovPensionHelper.extractData(cursor);
-                updateUI();
-                break;
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-    }
-
-    private void registerReceivers() {
-        registerMilestoneReceiver();
-    }
-
-    private void unregisterReceivers() {
-        unregisterMilestoneReceiver();
-    }
-
-    private void registerMilestoneReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED_RESULT);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mResultsReceiver, filter);
-    }
-
-    private void unregisterMilestoneReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mResultsReceiver);
+        mViewModel.setData(gpid);
     }
 }

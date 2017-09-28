@@ -5,7 +5,10 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.util.GovPensionDatabase;
@@ -19,23 +22,45 @@ public class GovPensionViewModel extends AndroidViewModel {
             new MutableLiveData<>();
     private GovPensionDatabase mGovPensionDatabase;
 
-    public GovPensionViewModel(Application application) {
+    public GovPensionViewModel(Application application, long incomeId) {
         super(application);
         mGovPensionDatabase = GovPensionDatabase.getInstance(this.getApplication());
-        //new GPDIAsyncTask(mGovPensionDatabase).execute(id);
+        new GetGPDIAsyncTask(mGovPensionDatabase).execute(incomeId);
     }
 
-    public LiveData<GovPensionIncomeData> getData(long id) {
-        if(id != -1) {
-            new GPDIAsyncTask(mGovPensionDatabase).execute(id);
-        }
+    public LiveData<GovPensionIncomeData> getData() {
         return mGPID;
     }
 
-    private class GPDIAsyncTask extends AsyncTask<Long, Void, GovPensionIncomeData> {
+    public void setData(GovPensionIncomeData gpid) {
+        mGPID.setValue(gpid);
+        if(gpid.getId() == -1) {
+            new InsertGPDIAsyncTask(mGovPensionDatabase).execute(gpid);
+        } else {
+            new UpdateGPDIAsyncTask(mGovPensionDatabase).execute(gpid);
+        }
+    }
+
+    public static class Factory extends ViewModelProvider.NewInstanceFactory {
+        @NonNull
+        private final Application mApplication;
+        private long mIncomeId;
+
+        public Factory(@NonNull Application application, long incomeId) {
+            mApplication = application;
+            mIncomeId = incomeId;
+        }
+
+        @Override
+        public <T extends ViewModel> T create(Class<T> modelClass) {
+            return (T) new GovPensionViewModel(mApplication, mIncomeId);
+        }
+    }
+
+    private class GetGPDIAsyncTask extends AsyncTask<Long, Void, GovPensionIncomeData> {
         private GovPensionDatabase mDB;
 
-        public GPDIAsyncTask(GovPensionDatabase db) {
+        public GetGPDIAsyncTask(GovPensionDatabase db) {
             mDB = db;
         }
 
@@ -47,6 +72,40 @@ public class GovPensionViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(GovPensionIncomeData gpid) {
             mGPID.setValue(gpid);
+        }
+    }
+
+    private class UpdateGPDIAsyncTask extends AsyncTask<GovPensionIncomeData, Void, Integer> {
+        private GovPensionDatabase mDB;
+
+        public UpdateGPDIAsyncTask(GovPensionDatabase db) {
+            mDB = db;
+        }
+
+        @Override
+        protected Integer doInBackground(GovPensionIncomeData... params) {
+            return mDB.updateGovPensionData(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Integer numRowsUpdated) {
+        }
+    }
+
+    private class InsertGPDIAsyncTask extends AsyncTask<GovPensionIncomeData, Void, Long> {
+        private GovPensionDatabase mDB;
+
+        public InsertGPDIAsyncTask(GovPensionDatabase db) {
+            mDB = db;
+        }
+
+        @Override
+        protected Long doInBackground(GovPensionIncomeData... params) {
+            return mDB.insertGovPensionData(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Long numRowsInserted) {
         }
     }
 }
