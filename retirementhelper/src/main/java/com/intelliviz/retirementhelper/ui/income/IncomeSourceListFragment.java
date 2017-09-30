@@ -30,7 +30,7 @@ import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.ListMenuActivity;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
-import com.intelliviz.retirementhelper.util.GovPensionDatabase;
+import com.intelliviz.retirementhelper.db.GovPensionDatabase;
 import com.intelliviz.retirementhelper.util.PensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SavingsIncomeHelper;

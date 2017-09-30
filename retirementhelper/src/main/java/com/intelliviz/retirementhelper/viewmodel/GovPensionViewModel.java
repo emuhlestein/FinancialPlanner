@@ -12,7 +12,7 @@ import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.util.GovPensionDatabase;
+import com.intelliviz.retirementhelper.db.GovPensionDatabase;
 
 import java.util.List;
 

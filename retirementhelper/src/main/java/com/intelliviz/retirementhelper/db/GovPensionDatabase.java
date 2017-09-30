@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.util;
+package com.intelliviz.retirementhelper.db;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -8,7 +8,6 @@ import android.net.Uri;
 
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
 import com.intelliviz.retirementhelper.data.IncomeType;
-import com.intelliviz.retirementhelper.db.RetirementContract;
 
 /**
  * Created by edm on 9/27/2017.
