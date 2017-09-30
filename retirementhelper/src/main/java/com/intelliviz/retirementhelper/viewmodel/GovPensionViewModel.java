@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper;
+package com.intelliviz.retirementhelper.viewmodel;
 
 
 import android.app.Application;
