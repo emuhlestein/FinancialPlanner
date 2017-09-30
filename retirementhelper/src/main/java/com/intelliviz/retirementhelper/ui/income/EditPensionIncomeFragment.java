@@ -1,20 +1,14 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,23 +18,16 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.PensionIncomeData;
-import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.services.PensionDataService;
-import com.intelliviz.retirementhelper.util.PensionHelper;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.viewmodel.PensionViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
-import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_RESULT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED_RESULT;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -48,13 +35,12 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditPensionIncomeFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+public class EditPensionIncomeFragment extends LifecycleFragment {
     private static final String TAG = EditPensionIncomeFragment.class.getSimpleName();
     public static final String EDIT_PENSION_INCOME_FRAG_TAG = "edit pension income frag tag";
     private PensionIncomeData mPID;
     private long mId;
-    public static final int PID_LOADER = 0;
+    private PensionViewModel mViewModel;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -67,14 +53,6 @@ public class EditPensionIncomeFragment extends Fragment implements
 
     @Bind(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
-
-    private BroadcastReceiver mResultsReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            long result = intent.getLongExtra(EXTRA_DB_RESULT, -1);
-            // TODO check result
-        }
-    };
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
@@ -114,12 +92,6 @@ public class EditPensionIncomeFragment extends Fragment implements
 
         mPID = null;
 
-        if(mId != -1) {
-            Bundle bundle = new Bundle();
-            bundle.putString(ID_ARGS, Long.toString(mId));
-            getLoaderManager().initLoader(PID_LOADER, bundle, this);
-        }
-
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -138,17 +110,21 @@ public class EditPensionIncomeFragment extends Fragment implements
         return view;
     }
 
-
     @Override
-    public void onResume() {
-        super.onResume();
-        registerReceivers();
-    }
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        PensionViewModel.Factory factory = new
+                PensionViewModel.Factory(getActivity().getApplication(), mId);
+        mViewModel = ViewModelProviders.of(this, factory).
+                get(PensionViewModel.class);
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterReceivers();
+        mViewModel.getData().observe(this, new Observer<PensionIncomeData>() {
+            @Override
+            public void onChanged(@Nullable PensionIncomeData data) {
+                mPID = data;
+                updateUI();
+            }
+        });
     }
 
     private void updateUI() {
@@ -189,77 +165,6 @@ public class EditPensionIncomeFragment extends Fragment implements
 
         double dbenefit = Double.parseDouble(benefit);
         PensionIncomeData pid = new PensionIncomeData(mId, name, INCOME_TYPE_PENSION, age, dbenefit);
-        updatePID(pid);
-    }
-
-    private void updatePID(PensionIncomeData pid) {
-        Intent intent = new Intent(getContext(), PensionDataService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ID, pid.getId());
-        intent.putExtra(EXTRA_DB_DATA, pid);
-        if(pid.getId() == -1) {
-            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
-        } else {
-            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_UPDATE);
-        }
-
-        getActivity().startService(intent);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-        Loader<Cursor> loader;
-        Uri uri;
-        switch (loaderId) {
-            case PID_LOADER:
-                String id = args.getString(ID_ARGS);
-                uri = RetirementContract.PensionIncomeEntry.CONTENT_URI;
-                if(uri != null) {
-                    uri = Uri.withAppendedPath(uri, id);
-                }
-
-                loader = new CursorLoader(getActivity(),
-                        uri,
-                        null,
-                        null,
-                        null,
-                        null);
-                break;
-            default:
-                loader = null;
-        }
-
-        return loader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        switch(loader.getId()) {
-            case PID_LOADER:
-                mPID = PensionHelper.extractData(cursor);
-                updateUI();
-                break;
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
-
-    private void registerReceivers() {
-        registerMilestoneReceiver();
-    }
-
-    private void unregisterReceivers() {
-        unregisterMilestoneReceiver();
-    }
-
-    private void registerMilestoneReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED_RESULT);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mResultsReceiver, filter);
-    }
-
-    private void unregisterMilestoneReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mResultsReceiver);
+        mViewModel.setData(pid);
     }
 }
