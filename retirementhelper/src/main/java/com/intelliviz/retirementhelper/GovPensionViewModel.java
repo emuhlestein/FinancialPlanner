@@ -11,7 +11,10 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
+import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.util.GovPensionDatabase;
+
+import java.util.List;
 
 /**
  * Created by edm on 9/26/2017.
@@ -21,6 +24,7 @@ public class GovPensionViewModel extends AndroidViewModel {
     private MutableLiveData<GovPensionIncomeData> mGPID =
             new MutableLiveData<>();
     private GovPensionDatabase mGovPensionDatabase;
+    private LiveData<List<MilestoneData>> mMilestones;
 
     public GovPensionViewModel(Application application, long incomeId) {
         super(application);
@@ -32,6 +36,10 @@ public class GovPensionViewModel extends AndroidViewModel {
         return mGPID;
     }
 
+    public LiveData<List<GovPensionIncomeData>> getList() {
+        return null;
+    }
+
     public void setData(GovPensionIncomeData gpid) {
         mGPID.setValue(gpid);
         if(gpid.getId() == -1) {
@@ -39,6 +47,10 @@ public class GovPensionViewModel extends AndroidViewModel {
         } else {
             new UpdateGPDIAsyncTask(mGovPensionDatabase).execute(gpid);
         }
+    }
+
+    public void delete(long id) {
+        new DeleteGPDIAsyncTask(mGovPensionDatabase).execute(id);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -84,7 +96,7 @@ public class GovPensionViewModel extends AndroidViewModel {
 
         @Override
         protected Integer doInBackground(GovPensionIncomeData... params) {
-            return mDB.updateGovPensionData(params[0]);
+            return mDB.update(params[0]);
         }
 
         @Override
@@ -101,11 +113,46 @@ public class GovPensionViewModel extends AndroidViewModel {
 
         @Override
         protected Long doInBackground(GovPensionIncomeData... params) {
-            return mDB.insertGovPensionData(params[0]);
+            return mDB.insert(params[0]);
         }
 
         @Override
         protected void onPostExecute(Long numRowsInserted) {
+        }
+    }
+
+    private class DeleteGPDIAsyncTask extends AsyncTask<Long, Void, Integer> {
+        private GovPensionDatabase mDB;
+
+        public DeleteGPDIAsyncTask(GovPensionDatabase db) {
+            mDB = db;
+        }
+
+        @Override
+        protected Integer doInBackground(Long... params) {
+            return mDB.delete(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Integer numRowsInserted) {
+        }
+    }
+
+    private class ListGPDIAsyncTask extends AsyncTask<Void, Void, List<MilestoneData>> {
+        private GovPensionDatabase mDB;
+
+        public ListGPDIAsyncTask(GovPensionDatabase db) {
+            mDB = db;
+        }
+
+        @Override
+        protected List<MilestoneData> doInBackground(Void... voids) {
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(List<MilestoneData> milestones) {
         }
     }
 }

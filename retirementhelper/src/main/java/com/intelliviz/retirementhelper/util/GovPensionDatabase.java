@@ -35,12 +35,12 @@ public class GovPensionDatabase {
     }
 
     public GovPensionIncomeData getGovPensionIncomeData(long incomeId) {
-        GovPensionDatabase.IncomeDataHelper idh = getIncomeTypeData(incomeId);
+        GovPensionDatabase.IncomeDataHelper idh = getData(incomeId);
         if(idh == null) {
             return null;
         }
 
-        Cursor cursor = getGovPensionIncome(incomeId);
+        Cursor cursor = get(incomeId);
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
         }
@@ -53,7 +53,7 @@ public class GovPensionDatabase {
         return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
     }
 
-    public int updateGovPensionData(GovPensionIncomeData gpid) {
+    public int update(GovPensionIncomeData gpid) {
         updateIncomeTypeName(gpid);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getFullMonthlyBenefit()));
@@ -67,7 +67,7 @@ public class GovPensionDatabase {
         return mContentResolver.update(uri, values, selectionClause, selectionArgs);
     }
 
-    public long insertGovPensionData(GovPensionIncomeData gpid) {
+    public long insert(GovPensionIncomeData gpid) {
         String id = addIncomeType(gpid);
         if(id == null) {
             return -1;
@@ -84,7 +84,17 @@ public class GovPensionDatabase {
             return Long.parseLong(uri.getLastPathSegment());
     }
 
-    private Cursor getGovPensionIncome(long incomeId) {
+    public int delete(long incomeId) {
+        String sid = String.valueOf(incomeId);
+        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        mContentResolver.delete(uri, null, null);
+        uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
+        uri = Uri.withAppendedPath(uri, sid);
+        return mContentResolver.delete(uri, null, null);
+    }
+
+    private Cursor get(long incomeId) {
         Uri uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
         String selection = RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
         String id = String.valueOf(incomeId);
@@ -92,7 +102,7 @@ public class GovPensionDatabase {
         return mContentResolver.query(uri, null, selection, selectionArgs, null);
     }
 
-    private IncomeDataHelper getIncomeTypeData(long incomeId) {
+    private IncomeDataHelper getData(long incomeId) {
         Cursor cursor = getIncomeType(incomeId);
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
