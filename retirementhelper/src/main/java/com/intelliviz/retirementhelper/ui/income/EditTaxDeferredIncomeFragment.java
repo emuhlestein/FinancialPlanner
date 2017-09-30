@@ -1,19 +1,13 @@
 package com.intelliviz.retirementhelper.ui.income;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -25,23 +19,16 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
-import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
+import com.intelliviz.retirementhelper.viewmodel.TaxDeferredViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
-import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_RESULT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.LOCAL_TAX_DEFERRED_RESULT;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -49,13 +36,12 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditTaxDeferredIncomeFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+public class EditTaxDeferredIncomeFragment extends LifecycleFragment {
     private static final String TAG = EditTaxDeferredIncomeFragment.class.getSimpleName();
     public static final String EDIT_TAXDEF_INCOME_FRAG_TAG = "edit taxdef income frag tag";
     private TaxDeferredIncomeData mTDID;
-    public static final int TDID_LOADER = 0;
     private long mId;
+    private TaxDeferredViewModel mViewModel;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -82,14 +68,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
         updateIncomeSourceData();
         getActivity().finish();
     }
-
-    private BroadcastReceiver mResultsReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            long result = intent.getLongExtra(EXTRA_DB_RESULT, -1);
-            // TODO check result
-        }
-    };
 
     public EditTaxDeferredIncomeFragment() {
         // Required empty public constructor
@@ -124,12 +102,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
         ButterKnife.bind(this, view);
 
         mTDID = null;
-
-        if(mId != -1) {
-            Bundle bundle = new Bundle();
-            bundle.putString(ID_ARGS, Long.toString(mId));
-            getLoaderManager().initLoader(TDID_LOADER, bundle, this);
-        }
 
         mBalance.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -201,26 +173,20 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        TaxDeferredViewModel.Factory factory = new
+                TaxDeferredViewModel.Factory(getActivity().getApplication(), mId);
+        mViewModel = ViewModelProviders.of(this, factory).
+                get(TaxDeferredViewModel.class);
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerReceivers();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterReceivers();
+        mViewModel.getData().observe(this, new Observer<TaxDeferredIncomeData>() {
+            @Override
+            public void onChanged(@Nullable TaxDeferredIncomeData data) {
+                mTDID = data;
+                updateUI();
+            }
+        });
     }
 
     private void updateUI() {
@@ -307,74 +273,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment implements
         double penalty = Double.parseDouble(penaltyAmount);
         double dbalance = Double.parseDouble(balance);
         TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(mId, name, INCOME_TYPE_TAX_DEFERRED, minimumAge, annualInterest, increase, penalty, dbalance, 1);
-        updateTDID(tdid);
-    }
-
-    private void updateTDID(TaxDeferredIncomeData tdid) {
-        Intent intent = new Intent(getContext(), TaxDeferredIntentService.class);
-        intent.putExtra(EXTRA_DB_DATA, tdid);
-        if(tdid.getId() == -1) {
-            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
-        } else {
-            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_UPDATE);
-        }
-        getActivity().startService(intent);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-        Loader<Cursor> loader;
-        Uri uri;
-        switch (loaderId) {
-            case TDID_LOADER:
-                String id = args.getString(ID_ARGS);
-                uri = RetirementContract.TaxDeferredIncomeEntry.CONTENT_URI;
-                if(uri != null) {
-                    uri = Uri.withAppendedPath(uri, id);
-                }
-
-                loader = new CursorLoader(getActivity(),
-                        uri,
-                        null,
-                        null,
-                        null,
-                        null);
-                break;
-            default:
-                loader = null;
-        }
-
-        return loader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        switch(loader.getId()) {
-            case TDID_LOADER:
-                mTDID = TaxDeferredHelper.extractData(cursor);
-                updateUI();
-                break;
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-    }
-
-    private void registerReceivers() {
-        registerMilestoneReceiver();
-    }
-
-    private void unregisterReceivers() {
-        unregisterMilestoneReceiver();
-    }
-
-    private void registerMilestoneReceiver() {
-        IntentFilter filter = new IntentFilter(LOCAL_TAX_DEFERRED_RESULT);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mResultsReceiver, filter);
-    }
-
-    private void unregisterMilestoneReceiver() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mResultsReceiver);
+        mViewModel.setData(tdid);
     }
 }
