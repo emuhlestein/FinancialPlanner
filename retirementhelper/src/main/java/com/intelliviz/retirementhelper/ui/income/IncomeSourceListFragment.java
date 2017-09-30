@@ -25,15 +25,15 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
+import com.intelliviz.retirementhelper.db.GovPensionDatabase;
+import com.intelliviz.retirementhelper.db.PensionDatabase;
 import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.services.TaxDeferredIntentService;
+import com.intelliviz.retirementhelper.db.SavingsDatabase;
+import com.intelliviz.retirementhelper.db.TaxDeferredDatabase;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.ListMenuActivity;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
-import com.intelliviz.retirementhelper.db.GovPensionDatabase;
-import com.intelliviz.retirementhelper.util.PensionHelper;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SavingsIncomeHelper;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -302,29 +302,21 @@ public class IncomeSourceListFragment extends Fragment implements
         if (mIncomeAction == INCOME_ACTION_DELETE && mSelectedId != -1) {
             switch(mIncomeSourceType){
                 case RetirementConstants.INCOME_TYPE_SAVINGS:
-                    SavingsIncomeHelper.deleteSavingsIncome(getContext(), mSelectedId);
+                    SavingsDatabase.getInstance(getContext()).delete(mSelectedId);
                     break;
                 case INCOME_TYPE_TAX_DEFERRED:
-                    deleteTDID();
+                    TaxDeferredDatabase.getInstance(getContext()).delete(mSelectedId);
                     break;
                 case INCOME_TYPE_PENSION:
-                    PensionHelper.deleteData(getContext(), mSelectedId);
+                    PensionDatabase.getInstance(getContext()).delete(mSelectedId);
                     break;
                 case INCOME_TYPE_GOV_PENSION:
                     GovPensionDatabase.getInstance(getContext()).delete(mSelectedId);
-                    //GovPensionHelper.deleteSavingsIncome(getContext(), mSelectedId);
                     break;
             }
 
             SystemUtils.updateAppWidget(getContext());
         }
-    }
-
-    private void deleteTDID() {
-        Intent intent = new Intent(getContext(), TaxDeferredIntentService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ID, mSelectedId);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_DELETE);
-        getActivity().startService(intent);
     }
 
     private void startTaxDeferredIncomeSourceActivity(long id, int action) {
