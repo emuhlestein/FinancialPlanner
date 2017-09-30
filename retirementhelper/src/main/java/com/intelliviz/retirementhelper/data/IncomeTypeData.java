@@ -13,7 +13,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_
  * Created by Ed Muhlestein on 5/12/2017.
  */
 
-abstract class IncomeTypeData implements IncomeType {
+public abstract class IncomeTypeData implements IncomeType {
     /**
      * The database id.
      */

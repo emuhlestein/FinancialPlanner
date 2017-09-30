@@ -1,16 +1,13 @@
 package com.intelliviz.retirementhelper.ui.income;
 
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,21 +17,15 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
-import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.services.SavingsDataService;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SavingsIncomeHelper;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.viewmodel.SavingsViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DB_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 /**
@@ -42,15 +33,13 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditSavingsIncomeFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+public class EditSavingsIncomeFragment extends LifecycleFragment {
     private static final String TAG = EditSavingsIncomeFragment.class.getSimpleName();
     public static final String EDIT_SAVINGS_INCOME_FRAG_TAG = "edit savings income frag tag";
     private static final String EXTRA_INTENT = "extra intent";
     private SavingsIncomeData mSID;
-    public static final int SID_LOADER = 0;
-    public static final int STATUS_LOADER = 1;
     private long mId;
+    private SavingsViewModel mViewModel;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -106,14 +95,6 @@ public class EditSavingsIncomeFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_edit_savings_income, container, false);
         ButterKnife.bind(this, view);
 
-        if(mId != -1) {
-            Bundle bundle = new Bundle();
-            bundle.putString(ID_ARGS, Long.toString(mId));
-            getLoaderManager().initLoader(SID_LOADER, bundle, this);
-        }
-
-        getLoaderManager().initLoader(STATUS_LOADER, null, this);
-
         mBalance.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -166,6 +147,23 @@ public class EditSavingsIncomeFragment extends Fragment implements
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        SavingsViewModel.Factory factory = new
+                SavingsViewModel.Factory(getActivity().getApplication(), mId);
+        mViewModel = ViewModelProviders.of(this, factory).
+                get(SavingsViewModel.class);
+
+        mViewModel.getData().observe(this, new Observer<SavingsIncomeData>() {
+            @Override
+            public void onChanged(@Nullable SavingsIncomeData sid) {
+                mSID = sid;
+                updateUI();
+            }
+        });
+    }
+
     private void updateUI() {
         if(mSID == null || mSID.getId() == -1) {
             return;
@@ -216,97 +214,6 @@ public class EditSavingsIncomeFragment extends Fragment implements
         double dmonthlyIncrease = Double.parseDouble(monthlyIncrease);
 
         SavingsIncomeData sid = new SavingsIncomeData(mId, name, INCOME_TYPE_SAVINGS, dinterest, dmonthlyIncrease, dbalance);
-        updateSID(sid);
-    }
-
-    private void updateSID(SavingsIncomeData sid) {
-        Intent intent = new Intent(getContext(), SavingsDataService.class);
-        intent.putExtra(EXTRA_DB_DATA, sid);
-        if(sid.getId() == -1) {
-            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
-        } else {
-            intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_UPDATE);
-        }
-
-        getActivity().startService(intent);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-        Loader<Cursor> loader;
-        Uri uri;
-        switch (loaderId) {
-            case SID_LOADER:
-                String id = args.getString(ID_ARGS);
-                uri = RetirementContract.SavingsIncomeEntry.CONTENT_URI;
-                if(uri != null) {
-                    uri = Uri.withAppendedPath(uri, id);
-                }
-
-                loader = new CursorLoader(getActivity(),
-                        uri,
-                        null,
-                        null,
-                        null,
-                        null);
-                break;
-            case STATUS_LOADER:
-                loader = new CursorLoader(getActivity(),
-                        RetirementContract.TransactionStatusEntry.CONTENT_URI,
-                        null,
-                        RetirementContract.TransactionStatusEntry.COLUMN_TYPE + " =? ",
-                        new String[]{Integer.toString(INCOME_TYPE_TAX_DEFERRED)},
-                        null);
-                break;
-            default:
-                loader = null;
-        }
-
-        return loader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        switch(loader.getId()) {
-            case SID_LOADER:
-                mSID = SavingsIncomeHelper.extractData(cursor);
-                updateUI();
-                break;
-            case STATUS_LOADER:
-                if(cursor.moveToFirst()) {
-                    int statusIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_STATUS);
-                    int resultIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_RESULT);
-                    int actionIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_ACTION);
-                    if(statusIndex != -1) {
-                        int status = cursor.getInt(statusIndex);
-                        if(status == RetirementContract.TransactionStatusEntry.STATUS_UPDATED) {
-                            if(actionIndex != -1 && resultIndex != -1) {
-                                int action = cursor.getInt(actionIndex);
-                                int numRows;
-                                switch(action) {
-                                    case RetirementContract.TransactionStatusEntry.ACTION_DELETE:
-                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
-                                        Log.d(TAG, numRows + " deleted");
-                                        break;
-                                    case RetirementContract.TransactionStatusEntry.ACTION_UPDATE:
-                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
-                                        Log.d(TAG, numRows + " update");
-                                        break;
-                                    case RetirementContract.TransactionStatusEntry.ACTION_INSERT:
-                                        String uri = cursor.getString(resultIndex);
-                                        Log.d(TAG, uri + " inserted");
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
+        mViewModel.setData(sid);
     }
 }

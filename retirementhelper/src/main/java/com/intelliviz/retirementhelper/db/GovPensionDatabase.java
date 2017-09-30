@@ -1,21 +1,19 @@
 package com.intelliviz.retirementhelper.db;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
 import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
-import com.intelliviz.retirementhelper.data.IncomeType;
+import com.intelliviz.retirementhelper.data.IncomeTypeData;
 
 /**
  * Created by edm on 9/27/2017.
  */
 
-public class GovPensionDatabase {
+public class GovPensionDatabase extends BaseDatabase {
     private volatile static GovPensionDatabase mINSTANCE;
-    private ContentResolver mContentResolver;
 
     public static GovPensionDatabase getInstance(Context context) {
         if(mINSTANCE == null) {
@@ -30,16 +28,38 @@ public class GovPensionDatabase {
     }
 
     private GovPensionDatabase(Context context) {
-        mContentResolver = context.getContentResolver();
+        super(context.getContentResolver());
     }
 
-    public GovPensionIncomeData getGovPensionIncomeData(long incomeId) {
-        GovPensionDatabase.IncomeDataHelper idh = getData(incomeId);
+    public long insert(IncomeTypeData data) {
+        if(!(data instanceof GovPensionIncomeData)) {
+            return 0;
+        }
+        GovPensionIncomeData gpid = (GovPensionIncomeData)data;
+
+        String id = addIncomeType(gpid);
+        if(id == null) {
+            return -1;
+        }
+        long incomeId = Long.parseLong(id);
+        ContentValues values = new ContentValues();
+        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
+        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getFullMonthlyBenefit()));
+        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getMinAge());
+        Uri uri = getContentResolver().insert(RetirementContract.GovPensionIncomeEntry.CONTENT_URI, values);
+        if (uri == null) {
+            return -1;
+        } else
+            return Long.parseLong(uri.getLastPathSegment());
+    }
+
+    public IncomeTypeData get(long incomeId) {
+        IncomeData idh = getData(incomeId);
         if(idh == null) {
             return null;
         }
 
-        Cursor cursor = get(incomeId);
+        Cursor cursor = query(incomeId);
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
         }
@@ -52,7 +72,12 @@ public class GovPensionDatabase {
         return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
     }
 
-    public int update(GovPensionIncomeData gpid) {
+    public int update(IncomeTypeData data) {
+        if(!(data instanceof GovPensionIncomeData)) {
+            return 0;
+        }
+        GovPensionIncomeData gpid = (GovPensionIncomeData)data;
+
         updateIncomeTypeName(gpid);
         ContentValues values = new ContentValues();
         values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getFullMonthlyBenefit()));
@@ -63,95 +88,24 @@ public class GovPensionDatabase {
         String[] selectionArgs = new String[]{sid};
         Uri uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        return mContentResolver.update(uri, values, selectionClause, selectionArgs);
-    }
-
-    public long insert(GovPensionIncomeData gpid) {
-        String id = addIncomeType(gpid);
-        if(id == null) {
-            return -1;
-        }
-        long incomeId = Long.parseLong(id);
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID, incomeId);
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MONTH_BENEFIT, Double.toString(gpid.getFullMonthlyBenefit()));
-        values.put(RetirementContract.GovPensionIncomeEntry.COLUMN_MIN_AGE, gpid.getMinAge());
-        Uri uri = mContentResolver.insert(RetirementContract.GovPensionIncomeEntry.CONTENT_URI, values);
-        if (uri == null) {
-            return -1;
-        } else
-            return Long.parseLong(uri.getLastPathSegment());
+        return getContentResolver().update(uri, values, selectionClause, selectionArgs);
     }
 
     public int delete(long incomeId) {
         String sid = String.valueOf(incomeId);
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        mContentResolver.delete(uri, null, null);
+        getContentResolver().delete(uri, null, null);
         uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, sid);
-        return mContentResolver.delete(uri, null, null);
+        return getContentResolver().delete(uri, null, null);
     }
 
-    private Cursor get(long incomeId) {
+    private Cursor query(long incomeId) {
         Uri uri = RetirementContract.GovPensionIncomeEntry.CONTENT_URI;
         String selection = RetirementContract.GovPensionIncomeEntry.COLUMN_INCOME_TYPE_ID + " = ?";
         String id = String.valueOf(incomeId);
         String[] selectionArgs = {id};
-        return mContentResolver.query(uri, null, selection, selectionArgs, null);
-    }
-
-    private IncomeDataHelper getData(long incomeId) {
-        Cursor cursor = getIncomeType(incomeId);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return null;
-        }
-        int nameIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
-        int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
-        String name = cursor.getString(nameIndex);
-        int type = cursor.getInt(typeIndex);
-        cursor.close();
-        return new IncomeDataHelper(name, type);
-    }
-
-    private Cursor getIncomeType(long incomeId) {
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        String selection = RetirementContract.IncomeTypeEntry._ID + " = ?";
-        String id = String.valueOf(incomeId);
-        String[] selectionArgs = {id};
-        return mContentResolver.query(uri, null, selection, selectionArgs, null);
-    }
-
-    private int updateIncomeTypeName(IncomeType incomeType) {
-        ContentValues values  = new ContentValues();
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
-
-        String sid = String.valueOf(incomeType.getId());
-        String selectionClause = RetirementContract.IncomeTypeEntry._ID + " = ?";
-        String[] selectionArgs = new String[]{sid};
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        return mContentResolver.update(uri, values, selectionClause, selectionArgs);
-    }
-
-    private String addIncomeType(IncomeType incomeType) {
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, incomeType.getType());
-        Uri uri = mContentResolver.insert(RetirementContract.IncomeTypeEntry.CONTENT_URI, values);
-        if(uri == null) {
-            return null;
-        } else {
-            return uri.getLastPathSegment();
-        }
-    }
-
-    private static class IncomeDataHelper {
-        public String name;
-        public int type;
-        public IncomeDataHelper(String name, int type) {
-            this.name = name;
-            this.type = type;
-        }
+        return getContentResolver().query(uri, null, selection, selectionArgs, null);
     }
 }
