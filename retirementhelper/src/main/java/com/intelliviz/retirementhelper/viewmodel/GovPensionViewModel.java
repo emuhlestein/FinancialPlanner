@@ -23,13 +23,13 @@ import java.util.List;
 public class GovPensionViewModel extends AndroidViewModel {
     private MutableLiveData<GovPensionIncomeData> mGPID =
             new MutableLiveData<>();
-    private GovPensionDatabase mGovPensionDatabase;
+    private GovPensionDatabase mDB;
     private LiveData<List<MilestoneData>> mMilestones;
 
     public GovPensionViewModel(Application application, long incomeId) {
         super(application);
-        mGovPensionDatabase = GovPensionDatabase.getInstance(this.getApplication());
-        new GetAsyncTask(mGovPensionDatabase).execute(incomeId);
+        mDB = GovPensionDatabase.getInstance(this.getApplication());
+        new GetAsyncTask().execute(incomeId);
     }
 
     public LiveData<GovPensionIncomeData> getData() {
@@ -43,14 +43,14 @@ public class GovPensionViewModel extends AndroidViewModel {
     public void setData(GovPensionIncomeData gpid) {
         mGPID.setValue(gpid);
         if(gpid.getId() == -1) {
-            new InsertAsyncTask(mGovPensionDatabase).execute(gpid);
+            new InsertAsyncTask().execute(gpid);
         } else {
-            new UpdateAsyncTask(mGovPensionDatabase).execute(gpid);
+            new UpdateAsyncTask().execute(gpid);
         }
     }
 
     public void delete(long id) {
-        new DeleteAsyncTask(mGovPensionDatabase).execute(id);
+        new DeleteAsyncTask().execute(id);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -70,11 +70,6 @@ public class GovPensionViewModel extends AndroidViewModel {
     }
 
     private class GetAsyncTask extends AsyncTask<Long, Void, GovPensionIncomeData> {
-        private GovPensionDatabase mDB;
-
-        public GetAsyncTask(GovPensionDatabase db) {
-            mDB = db;
-        }
 
         @Override
         protected GovPensionIncomeData doInBackground(Long... params) {
@@ -88,11 +83,6 @@ public class GovPensionViewModel extends AndroidViewModel {
     }
 
     private class UpdateAsyncTask extends AsyncTask<GovPensionIncomeData, Void, Integer> {
-        private GovPensionDatabase mDB;
-
-        public UpdateAsyncTask(GovPensionDatabase db) {
-            mDB = db;
-        }
 
         @Override
         protected Integer doInBackground(GovPensionIncomeData... params) {
@@ -105,11 +95,6 @@ public class GovPensionViewModel extends AndroidViewModel {
     }
 
     private class InsertAsyncTask extends AsyncTask<GovPensionIncomeData, Void, Long> {
-        private GovPensionDatabase mDB;
-
-        public InsertAsyncTask(GovPensionDatabase db) {
-            mDB = db;
-        }
 
         @Override
         protected Long doInBackground(GovPensionIncomeData... params) {
@@ -122,11 +107,6 @@ public class GovPensionViewModel extends AndroidViewModel {
     }
 
     private class DeleteAsyncTask extends AsyncTask<Long, Void, Integer> {
-        private GovPensionDatabase mDB;
-
-        public DeleteAsyncTask(GovPensionDatabase db) {
-            mDB = db;
-        }
 
         @Override
         protected Integer doInBackground(Long... params) {
