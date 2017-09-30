@@ -46,7 +46,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_ADD;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_VIEW;
@@ -217,10 +216,6 @@ public class IncomeSourceListFragment extends Fragment implements
 
     private void onHandleIncomeSourceSelection(Intent resultIntent) {
         int item = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
-        Intent intent = new Intent(getContext(), IncomeSourceHelperActivity.class);
-        intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, -1);
-        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_ADD);
-        intent.putExtra(EXTRA_INCOME_SOURCE_TYPE, item);
         switch (item) {
             case INCOME_TYPE_SAVINGS:
                 startSavingsIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
