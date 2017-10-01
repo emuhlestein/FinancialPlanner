@@ -1,16 +1,14 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -25,13 +23,14 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.viewmodel.MilestoneViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -41,19 +40,20 @@ import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.TRANS_TYPE_MILESTONE_SUMMARY;
 
 /**
  * @author Ed Muhlestein
  * Created on 8/7/2017.
  */
 
-public abstract class BaseSummaryFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor>, SummaryMilestoneAdapter.SelectionMilestoneListener{
+public abstract class BaseSummaryFragment extends LifecycleFragment implements
+        SummaryMilestoneAdapter.SelectionMilestoneListener{
     private static final String DIALOG_INPUT_TEXT = "DialogInputText";
     private static final int STATUS_LOADER = 0;
     private static final int MILESTONE_SUMMARY_LOADER = 1;
     private SummaryMilestoneAdapter mMilestoneAdapter;
+    private List<MilestoneData> mMilestones;
+    private MilestoneViewModel mViewModel;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -87,9 +87,8 @@ public abstract class BaseSummaryFragment extends Fragment implements
             actionBar.setSubtitle(getString(R.string.summary_screen_subtitle));
         }
 
-        getLoaderManager().initLoader(STATUS_LOADER, null, this);
-
-        mMilestoneAdapter = new SummaryMilestoneAdapter(getContext());
+        mMilestones = new ArrayList<>();
+        mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), mMilestones);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mMilestoneAdapter);
@@ -116,6 +115,20 @@ public abstract class BaseSummaryFragment extends Fragment implements
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(MilestoneViewModel.class);
+
+        mViewModel.getList().observe(this, new Observer<List<MilestoneData>>() {
+            @Override
+            public void onChanged(@Nullable List<MilestoneData> milestones) {
+                mMilestones.clear();
+                mMilestones.addAll(milestones);
+            }
+        });
+    }
+
     public void createBannerAdd() {
 
     }
@@ -131,16 +144,10 @@ public abstract class BaseSummaryFragment extends Fragment implements
         }
     }
 
-    private void updateUI(double currentBalance) {
-        String formattedAmount = SystemUtils.getFormattedCurrency(currentBalance);
-        mCurrentBalanceTextView.setText(String.valueOf(formattedAmount));
-    }
-
     @Override
-    public void onSelectMilestone(Cursor cursor) {
-        MilestoneData msd = DataBaseUtils.extractData(cursor);
+    public void onSelectMilestone(MilestoneData milestone) {
         Intent intent = new Intent(getContext(), MilestoneDetailsDialog.class);
-        intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, msd);
+        intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, milestone);
         startActivity(intent);
     }
 
@@ -156,61 +163,6 @@ public abstract class BaseSummaryFragment extends Fragment implements
         }
 
         RetirementOptionsDatabase.getInstance(getContext()).saveBirthdate(birthdate);
-        //RetirementOptionsHelper.saveBirthdate(getContext(), birthdate);
         SystemUtils.updateAppWidget(getContext());
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-        Loader<Cursor> loader;
-        Uri uri;
-        switch (loaderId) {
-            case MILESTONE_SUMMARY_LOADER:
-                uri = RetirementContract.MilestoneSummaryEntry.CONTENT_URI;
-                loader = new CursorLoader(getActivity(),
-                        uri,
-                        null,
-                        null,
-                        null,
-                        null);
-                break;
-            case STATUS_LOADER:
-                loader = new CursorLoader(getActivity(),
-                        RetirementContract.TransactionStatusEntry.CONTENT_URI,
-                        null,
-                        RetirementContract.TransactionStatusEntry.COLUMN_TYPE + " =? ",
-                        new String[]{Integer.toString(TRANS_TYPE_MILESTONE_SUMMARY)},
-                        null);
-                break;
-            default:
-                loader = null;
-        }
-
-        return loader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        switch(loader.getId()) {
-            case MILESTONE_SUMMARY_LOADER:
-                mMilestoneAdapter.swapCursor(cursor);
-                break;
-            case STATUS_LOADER:
-                if(cursor.moveToFirst()) {
-                    int statusIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_STATUS);
-                    if(statusIndex != -1) {
-                        int status = cursor.getInt(statusIndex);
-                        if(status == RetirementContract.TransactionStatusEntry.STATUS_UPDATED) {
-                            getLoaderManager().initLoader(MILESTONE_SUMMARY_LOADER, null, this);
-                        }
-                    }
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 }

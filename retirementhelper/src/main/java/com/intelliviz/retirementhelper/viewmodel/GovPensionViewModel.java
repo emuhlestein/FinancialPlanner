@@ -28,7 +28,7 @@ public class GovPensionViewModel extends AndroidViewModel {
 
     public GovPensionViewModel(Application application, long incomeId) {
         super(application);
-        mDB = GovPensionDatabase.getInstance(this.getApplication());
+        mDB = GovPensionDatabase.getInstance(application);
         new GetAsyncTask().execute(incomeId);
     }
 
