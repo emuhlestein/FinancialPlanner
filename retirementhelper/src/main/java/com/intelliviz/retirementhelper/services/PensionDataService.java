@@ -10,7 +10,6 @@ import com.intelliviz.retirementhelper.data.PensionIncomeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.PensionHelper;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +78,7 @@ public class PensionDataService extends IntentService {
                 case INCOME_ACTION_VIEW:
                     if (id != -1) {
                         pid = PensionHelper.getData(this, id);
-                        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+                        RetirementOptionsData rod = null; //RetirementOptionsHelper.getRetirementOptionsData(this);
                         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(this, rod);
                         List<MilestoneData> milestones = pid.getMilestones(ages, rod);
                         ArrayList<MilestoneData> listMilestones = new ArrayList<>(milestones);

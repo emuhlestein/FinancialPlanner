@@ -17,7 +17,6 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
-import com.intelliviz.retirementhelper.services.SummaryDataIntentService;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import java.text.NumberFormat;
@@ -333,18 +332,6 @@ public class SystemUtils {
         Intent intent = new Intent(context, RetirementOptionsService.class);
         intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
         intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
-        context.startService(intent);
-    }
-
-    public static void updateBirthdate(Context context, String birthdate) {
-        Intent intent = new Intent(context, RetirementOptionsService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, birthdate);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
-        context.startService(intent);
-    }
-
-    public static void updateSummaryData(Context context) {
-        Intent intent = new Intent(context, SummaryDataIntentService.class);
         context.startService(intent);
     }
 }

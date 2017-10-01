@@ -9,7 +9,6 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SavingsIncomeHelper;
 
 import java.util.ArrayList;
@@ -80,7 +79,7 @@ public class SavingsDataService extends IntentService {
                 case INCOME_ACTION_VIEW:
                     if(id != -1) {
                         sid = SavingsIncomeHelper.getData(this, id);
-                        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+                        RetirementOptionsData rod = null; //RetirementOptionsHelper.getRetirementOptionsData(this);
                         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(this, rod);
                         List<MilestoneData> milestones = sid.getMilestones(ages, rod);
                         ArrayList<MilestoneData> listMilestones = new ArrayList<>(milestones);

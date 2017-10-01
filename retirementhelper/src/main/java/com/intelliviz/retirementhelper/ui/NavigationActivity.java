@@ -31,15 +31,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
@@ -120,7 +119,9 @@ public class NavigationActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.retirement_options_item:
                 intent = new Intent(this, RetirementOptionsDialog.class);
-                RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+
+                // TODO needs to go into a viewmodel
+                RetirementOptionsData rod = RetirementOptionsDatabase.getInstance(this).get();
                 if (rod != null) {
                     intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
                     startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
@@ -128,7 +129,8 @@ public class NavigationActivity extends AppCompatActivity implements
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
-                rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+                // TODO needs to go into a viewmodel
+                rod = RetirementOptionsDatabase.getInstance(this).get();
                 if (rod != null) {
                     intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                     startActivityForResult(intent, REQUEST_PERSONAL_INFO);
@@ -201,7 +203,9 @@ public class NavigationActivity extends AppCompatActivity implements
                 if (resultCode == RESULT_OK) {
                     String birthdate = intent.getStringExtra(RetirementConstants.EXTRA_BIRTHDATE);
                     //SystemUtils.updateBirthdate(this, birthdate);
-                    RetirementOptionsHelper.saveBirthdate(this, birthdate);
+                    // TODO needs to go into a viewmodel
+                    RetirementOptionsDatabase.getInstance(this).saveBirthdate(birthdate);
+                    //RetirementOptionsHelper.saveBirthdate(this, birthdate);
                     DataBaseUtils.updateMilestoneData(this);
                 }
                 break;

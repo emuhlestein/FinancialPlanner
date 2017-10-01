@@ -8,8 +8,8 @@ import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
 import java.util.ArrayList;
@@ -80,7 +80,7 @@ public class TaxDeferredIntentService extends IntentService {
                 case INCOME_ACTION_VIEW:
                     if(id != -1) {
                         tdid = TaxDeferredHelper.getTaxDeferredIncomeData(this, id);
-                        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+                        RetirementOptionsData rod = RetirementOptionsDatabase.getInstance(this).get();
                         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(this, rod);
                         List<MilestoneData> milestones = tdid.getMilestones(ages, rod);
                         ArrayList<MilestoneData> listMilestones = new ArrayList<>(milestones);

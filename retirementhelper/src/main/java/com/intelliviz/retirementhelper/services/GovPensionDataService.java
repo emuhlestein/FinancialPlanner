@@ -12,7 +12,6 @@ import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.GovPensionHelper;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.TaxDeferredHelper;
 
@@ -86,7 +85,7 @@ public class GovPensionDataService extends IntentService {
                 case INCOME_ACTION_VIEW:
                     if(id != -1) {
                         gpid = GovPensionHelper.getGovPensionIncomeData(this, id);
-                        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+                        RetirementOptionsData rod = null; //RetirementOptionsHelper.getRetirementOptionsData(this);
                         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(this, rod);
                         String birthDate = rod.getBirthdate();
                         AgeData minAge = SystemUtils.parseAgeString(gpid.getMinAge());

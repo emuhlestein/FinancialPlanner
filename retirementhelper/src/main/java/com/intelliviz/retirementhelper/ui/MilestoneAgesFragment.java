@@ -27,11 +27,10 @@ import com.intelliviz.retirementhelper.adapter.MilestoneAgeAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
 import com.intelliviz.retirementhelper.services.MilestoneAgeIntentService;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -216,9 +215,10 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
     }
 
     private void onHandleYesNo() {
-        RetirementOptionsHelper.deleteAge(getContext(), mSelectedAge.getId());
+        RetirementOptionsDatabase.getInstance(getContext()).deleteAge(mSelectedAge.getId());
+        //RetirementOptionsHelper.deleteAge(getContext(), mSelectedAge.getId());
         SystemUtils.updateAppWidget(getContext());
-        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(getContext());
+        RetirementOptionsData rod = RetirementOptionsDatabase.getInstance(getContext()).get();
         List<MilestoneAgeData> milestoneAges = getMilestoneAges(getContext(), rod);
         mAdapter.update(milestoneAges);
     }
@@ -275,7 +275,8 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
             return;
         }
 
-        RetirementOptionsHelper.addAge(getContext(), newAge);
+        RetirementOptionsDatabase.getInstance(getContext()).addAge(newAge);
+        //RetirementOptionsHelper.addAge(getContext(), newAge);
         SystemUtils.updateAppWidget(getContext());
         milestoneAges = getMilestoneAges(getContext(), mROD);
         mAdapter.update(milestoneAges);

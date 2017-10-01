@@ -1,20 +1,12 @@
 package com.intelliviz.retirementhelper.util;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-
-import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.db.RetirementContract;
-
 /**
  * Helper class for retirement options.
  * Created by Ed Muhlestein on 6/28/2017.
  */
 
 public class RetirementOptionsHelper {
+    /*
     public static String addAge(Context context, AgeData age) {
         ContentValues values = new ContentValues();
         values.put(RetirementContract.MilestoneEntry.COLUMN_AGE, age.getUnformattedString());
@@ -35,7 +27,8 @@ public class RetirementOptionsHelper {
         uri = Uri.withAppendedPath(uri, sid);
         return context.getContentResolver().delete(uri, null, null);
     }
-
+    */
+/*
     public static RetirementOptionsData getRetirementOptionsData(Context context) {
         Cursor cursor = getRetirementOptions(context);
         if(cursor == null || !cursor.moveToFirst()) {
@@ -60,7 +53,9 @@ public class RetirementOptionsHelper {
         cursor.close();
         return new RetirementOptionsData(birthdate, endAge, withdrawMode, withdrawAmount);
     }
+    */
 
+/*
     public static int saveBirthdate(Context context, String birthdate) {
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.RetirementParmsEntry.COLUMN_BIRTHDATE, birthdate);
@@ -81,7 +76,8 @@ public class RetirementOptionsHelper {
         Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
         return context.getContentResolver().update(uri, values, null, null);
     }
-
+    */
+/*
     private static Cursor getRetirementOptions(Context context) {
         Uri uri = RetirementContract.RetirementParmsEntry.CONTENT_URI;
         return context.getContentResolver().query(uri, null, null, null, null);
@@ -103,4 +99,5 @@ public class RetirementOptionsHelper {
 
         return new RetirementOptionsData(birthdate, endAge, withdrawMode, withdrawAmount);
     }
+    */
 }

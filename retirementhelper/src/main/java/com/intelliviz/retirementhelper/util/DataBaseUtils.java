@@ -18,6 +18,7 @@ import com.intelliviz.retirementhelper.data.SavingsIncomeData;
 import com.intelliviz.retirementhelper.data.SummaryData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
 import com.intelliviz.retirementhelper.services.MilestoneSummaryIntentService;
 
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TY
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
-import static com.intelliviz.retirementhelper.util.RetirementOptionsHelper.getRetirementOptionsData;
 
 /**
  * Utility class for database access.
@@ -82,7 +82,7 @@ public class DataBaseUtils {
     public static void updateMilestoneSummary(Context context) {
         ContentResolver cr = context.getContentResolver();
 
-        RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(context);
+        RetirementOptionsData rod = RetirementOptionsDatabase.getInstance(context).get();
         List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(context, rod);
         List<MilestoneData> milestoneDataList = DataBaseUtils.getAllMilestones(context, ages, rod);
 
@@ -242,7 +242,7 @@ public class DataBaseUtils {
     }
 
     static void updateSummaryData(Context context) {
-        RetirementOptionsData rod = getRetirementOptionsData(context);
+        RetirementOptionsData rod = RetirementOptionsDatabase.getInstance(context).get();
         List<MilestoneAgeData> ages = getMilestoneAges(context, rod);
         List<MilestoneData> milestones = getAllMilestones(context, ages, rod);
         List<SummaryData> listSummaryData = new ArrayList<>();

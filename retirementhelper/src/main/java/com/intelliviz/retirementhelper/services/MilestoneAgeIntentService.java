@@ -6,8 +6,8 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.intelliviz.retirementhelper.data.MilestoneAgeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class MilestoneAgeIntentService extends IntentService {
         if (intent != null) {
             int action = intent.getIntExtra(EXTRA_DB_ACTION, SERVICE_DB_QUERY);
             if(action == SERVICE_DB_QUERY) {
-                RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+                RetirementOptionsData rod = RetirementOptionsDatabase.getInstance(this).get();
                 List<MilestoneAgeData> milestoneAges = DataBaseUtils.getMilestoneAges(this, rod);
 
                 Intent localIntent = new Intent(LOCAL_MILESTONE_AGE);

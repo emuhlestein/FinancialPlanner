@@ -10,8 +10,8 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.data.SummaryData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class SummaryDataIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            RetirementOptionsData rod = RetirementOptionsHelper.getRetirementOptionsData(this);
+            RetirementOptionsData rod = RetirementOptionsDatabase.getInstance(this).get();
             List<MilestoneAgeData> ages = getMilestoneAges(this, rod);
             List<MilestoneData> milestones = DataBaseUtils.getAllMilestones(this, ages, rod);
             List<SummaryData> listSummaryData = new ArrayList<>();

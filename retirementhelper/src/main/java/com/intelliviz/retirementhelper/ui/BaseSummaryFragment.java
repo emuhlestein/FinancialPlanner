@@ -26,10 +26,10 @@ import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.RetirementOptionsHelper;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -155,7 +155,8 @@ public abstract class BaseSummaryFragment extends Fragment implements
             return;
         }
 
-        RetirementOptionsHelper.saveBirthdate(getContext(), birthdate);
+        RetirementOptionsDatabase.getInstance(getContext()).saveBirthdate(birthdate);
+        //RetirementOptionsHelper.saveBirthdate(getContext(), birthdate);
         SystemUtils.updateAppWidget(getContext());
     }
 
