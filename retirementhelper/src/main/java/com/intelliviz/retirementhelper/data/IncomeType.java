@@ -2,6 +2,8 @@ package com.intelliviz.retirementhelper.data;
 
 import android.os.Parcelable;
 
+import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
+
 import java.util.List;
 
 /**
@@ -9,23 +11,6 @@ import java.util.List;
  * Created by Ed Muhlestein on 5/22/2017.
  */
 public interface IncomeType extends Parcelable {
-    /**
-     * Get the database id.
-     * @return The database id.
-     */
-    long getId();
-
-    /**
-     * Get the name.
-     * @return The name.
-     */
-    String getName();
-
-    /**
-     * Get the type.
-     * @return The type.
-     */
-    int getType();
 
     /**
      * Get the balance.
@@ -43,7 +28,7 @@ public interface IncomeType extends Parcelable {
 
     double getFullMonthlyBenefit();
 
-    List<MilestoneData> getMilestones(List<MilestoneAgeData> ages, RetirementOptionsData rod);
+    List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsData rod);
 
     List<AgeData> getAges();
 }

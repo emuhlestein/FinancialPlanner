@@ -72,7 +72,7 @@ public class SavingsIncomeHelper {
         double interest = Double.parseDouble(cursor.getString(interestIndex));
         double monthAdd = Double.parseDouble(cursor.getString(monthAddIndex));
         double balance = Double.parseDouble(cursor.getString(balanceIndex));
-        return new SavingsIncomeData(incomeId, idh.name, idh.type, interest, monthAdd, balance);
+        return null;//new SavingsIncomeData(incomeId, idh.name, idh.type, interest, monthAdd, balance);
     }
 
     public static int deleteSavingsIncome(Context context, long incomeId) {
@@ -105,6 +105,6 @@ public class SavingsIncomeHelper {
         double monthAdd = Double.parseDouble(cursor.getString(monthlyAddIndex));
         double balance = Double.parseDouble(cursor.getString(balanceIndex));
 
-        return new SavingsIncomeData(incomeId, name, incomeType, interest, monthAdd, balance);
+        return null;//new SavingsIncomeData(incomeId, name, incomeType, interest, monthAdd, balance);
     }
 }

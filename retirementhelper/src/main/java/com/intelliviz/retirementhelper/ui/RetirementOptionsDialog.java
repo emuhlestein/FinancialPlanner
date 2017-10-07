@@ -203,7 +203,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         }
         endAge = age.getUnformattedString();
 
-        RetirementOptionsData rod = new RetirementOptionsData(mROD.getBirthdate(), endAge, withdrawMode, withdrawAmount);
+        RetirementOptionsData rod = new RetirementOptionsData(endAge, withdrawMode, withdrawAmount, mROD.getBirthdate());
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);

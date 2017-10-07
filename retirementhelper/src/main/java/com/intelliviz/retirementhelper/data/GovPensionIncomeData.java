@@ -1,9 +1,12 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Ignore;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
+import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
@@ -13,30 +16,48 @@ import java.util.List;
  * Class to manager government pensions. e.g. social security.
  * Created by Ed Muhlestein on 5/11/2017.
  */
-
 public class GovPensionIncomeData extends IncomeTypeData {
-    private SocialSecurityRules mRules;
-    private String mMinAge;
-    private double mMonthlyBenefit;
+    public static final String TABLE_NAME = "gov_pension_income";
 
-    /**
-     * Default constructor.
-     */
-    public GovPensionIncomeData() {
-        super(RetirementConstants.INCOME_TYPE_GOV_PENSION);
+    @Ignore
+    private SocialSecurityRules mRules;
+
+    private long income_type_id;
+
+    @ColumnInfo(name = GovPensionEntity.MIN_AGE_FIELD)
+    private String mMinAge;
+
+    @ColumnInfo(name = GovPensionEntity.MONTHLY_BENEFIT_FIELD)
+    public String mMonthlyBenefit;
+
+    public GovPensionIncomeData(long id, int type, String name, long income_type_id, String mMinAge, String mMonthlyBenefit ) {
+        super(id, type, name);
+        this.income_type_id = income_type_id;
+        this.mMinAge = mMinAge;
+        this.mMonthlyBenefit = mMonthlyBenefit;
     }
 
-    /**
-     * Constructor.
-     * @param id The database id.
-     * @param name The income type name.
-     * @param type The income type.
-     * @param minAge The start age.
-     * @param monthlyBenefit The monthly benefit.
-     */
-    public GovPensionIncomeData(long id, String name, int type, String minAge, double monthlyBenefit) {
-        super(id, name, type);
+    public long getIncome_type_id() {
+        return income_type_id;
+    }
+
+    public void setIncome_type_id(long income_type_id) {
+        this.income_type_id = income_type_id;
+    }
+
+    public String getMinAge() {
+        return mMinAge;
+    }
+
+    public void setMinAge(String minAge) {
         mMinAge = minAge;
+    }
+
+    public String getMonthlyBenefit() {
+        return mMonthlyBenefit;
+    }
+
+    public void setMonthlyBenefit(String monthlyBenefit) {
         mMonthlyBenefit = monthlyBenefit;
     }
 
@@ -53,12 +74,12 @@ public class GovPensionIncomeData extends IncomeTypeData {
         } else {
 
         }
-        return mMonthlyBenefit;
+        return Double.parseDouble(mMonthlyBenefit);
     }
 
     @Override
     public double getFullMonthlyBenefit() {
-        return mMonthlyBenefit;
+        return Double.parseDouble(mMonthlyBenefit);
     }
 
     public AgeData getFullRetirementAge() {
@@ -73,25 +94,20 @@ public class GovPensionIncomeData extends IncomeTypeData {
         }
     }
 
-    public String getMinAge() {
-        return mMinAge;
-    }
-
     @Override
-    public List<MilestoneData> getMilestones(List<MilestoneAgeData> ages, RetirementOptionsData rod) {
+    public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsData rod) {
         List<MilestoneData> milestones = new ArrayList<>();
         if(ages.isEmpty()) {
             return milestones;
         }
 
-        String birthDate = rod.getBirthdate();
-        int birthYear = SystemUtils.getBirthYear(birthDate);
-        double monthlyBenefit = mMonthlyBenefit;
+        int birthYear = SystemUtils.getBirthYear(rod.getBirthdate());
+        double monthlyBenefit = Double.parseDouble(mMonthlyBenefit);
 
         AgeData minimumAge = new AgeData(62, 0);
 
         MilestoneData milestone;
-        for(MilestoneAgeData msad : ages) {
+        for(MilestoneAgeEntity msad : ages) {
             AgeData age = msad.getAge();
             if(mRules != null) {
                 monthlyBenefit = mRules.getMonthlyBenefitForAge(age);
@@ -124,6 +140,7 @@ public class GovPensionIncomeData extends IncomeTypeData {
         return ages;
     }
 
+    @Ignore
     private GovPensionIncomeData(Parcel in) {
         readFromParcel(in);
     }
@@ -137,7 +154,7 @@ public class GovPensionIncomeData extends IncomeTypeData {
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeString(mMinAge);
-        dest.writeDouble(mMonthlyBenefit);
+        dest.writeString(mMonthlyBenefit);
         dest.writeParcelable(mRules, flags);
     }
 
@@ -145,7 +162,7 @@ public class GovPensionIncomeData extends IncomeTypeData {
     public void readFromParcel(Parcel in) {
         super.readFromParcel(in);
         mMinAge = in.readString();
-        mMonthlyBenefit = in.readDouble();
+        mMonthlyBenefit = in.readString();
         mRules = in.readParcelable(SocialSecurityRules.class.getClassLoader());
     }
 

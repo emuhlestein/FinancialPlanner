@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.adapter;
 
-import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,28 +9,30 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
+
+import java.util.List;
 
 /**
  * Adapter for income sources.
  * Created by Ed Muhlestein on 4/12/2017.
  */
 public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapter.IncomeSourceHolder> {
-    private Cursor mCursor;
+    private List<IncomeSourceEntityBase> mIncomeSources;
     private SelectIncomeSourceListener mListener;
-    private String[] mIncomeTypes;
+    private String[] mIncomeTypeStrings;
 
     /**
      * Default constructor.
      */
-    public IncomeSourceAdapter() {
-
+    public IncomeSourceAdapter(List<IncomeSourceEntityBase> incomeSources) {
+        mIncomeSources = incomeSources;
     }
 
     @Override
     public IncomeSourceHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        mIncomeTypes = parent.getResources().getStringArray(R.array.income_types);
+        mIncomeTypeStrings = parent.getResources().getStringArray(R.array.income_types);
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.income_source_card, parent, false);
         return new IncomeSourceHolder(view);
@@ -39,29 +40,25 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
 
     @Override
     public void onBindViewHolder(IncomeSourceHolder holder, int position) {
-        if (mCursor == null || !mCursor.moveToPosition(position)) {
-            return;
-        }
-
-        holder.bindIncomeSource(mCursor);
+        IncomeSourceEntityBase incomeSource = mIncomeSources.get(position);
+        holder.bindIncomeSource(incomeSource);
     }
 
     @Override
     public int getItemCount() {
-        if(mCursor != null) {
-            return mCursor.getCount();
+        if(mIncomeSources != null) {
+            return mIncomeSources.size();
         } else {
             return 0;
         }
     }
 
-    /**
-     * Update the cursor.
-     * @param cursor The new cursor.
-     */
-    public void swapCursor(Cursor cursor) {
-        mCursor = cursor;
-        notifyDataSetChanged();
+    public void update(List<IncomeSourceEntityBase> incomeSources) {
+        if(incomeSources != null) {
+            mIncomeSources.clear();
+            mIncomeSources.addAll(incomeSources);
+            notifyDataSetChanged();
+        }
     }
 
     /**
@@ -74,6 +71,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
 
     class IncomeSourceHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
+        private IncomeSourceEntityBase mIncomeSource;
         private long mId;
         private int mIncomeType;
         private String mIncomeSourceName;
@@ -90,31 +88,26 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
             itemView.setOnClickListener(this);
         }
 
-        void bindIncomeSource(Cursor cursor) {
-            int idIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID);
-            int nameIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
-            int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
-            if(nameIndex != -1) {
-                mIncomeSourceName = cursor.getString(nameIndex);
-                incomeSourceNameTextView.setText(mIncomeSourceName);
-            }
-            if(typeIndex != -1) {
-                mIncomeType = cursor.getInt(typeIndex);
-                incomeTypeTextView.setText(mIncomeTypes[mIncomeType]);
-            }
-            if(idIndex != -1) {
-                String id = cursor.getString(idIndex);
-                mId = Long.parseLong(id);
-            }
+        void bindIncomeSource(IncomeSourceEntityBase incomeSource) {
+
+            mIncomeSourceName = incomeSource.getName();
+            incomeSourceNameTextView.setText(mIncomeSourceName);
+
+            mIncomeType = incomeSource.getType();
+            incomeTypeTextView.setText(mIncomeTypeStrings[mIncomeType]);
+
+            mId = incomeSource.getId();
+
+            mIncomeSource = incomeSource;
         }
 
         @Override
         public void onClick(View v) {
             if(mListener != null) {
                 if(v instanceof LinearLayout) {
-                    mListener.onSelectIncomeSource(mId, mIncomeType, false);
+                    mListener.onSelectIncomeSource(mIncomeSource, false);
                 } else {
-                    mListener.onSelectIncomeSource(mId, mIncomeType, true);
+                    mListener.onSelectIncomeSource(mIncomeSource, true);
                 }
             }
         }

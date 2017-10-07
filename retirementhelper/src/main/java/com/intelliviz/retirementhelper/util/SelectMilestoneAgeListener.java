@@ -1,6 +1,6 @@
 package com.intelliviz.retirementhelper.util;
 
-import com.intelliviz.retirementhelper.data.MilestoneAgeData;
+import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 
 /**
  * Listener for milestone age selection.
@@ -8,5 +8,5 @@ import com.intelliviz.retirementhelper.data.MilestoneAgeData;
  */
 
 public interface SelectMilestoneAgeListener {
-    void onSelectMilestoneAge(MilestoneAgeData age);
+    void onSelectMilestoneAge(MilestoneAgeEntity age);
 }

@@ -61,8 +61,8 @@ public class TaxDeferredDatabase extends BaseDatabase {
     }
 
     public IncomeTypeData get(long incomeId) {
-        IncomeData idh = getData(incomeId);
-        if(idh == null) {
+        IncomeData id = getData(incomeId);
+        if(id == null) {
             return null;
         }
 
@@ -83,7 +83,7 @@ public class TaxDeferredDatabase extends BaseDatabase {
         double balance = Double.parseDouble(cursor.getString(balanceIndex));
         int is401k = cursor.getInt(is401kIndex);
         cursor.close();
-        return new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, balance, is401k);
+        return new TaxDeferredIncomeData(incomeId, id.type, id.name, minAge, interest, monthAdd, penalty, balance, is401k);
     }
 
     public int update(IncomeTypeData data) {

@@ -1,12 +1,14 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,9 +20,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.viewmodel.StartUpViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,9 @@ public class StartActivity extends AppCompatActivity implements
     private static final int REQUEST_BIRTHDATE = 2;
     private IdpResponse mResponse;
     private GoogleApiClient mGoogleApiClient;
+    private StartUpViewModel mViewModel;
+    private boolean mValidBirthdate = false;
+    StartUpViewModel.BirthdateInfo mBirthdateInfo;
 
     @Bind(R.id.login_button)
     Button mLoginButton;
@@ -84,6 +89,15 @@ public class StartActivity extends AppCompatActivity implements
         if (auth.getCurrentUser() != null) {
             mLoginButton.setText(R.string.sign_in);
         }
+
+        mViewModel = ViewModelProviders.of(this).get(StartUpViewModel.class);
+
+        mViewModel.getBirthdate().observe(this, new Observer<StartUpViewModel.BirthdateInfo>() {
+            @Override
+            public void onChanged(@Nullable StartUpViewModel.BirthdateInfo birthdateInfo) {
+                mBirthdateInfo = birthdateInfo;
+            }
+        });
     }
 
     @Override
@@ -100,10 +114,13 @@ public class StartActivity extends AppCompatActivity implements
                 case REQUEST_BIRTHDATE:
                     String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
                     if(SystemUtils.validateBirthday(birthdate)) {
+                        mViewModel.updateBirthdate(birthdate);
+                        /*
                         BirthdateQueryHandler queryHandler = new BirthdateQueryHandler(getContentResolver(), this);
                         ContentValues values = new ContentValues();
                         values.put(RetirementContract.RetirementParmsEntry.COLUMN_BIRTHDATE, birthdate);
                         queryHandler.startUpdate(0, null, RetirementContract.RetirementParmsEntry.CONTENT_URI, values, null, null);
+                        */
                     } else {
                         Intent newIntent = new Intent(this, BirthdateActivity.class);
                         startActivityForResult(newIntent, REQUEST_BIRTHDATE);
@@ -143,9 +160,16 @@ public class StartActivity extends AppCompatActivity implements
     private void prepareToStartNavigateActivity(IdpResponse response) {
         mResponse = response;
 
+        if(mBirthdateInfo.getStatus() == StartUpViewModel.BIRTHDATE_VALID) {
+            onStartNavigationActivity();
+        } else {
+            onStartBirthdateActivity(mBirthdateInfo.getBirthdate());
+        }
+        /*
         BirthdateQueryHandler queryHandler = new BirthdateQueryHandler(getContentResolver(), this);
         queryHandler.startQuery(0, null, RetirementContract.RetirementParmsEntry.CONTENT_URI,
                 new String[]{RetirementContract.RetirementParmsEntry.COLUMN_BIRTHDATE}, null, null, null);
+         */
     }
 
     @Override

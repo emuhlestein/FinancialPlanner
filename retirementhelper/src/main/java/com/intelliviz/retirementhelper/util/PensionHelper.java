@@ -68,7 +68,7 @@ public class PensionHelper {
         String startAge = cursor.getString(startAgeIndex);
         String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
         double amount = Double.parseDouble(monthlyBenefit);
-        return new PensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
+        return null;//new PensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
     }
 
     public static int deleteData(Context context, long incomeId) {
@@ -99,6 +99,6 @@ public class PensionHelper {
         String startAge = cursor.getString(startAgeIndex);
         double monthlyBenefit = Double.parseDouble(cursor.getString(monthlyBenefitIndex));
 
-        return new PensionIncomeData(incomeId, name, incomeType, startAge, monthlyBenefit);
+        return null;//new PensionIncomeData(incomeId, name, incomeType, startAge, monthlyBenefit);
     }
 }

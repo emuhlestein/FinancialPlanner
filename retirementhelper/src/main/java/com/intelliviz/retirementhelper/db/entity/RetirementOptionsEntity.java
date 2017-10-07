@@ -27,6 +27,14 @@ public class RetirementOptionsEntity {
     private String withdrawAmount;
     private String birthdate;
 
+    public RetirementOptionsEntity(int id, String endAge, int withdrawMode, String withdrawAmount, String birthdate) {
+        this.id = id;
+        this.endAge = endAge;
+        this.withdrawMode = withdrawMode;
+        this.withdrawAmount = withdrawAmount;
+        this.birthdate = birthdate;
+    }
+
     public int getId() {
         return id;
     }

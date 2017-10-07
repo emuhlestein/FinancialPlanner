@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.ui.income;
 
-import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.SavingsIncomeData;
+import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.SavingsViewModel;
 
@@ -33,12 +33,12 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditSavingsIncomeFragment extends LifecycleFragment {
+public class EditSavingsIncomeFragment extends Fragment {
     private static final String TAG = EditSavingsIncomeFragment.class.getSimpleName();
     public static final String EDIT_SAVINGS_INCOME_FRAG_TAG = "edit savings income frag tag";
     private static final String EXTRA_INTENT = "extra intent";
-    private SavingsIncomeData mSID;
-    private long mId;
+    private SavingsIncomeEntity mSID;
+    private int mId;
     private SavingsViewModel mViewModel;
 
     @Bind(R.id.coordinatorLayout)
@@ -83,7 +83,7 @@ public class EditSavingsIncomeFragment extends LifecycleFragment {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
             mId = -1;
             if(intent != null) {
-                mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+                mId = intent.getIntExtra(EXTRA_INCOME_SOURCE_ID, -1);
             }
         }
     }
@@ -155,9 +155,9 @@ public class EditSavingsIncomeFragment extends LifecycleFragment {
         mViewModel = ViewModelProviders.of(this, factory).
                 get(SavingsViewModel.class);
 
-        mViewModel.getData().observe(this, new Observer<SavingsIncomeData>() {
+        mViewModel.getData().observe(this, new Observer<SavingsIncomeEntity>() {
             @Override
-            public void onChanged(@Nullable SavingsIncomeData sid) {
+            public void onChanged(@Nullable SavingsIncomeEntity sid) {
                 mSID = sid;
                 updateUI();
             }
@@ -213,7 +213,7 @@ public class EditSavingsIncomeFragment extends LifecycleFragment {
         double dinterest = Double.parseDouble(interest);
         double dmonthlyIncrease = Double.parseDouble(monthlyIncrease);
 
-        SavingsIncomeData sid = new SavingsIncomeData(mId, name, INCOME_TYPE_SAVINGS, dinterest, dmonthlyIncrease, dbalance);
+        SavingsIncomeEntity sid = new SavingsIncomeEntity(mId, INCOME_TYPE_SAVINGS, name, interest, monthlyIncrease, balance);
         mViewModel.setData(sid);
     }
 }

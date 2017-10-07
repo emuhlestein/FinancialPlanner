@@ -15,15 +15,21 @@ public class IncomeTypeEntity {
     public static final String TABLE_NAME = "income_type";
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
+    private int type;
     private String name;
-    private String type;
 
-    public int getId() {
+    public IncomeTypeEntity(long id, int type, String name) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -35,11 +41,11 @@ public class IncomeTypeEntity {
         this.name = name;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 }

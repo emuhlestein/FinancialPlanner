@@ -1,68 +1,57 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.arch.persistence.room.Ignore;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 
 /**
  * CLass for managing retirement options.
  * Created by Ed Muhlestein on 5/16/2017.
  */
 public class RetirementOptionsData implements Parcelable {
-    private final String mBirthdate;
-    private final String mEndAge;
-    private final int mWithdrawMode;
-    private final String mWithdrawAmount;
+    private String mEndAge;
+    private int mWithdrawMode;
+    private String mWithdrawAmount;
+    private String mBirthdate;
 
-    /**
-     * Constructor.
-     * @param birthdate The birthdate.
-     * @param endAge The end age.
-     * @param withdrawMode The withdrawal mode.
-     * @param withdrawAmount The withdrawal amount.
-     */
-    public RetirementOptionsData(String birthdate, String endAge, int withdrawMode, String withdrawAmount) {
-        mBirthdate = birthdate;
+    public RetirementOptionsData(String endAge, int withdrawMode, String withdrawAmount, String birthdate) {
         mEndAge = endAge;
         mWithdrawMode = withdrawMode;
         mWithdrawAmount = withdrawAmount;
+        mBirthdate = birthdate;
     }
 
-    /**
-     * Get the birthdate.
-     * @return The birthdate.
-     */
-    public String getBirthdate() {
-        return mBirthdate;
-    }
-
-    /**
-     * Get the end age.
-     * @return The end age.
-     */
     public String getEndAge() {
         return mEndAge;
     }
 
-    /**
-     * Get the withdrawal mode.
-     * @return The withdrawal mode.
-     */
     public int getWithdrawMode() {
         return mWithdrawMode;
     }
 
-    /**
-     * Get the withdrawal amount.
-     * @return The withdrawal amount.
-     */
     public String getWithdrawAmount() {
         return mWithdrawAmount;
+    }
+
+    public String getBirthdate() {
+        return mBirthdate;
+    }
+
+    public static RetirementOptionsData create(RetirementOptionsEntity rom) {
+        return new RetirementOptionsData(rom.getEndAge(), rom.getWithdrawMode(), rom.getWithdrawAmount(), rom.getBirthdate());
+    }
+
+    public static RetirementOptionsEntity create(int id, RetirementOptionsData rod) {
+        return new RetirementOptionsEntity(id, rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate());
     }
 
     /**
      * Constructor used by parcelable
      * @param in The parcel.
      */
+    @Ignore
     public RetirementOptionsData(Parcel in) {
         mBirthdate = in.readString();
         mEndAge = in.readString();

@@ -1,8 +1,10 @@
-package com.intelliviz.retirementhelper.data;
+package com.intelliviz.retirementhelper.db.entity;
 
-import android.os.Parcel;
+import android.arch.persistence.room.PrimaryKey;
 
-import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
+import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.IncomeSourceType;
+import com.intelliviz.retirementhelper.data.MilestoneData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,74 +13,58 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_
 import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
 
 /**
- * Class for a basic income type.
- * Created by Ed Muhlestein on 5/12/2017.
+ * Created by edm on 10/3/2017.
  */
 
-public abstract class IncomeTypeData implements IncomeType {
-    /**
-     * The database id.
-     */
+public abstract class IncomeSourceEntityBase implements IncomeSourceType {
+
+    @PrimaryKey(autoGenerate = true)
     private long id;
 
-    /**
-     * The income type. Can be one of following:
-     *      INCOME_TYPE_SAVINGS
-     *      INCOME_TYPE_TAX_DEFERRED
-     *      INCOME_TYPE_PENSION
-     *      INCOME_TYPE_GOV_PENSION
-     */
     private int type;
 
-    /**
-     * The name of the income type.
-     */
     private String name;
 
-    /**
-     * Default constructor.
-     */
-    IncomeTypeData() {
-        this(-1, 0, "");
-    }
-
-    /**
-     * Constructor.
-     * @param type The income type.
-     */
-    IncomeTypeData(int type) {
-        this(-1, type, "");
-    }
-
-    IncomeTypeData(long id, int type, String name) {
+    public IncomeSourceEntityBase(long id, int type, String name) {
         this.id = id;
-        this.name = name;
         this.type = type;
+        this.name = name;
     }
 
+    @Override
     public long getId() {
         return id;
     }
 
+    @Override
     public void setId(long id) {
         this.id = id;
     }
 
+    @Override
     public int getType() {
         return type;
     }
 
+    @Override
     public void setType(int type) {
         this.type = type;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
+
+    public abstract List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsEntity rod);
+
+    public abstract List<AgeData> getAges();
+
 
     /**
      * Get the balances for each milestone.
@@ -126,8 +112,8 @@ public abstract class IncomeTypeData implements IncomeType {
     }
 
     protected static List<MilestoneData> getMilestones(AgeData endOfLifeAge, AgeData minimumAge,
-                                                     double interestRate, double penalty, int withdrawMode, double withdrawAmount,
-                                                     List<MilestoneAgeEntity> ages, List<Double> milestoneBalances) {
+                                                       double interestRate, double penalty, int withdrawMode, double withdrawAmount,
+                                                       List<MilestoneAgeEntity> ages, List<Double> milestoneBalances) {
 
         List<MilestoneData> milestones = new ArrayList<>();
 
@@ -192,21 +178,4 @@ public abstract class IncomeTypeData implements IncomeType {
         return new MilestoneData(startAge, endAge, minimumAge, monthlyAmount, startBalance, lastBalance, penalty, numMonths);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(name);
-        dest.writeInt(type);
-    }
-
-    public void readFromParcel(Parcel in) {
-        id = in.readLong();
-        name = in.readString();
-        type = in.readInt();
-    }
 }

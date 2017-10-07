@@ -32,39 +32,30 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
         int mIncomeSourceAction = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
 
         if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_ADD) {
-            addIncomeSourceFragment(false, intent);
+            addIncomeSourceFragment(intent);
         } else {
             // View or edit an income source
             if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_EDIT) {
                 // View or edit an income source
-                addIncomeSourceFragment(false, intent);
+                addIncomeSourceFragment(intent);
             } else {
-                addIncomeSourceFragment(true, intent);
+                addIncomeSourceFragment(intent);
             }
         }
     }
 
-    private void addIncomeSourceFragment(boolean viewMode, Intent intent) {
+    private void addIncomeSourceFragment(Intent intent) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft;
         Fragment fragment;
 
-        if (viewMode) {
-            fragment = fm.findFragmentByTag(ViewTaxDeferredIncomeFragment.VIEW_TAXDEF_INCOME_FRAG_TAG);
-            if (fragment == null) {
-                fragment = ViewTaxDeferredIncomeFragment.newInstance(intent);
-                ft = fm.beginTransaction();
-                ft.add(R.id.content_frame, fragment, ViewTaxDeferredIncomeFragment.VIEW_TAXDEF_INCOME_FRAG_TAG);
-                ft.commit();
-            }
-        } else {
-            fragment = fm.findFragmentByTag(EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
-            if (fragment == null) {
-                fragment = EditTaxDeferredIncomeFragment.newInstance(intent);
-                ft = fm.beginTransaction();
-                ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
-                ft.commit();
-            }
+
+        fragment = fm.findFragmentByTag(EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
+        if (fragment == null) {
+            fragment = EditTaxDeferredIncomeFragment.newInstance(intent);
+            ft = fm.beginTransaction();
+            ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
+            ft.commit();
         }
     }
 }

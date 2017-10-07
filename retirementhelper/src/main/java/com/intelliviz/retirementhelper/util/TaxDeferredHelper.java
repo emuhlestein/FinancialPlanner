@@ -95,7 +95,7 @@ public class TaxDeferredHelper {
         double balance = Double.parseDouble(cursor.getString(balanceIndex));
         int is401k = cursor.getInt(is401kIndex);
         cursor.close();
-        return new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, balance, is401k);
+        return null; //new TaxDeferredIncomeData(incomeId, idh.name, idh.type, minAge, interest, monthAdd, penalty, balance, is401k);
     }
 
     public static TaxDeferredIncomeData extractData(Cursor cursor) {
@@ -127,7 +127,7 @@ public class TaxDeferredHelper {
         String amount = cursor.getString(balanceIndex);
         double balance = Double.parseDouble(amount);
 
-        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(incomeId, name, incomeType, minAge, interest, monthAdd, penalty, balance, is401k);
-        return tdid;
+        //TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(incomeId, name, incomeType, minAge, interest, monthAdd, penalty, balance, is401k);
+        return null;
     }
 }

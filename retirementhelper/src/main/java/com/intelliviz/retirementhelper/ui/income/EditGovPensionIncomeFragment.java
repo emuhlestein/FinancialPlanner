@@ -1,7 +1,6 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
-import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -9,24 +8,25 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.intelliviz.retirementhelper.viewmodel.GovPensionViewModel;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
+import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.viewmodel.GovPensionViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
-import static com.intelliviz.retirementhelper.ui.income.ViewTaxDeferredIncomeFragment.ID_ARGS;
+import static com.intelliviz.retirementhelper.GovPensionRepository.ID_ARGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
@@ -36,10 +36,10 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditGovPensionIncomeFragment extends LifecycleFragment {
+public class EditGovPensionIncomeFragment extends Fragment {
     private static final String TAG = EditGovPensionIncomeFragment.class.getSimpleName();
     public static final String EDIT_GOVPENSION_INCOME_FRAG_TAG = "edit govpension income frag tag";
-    private GovPensionIncomeData mGPID;
+    private GovPensionEntity mGPID;
     private long mId;
     private GovPensionViewModel mViewModel;
 
@@ -124,9 +124,9 @@ public class EditGovPensionIncomeFragment extends LifecycleFragment {
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionViewModel.class);
 
-        mViewModel.getData().observe(this, new Observer<GovPensionIncomeData>() {
+        mViewModel.getData().observe(this, new Observer<GovPensionEntity>() {
             @Override
-            public void onChanged(@Nullable GovPensionIncomeData govPensionIncomeData) {
+            public void onChanged(@Nullable GovPensionEntity govPensionIncomeData) {
                 mGPID = govPensionIncomeData;
                 updateUI();
             }
@@ -170,7 +170,7 @@ public class EditGovPensionIncomeFragment extends LifecycleFragment {
         }
 
         double dbenefit = Double.parseDouble(benefit);
-        GovPensionIncomeData gpid = new GovPensionIncomeData(mId, name, INCOME_TYPE_GOV_PENSION, minimumAge, dbenefit);
+        GovPensionEntity gpid = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, name, minimumAge, benefit);
         mViewModel.setData(gpid);
     }
 }

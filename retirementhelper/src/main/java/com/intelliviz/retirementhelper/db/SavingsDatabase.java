@@ -59,8 +59,8 @@ public class SavingsDatabase extends BaseDatabase {
     }
 
     public IncomeTypeData get(long incomeId) {
-        IncomeData idh = getData(incomeId);
-        if(idh == null) {
+        IncomeData id = getData(incomeId);
+        if(id == null) {
             return null;
         }
 
@@ -75,7 +75,7 @@ public class SavingsDatabase extends BaseDatabase {
         double interest = Double.parseDouble(cursor.getString(interestIndex));
         double monthAdd = Double.parseDouble(cursor.getString(monthAddIndex));
         double balance = Double.parseDouble(cursor.getString(balanceIndex));
-        return new SavingsIncomeData(incomeId, idh.name, idh.type, interest, monthAdd, balance);
+        return new SavingsIncomeData(incomeId, id.type, id.name, interest, monthAdd, balance);
     }
 
     public int update(IncomeTypeData data) {

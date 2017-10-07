@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.IncomeTypeData;
 
 /**
@@ -28,7 +27,7 @@ public abstract class BaseDatabase {
     public abstract int update(IncomeTypeData data);
     public abstract int delete(long incomeId);
 
-    protected String addIncomeType(IncomeType incomeType) {
+    protected String addIncomeType(IncomeTypeData incomeType) {
         ContentValues values = new ContentValues();
         values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
         values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, incomeType.getType());
@@ -40,7 +39,7 @@ public abstract class BaseDatabase {
         }
     }
 
-    protected int updateIncomeTypeName(IncomeType incomeType) {
+    protected int updateIncomeTypeName(IncomeTypeData incomeType) {
         ContentValues values  = new ContentValues();
         values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
 

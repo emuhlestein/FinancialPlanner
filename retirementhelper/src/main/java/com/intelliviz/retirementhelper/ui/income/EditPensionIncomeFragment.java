@@ -1,7 +1,6 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
-import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -9,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.PensionIncomeData;
+import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.PensionViewModel;
 
@@ -35,10 +35,10 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditPensionIncomeFragment extends LifecycleFragment {
+public class EditPensionIncomeFragment extends Fragment {
     private static final String TAG = EditPensionIncomeFragment.class.getSimpleName();
     public static final String EDIT_PENSION_INCOME_FRAG_TAG = "edit pension income frag tag";
-    private PensionIncomeData mPID;
+    private PensionIncomeEntity mPID;
     private long mId;
     private PensionViewModel mViewModel;
 
@@ -118,9 +118,9 @@ public class EditPensionIncomeFragment extends LifecycleFragment {
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionViewModel.class);
 
-        mViewModel.getData().observe(this, new Observer<PensionIncomeData>() {
+        mViewModel.getData().observe(this, new Observer<PensionIncomeEntity>() {
             @Override
-            public void onChanged(@Nullable PensionIncomeData data) {
+            public void onChanged(@Nullable PensionIncomeEntity data) {
                 mPID = data;
                 updateUI();
             }
@@ -132,8 +132,8 @@ public class EditPensionIncomeFragment extends LifecycleFragment {
             return;
         }
         String name = mPID.getName();
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPID.getFullMonthlyBenefit());
-        String age = mPID.getStartAge();
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPID.getMonthlyBenefit());
+        String age = mPID.getMinAge();
 
         mIncomeSourceName.setText(name);
         mMinAge.setText(age);
@@ -164,7 +164,7 @@ public class EditPensionIncomeFragment extends LifecycleFragment {
         }
 
         double dbenefit = Double.parseDouble(benefit);
-        PensionIncomeData pid = new PensionIncomeData(mId, name, INCOME_TYPE_PENSION, age, dbenefit);
+        PensionIncomeEntity pid = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name, age, benefit);
         mViewModel.setData(pid);
     }
 }

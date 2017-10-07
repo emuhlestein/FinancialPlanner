@@ -11,7 +11,7 @@ import static com.intelliviz.retirementhelper.db.entity.MilestoneSummaryEntity.T
  */
 @Entity(tableName = TABLE_NAME)
 public class MilestoneSummaryEntity {
-    public static final String TABLE_NAME = "tax_deferred_income";
+    public static final String TABLE_NAME = "milestone_summary_income";
     public static final String MONTHLY_BENEFIT_FIELD = "monthly_benefit";
     public static final String START_AGE_FIELD = "start_age";
     public static final String END_AGE_FIELD = "end_age";

@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.ui;
 
-import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -8,7 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -23,12 +22,11 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.viewmodel.MilestoneViewModel;
+import com.intelliviz.retirementhelper.viewmodel.MilestoneSummaryViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,24 +34,17 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
-
 /**
  * @author Ed Muhlestein
  * Created on 8/7/2017.
  */
 
-public abstract class BaseSummaryFragment extends LifecycleFragment implements
+public abstract class BaseSummaryFragment extends Fragment implements
         SummaryMilestoneAdapter.SelectionMilestoneListener{
     private static final String DIALOG_INPUT_TEXT = "DialogInputText";
-    private static final int STATUS_LOADER = 0;
-    private static final int MILESTONE_SUMMARY_LOADER = 1;
     private SummaryMilestoneAdapter mMilestoneAdapter;
     private List<MilestoneData> mMilestones;
-    private MilestoneViewModel mViewModel;
+    private MilestoneSummaryViewModel mViewModel;
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -108,8 +99,7 @@ public abstract class BaseSummaryFragment extends LifecycleFragment implements
             snackbar.show();
         }
 
-        // TODO see if birthday has been set. if not force user to set it.
-        SystemUtils.updateAppWidget(getContext());
+        SystemUtils.updateAppWidget(getActivity().getApplication());
         DataBaseUtils.updateMilestoneData(getContext());
 
         return view;
@@ -118,13 +108,12 @@ public abstract class BaseSummaryFragment extends LifecycleFragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(MilestoneViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(MilestoneSummaryViewModel.class);
 
         mViewModel.getList().observe(this, new Observer<List<MilestoneData>>() {
             @Override
             public void onChanged(@Nullable List<MilestoneData> milestones) {
-                mMilestones.clear();
-                mMilestones.addAll(milestones);
+                mMilestoneAdapter.update(milestones);
             }
         });
     }
@@ -133,6 +122,7 @@ public abstract class BaseSummaryFragment extends LifecycleFragment implements
 
     }
 
+    /*
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
@@ -143,6 +133,7 @@ public abstract class BaseSummaryFragment extends LifecycleFragment implements
             }
         }
     }
+    */
 
     @Override
     public void onSelectMilestone(MilestoneData milestone) {
@@ -150,7 +141,7 @@ public abstract class BaseSummaryFragment extends LifecycleFragment implements
         intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, milestone);
         startActivity(intent);
     }
-
+/*
     private void onHandleBirthdate(Intent intent) {
         String birthdate = intent.getStringExtra(EXTRA_DIALOG_INPUT_TEXT);
         if (!SystemUtils.validateBirthday(birthdate)) {
@@ -165,4 +156,5 @@ public abstract class BaseSummaryFragment extends LifecycleFragment implements
         RetirementOptionsDatabase.getInstance(getContext()).saveBirthdate(birthdate);
         SystemUtils.updateAppWidget(getContext());
     }
+*/
 }

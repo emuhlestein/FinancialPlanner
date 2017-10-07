@@ -54,8 +54,8 @@ public class GovPensionDatabase extends BaseDatabase {
     }
 
     public IncomeTypeData get(long incomeId) {
-        IncomeData idh = getData(incomeId);
-        if(idh == null) {
+        IncomeData id = getData(incomeId);
+        if(id == null) {
             return null;
         }
 
@@ -69,7 +69,7 @@ public class GovPensionDatabase extends BaseDatabase {
         String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
         double amount = Double.parseDouble(monthlyBenefit);
         cursor.close();
-        return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
+        return new GovPensionIncomeData(incomeId, id.type, id.name, incomeId, startAge, monthlyBenefit);
     }
 
     public int update(IncomeTypeData data) {

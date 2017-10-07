@@ -9,29 +9,29 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
-import com.intelliviz.retirementhelper.db.TaxDeferredDatabase;
+import com.intelliviz.retirementhelper.db.AppDatabase;
+import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 
 /**
  * Created by edm on 9/30/2017.
  */
 
 public class TaxDeferredViewModel extends AndroidViewModel {
-    private MutableLiveData<TaxDeferredIncomeData> mTDID =
+    private MutableLiveData<TaxDeferredIncomeEntity> mTDID =
             new MutableLiveData<>();
-    private TaxDeferredDatabase mDB;
+    private AppDatabase mDB;
 
     public TaxDeferredViewModel(Application application, long incomeId) {
         super(application);
-        mDB = TaxDeferredDatabase.getInstance(this.getApplication());
+        mDB = AppDatabase.getInstance(application);
         new GetAsyncTask().execute(incomeId);
     }
 
-    public LiveData<TaxDeferredIncomeData> getData() {
+    public LiveData<TaxDeferredIncomeEntity> getData() {
         return mTDID;
     }
 
-    public void setData(TaxDeferredIncomeData tdid) {
+    public void setData(TaxDeferredIncomeEntity tdid) {
         mTDID.setValue(tdid);
         if(tdid.getId() == -1) {
             new InsertAsyncTask().execute(tdid);
@@ -40,8 +40,8 @@ public class TaxDeferredViewModel extends AndroidViewModel {
         }
     }
 
-    public void delete(long id) {
-        new DeleteAsyncTask().execute(id);
+    public void delete(TaxDeferredIncomeEntity entity) {
+        new DeleteAsyncTask().execute(entity);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -60,27 +60,27 @@ public class TaxDeferredViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, TaxDeferredIncomeData> {
+    private class GetAsyncTask extends AsyncTask<Long, Void, TaxDeferredIncomeEntity> {
 
         public GetAsyncTask() {
         }
 
         @Override
-        protected TaxDeferredIncomeData doInBackground(Long... params) {
-            return (TaxDeferredIncomeData)mDB.get(params[0]);
+        protected TaxDeferredIncomeEntity doInBackground(Long... params) {
+            return mDB.taxDeferredIncomeDao().get(params[0]);
         }
 
         @Override
-        protected void onPostExecute(TaxDeferredIncomeData tdid) {
+        protected void onPostExecute(TaxDeferredIncomeEntity tdid) {
             mTDID.setValue(tdid);
         }
     }
 
-    private class UpdateAsyncTask extends AsyncTask<TaxDeferredIncomeData, Void, Integer> {
+    private class UpdateAsyncTask extends AsyncTask<TaxDeferredIncomeEntity, Void, Integer> {
 
         @Override
-        protected Integer doInBackground(TaxDeferredIncomeData... params) {
-            return mDB.update(params[0]);
+        protected Integer doInBackground(TaxDeferredIncomeEntity... params) {
+            return mDB.taxDeferredIncomeDao().update(params[0]);
         }
 
         @Override
@@ -88,11 +88,11 @@ public class TaxDeferredViewModel extends AndroidViewModel {
         }
     }
 
-    private class InsertAsyncTask extends AsyncTask<TaxDeferredIncomeData, Void, Long> {
+    private class InsertAsyncTask extends AsyncTask<TaxDeferredIncomeEntity, Void, Long> {
 
         @Override
-        protected Long doInBackground(TaxDeferredIncomeData... params) {
-            return mDB.insert(params[0]);
+        protected Long doInBackground(TaxDeferredIncomeEntity... params) {
+            return mDB.taxDeferredIncomeDao().insert(params[0]);
         }
 
         @Override
@@ -100,11 +100,12 @@ public class TaxDeferredViewModel extends AndroidViewModel {
         }
     }
 
-    private class DeleteAsyncTask extends AsyncTask<Long, Void, Integer> {
+    private class DeleteAsyncTask extends AsyncTask<TaxDeferredIncomeEntity, Void, Integer> {
 
         @Override
-        protected Integer doInBackground(Long... params) {
-            return mDB.delete(params[0]);
+        protected Integer doInBackground(TaxDeferredIncomeEntity... params) {
+            mDB.taxDeferredIncomeDao().delete(params[0]);
+            return null;
         }
 
         @Override

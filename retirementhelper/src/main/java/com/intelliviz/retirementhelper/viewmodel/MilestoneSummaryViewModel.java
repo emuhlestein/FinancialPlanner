@@ -7,7 +7,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.db.MilestoneDatabase;
+import com.intelliviz.retirementhelper.db.AppDatabase;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 
 import java.util.List;
 
@@ -15,13 +16,13 @@ import java.util.List;
  * Created by edm on 9/30/2017.
  */
 
-public class MilestoneViewModel extends AndroidViewModel {
+public class MilestoneSummaryViewModel extends AndroidViewModel {
     private MutableLiveData<List<MilestoneData>> mMilestones = new MutableLiveData<>();
-    private MilestoneDatabase mDB;
+    private AppDatabase mDB;
 
-    public MilestoneViewModel(Application application) {
+    public MilestoneSummaryViewModel(Application application) {
         super(application);
-        mDB = MilestoneDatabase.getInstance(application);
+        mDB = AppDatabase.getInstance(application);
         new MilestoneAsyncTask().execute();
     }
 
@@ -33,7 +34,7 @@ public class MilestoneViewModel extends AndroidViewModel {
 
         @Override
         protected List<MilestoneData> doInBackground(Void... voids) {
-            return mDB.getList();
+            return DataBaseUtils.getAllMilestones(mDB);
         }
 
         @Override

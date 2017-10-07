@@ -3,6 +3,7 @@ package com.intelliviz.retirementhelper.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -46,9 +47,9 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
      * @param penalty The penalty.
      * @param is401k Is this a 401k.
      */
-    public TaxDeferredIncomeData(long id, String name, int type, String minimumAge,
+    public TaxDeferredIncomeData(long id, int type, String name, String minimumAge,
                                  double annualRate, double monthlyAdd, double penalty, double balance, int is401k) {
-        super(id, name, type);
+        super(id, type, name);
         mMinimumAge = minimumAge;
         mInterestRate = annualRate;
         mMonthAdd = monthlyAdd;
@@ -115,7 +116,7 @@ public class TaxDeferredIncomeData extends IncomeTypeData {
     }
 
     @Override
-    public List<MilestoneData> getMilestones(List<MilestoneAgeData> ages, RetirementOptionsData rod) {
+    public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsData rod) {
         String endAge = rod.getEndAge();
         double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();

@@ -1,6 +1,7 @@
 package com.intelliviz.retirementhelper.util;
 
 import android.app.Activity;
+import android.app.Application;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,6 +17,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
+import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
@@ -26,11 +28,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -60,31 +59,13 @@ public class SystemUtils {
                 .build();
     }
 
-    public static void updateAppWidget(Context context) {
-        DataBaseUtils.updateSummaryData(context);
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        ComponentName appWidget = new ComponentName(context, WidgetProvider.class);
+    public static void updateAppWidget(Application application) {
+        AppDatabase db = AppDatabase.getInstance(application);
+        DataBaseUtils.updateSummaryData(db);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(application);
+        ComponentName appWidget = new ComponentName(application, WidgetProvider.class);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
-    }
-
-    public static boolean onActivityResultForOptionMenu (Context context, int requestCode, int resultCode, Intent intent) {
-        switch (requestCode) {
-            case REQUEST_RETIRE_OPTIONS:
-                if (resultCode == RESULT_OK) {
-                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                    updateROD(context, rod);
-                }
-                return false;
-            case REQUEST_PERSONAL_INFO:
-                if (resultCode == RESULT_OK) {
-                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                    updateROD(context, rod);
-                }
-                return false;
-            default:
-                return true;
-        }
     }
 
     public static boolean validateBirthday(String birthdate) {

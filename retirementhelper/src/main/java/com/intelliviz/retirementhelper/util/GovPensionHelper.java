@@ -53,11 +53,7 @@ public class GovPensionHelper {
     }
     */
 
-    /**
-     * Get the percent credit per year.
-     * @param birthyear The birth year.
-     * @return THe delayed credit.
-     */
+
     /*
     private static double getDelayedCredit(int birthyear) {
         if(birthyear < 1925) {
@@ -166,7 +162,7 @@ public class GovPensionHelper {
         String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
         double amount = Double.parseDouble(monthlyBenefit);
         cursor.close();
-        return new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
+        return null;//new GovPensionIncomeData(incomeId, idh.name, idh.type, startAge, amount);
     }
 
     public static int deleteSavingsIncome(Context context, long incomeId) {
@@ -197,6 +193,6 @@ public class GovPensionHelper {
         String minAge = cursor.getString(minAgeIndex);
         double monthlyBenefit = Double.parseDouble(cursor.getString(monthlyBenefitIndex));
 
-        return new GovPensionIncomeData(incomeId, name, incomeType, minAge, monthlyBenefit);
+        return null;//new GovPensionIncomeData(incomeId, name, incomeType, minAge, monthlyBenefit);
     }
 }

@@ -20,7 +20,7 @@ public class MilestoneSummaryIntentService extends IntentService {
         if (intent != null) {
             DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATING,
                     RetirementContract.TransactionStatusEntry.ACTION_INSERT, "", TRANS_TYPE_MILESTONE_SUMMARY);
-            DataBaseUtils.updateMilestoneSummary(this);
+            //DataBaseUtils.updateMilestoneSummary(this);
             DataBaseUtils.updateStatus(this, RetirementContract.TransactionStatusEntry.STATUS_UPDATED,
                     RetirementContract.TransactionStatusEntry.ACTION_INSERT, "", TRANS_TYPE_MILESTONE_SUMMARY);
         }

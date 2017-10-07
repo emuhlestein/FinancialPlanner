@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.MilestoneAgeData;
+import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -19,13 +19,13 @@ import java.util.List;
  */
 public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapter.MilestoneAgeHolder> {
     private SelectMilestoneAgeListener mListener;
-    private List<MilestoneAgeData> mMilestoneAges;
+    private List<MilestoneAgeEntity> mMilestoneAges;
 
     /**
      * Constructor.
      * @param milestoneAges The list of milestone ages.
      */
-    public MilestoneAgeAdapter(List<MilestoneAgeData> milestoneAges) {
+    public MilestoneAgeAdapter(List<MilestoneAgeEntity> milestoneAges) {
         mMilestoneAges = milestoneAges;
     }
 
@@ -38,7 +38,7 @@ public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapte
 
     @Override
     public void onBindViewHolder(MilestoneAgeHolder holder, int position) {
-        MilestoneAgeData ageData = mMilestoneAges.get(position);
+        MilestoneAgeEntity ageData = mMilestoneAges.get(position);
         holder.bindMilestone(ageData);
     }
 
@@ -60,7 +60,7 @@ public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapte
      * Update the milestone ages.
      * @param ages The new milestone ages.
      */
-    public void update(List<MilestoneAgeData> ages) {
+    public void update(List<MilestoneAgeEntity> ages) {
         mMilestoneAges.clear();
         if(ages != null) {
             mMilestoneAges.addAll(ages);
@@ -80,7 +80,7 @@ public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapte
             implements View.OnClickListener
     {
         private TextView mMilestoneAgeTextView;
-        private MilestoneAgeData mAge;
+        private MilestoneAgeEntity mAge;
 
         private MilestoneAgeHolder(View itemView) {
             super(itemView);
@@ -88,7 +88,7 @@ public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapte
             itemView.setOnClickListener(this);
         }
 
-        private void bindMilestone(MilestoneAgeData ageData) {
+        private void bindMilestone(MilestoneAgeEntity ageData) {
             mMilestoneAgeTextView.setText(SystemUtils.getFormattedAge(ageData.getAge()));
             mAge = ageData;
         }

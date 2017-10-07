@@ -10,8 +10,8 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.SavingsIncomeData;
-import com.intelliviz.retirementhelper.db.SavingsDatabase;
+import com.intelliviz.retirementhelper.db.AppDatabase;
+import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 
 import java.util.List;
 
@@ -20,36 +20,36 @@ import java.util.List;
  */
 
 public class SavingsViewModel  extends AndroidViewModel {
-    private MutableLiveData<SavingsIncomeData> mSID =
+    private MutableLiveData<SavingsIncomeEntity> mSID =
             new MutableLiveData<>();
-    private SavingsDatabase mSavingsDatabase;
+    private AppDatabase mDB;
     private LiveData<List<MilestoneData>> mMilestones;
 
     public SavingsViewModel(Application application, long incomeId) {
         super(application);
-        mSavingsDatabase = mSavingsDatabase.getInstance(this.getApplication());
-        new GetAsyncTask(mSavingsDatabase).execute(incomeId);
+        mDB = AppDatabase.getInstance(application);
+        new GetAsyncTask().execute(incomeId);
     }
 
-    public LiveData<SavingsIncomeData> getData() {
+    public LiveData<SavingsIncomeEntity> getData() {
         return mSID;
     }
 
-    public LiveData<List<SavingsIncomeData>> getList() {
+    public LiveData<List<SavingsIncomeEntity>> getList() {
         return null;
     }
 
-    public void setData(SavingsIncomeData sid) {
+    public void setData(SavingsIncomeEntity sid) {
         mSID.setValue(sid);
         if(sid.getId() == -1) {
-            new InsertAsyncTask(mSavingsDatabase).execute(sid);
+            new InsertAsyncTask().execute(sid);
         } else {
-            new UpdateAsyncTask(mSavingsDatabase).execute(sid);
+            new UpdateAsyncTask().execute(sid);
         }
     }
 
-    public void delete(long id) {
-        new DeleteAsyncTask(mSavingsDatabase).execute(id);
+    public void delete(SavingsIncomeEntity entity) {
+        new DeleteAsyncTask().execute(entity);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -69,16 +69,11 @@ public class SavingsViewModel  extends AndroidViewModel {
     }
 
 
-    private class InsertAsyncTask extends AsyncTask<SavingsIncomeData, Void, Long> {
-        private SavingsDatabase mDB;
-
-        public InsertAsyncTask(SavingsDatabase db) {
-            mDB = db;
-        }
+    private class InsertAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, Long> {
 
         @Override
-        protected Long doInBackground(SavingsIncomeData... params) {
-            return mDB.insert(params[0]);
+        protected Long doInBackground(SavingsIncomeEntity... params) {
+            return mDB.savingsIncomeDao().insert(params[0]);
         }
 
         @Override
@@ -87,34 +82,24 @@ public class SavingsViewModel  extends AndroidViewModel {
     }
 
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, SavingsIncomeData> {
-        private SavingsDatabase mDB;
+    private class GetAsyncTask extends AsyncTask<Long, Void, SavingsIncomeEntity> {
 
-        public GetAsyncTask(SavingsDatabase db) {
-            mDB = db;
+        @Override
+        protected SavingsIncomeEntity doInBackground(Long... params) {
+            return mDB.savingsIncomeDao().get(params[0]);
         }
 
         @Override
-        protected SavingsIncomeData doInBackground(Long... params) {
-            return (SavingsIncomeData)mDB.get(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(SavingsIncomeData sid) {
+        protected void onPostExecute(SavingsIncomeEntity sid) {
             mSID.setValue(sid);
         }
     }
 
-    private class UpdateAsyncTask extends AsyncTask<SavingsIncomeData, Void, Integer> {
-        private SavingsDatabase mDB;
-
-        public UpdateAsyncTask(SavingsDatabase db) {
-            mDB = db;
-        }
+    private class UpdateAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, Integer> {
 
         @Override
-        protected Integer doInBackground(SavingsIncomeData... params) {
-            return mDB.update(params[0]);
+        protected Integer doInBackground(SavingsIncomeEntity... params) {
+            return mDB.savingsIncomeDao().update(params[0]);
         }
 
         @Override
@@ -122,20 +107,12 @@ public class SavingsViewModel  extends AndroidViewModel {
         }
     }
 
-    private class DeleteAsyncTask extends AsyncTask<Long, Void, Integer> {
-        private SavingsDatabase mDB;
-
-        public DeleteAsyncTask(SavingsDatabase db) {
-            mDB = db;
-        }
+    private class DeleteAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, Void> {
 
         @Override
-        protected Integer doInBackground(Long... params) {
-            return mDB.delete(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Integer numRowsInserted) {
+        protected Void doInBackground(SavingsIncomeEntity... params) {
+            mDB.savingsIncomeDao().delete(params[0]);
+            return null;
         }
     }
 }

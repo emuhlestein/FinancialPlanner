@@ -58,9 +58,9 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
     }
 
     public void update(List<MilestoneData> milestones) {
-        mMilestones.clear();
         if(milestones != null) {
-            milestones.addAll(milestones);
+            mMilestones.clear();
+            mMilestones.addAll(milestones);
             notifyDataSetChanged();
         }
     }

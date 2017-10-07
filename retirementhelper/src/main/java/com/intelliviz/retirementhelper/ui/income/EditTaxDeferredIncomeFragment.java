@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.ui.income;
 
-import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
+import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.TaxDeferredViewModel;
 
@@ -36,10 +36,10 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
  *
  * @author Ed Muhlestein
  */
-public class EditTaxDeferredIncomeFragment extends LifecycleFragment {
+public class EditTaxDeferredIncomeFragment extends Fragment {
     private static final String TAG = EditTaxDeferredIncomeFragment.class.getSimpleName();
     public static final String EDIT_TAXDEF_INCOME_FRAG_TAG = "edit taxdef income frag tag";
-    private TaxDeferredIncomeData mTDID;
+    private TaxDeferredIncomeEntity mTDID;
     private long mId;
     private TaxDeferredViewModel mViewModel;
 
@@ -180,9 +180,9 @@ public class EditTaxDeferredIncomeFragment extends LifecycleFragment {
         mViewModel = ViewModelProviders.of(this, factory).
                 get(TaxDeferredViewModel.class);
 
-        mViewModel.getData().observe(this, new Observer<TaxDeferredIncomeData>() {
+        mViewModel.getData().observe(this, new Observer<TaxDeferredIncomeEntity>() {
             @Override
-            public void onChanged(@Nullable TaxDeferredIncomeData data) {
+            public void onChanged(@Nullable TaxDeferredIncomeEntity data) {
                 mTDID = data;
                 updateUI();
             }
@@ -200,11 +200,11 @@ public class EditTaxDeferredIncomeFragment extends LifecycleFragment {
         SystemUtils.setToolbarSubtitle(getActivity(), incomeSourceTypeString);
 
         String balanceString;
-        double balance = mTDID.getBalance();
-        balanceString = SystemUtils.getFormattedCurrency(balance);
+        balanceString = mTDID.getBalance();
+        balanceString = SystemUtils.getFormattedCurrency(balanceString);
 
-        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mTDID.getMonthAddition());
-        String minimumAge = mTDID.getMinimumAge();
+        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mTDID.getMonthlyIncrease());
+        String minimumAge = mTDID.getMinAge();
         AgeData age = SystemUtils.parseAgeString(minimumAge);
         minimumAge = SystemUtils.getFormattedAge(age);
 
@@ -217,7 +217,7 @@ public class EditTaxDeferredIncomeFragment extends LifecycleFragment {
         mIncomeSourceName.setText(incomeSourceName);
         mBalance.setText(balanceString);
 
-        String interest = mTDID.getInterestRate()+"%";
+        String interest = mTDID.getInterest()+"%";
         mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(monthlyIncreaseString);
         mPenaltyAge.setText(minimumAge);
@@ -272,7 +272,7 @@ public class EditTaxDeferredIncomeFragment extends LifecycleFragment {
         double increase = Double.parseDouble(monthlyIncrease);
         double penalty = Double.parseDouble(penaltyAmount);
         double dbalance = Double.parseDouble(balance);
-        TaxDeferredIncomeData tdid = new TaxDeferredIncomeData(mId, name, INCOME_TYPE_TAX_DEFERRED, minimumAge, annualInterest, increase, penalty, dbalance, 1);
+        TaxDeferredIncomeEntity tdid = new TaxDeferredIncomeEntity(mId, INCOME_TYPE_TAX_DEFERRED, name, minimumAge, interest, monthlyIncrease, penaltyAmount, 1, balance);
         mViewModel.setData(tdid);
     }
 }

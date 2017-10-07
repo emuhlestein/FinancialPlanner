@@ -1,23 +1,17 @@
 package com.intelliviz.retirementhelper.ui;
 
-import android.content.AsyncQueryHandler;
-import android.content.ContentResolver;
-import android.content.ContentValues;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,12 +24,10 @@ import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.db.RetirementContract;
-import com.intelliviz.retirementhelper.db.RetirementOptionsDatabase;
+import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.viewmodel.NavigationModelView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,17 +40,16 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_R
  * The summary activity.
  * @author Ed Muhlestein
  */
-public class NavigationActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>{
+public class NavigationActivity extends AppCompatActivity {
     private static final String TAG = NavigationActivity.class.getSimpleName();
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";
     private static final String MILESTONES_FRAG_TAG = "milestones frag tag";
-    private static final int STATUS_LOADER = 1;
     private GoogleApiClient mGoogleApiClient;
     private boolean mNeedToStartSummaryFragment;
     private int mStartFragment;
-    private TaxDeferredStatusAsyncHandler mTaxDeferredStatusAsyncHandler;
+    private NavigationModelView mViewModel;
+    private RetirementOptionsEntity mROM;
 
     @Bind(R.id.summary_toolbar)
     Toolbar mToolbar;
@@ -84,10 +75,6 @@ public class NavigationActivity extends AppCompatActivity implements
 
         mNeedToStartSummaryFragment = true;
 
-        mTaxDeferredStatusAsyncHandler = new TaxDeferredStatusAsyncHandler(getContentResolver());
-
-        getSupportLoaderManager().initLoader(STATUS_LOADER, null, this);
-
         initBottomNavigation();
 
         FragmentManager fm = getSupportFragmentManager();
@@ -97,6 +84,15 @@ public class NavigationActivity extends AppCompatActivity implements
             selectedItem = mBottomNavigation.getMenu().getItem(0);
             selectedNavFragment(selectedItem);
         }
+
+        mViewModel = ViewModelProviders.of(this).get(NavigationModelView.class);
+
+        mViewModel.getROM().observe(this, new Observer<RetirementOptionsEntity>() {
+            @Override
+            public void onChanged(@Nullable RetirementOptionsEntity rom) {
+                mROM = rom;
+            }
+        });
     }
 
     @Override
@@ -104,7 +100,6 @@ public class NavigationActivity extends AppCompatActivity implements
         outState.putInt("START_FRAGMENT", mStartFragment);
         super.onSaveInstanceState(outState);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,25 +111,20 @@ public class NavigationActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
+        RetirementOptionsData rod;
         switch (item.getItemId()) {
             case R.id.retirement_options_item:
                 intent = new Intent(this, RetirementOptionsDialog.class);
-
-                // TODO needs to go into a viewmodel
-                RetirementOptionsData rod = RetirementOptionsDatabase.getInstance(this).get();
-                if (rod != null) {
-                    intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
-                    startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
-                }
+                rod = RetirementOptionsData.create(mROM);
+                intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
+                startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
-                // TODO needs to go into a viewmodel
-                rod = RetirementOptionsDatabase.getInstance(this).get();
-                if (rod != null) {
-                    intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
-                    startActivityForResult(intent, REQUEST_PERSONAL_INFO);
-                }
+                rod = RetirementOptionsData.create(mROM);
+                intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+                startActivityForResult(intent, REQUEST_PERSONAL_INFO);
+
                 break;
             case R.id.sign_out_item:
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
@@ -196,17 +186,13 @@ public class NavigationActivity extends AppCompatActivity implements
             case REQUEST_RETIRE_OPTIONS:
                 if (resultCode == RESULT_OK) {
                     RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                    SystemUtils.updateROD(this, rod);
+                    mViewModel.update(mROM.getId(), rod);
                 }
                 break;
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
                     String birthdate = intent.getStringExtra(RetirementConstants.EXTRA_BIRTHDATE);
-                    //SystemUtils.updateBirthdate(this, birthdate);
-                    // TODO needs to go into a viewmodel
-                    RetirementOptionsDatabase.getInstance(this).saveBirthdate(birthdate);
-                    //RetirementOptionsHelper.saveBirthdate(this, birthdate);
-                    DataBaseUtils.updateMilestoneData(this);
+                    mViewModel.updateBirthdate(birthdate);
                 }
                 break;
             default:
@@ -251,95 +237,5 @@ public class NavigationActivity extends AppCompatActivity implements
         ft.replace(R.id.content_frame, fragment, fragmentTag);
         ft.commit();
     }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-        Loader<Cursor> loader;
-        Uri uri;
-        switch (loaderId) {
-            case STATUS_LOADER:
-                loader = new CursorLoader(this,
-                        RetirementContract.TransactionStatusEntry.CONTENT_URI,
-                        null,
-                        null,
-                        null,
-                        null);
-                break;
-            default:
-                loader = null;
-        }
-
-        return loader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        switch(loader.getId()) {
-            case STATUS_LOADER:
-                if(cursor.moveToFirst()) {
-                    int statusIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_STATUS);
-                    int resultIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_RESULT);
-                    int actionIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_ACTION);
-                    int typeIndex = cursor.getColumnIndex(RetirementContract.TransactionStatusEntry.COLUMN_TYPE);
-                    if(statusIndex != -1) {
-                        int status = cursor.getInt(statusIndex);
-                        if(status == RetirementContract.TransactionStatusEntry.STATUS_UPDATED) {
-                            if(actionIndex != -1 && resultIndex != -1) {
-                                int action = cursor.getInt(actionIndex);
-                                int numRows;
-                                switch(action) {
-                                    case RetirementContract.TransactionStatusEntry.ACTION_DELETE:
-                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
-                                        Log.d(TAG, numRows + " deleted");
-                                        break;
-                                    case RetirementContract.TransactionStatusEntry.ACTION_UPDATE:
-                                        numRows = Integer.parseInt(cursor.getString(resultIndex));
-                                        Log.d(TAG, numRows + " update");
-                                        break;
-                                    case RetirementContract.TransactionStatusEntry.ACTION_INSERT:
-                                        String uri = cursor.getString(resultIndex);
-                                        Log.d(TAG, uri + " inserted");
-                                        break;
-                                }
-                            }
-                            mTaxDeferredStatusAsyncHandler.clear();
-                        }
-                    }
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
-
-
-    public static class TaxDeferredStatusAsyncHandler extends AsyncQueryHandler {
-
-        public TaxDeferredStatusAsyncHandler(ContentResolver cr) {
-            super(cr);
-        }
-
-        public void clear() {
-            Uri uri = RetirementContract.TransactionStatusEntry.CONTENT_URI;
-            ContentValues values = new ContentValues();
-            values.put(RetirementContract.TransactionStatusEntry.COLUMN_STATUS,
-                    RetirementContract.TransactionStatusEntry.STATUS_NONE);
-            values.put(RetirementContract.TransactionStatusEntry.COLUMN_ACTION,
-                    RetirementContract.TransactionStatusEntry.ACTION_NONE);
-            values.put(RetirementContract.TransactionStatusEntry.COLUMN_RESULT, "");
-            startUpdate(0, null, uri, values, null, null);
-        }
-
-        @Override
-        protected void onUpdateComplete(int token, Object cookie, int result) {
-            if(result != 1) {
-                Log.d(TAG, "Error updating status");
-            }
-        }
-    }
-
 }
 

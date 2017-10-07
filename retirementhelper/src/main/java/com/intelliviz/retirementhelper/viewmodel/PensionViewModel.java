@@ -9,8 +9,8 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.retirementhelper.data.PensionIncomeData;
-import com.intelliviz.retirementhelper.db.PensionDatabase;
+import com.intelliviz.retirementhelper.db.AppDatabase;
+import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 
 import java.util.List;
 
@@ -19,25 +19,25 @@ import java.util.List;
  */
 
 public class PensionViewModel extends AndroidViewModel {
-    private MutableLiveData<PensionIncomeData> mPID =
+    private MutableLiveData<PensionIncomeEntity> mPID =
             new MutableLiveData<>();
-    private PensionDatabase mDB;
+    private AppDatabase mDB;
 
     public PensionViewModel(Application application, long incomeId) {
         super(application);
-        mDB = PensionDatabase.getInstance(this.getApplication());
+        mDB = AppDatabase.getInstance(application); //PensionDatabase.getInstance(this.getApplication());
         new GetAsyncTask().execute(incomeId);
     }
 
-    public LiveData<PensionIncomeData> getData() {
+    public LiveData<PensionIncomeEntity> getData() {
         return mPID;
     }
 
-    public LiveData<List<PensionIncomeData>> getList() {
+    public LiveData<List<PensionIncomeEntity>> getList() {
         return null;
     }
 
-    public void setData(PensionIncomeData pid) {
+    public void setData(PensionIncomeEntity pid) {
         mPID.setValue(pid);
         if(pid.getId() == -1) {
             new InsertAsyncTask().execute(pid);
@@ -46,8 +46,8 @@ public class PensionViewModel extends AndroidViewModel {
         }
     }
 
-    public void delete(long id) {
-        new DeleteAsyncTask().execute(id);
+    public void delete(PensionIncomeEntity entity) {
+        new DeleteAsyncTask().execute(entity);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -66,24 +66,24 @@ public class PensionViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, PensionIncomeData> {
+    private class GetAsyncTask extends AsyncTask<Long, Void, PensionIncomeEntity> {
 
         @Override
-        protected PensionIncomeData doInBackground(Long... params) {
-            return (PensionIncomeData)mDB.get(params[0]);
+        protected PensionIncomeEntity doInBackground(Long... params) {
+            return mDB.pensionIncomeDao().get(params[0]);
         }
 
         @Override
-        protected void onPostExecute(PensionIncomeData pid) {
+        protected void onPostExecute(PensionIncomeEntity pid) {
             mPID.setValue(pid);
         }
     }
 
-    private class UpdateAsyncTask extends AsyncTask<PensionIncomeData, Void, Integer> {
+    private class UpdateAsyncTask extends AsyncTask<PensionIncomeEntity, Void, Integer> {
 
         @Override
-        protected Integer doInBackground(PensionIncomeData... params) {
-            return mDB.update(params[0]);
+        protected Integer doInBackground(PensionIncomeEntity... params) {
+            return mDB.pensionIncomeDao().update(params[0]);
         }
 
         @Override
@@ -91,11 +91,11 @@ public class PensionViewModel extends AndroidViewModel {
         }
     }
 
-    private class InsertAsyncTask extends AsyncTask<PensionIncomeData, Void, Long> {
+    private class InsertAsyncTask extends AsyncTask<PensionIncomeEntity, Void, Long> {
 
         @Override
-        protected Long doInBackground(PensionIncomeData... params) {
-            return mDB.insert(params[0]);
+        protected Long doInBackground(PensionIncomeEntity... params) {
+            return mDB.pensionIncomeDao().insert(params[0]);
         }
 
         @Override
@@ -103,15 +103,12 @@ public class PensionViewModel extends AndroidViewModel {
         }
     }
 
-    private class DeleteAsyncTask extends AsyncTask<Long, Void, Integer> {
+    private class DeleteAsyncTask extends AsyncTask<PensionIncomeEntity, Void, Void> {
 
         @Override
-        protected Integer doInBackground(Long... params) {
-            return mDB.delete(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Integer numRowsInserted) {
+        protected Void doInBackground(PensionIncomeEntity... params) {
+            mDB.pensionIncomeDao().delete(params[0]);
+            return null;
         }
     }
 }

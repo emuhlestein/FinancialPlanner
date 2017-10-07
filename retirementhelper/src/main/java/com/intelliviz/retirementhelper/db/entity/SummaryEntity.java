@@ -3,6 +3,8 @@ package com.intelliviz.retirementhelper.db.entity;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.intelliviz.retirementhelper.data.AgeData;
+
 import static com.intelliviz.retirementhelper.db.entity.SummaryEntity.TABLE_NAME;
 
 /**
@@ -10,14 +12,20 @@ import static com.intelliviz.retirementhelper.db.entity.SummaryEntity.TABLE_NAME
  */
 @Entity(tableName = TABLE_NAME)
 public class SummaryEntity {
-    public static final String TABLE_NAME = "tax_deferred_income";
+    public static final String TABLE_NAME = "summary";
 
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    private String age;
+    private AgeData age;
 
     private String amount;
+
+    public SummaryEntity(int id, AgeData age, String amount) {
+        this.id = id;
+        this.age = age;
+        this.amount = amount;
+    }
 
     public int getId() {
         return id;
@@ -27,11 +35,11 @@ public class SummaryEntity {
         this.id = id;
     }
 
-    public String getAge() {
+    public AgeData getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(AgeData age) {
         this.age = age;
     }
 

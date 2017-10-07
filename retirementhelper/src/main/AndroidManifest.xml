@@ -43,20 +43,7 @@
             android:theme="@style/RetireDialog" />
 
         <service
-            android:name=".services.TaxDeferredIntentService"
-            android:exported="false" />
-        <service
             android:name=".services.RetirementOptionsService"
-            android:exported="false" />
-        <service
-            android:name=".services.PensionDataService"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <service
-            android:name=".services.SavingsDataService"
-            android:exported="false" />
-        <service
-            android:name=".services.GovPensionDataService"
             android:exported="false" />
         <service
             android:name=".widget.MilestonesRemoteViewsService"
@@ -66,12 +53,6 @@
             android:name=".ui.ListMenuActivity"
             android:theme="@style/RetireDialog" />
 
-        <service
-            android:name=".services.SummaryDataIntentService"
-            android:exported="false" />
-        <service
-            android:name=".services.MilestoneAgeIntentService"
-            android:exported="false" />
         <service
             android:name=".services.MilestoneSummaryIntentService"
             android:exported="false" />

@@ -10,9 +10,8 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
-import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.db.GovPensionDatabase;
+import com.intelliviz.retirementhelper.db.AppDatabase;
+import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 
 import java.util.List;
 
@@ -21,26 +20,25 @@ import java.util.List;
  */
 
 public class GovPensionViewModel extends AndroidViewModel {
-    private MutableLiveData<GovPensionIncomeData> mGPID =
+    private MutableLiveData<GovPensionEntity> mGPID =
             new MutableLiveData<>();
-    private GovPensionDatabase mDB;
-    private LiveData<List<MilestoneData>> mMilestones;
+    private AppDatabase mDB;
 
     public GovPensionViewModel(Application application, long incomeId) {
         super(application);
-        mDB = GovPensionDatabase.getInstance(application);
+        mDB = AppDatabase.getInstance(application); //GovPensionDatabase.getInstance(application);
         new GetAsyncTask().execute(incomeId);
     }
 
-    public LiveData<GovPensionIncomeData> getData() {
+    public LiveData<GovPensionEntity> getData() {
         return mGPID;
     }
 
-    public LiveData<List<GovPensionIncomeData>> getList() {
+    public LiveData<List<GovPensionEntity>> getList() {
         return null;
     }
 
-    public void setData(GovPensionIncomeData gpid) {
+    public void setData(GovPensionEntity gpid) {
         mGPID.setValue(gpid);
         if(gpid.getId() == -1) {
             new InsertAsyncTask().execute(gpid);
@@ -49,8 +47,8 @@ public class GovPensionViewModel extends AndroidViewModel {
         }
     }
 
-    public void delete(long id) {
-        new DeleteAsyncTask().execute(id);
+    public void delete(GovPensionEntity gpid) {
+        new DeleteAsyncTask().execute(gpid);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -69,24 +67,24 @@ public class GovPensionViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, GovPensionIncomeData> {
+    private class GetAsyncTask extends AsyncTask<Long, Void, GovPensionEntity> {
 
         @Override
-        protected GovPensionIncomeData doInBackground(Long... params) {
-            return (GovPensionIncomeData)mDB.get(params[0]);
+        protected GovPensionEntity doInBackground(Long... params) {
+            return mDB.govPensionDao().get(params[0]);
         }
 
         @Override
-        protected void onPostExecute(GovPensionIncomeData gpid) {
+        protected void onPostExecute(GovPensionEntity gpid) {
             mGPID.setValue(gpid);
         }
     }
 
-    private class UpdateAsyncTask extends AsyncTask<GovPensionIncomeData, Void, Integer> {
+    private class UpdateAsyncTask extends AsyncTask<GovPensionEntity, Void, Integer> {
 
         @Override
-        protected Integer doInBackground(GovPensionIncomeData... params) {
-            return mDB.update(params[0]);
+        protected Integer doInBackground(GovPensionEntity... params) {
+            return mDB.govPensionDao().update(params[0]);
         }
 
         @Override
@@ -94,11 +92,11 @@ public class GovPensionViewModel extends AndroidViewModel {
         }
     }
 
-    private class InsertAsyncTask extends AsyncTask<GovPensionIncomeData, Void, Long> {
+    private class InsertAsyncTask extends AsyncTask<GovPensionEntity, Void, Long> {
 
         @Override
-        protected Long doInBackground(GovPensionIncomeData... params) {
-            return mDB.insert(params[0]);
+        protected Long doInBackground(GovPensionEntity... params) {
+            return mDB.govPensionDao().insert(params[0]);
         }
 
         @Override
@@ -106,15 +104,17 @@ public class GovPensionViewModel extends AndroidViewModel {
         }
     }
 
-    private class DeleteAsyncTask extends AsyncTask<Long, Void, Integer> {
+    private class DeleteAsyncTask extends AsyncTask<GovPensionEntity, Void, Void> {
 
         @Override
-        protected Integer doInBackground(Long... params) {
-            return mDB.delete(params[0]);
+        protected Void doInBackground(GovPensionEntity... params) {
+            mDB.govPensionDao().delete(params[0]);
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Integer numRowsInserted) {
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
         }
     }
 }

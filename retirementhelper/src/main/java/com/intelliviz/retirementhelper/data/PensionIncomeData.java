@@ -1,10 +1,10 @@
 package com.intelliviz.retirementhelper.data;
 
-import android.content.Context;
+import android.arch.persistence.room.ColumnInfo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
@@ -16,28 +16,24 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
  * Class for pension income data.
  * Created by Ed Muhlestein on 5/11/2017.
  */
-
 public class PensionIncomeData extends IncomeTypeData {
-    private String mStartAge;
-    private double mMonthlyBenefit;
+    public static final String TABLE_NAME = "pension_income";
+    public static final String INCOME_TYPE_ID_FIELD = "income_type_id";
+    public static final String MIN_AGE_FIELD = "min_age";
+    public static final String MONTHLY_BENEFIT_FIELD = "monthly_benefit";
 
-    /**
-     * Constructor.
-     */
-    public PensionIncomeData() {
-        super(RetirementConstants.INCOME_TYPE_PENSION);
-    }
+    @ColumnInfo(name = INCOME_TYPE_ID_FIELD)
+    public long incomeTypeId;
 
-    /**
-     * Constructor.
-     * @param id The database id.
-     * @param name The income source name.
-     * @param type The income source type.
-     * @param startAge The start age.
-     * @param monthlyBenefit The monthly benefir.
-     */
-    public PensionIncomeData(long id, String name, int type, String startAge, double monthlyBenefit) {
-        super(id, name, type);
+    @ColumnInfo(name = MIN_AGE_FIELD)
+    public String minAge;
+
+    @ColumnInfo(name = MONTHLY_BENEFIT_FIELD)
+    public String mStartAge;
+    public double mMonthlyBenefit;
+
+    public PensionIncomeData(long id, int type, String name, long income_type_id, String startAge, double monthlyBenefit) {
+        super(id, type, name);
         mStartAge = startAge;
         mMonthlyBenefit = monthlyBenefit;
     }
@@ -70,7 +66,7 @@ public class PensionIncomeData extends IncomeTypeData {
         return mStartAge;
     }
 
-    public List<MilestoneData> getMilestones(List<MilestoneAgeData> ages, RetirementOptionsData rod) {
+    public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsData rod) {
         List<MilestoneData> milestones = new ArrayList<>();
         if(ages.isEmpty()) {
             return milestones;
@@ -81,7 +77,7 @@ public class PensionIncomeData extends IncomeTypeData {
         double monthlyBenefit = mMonthlyBenefit;
 
         MilestoneData milestone;
-        for(MilestoneAgeData msad : ages) {
+        for(MilestoneAgeEntity msad : ages) {
             AgeData age = msad.getAge();
             if(age.isBefore(minimumAge)) {
                 milestone = new MilestoneData(age, endAge, minimumAge, 0, 0, 0, 0, 0);

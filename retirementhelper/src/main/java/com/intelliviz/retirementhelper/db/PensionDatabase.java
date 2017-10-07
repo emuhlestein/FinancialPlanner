@@ -69,7 +69,7 @@ public class PensionDatabase extends BaseDatabase {
         String startAge = cursor.getString(startAgeIndex);
         String monthlyBenefit = cursor.getString(monthlyBenefitIndex);
         double amount = Double.parseDouble(monthlyBenefit);
-        return new PensionIncomeData(incomeId, idata.name, idata.type, startAge, amount);
+        return new PensionIncomeData(incomeId, idata.type, idata.name, -1, startAge, amount);
     }
 
     public int update(IncomeTypeData data) {

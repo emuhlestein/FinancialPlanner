@@ -1,9 +1,9 @@
 package com.intelliviz.retirementhelper.data;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -38,8 +38,8 @@ public class SavingsIncomeData extends IncomeTypeData {
      * @param monthlyIncrease The monthly increase.
      * @param balance The balance.
      */
-    public SavingsIncomeData(long id, String name, int type, double interest, double monthlyIncrease, double balance) {
-        super(id, name, type);
+    public SavingsIncomeData(long id, int type, String name, double interest, double monthlyIncrease, double balance) {
+        super(id, type, name);
         mInterest = interest;
         mMonthlyIncrease = monthlyIncrease;
         mBalance = balance;
@@ -78,7 +78,7 @@ public class SavingsIncomeData extends IncomeTypeData {
         return mMonthlyIncrease;
     }
 
-    public List<MilestoneData> getMilestones(List<MilestoneAgeData> ages, RetirementOptionsData rod) {
+    public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsData rod) {
         String endAge = rod.getEndAge();
         double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
@@ -90,8 +90,7 @@ public class SavingsIncomeData extends IncomeTypeData {
 
         List<Double> milestoneBalances = getMilestoneBalances(ages, mBalance, mInterest, mMonthlyIncrease);
 
-        milestones = getMilestones(endOfLifeAge, null, mInterest, 0, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
-        return milestones;
+        return getMilestones(endOfLifeAge, null, mInterest, 0, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
     }
 
     @Override
