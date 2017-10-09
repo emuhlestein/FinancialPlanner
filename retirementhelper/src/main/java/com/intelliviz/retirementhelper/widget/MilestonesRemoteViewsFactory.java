@@ -2,13 +2,14 @@ package com.intelliviz.retirementhelper.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.db.RetirementContract;
+import com.intelliviz.retirementhelper.db.AppDatabase;
+import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
+
+import java.util.List;
 
 /**
  * Implementation of remote views factory.
@@ -17,7 +18,7 @@ import com.intelliviz.retirementhelper.db.RetirementContract;
 
 class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context mContext;
-    private Cursor mCursor;
+    private List<SummaryEntity> mSummaryIncome;
 
     MilestonesRemoteViewsFactory(Context context) {
         mContext = context;
@@ -25,23 +26,22 @@ class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 
     @Override
     public void onCreate() {
-        mCursor = executeQuery();
+        mSummaryIncome = executeQuery();
     }
 
     @Override
     public void onDataSetChanged() {
-        mCursor = executeQuery();
+        mSummaryIncome = executeQuery();
     }
 
     @Override
     public void onDestroy() {
-        mCursor.close();
     }
 
     @Override
     public int getCount() {
-        if(mCursor != null) {
-            return mCursor.getCount();
+        if(mSummaryIncome != null) {
+            return mSummaryIncome.size();
         } else {
             return 0;
         }
@@ -49,13 +49,10 @@ class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 
     @Override
     public RemoteViews getViewAt(int position) {
-        mCursor.moveToPosition(position);
+        SummaryEntity entity = mSummaryIncome.get(position);
 
-        int ageIndex = mCursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AGE);
-        int amountIndex = mCursor.getColumnIndex(RetirementContract.SummaryEntry.COLUMN_AMOUNT);
-
-        String age = mCursor.getString(ageIndex);
-        String monthlyBenefit = mCursor.getString(amountIndex);
+        String age = entity.getAge().toString();
+        String monthlyBenefit = entity.getAmount();
 
         RemoteViews rv = new RemoteViews(mContext.getPackageName(),
                 R.layout.milestone_collection_item_layout);
@@ -64,8 +61,8 @@ class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 
         Intent fillIntent = new Intent();
 
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        fillIntent.setData(uri);
+        //Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
+        //fillIntent.setData(uri);
 
         rv.setOnClickFillInIntent(R.id.start_age_text_view, fillIntent);
         rv.setOnClickFillInIntent(R.id.monthly_benefit_text_view, fillIntent);
@@ -85,8 +82,8 @@ class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 
     @Override
     public long getItemId(int position) {
-        if(mCursor != null) {
-            return mCursor.getInt(mCursor.getColumnIndex(RetirementContract.SummaryEntry._ID));
+        if(mSummaryIncome != null) {
+            return mSummaryIncome.get(position).getId();
         } else {
             return position;
         }
@@ -97,14 +94,8 @@ class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
         return true;
     }
 
-    private Cursor executeQuery() {
-        String[] projection = new String[] {
-                RetirementContract.SummaryEntry._ID,
-                RetirementContract.SummaryEntry.COLUMN_AGE,
-                RetirementContract.SummaryEntry.COLUMN_AMOUNT
-        };
-
-        return mContext.getContentResolver().query(RetirementContract.SummaryEntry.CONTENT_URI,
-                projection, null, null, null);
+    private List<SummaryEntity> executeQuery() {
+        AppDatabase db = AppDatabase.getInstance(mContext.getApplicationContext());
+        return db.summaryDao().get();
     }
 }

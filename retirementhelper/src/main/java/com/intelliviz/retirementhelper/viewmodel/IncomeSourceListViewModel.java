@@ -12,6 +12,7 @@ import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
@@ -53,6 +54,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         @Override
         protected Void doInBackground(GovPensionEntity... params) {
             mDB.govPensionDao().delete(params[0]);
+            SystemUtils.updateAppWidget(getApplication());
             return null;
         }
     }
@@ -62,6 +64,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         @Override
         protected Void doInBackground(PensionIncomeEntity... params) {
             mDB.pensionIncomeDao().delete(params[0]);
+            SystemUtils.updateAppWidget(getApplication());
             return null;
         }
     }
@@ -71,6 +74,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         @Override
         protected Void doInBackground(SavingsIncomeEntity... params) {
             mDB.savingsIncomeDao().delete(params[0]);
+            SystemUtils.updateAppWidget(getApplication());
             return null;
         }
     }
@@ -80,6 +84,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         @Override
         protected Void doInBackground(TaxDeferredIncomeEntity... params) {
             mDB.taxDeferredIncomeDao().delete(params[0]);
+            SystemUtils.updateAppWidget(getApplication());
             return null;
         }
     }

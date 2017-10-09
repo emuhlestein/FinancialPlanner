@@ -20,12 +20,6 @@
             android:name=".ui.RetirementOptionsDialog"
             android:theme="@style/RetireDialog" />
 
-        <provider
-            android:name=".db.RetirementProvider"
-            android:authorities="${applicationId}.RetirementProvider"
-            android:exported="true"
-            android:label="my provider" />
-
         <receiver android:name=".widget.WidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -43,19 +37,12 @@
             android:theme="@style/RetireDialog" />
 
         <service
-            android:name=".services.RetirementOptionsService"
-            android:exported="false" />
-        <service
             android:name=".widget.MilestonesRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity
             android:name=".ui.ListMenuActivity"
             android:theme="@style/RetireDialog" />
-
-        <service
-            android:name=".services.MilestoneSummaryIntentService"
-            android:exported="false" />
 
         <activity android:name=".ui.BirthdateActivity" />
         <activity android:name=".ui.income.TaxDeferredIncomeActivity" />

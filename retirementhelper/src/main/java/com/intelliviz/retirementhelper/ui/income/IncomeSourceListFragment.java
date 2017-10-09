@@ -23,10 +23,6 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
-import com.intelliviz.retirementhelper.db.GovPensionDatabase;
-import com.intelliviz.retirementhelper.db.PensionDatabase;
-import com.intelliviz.retirementhelper.db.SavingsDatabase;
-import com.intelliviz.retirementhelper.db.TaxDeferredDatabase;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.ListMenuActivity;
@@ -209,9 +205,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
             mSelectedIncome = null;
             return;
         }
-        Intent newIntent;
 
-        //mSelectedId = incomeSourceId;
         mIncomeSourceType = incomeSourceType;
 
         switch(incomeSourceType) {
@@ -264,21 +258,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
 
     private void onHandleYesNo() {
         if (mIncomeAction == INCOME_ACTION_DELETE && mSelectedIncome.getId() != -1) {
-            switch(mIncomeSourceType){
-                case RetirementConstants.INCOME_TYPE_SAVINGS:
-                    SavingsDatabase.getInstance(getContext()).delete(mSelectedIncome.getId());
-                    break;
-                case INCOME_TYPE_TAX_DEFERRED:
-                    TaxDeferredDatabase.getInstance(getContext()).delete(mSelectedIncome.getId());
-                    break;
-                case INCOME_TYPE_PENSION:
-                    PensionDatabase.getInstance(getContext()).delete(mSelectedIncome.getId());
-                    break;
-                case INCOME_TYPE_GOV_PENSION:
-                    GovPensionDatabase.getInstance(getContext()).delete(mSelectedIncome.getId());
-                    break;
-            }
-
+            mViewModel.delete(mSelectedIncome);
             SystemUtils.updateAppWidget(getActivity().getApplication());
         }
     }

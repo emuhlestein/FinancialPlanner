@@ -1,22 +1,8 @@
 package com.intelliviz.retirementhelper.util;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.GovPensionIncomeData;
-import com.intelliviz.retirementhelper.data.IncomeType;
-import com.intelliviz.retirementhelper.data.IncomeTypeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.PensionIncomeData;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
-import com.intelliviz.retirementhelper.data.SavingsIncomeData;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.RetirementContract;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
@@ -25,17 +11,11 @@ import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
-import com.intelliviz.retirementhelper.services.MilestoneSummaryIntentService;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
 
 /**
  * Utility class for database access.
@@ -114,7 +94,7 @@ public class DataBaseUtils {
 
         return sortedAges;
     }
-
+/*
     public static String extractBirthDate(Cursor cursor) {
         if(cursor == null || !cursor.moveToFirst()) {
             return null;
@@ -129,6 +109,7 @@ public class DataBaseUtils {
         }
         return null;
     }
+    */
 /*
     public static void updateMilestoneSummary(Context context) {
         ContentResolver cr = context.getContentResolver();
@@ -159,12 +140,13 @@ public class DataBaseUtils {
         }
     }
 */
-
+/*
     public static void updateMilestoneData(Context context) {
         Intent intent = new Intent(context, MilestoneSummaryIntentService.class);
         context.startService(intent);
     }
-
+*/
+/*
     public static void updateStatus(Context context, int status, int action, String result, int incomeType) {
         ContentValues values = new ContentValues();
         values.put(RetirementContract.TransactionStatusEntry.COLUMN_STATUS, status);
@@ -174,6 +156,7 @@ public class DataBaseUtils {
         Uri uri = RetirementContract.TransactionStatusEntry.CONTENT_URI;
         context.getContentResolver().update(uri, values, null, null);
     }
+    */
 
     public static List<MilestoneData> getAllMilestones(List<IncomeSourceEntityBase> incomeTypes, List<MilestoneAgeEntity> ages, RetirementOptionsEntity rod) {
         List<MilestoneData> sumMilestones = new ArrayList<>();
@@ -240,7 +223,7 @@ public class DataBaseUtils {
 
         return sumMilestones;
     }
-
+/*
     public static List<MilestoneAgeEntity> getMilestoneAges(Context context, RetirementOptionsData rod) {
 
         // ages from data base
@@ -291,16 +274,17 @@ public class DataBaseUtils {
 
         return sortedAges;
     }
+    */
 
     static void updateSummaryData(AppDatabase db) {
         List<SummaryEntity> summaries = db.summaryDao().get();
-        db.summaryDao().delete(summaries);
+        db.summaryDao().deleteAll();
         List<MilestoneData> milestones = getAllMilestones(db);
         for(MilestoneData msd : milestones) {
             db.summaryDao().insert(new SummaryEntity(-1, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
         }
     }
-
+/*
     public static List<IncomeType> getAllIncomeTypes(Context context) {
         Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
@@ -337,61 +321,5 @@ public class DataBaseUtils {
 
         return incomeTypes;
     }
-
-    //
-    // Methods for IncomeType table
-    //
-    static String addIncomeType(Context context, IncomeTypeData incomeType) {
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_TYPE, incomeType.getType());
-        Uri uri = context.getContentResolver().insert(RetirementContract.IncomeTypeEntry.CONTENT_URI, values);
-        if(uri == null) {
-            return null;
-        } else {
-            return uri.getLastPathSegment();
-        }
-    }
-
-    static int updateIncomeTypeName(Context context, IncomeTypeData incomeType) {
-        ContentValues values  = new ContentValues();
-        values.put(RetirementContract.IncomeTypeEntry.COLUMN_NAME, incomeType.getName());
-
-        String sid = String.valueOf(incomeType.getId());
-        String selectionClause = RetirementContract.IncomeTypeEntry._ID + " = ?";
-        String[] selectionArgs = new String[]{sid};
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, sid);
-        return context.getContentResolver().update(uri, values, selectionClause, selectionArgs);
-    }
-
-    private static Cursor getIncomeType(Context context, long incomeId) {
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        String selection = RetirementContract.IncomeTypeEntry._ID + " = ?";
-        String id = String.valueOf(incomeId);
-        String[] selectionArgs = {id};
-        return context.getContentResolver().query(uri, null, selection, selectionArgs, null);
-    }
-
-    static IncomeDataHelper getIncomeTypeData(Context context, long incomeId) {
-        Cursor cursor = getIncomeType(context, incomeId);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return null;
-        }
-        int nameIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_NAME);
-        int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
-        String name = cursor.getString(nameIndex);
-        int type = cursor.getInt(typeIndex);
-        cursor.close();
-        return new IncomeDataHelper(name, type);
-    }
-
-    static class IncomeDataHelper {
-        public String name;
-        public int type;
-        public IncomeDataHelper(String name, int type) {
-            this.name = name;
-            this.type = type;
-        }
-    }
+    */
 }

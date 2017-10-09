@@ -26,7 +26,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.content.Intent.EXTRA_INTENT;
-import static com.intelliviz.retirementhelper.GovPensionRepository.ID_ARGS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
@@ -92,11 +91,6 @@ public class EditGovPensionIncomeFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         mGPID = null;
-
-        if(mId != -1) {
-            Bundle bundle = new Bundle();
-            bundle.putString(ID_ARGS, Long.toString(mId));
-        }
 
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

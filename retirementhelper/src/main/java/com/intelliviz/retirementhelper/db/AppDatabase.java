@@ -1,10 +1,14 @@
 package com.intelliviz.retirementhelper.db;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
+import android.content.ContentValues;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.db.dao.GovPensionDao;
 import com.intelliviz.retirementhelper.db.dao.IncomeTypeDao;
@@ -32,7 +36,7 @@ import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 
 @Database(entities = {MilestoneAgeEntity.class, GovPensionEntity.class, IncomeTypeEntity.class,
         MilestoneSummaryEntity.class, PensionIncomeEntity.class, RetirementOptionsEntity.class,
-        SavingsIncomeEntity.class, SummaryEntity.class, TaxDeferredIncomeEntity.class}, version = 1)
+        SavingsIncomeEntity.class, SummaryEntity.class, TaxDeferredIncomeEntity.class}, version = 3)
 @TypeConverters({AgeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private volatile static AppDatabase mINSTANCE;
@@ -41,7 +45,19 @@ public abstract class AppDatabase extends RoomDatabase {
         if(mINSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if(mINSTANCE == null) {
-                    mINSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "income_db").build();
+                    RoomDatabase.Callback rdc = new RoomDatabase.Callback() {
+                        @Override
+                        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                            ContentValues values = new ContentValues();
+                            values.put(RetirementOptionsEntity.END_AGE_FIELD, "90");
+                            values.put(RetirementOptionsEntity.WITHDRAW_MODE_FIELD, 0);
+                            values.put(RetirementOptionsEntity.WITHDRAW_AMOUNT_FIELD, "4");
+                            values.put(RetirementOptionsEntity.BIRTHDATE_FIELD, 0);
+                            db.insert(RetirementOptionsEntity.TABLE_NAME, OnConflictStrategy.IGNORE, values);
+                        }
+                    };
+
+                    mINSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "income_db").addCallback(rdc).build();
                 }
             }
         }

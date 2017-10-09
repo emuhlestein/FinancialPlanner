@@ -20,12 +20,8 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
-import com.intelliviz.retirementhelper.data.IncomeType;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.services.RetirementOptionsService;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.MilestoneSummaryViewModel;
 
 import java.util.ArrayList;
@@ -58,10 +54,6 @@ public abstract class BaseSummaryFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        Intent intent = new Intent(getContext(), RetirementOptionsService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_QUERY);
-        getContext().startService(intent);
     }
 
     @Override
@@ -87,20 +79,10 @@ public abstract class BaseSummaryFragment extends Fragment implements
                 linearLayoutManager.getOrientation()));
         mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
-        List<IncomeType> incomeSources = DataBaseUtils.getAllIncomeTypes(getContext());
-        if(incomeSources.isEmpty()) {
-            final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.add_income_source_message, Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    snackbar.dismiss();
-                }
-            });
-            snackbar.show();
-        }
-
+/*
         SystemUtils.updateAppWidget(getActivity().getApplication());
         DataBaseUtils.updateMilestoneData(getContext());
+*/
 
         return view;
     }
@@ -114,6 +96,17 @@ public abstract class BaseSummaryFragment extends Fragment implements
             @Override
             public void onChanged(@Nullable List<MilestoneData> milestones) {
                 mMilestoneAdapter.update(milestones);
+                if (milestones.isEmpty()) {
+
+                    final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.add_income_source_message, Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            snackbar.dismiss();
+                        }
+                    });
+                    snackbar.show();
+                }
             }
         });
     }

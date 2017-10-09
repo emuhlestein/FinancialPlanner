@@ -16,6 +16,7 @@ public class RetirementOptionsEntity {
     public static final String END_AGE_FIELD = "end_age";
     public static final String WITHDRAW_MODE_FIELD = "withdraw_mode";
     public static final String WITHDRAW_AMOUNT_FIELD = "withdraw_amount";
+    public static final String BIRTHDATE_FIELD = "birthdate";
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -25,6 +26,7 @@ public class RetirementOptionsEntity {
     private int withdrawMode;
     @ColumnInfo(name = WITHDRAW_AMOUNT_FIELD)
     private String withdrawAmount;
+    @ColumnInfo(name = BIRTHDATE_FIELD)
     private String birthdate;
 
     public RetirementOptionsEntity(int id, String endAge, int withdrawMode, String withdrawAmount, String birthdate) {

@@ -2,10 +2,7 @@ package com.intelliviz.retirementhelper.ui;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.AsyncQueryHandler;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,7 +17,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.StartUpViewModel;
 
@@ -165,46 +161,11 @@ public class StartActivity extends AppCompatActivity implements
         } else {
             onStartBirthdateActivity(mBirthdateInfo.getBirthdate());
         }
-        /*
-        BirthdateQueryHandler queryHandler = new BirthdateQueryHandler(getContentResolver(), this);
-        queryHandler.startQuery(0, null, RetirementContract.RetirementParmsEntry.CONTENT_URI,
-                new String[]{RetirementContract.RetirementParmsEntry.COLUMN_BIRTHDATE}, null, null, null);
-         */
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e(TAG, "Failed to connect");
-    }
-
-    private static final class BirthdateQueryHandler extends AsyncQueryHandler {
-        private QueryCompleteListener mListener;
-
-        BirthdateQueryHandler(ContentResolver cr, QueryCompleteListener listener) {
-            super(cr);
-            mListener = listener;
-        }
-
-        @Override
-        protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-            String birthdate = DataBaseUtils.extractBirthDate(cursor);
-            if(SystemUtils.validateBirthday(birthdate)) {
-                if(mListener != null) {
-                    mListener.onStartNavigationActivity();
-                }
-            } else {
-                if(mListener != null) {
-                    mListener.onStartBirthdateActivity("");
-                }
-            }
-        }
-
-        @Override
-        protected void onUpdateComplete(int token, Object cookie, int result) {
-            if(mListener != null) {
-                mListener.onStartNavigationActivity();
-            }
-        }
     }
 
     @Override

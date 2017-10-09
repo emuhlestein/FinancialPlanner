@@ -5,7 +5,6 @@ import android.app.Application;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.services.RetirementOptionsService;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import java.text.NumberFormat;
@@ -307,12 +304,5 @@ public class SystemUtils {
         sb.append(month);
         sb.append("m");
         return sb.toString();
-    }
-
-    public static void updateROD(Context context, RetirementOptionsData rod) {
-        Intent intent = new Intent(context, RetirementOptionsService.class);
-        intent.putExtra(RetirementConstants.EXTRA_DB_DATA, rod);
-        intent.putExtra(RetirementConstants.EXTRA_DB_ACTION, RetirementConstants.SERVICE_DB_UPDATE);
-        context.startService(intent);
     }
 }

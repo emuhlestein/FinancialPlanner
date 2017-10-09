@@ -48,6 +48,7 @@ public class StartUpViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(RetirementOptionsEntity rom) {
+            // TODO if rom is null, one needs to be added
             mROM = rom;
             mCurrentAge.setValue(SystemUtils.getAge(mROM.getBirthdate()));
             if(SystemUtils.validateBirthday(mROM.getBirthdate())) {
@@ -72,6 +73,11 @@ public class StartUpViewModel extends AndroidViewModel {
         protected void onPostExecute(RetirementOptionsEntity rom) {
             mROM = rom;
             mCurrentAge.setValue(SystemUtils.getAge(mROM.getBirthdate()));
+            if(SystemUtils.validateBirthday(mROM.getBirthdate())) {
+                mBirthdateInfo.setValue(new BirthdateInfo(mROM.getBirthdate(), BIRTHDATE_VALID));
+            } else {
+                mBirthdateInfo.setValue(new BirthdateInfo(mROM.getBirthdate(), BIRTHDATE_INVALID));
+            }
         }
     }
 

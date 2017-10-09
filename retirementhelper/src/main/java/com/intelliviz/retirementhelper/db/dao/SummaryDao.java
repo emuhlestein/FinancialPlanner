@@ -1,7 +1,6 @@
 package com.intelliviz.retirementhelper.db.dao;
 
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
@@ -26,6 +25,6 @@ public interface SummaryDao {
     @Update(onConflict = REPLACE)
     void update(SummaryEntity summary);
 
-    @Delete
-    void delete(List<SummaryEntity> entities);
+    @Query("DELETE FROM " + SummaryEntity.TABLE_NAME)
+    void deleteAll();
 }
