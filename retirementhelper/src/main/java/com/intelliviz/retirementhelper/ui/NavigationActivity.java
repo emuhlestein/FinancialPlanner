@@ -23,6 +23,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
@@ -115,13 +116,17 @@ public class NavigationActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.retirement_options_item:
                 intent = new Intent(this, RetirementOptionsDialog.class);
-                rod = RetirementOptionsData.create(mROM);
-                intent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
+                Bundle b = new Bundle();
+                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate());
+                AgeData age = new AgeData(2,3);
+                b.putParcelable(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
+                b.putParcelable("test1", age);
+                intent.putExtras(b);
                 startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
-                rod = RetirementOptionsData.create(mROM);
+                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate());
                 intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
 
@@ -186,6 +191,7 @@ public class NavigationActivity extends AppCompatActivity {
             case REQUEST_RETIRE_OPTIONS:
                 if (resultCode == RESULT_OK) {
                     RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+                    mROM = new RetirementOptionsEntity(mROM.getId(), rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate());
                     mViewModel.update(mROM.getId(), rod);
                 }
                 break;

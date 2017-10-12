@@ -22,7 +22,7 @@ import java.util.List;
 
 public class IncomeSourceListViewModel extends AndroidViewModel {
     private AppDatabase mDB;
-    private MutableLiveData<List<IncomeSourceEntityBase>> mIncomeSources;
+    private MutableLiveData<List<IncomeSourceEntityBase>> mIncomeSources = new MutableLiveData<>();
 
     public IncomeSourceListViewModel(Application application) {
         super(application);

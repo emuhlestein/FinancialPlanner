@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
@@ -29,16 +30,18 @@ public class NavigationModelView extends AndroidViewModel {
     }
 
     public void update(int id, RetirementOptionsData rod) {
-        RetirementOptionsEntity rom = RetirementOptionsData.create(id, rod);
-        mROM.setValue(rom);
+        RetirementOptionsEntity rom = new RetirementOptionsEntity(id, rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate());
         new UpdateRetirementOptionsAsyncTask().execute(rom);
+        RetirementOptionsEntity r =  mROM.getValue();
+        Log.d("edm", r.getBirthdate());
+        mROM.setValue(rom);
     }
 
     public void updateBirthdate(String birthdate) {
         RetirementOptionsEntity rom = mROM.getValue();
         RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), rom.getWithdrawMode(), rom.getWithdrawAmount(), birthdate);
         mROM.setValue(newRom);
-        new UpdateRetirementOptionsAsyncTask().execute(rom);
+        new UpdateRetirementOptionsAsyncTask().execute(newRom);
     }
 
     private class GetRetirementOptionsAsyncTask extends android.os.AsyncTask<Void, Void, RetirementOptionsEntity> {

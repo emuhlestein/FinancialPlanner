@@ -78,7 +78,10 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         mWithdrawPercentButton.setOnClickListener(this);
 
         Intent intent = getIntent();
-        mROD = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+        Bundle b = intent.getExtras();
+        mROD = b.getParcelable(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
+        String name = b.getString("test");
+        AgeData age = b.getParcelable("test1");
 
         updateUI();
     }

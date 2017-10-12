@@ -1,10 +1,7 @@
 package com.intelliviz.retirementhelper.data;
 
-import android.arch.persistence.room.Ignore;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 
 /**
  * CLass for managing retirement options.
@@ -39,24 +36,15 @@ public class RetirementOptionsData implements Parcelable {
         return mBirthdate;
     }
 
-    public static RetirementOptionsData create(RetirementOptionsEntity rom) {
-        return new RetirementOptionsData(rom.getEndAge(), rom.getWithdrawMode(), rom.getWithdrawAmount(), rom.getBirthdate());
-    }
 
-    public static RetirementOptionsEntity create(int id, RetirementOptionsData rod) {
-        return new RetirementOptionsEntity(id, rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate());
-    }
 
-    /**
-     * Constructor used by parcelable
-     * @param in The parcel.
-     */
-    @Ignore
-    public RetirementOptionsData(Parcel in) {
-        mBirthdate = in.readString();
+
+
+    protected RetirementOptionsData(Parcel in) {
         mEndAge = in.readString();
         mWithdrawMode = in.readInt();
         mWithdrawAmount = in.readString();
+        mBirthdate = in.readString();
     }
 
     @Override
@@ -66,16 +54,17 @@ public class RetirementOptionsData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mBirthdate);
         dest.writeString(mEndAge);
         dest.writeInt(mWithdrawMode);
         dest.writeString(mWithdrawAmount);
+        dest.writeString(mBirthdate);
     }
 
-    public static final Creator<RetirementOptionsData> CREATOR = new Creator<RetirementOptionsData>() {
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<RetirementOptionsData> CREATOR = new Parcelable.Creator<RetirementOptionsData>() {
         @Override
-        public RetirementOptionsData createFromParcel(Parcel source) {
-            return new RetirementOptionsData(source);
+        public RetirementOptionsData createFromParcel(Parcel in) {
+            return new RetirementOptionsData(in);
         }
 
         @Override
