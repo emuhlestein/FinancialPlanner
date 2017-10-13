@@ -87,9 +87,9 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
 
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mId = -1;
+            mId = 0;
             if(intent != null) {
-                mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+                mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
             }
         }
     }
@@ -190,7 +190,7 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
-        if (mTDID == null || mTDID.getId() == -1) {
+        if (mTDID == null || mTDID.getId() == 0) {
             return;
         }
 

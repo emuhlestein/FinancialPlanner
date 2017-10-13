@@ -76,9 +76,9 @@ public class EditGovPensionIncomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mId = -1;
+            mId = 0;
             if(intent != null) {
-                mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+                mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
             }
         }
     }
@@ -128,7 +128,7 @@ public class EditGovPensionIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
-        if(mGPID == null || mGPID.getId() == -1) {
+        if(mGPID == null || mGPID.getId() == 0) {
             return;
         }
         String name = mGPID.getName();

@@ -71,9 +71,9 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         Intent intent = getIntent();
-        mId = -1;
+        mId = 0;
         if(intent != null) {
-            mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+            mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         }
 
         mTDID = null;
@@ -191,7 +191,7 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        if (mTDID == null || mTDID.getId() == -1) {
+        if (mTDID == null || mTDID.getId() == 0) {
             return;
         }
 

@@ -40,7 +40,7 @@ public class GovPensionViewModel extends AndroidViewModel {
 
     public void setData(GovPensionEntity gpid) {
         mGPID.setValue(gpid);
-        if(gpid.getId() == -1) {
+        if(gpid.getId() == 0) {
             new InsertAsyncTask().execute(gpid);
         } else {
             new UpdateAsyncTask().execute(gpid);

@@ -20,6 +20,7 @@ public class TaxDeferredViewModel extends AndroidViewModel {
     private MutableLiveData<TaxDeferredIncomeEntity> mTDID =
             new MutableLiveData<>();
     private AppDatabase mDB;
+    private long mId;
 
     public TaxDeferredViewModel(Application application, long incomeId) {
         super(application);
@@ -33,7 +34,7 @@ public class TaxDeferredViewModel extends AndroidViewModel {
 
     public void setData(TaxDeferredIncomeEntity tdid) {
         mTDID.setValue(tdid);
-        if(tdid.getId() == -1) {
+        if(tdid.getId() == 0) {
             new InsertAsyncTask().execute(tdid);
         } else {
             new UpdateAsyncTask().execute(tdid);
@@ -96,7 +97,8 @@ public class TaxDeferredViewModel extends AndroidViewModel {
         }
 
         @Override
-        protected void onPostExecute(Long numRowsInserted) {
+        protected void onPostExecute(Long id) {
+            mId = id;
         }
     }
 

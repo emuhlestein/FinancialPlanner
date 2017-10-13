@@ -126,7 +126,7 @@ public class MilestoneAgeViewModel extends AndroidViewModel {
     }
 
     private List<MilestoneAgeEntity> addNewAge(AgeData ageData) {
-        MilestoneAgeEntity milestoneAgeEntity = new MilestoneAgeEntity(-1, ageData);
+        MilestoneAgeEntity milestoneAgeEntity = new MilestoneAgeEntity(0, ageData);
         mDB.milestoneAgeDao().insert(milestoneAgeEntity);
         SystemUtils.updateAppWidget(getApplication());
         return DataBaseUtils.getMilestoneAges(mDB);

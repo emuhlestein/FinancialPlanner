@@ -69,7 +69,7 @@ public class DataBaseUtils {
         for(IncomeSourceEntityBase incomeType : incomeTypes) {
             List<AgeData> allAges = incomeType.getAges();
             for(AgeData anAge : allAges) {
-                ages.add(new MilestoneAgeEntity(-1, anAge));
+                ages.add(new MilestoneAgeEntity(0, anAge));
             }
         }
 
@@ -77,7 +77,7 @@ public class DataBaseUtils {
         if(SystemUtils.validateBirthday(birthdate)) {
             // add birth date
             AgeData nowAge = SystemUtils.getAge(birthdate);
-            ages.add(new MilestoneAgeEntity(-1, nowAge));
+            ages.add(new MilestoneAgeEntity(0, nowAge));
 
             // add full retirement age
             //int year = SystemUtils.getBirthYear(birthdate);
@@ -281,7 +281,7 @@ public class DataBaseUtils {
         db.summaryDao().deleteAll();
         List<MilestoneData> milestones = getAllMilestones(db);
         for(MilestoneData msd : milestones) {
-            db.summaryDao().insert(new SummaryEntity(-1, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
+            db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
         }
     }
 /*

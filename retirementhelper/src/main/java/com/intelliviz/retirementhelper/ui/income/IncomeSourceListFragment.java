@@ -189,16 +189,16 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         int item = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
         switch (item) {
             case INCOME_TYPE_SAVINGS:
-                startSavingsIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
+                startSavingsIncomeSourceActivity(0, RetirementConstants.INCOME_ACTION_ADD);
                 break;
             case INCOME_TYPE_TAX_DEFERRED:
-                startTaxDeferredIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
+                startTaxDeferredIncomeSourceActivity(0, RetirementConstants.INCOME_ACTION_ADD);
                 break;
             case INCOME_TYPE_PENSION:
-                startPensionIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
+                startPensionIncomeSourceActivity(0, RetirementConstants.INCOME_ACTION_ADD);
                 break;
             case INCOME_TYPE_GOV_PENSION:
-                startGovPensionIncomeSourceActivity(-1, RetirementConstants.INCOME_ACTION_ADD);
+                startGovPensionIncomeSourceActivity(0, RetirementConstants.INCOME_ACTION_ADD);
                 break;
         }
     }
@@ -206,7 +206,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     private void onHandleIncomeMenuSourceAction(Intent resultIntent) {
         int action = resultIntent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
         int incomeSourceType = resultIntent.getIntExtra(EXTRA_INCOME_SOURCE_TYPE, INCOME_TYPE_SAVINGS);
-        long incomeSourceId = resultIntent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+        long incomeSourceId = resultIntent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         if(incomeSourceId < 0) {
             mSelectedIncome = null;
             return;
@@ -263,7 +263,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     }
 
     private void onHandleYesNo() {
-        if (mIncomeAction == INCOME_ACTION_DELETE && mSelectedIncome.getId() != -1) {
+        if (mIncomeAction == INCOME_ACTION_DELETE && mSelectedIncome.getId() != 0) {
             mViewModel.delete(mSelectedIncome);
             SystemUtils.updateAppWidget(getActivity().getApplication());
         }

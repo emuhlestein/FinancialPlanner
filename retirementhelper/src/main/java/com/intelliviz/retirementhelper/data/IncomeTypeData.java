@@ -39,7 +39,7 @@ public abstract class IncomeTypeData implements IncomeType {
      * Default constructor.
      */
     IncomeTypeData() {
-        this(-1, 0, "");
+        this(0, 0, "");
     }
 
     /**
@@ -47,7 +47,7 @@ public abstract class IncomeTypeData implements IncomeType {
      * @param type The income type.
      */
     IncomeTypeData(int type) {
-        this(-1, type, "");
+        this(0, type, "");
     }
 
     IncomeTypeData(long id, int type, String name) {

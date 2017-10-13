@@ -81,9 +81,9 @@ public class EditSavingsIncomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Intent intent = getArguments().getParcelable(EXTRA_INTENT);
-            mId = -1;
+            mId = 0;
             if(intent != null) {
-                mId = intent.getIntExtra(EXTRA_INCOME_SOURCE_ID, -1);
+                mId = intent.getIntExtra(EXTRA_INCOME_SOURCE_ID, 0);
             }
         }
     }
@@ -165,7 +165,7 @@ public class EditSavingsIncomeFragment extends Fragment {
     }
 
     private void updateUI() {
-        if(mSID == null || mSID.getId() == -1) {
+        if(mSID == null || mSID.getId() == 0) {
             return;
         }
 

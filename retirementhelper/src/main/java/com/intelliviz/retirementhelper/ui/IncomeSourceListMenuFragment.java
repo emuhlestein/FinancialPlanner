@@ -42,7 +42,7 @@ public class IncomeSourceListMenuFragment extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
-        mIncomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, -1);
+        mIncomeSourceId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         mIncomeSourceType = intent.getIntExtra(EXTRA_INCOME_SOURCE_TYPE, -1);
 
         final String[] incomeActions = getResources().getStringArray(R.array.income_source_actions);

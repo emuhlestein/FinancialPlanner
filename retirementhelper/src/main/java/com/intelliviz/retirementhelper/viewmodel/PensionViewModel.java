@@ -39,7 +39,7 @@ public class PensionViewModel extends AndroidViewModel {
 
     public void setData(PensionIncomeEntity pid) {
         mPID.setValue(pid);
-        if(pid.getId() == -1) {
+        if(pid.getId() == 0) {
             new InsertAsyncTask().execute(pid);
         } else {
             new UpdateAsyncTask().execute(pid);

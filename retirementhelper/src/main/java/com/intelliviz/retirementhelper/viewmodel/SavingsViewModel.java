@@ -41,7 +41,7 @@ public class SavingsViewModel  extends AndroidViewModel {
 
     public void setData(SavingsIncomeEntity sid) {
         mSID.setValue(sid);
-        if(sid.getId() == -1) {
+        if(sid.getId() == 0) {
             new InsertAsyncTask().execute(sid);
         } else {
             new UpdateAsyncTask().execute(sid);
