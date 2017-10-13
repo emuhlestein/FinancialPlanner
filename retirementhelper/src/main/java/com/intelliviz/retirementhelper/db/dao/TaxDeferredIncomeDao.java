@@ -17,7 +17,7 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
  */
 @Dao
 public interface TaxDeferredIncomeDao {
-    @Insert(onConflict = REPLACE)
+    @Insert
     long insert(TaxDeferredIncomeEntity income);
 
     @Query("SELECT * FROM " + TaxDeferredIncomeEntity.TABLE_NAME

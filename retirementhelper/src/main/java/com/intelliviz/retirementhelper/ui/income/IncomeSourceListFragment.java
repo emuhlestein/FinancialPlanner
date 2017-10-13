@@ -139,6 +139,12 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.update();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(IncomeSourceListViewModel.class);

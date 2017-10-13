@@ -14,6 +14,7 @@ import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +28,15 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
     public IncomeSourceListViewModel(Application application) {
         super(application);
         mDB = AppDatabase.getInstance(application);
+        new GetAllIncomeSourcesAsyncTask().execute();
     }
 
     public LiveData<List<IncomeSourceEntityBase>> get() {
         return mIncomeSources;
+    }
+
+    public void update() {
+        new GetAllIncomeSourcesAsyncTask().execute();
     }
 
     public void delete(IncomeSourceEntityBase incomeSource) {
@@ -46,6 +52,37 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         } else if(incomeSource instanceof TaxDeferredIncomeEntity) {
             TaxDeferredIncomeEntity entity = (TaxDeferredIncomeEntity)incomeSource;
             new DeleteTaxDeferredAsyncTask().execute(entity);
+        }
+    }
+
+    private class GetAllIncomeSourcesAsyncTask extends AsyncTask<Void, List<IncomeSourceEntityBase>, List<IncomeSourceEntityBase>> {
+
+        @Override
+        protected List<IncomeSourceEntityBase> doInBackground(Void... params) {
+            List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
+            List<TaxDeferredIncomeEntity> tdieList = mDB.taxDeferredIncomeDao().get();
+            for(TaxDeferredIncomeEntity tdie : tdieList) {
+                incomeSourceList.add(tdie);
+            }
+            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+            for(GovPensionEntity gpie : gpeList) {
+                incomeSourceList.add(gpie);
+            }
+            List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
+            for(PensionIncomeEntity pie : pieList) {
+                incomeSourceList.add(pie);
+            }
+            List<SavingsIncomeEntity> sieList = mDB.savingsIncomeDao().get();
+            for(SavingsIncomeEntity sie : sieList) {
+                incomeSourceList.add(sie);
+            }
+
+            return incomeSourceList;
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
