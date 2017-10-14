@@ -2,6 +2,7 @@ package com.intelliviz.retirementhelper.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -22,16 +23,17 @@ class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 
     MilestonesRemoteViewsFactory(Context context) {
         mContext = context;
+        executeQuery();
     }
 
     @Override
     public void onCreate() {
-        mSummaryIncome = executeQuery();
+        executeQuery();
     }
 
     @Override
     public void onDataSetChanged() {
-        mSummaryIncome = executeQuery();
+        executeQuery();
     }
 
     @Override
@@ -94,8 +96,21 @@ class MilestonesRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
         return true;
     }
 
-    private List<SummaryEntity> executeQuery() {
-        AppDatabase db = AppDatabase.getInstance(mContext.getApplicationContext());
-        return db.summaryDao().get();
+    private void executeQuery() {
+        new GetSummaryAsyncTask().execute();
+    }
+
+    private class GetSummaryAsyncTask extends AsyncTask<Void, List<SummaryEntity>, List<SummaryEntity>> {
+
+        @Override
+        protected List<SummaryEntity> doInBackground(Void... params) {
+            AppDatabase db = AppDatabase.getInstance(mContext.getApplicationContext());
+            return db.summaryDao().get();
+        }
+
+        @Override
+        protected void onPostExecute(List<SummaryEntity> summaryEntities) {
+            mSummaryIncome = summaryEntities;
+        }
     }
 }
