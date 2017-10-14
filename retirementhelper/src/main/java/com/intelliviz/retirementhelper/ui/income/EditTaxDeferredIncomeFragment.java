@@ -267,11 +267,6 @@ public class EditTaxDeferredIncomeFragment extends Fragment {
         }
 
         String name = mIncomeSourceName.getText().toString();
-
-        double annualInterest = Double.parseDouble(interest);
-        double increase = Double.parseDouble(monthlyIncrease);
-        double penalty = Double.parseDouble(penaltyAmount);
-        double dbalance = Double.parseDouble(balance);
         TaxDeferredIncomeEntity tdid = new TaxDeferredIncomeEntity(mId, INCOME_TYPE_TAX_DEFERRED, name, minimumAge, interest, monthlyIncrease, penaltyAmount, 1, balance);
         mViewModel.setData(tdid);
     }
