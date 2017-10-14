@@ -11,7 +11,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.db.dao.GovPensionDao;
-import com.intelliviz.retirementhelper.db.dao.IncomeTypeDao;
 import com.intelliviz.retirementhelper.db.dao.MilestoneAgeDao;
 import com.intelliviz.retirementhelper.db.dao.MilestoneSummaryDao;
 import com.intelliviz.retirementhelper.db.dao.PensionIncomeDao;
@@ -66,7 +65,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract MilestoneAgeDao milestoneAgeDao();
     public abstract GovPensionDao govPensionDao();
-    public abstract IncomeTypeDao incomeTypeDao();
     public abstract PensionIncomeDao pensionIncomeDao();
     public abstract SavingsIncomeDao savingsIncomeDao();
     public abstract TaxDeferredIncomeDao taxDeferredIncomeDao();

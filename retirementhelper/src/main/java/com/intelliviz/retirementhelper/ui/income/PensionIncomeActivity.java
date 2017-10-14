@@ -28,7 +28,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TY
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 public class PensionIncomeActivity extends AppCompatActivity {
-    private static final String TAG = EditPensionIncomeFragment.class.getSimpleName();
+    private static final String TAG = PensionIncomeActivity.class.getSimpleName();
     private PensionIncomeEntity mPID;
     private long mId;
     private PensionViewModel mViewModel;
