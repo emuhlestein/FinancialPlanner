@@ -17,6 +17,6 @@ public class AgeConverter {
 
     @TypeConverter
     public static String toString(AgeData age) {
-        return age.toString();
+        return age.getUnformattedString();
     }
 }
