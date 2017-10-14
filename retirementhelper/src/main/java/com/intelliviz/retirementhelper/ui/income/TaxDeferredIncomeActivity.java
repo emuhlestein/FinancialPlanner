@@ -156,38 +156,6 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
                 updateUI();
             }
         });
-
-/*
-        int mIncomeSourceType = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_TYPE, RetirementConstants.INCOME_TYPE_SAVINGS);
-        int mIncomeSourceAction = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_VIEW);
-
-        if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_ADD) {
-            addIncomeSourceFragment(intent);
-        } else {
-            // View or edit an income source
-            if(mIncomeSourceAction == RetirementConstants.INCOME_ACTION_EDIT) {
-                // View or edit an income source
-                addIncomeSourceFragment(intent);
-            } else {
-                addIncomeSourceFragment(intent);
-            }
-        }
-    }
-
-    private void addIncomeSourceFragment(Intent intent) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft;
-        Fragment fragment;
-
-
-        fragment = fm.findFragmentByTag(EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
-        if (fragment == null) {
-            fragment = EditTaxDeferredIncomeFragment.newInstance(intent);
-            ft = fm.beginTransaction();
-            ft.add(R.id.content_frame, fragment, EditTaxDeferredIncomeFragment.EDIT_TAXDEF_INCOME_FRAG_TAG);
-            ft.commit();
-        }
-        */
     }
 
     private void updateUI() {

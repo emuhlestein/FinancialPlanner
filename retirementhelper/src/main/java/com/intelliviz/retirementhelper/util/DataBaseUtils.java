@@ -94,69 +94,6 @@ public class DataBaseUtils {
 
         return sortedAges;
     }
-/*
-    public static String extractBirthDate(Cursor cursor) {
-        if(cursor == null || !cursor.moveToFirst()) {
-            return null;
-        }
-
-        int birthdateIndex = cursor.getColumnIndex(RetirementContract.RetirementParmsEntry.COLUMN_BIRTHDATE);
-        if(birthdateIndex != -1) {
-            String birthDate = cursor.getString(birthdateIndex);
-            if(SystemUtils.validateBirthday(birthDate)) {
-                return birthDate;
-            }
-        }
-        return null;
-    }
-    */
-/*
-    public static void updateMilestoneSummary(Context context) {
-        ContentResolver cr = context.getContentResolver();
-
-        RetirementOptionsData rod = RetirementOptionsDatabase.getInstance(context).get();
-        List<MilestoneAgeData> ages = DataBaseUtils.getMilestoneAges(context, rod);
-        List<MilestoneData> milestoneDataList = DataBaseUtils.getAllMilestones(context, ages, rod);
-
-        // delete all milestone summary tables, then re-add them.
-        Uri uri = RetirementContract.MilestoneSummaryEntry.CONTENT_URI;
-        cr.delete(uri, null, null);
-
-        for (MilestoneData milestoneData : milestoneDataList) {
-            ContentValues values = new ContentValues();
-            values.put(RetirementContract.MilestoneSummaryEntry.COLUMN_START_AGE, milestoneData.getStartAge().getUnformattedString());
-            values.put(RetirementContract.MilestoneSummaryEntry.COLUMN_END_AGE, milestoneData.getEndAge().getUnformattedString());
-            values.put(RetirementContract.MilestoneSummaryEntry.COLUMN_MINIMUM_AGE, milestoneData.getMinimumAge().getUnformattedString());
-            String monthlyBenefit = Double.toString(milestoneData.getMonthlyBenefit());
-            values.put(RetirementContract.MilestoneSummaryEntry.COLUMN_MONTHLY_BENEFIT, monthlyBenefit);
-            String startBalance = Double.toString(milestoneData.getStartBalance());
-            values.put(RetirementContract.MilestoneSummaryEntry.COLUMN_START_BALANCE, startBalance);
-            String endBalance = Double.toString(milestoneData.getEndBalance());
-            values.put(RetirementContract.MilestoneSummaryEntry.COLUMN_END_BALANCE, endBalance);
-            String penaltyAmount = Double.toString(milestoneData.getPenaltyAmount());
-            values.put(RetirementContract.MilestoneSummaryEntry.COLUMN_PENALTY_AMOUNT, penaltyAmount);
-            values.put(RetirementContract.MilestoneSummaryEntry.COLUMN_MONTHS, milestoneData.getMonthsFundsFillLast());
-            cr.insert(RetirementContract.MilestoneSummaryEntry.CONTENT_URI, values);
-        }
-    }
-*/
-/*
-    public static void updateMilestoneData(Context context) {
-        Intent intent = new Intent(context, MilestoneSummaryIntentService.class);
-        context.startService(intent);
-    }
-*/
-/*
-    public static void updateStatus(Context context, int status, int action, String result, int incomeType) {
-        ContentValues values = new ContentValues();
-        values.put(RetirementContract.TransactionStatusEntry.COLUMN_STATUS, status);
-        values.put(RetirementContract.TransactionStatusEntry.COLUMN_ACTION, action);
-        values.put(RetirementContract.TransactionStatusEntry.COLUMN_RESULT, result);
-        values.put(RetirementContract.TransactionStatusEntry.COLUMN_TYPE, incomeType);
-        Uri uri = RetirementContract.TransactionStatusEntry.CONTENT_URI;
-        context.getContentResolver().update(uri, values, null, null);
-    }
-    */
 
     public static List<MilestoneData> getAllMilestones(List<IncomeSourceEntityBase> incomeTypes, List<MilestoneAgeEntity> ages, RetirementOptionsEntity rod) {
         List<MilestoneData> sumMilestones = new ArrayList<>();
@@ -223,103 +160,12 @@ public class DataBaseUtils {
 
         return sumMilestones;
     }
-/*
-    public static List<MilestoneAgeEntity> getMilestoneAges(Context context, RetirementOptionsData rod) {
-
-        // ages from data base
-        Uri uri = RetirementContract.MilestoneEntry.CONTENT_URI;
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return Collections.emptyList();
-        }
-
-        HashSet<MilestoneAgeEntity> ages = new HashSet<>();
-        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            int idIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry._ID);
-            int ageIndex = cursor.getColumnIndex(RetirementContract.MilestoneEntry.COLUMN_AGE);
-            long id = cursor.getLong(idIndex);
-            String ageString = cursor.getString(ageIndex);
-            AgeData age = SystemUtils.parseAgeString(ageString);
-            ages.add(new MilestoneAgeEntity(id, age));
-        }
-        cursor.close();
-
-        // add ages from income types
-        List<IncomeType> incomeTypes = DataBaseUtils.getAllIncomeTypes(context);
-        for(IncomeType incomeType : incomeTypes) {
-            List<AgeData> allAges = incomeType.getAges();
-            for(AgeData anAge : allAges) {
-                ages.add(new MilestoneAgeEntity(-1, anAge));
-            }
-        }
-
-        String birthdate = rod.getBirthdate();
-        if(SystemUtils.validateBirthday(birthdate)) {
-            // add birth date
-            AgeData nowAge = SystemUtils.getAge(birthdate);
-            ages.add(new MilestoneAgeEntity(-1, nowAge));
-
-            // add full retirement age
-            //int year = SystemUtils.getBirthYear(birthdate);
-            //AgeData fullRetirementAge = GovPensionHelper.getFullRetirementAge(year);
-            //ages.add(new MilestoneAgeData(-1, fullRetirementAge));
-        }
-
-        // Need to get this age from deferred tax income source
-        //AgeData min401kAge = new AgeData(59, 6);
-        //ages.add(new MilestoneAgeData(-1, min401kAge));
-
-        List<MilestoneAgeEntity> sortedAges = new ArrayList<>(ages);
-        Collections.sort(sortedAges);
-
-        return sortedAges;
-    }
-    */
 
     static void updateSummaryData(AppDatabase db) {
-        List<SummaryEntity> summaries = db.summaryDao().get();
         db.summaryDao().deleteAll();
         List<MilestoneData> milestones = getAllMilestones(db);
         for(MilestoneData msd : milestones) {
             db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
         }
     }
-/*
-    public static List<IncomeType> getAllIncomeTypes(Context context) {
-        Uri uri = RetirementContract.IncomeTypeEntry.CONTENT_URI;
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        if(cursor == null || !cursor.moveToFirst()) {
-            return Collections.emptyList();
-        }
-
-        List<IncomeType> incomeTypes = new ArrayList<>();
-        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            int idIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry._ID);
-            int typeIndex = cursor.getColumnIndex(RetirementContract.IncomeTypeEntry.COLUMN_TYPE);
-            long id = Long.parseLong(cursor.getString(idIndex));
-            int type = Integer.parseInt(cursor.getString(typeIndex));
-            switch(type) {
-                case INCOME_TYPE_SAVINGS:
-                    SavingsIncomeData sid = SavingsIncomeHelper.getData(context, id);
-                    incomeTypes.add(sid);
-                    break;
-                case INCOME_TYPE_TAX_DEFERRED:
-                    TaxDeferredIncomeData tdid = TaxDeferredHelper.getTaxDeferredIncomeData(context, id);
-                    incomeTypes.add(tdid);
-                    break;
-                case INCOME_TYPE_PENSION:
-                    PensionIncomeData pid = PensionHelper.getData(context, id);
-                    incomeTypes.add(pid);
-                    break;
-                case INCOME_TYPE_GOV_PENSION:
-                    GovPensionIncomeData gpid = GovPensionHelper.getGovPensionIncomeData(context, id);
-                    incomeTypes.add(gpid);
-                    break;
-            }
-        }
-        cursor.close();
-
-        return incomeTypes;
-    }
-    */
 }

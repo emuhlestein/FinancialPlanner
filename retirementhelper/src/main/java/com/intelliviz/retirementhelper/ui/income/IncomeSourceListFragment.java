@@ -29,7 +29,6 @@ import com.intelliviz.retirementhelper.ui.ListMenuActivity;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.IncomeSourceListViewModel;
 
 import java.util.ArrayList;
@@ -218,55 +217,35 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         }
 
         if(action == INCOME_ACTION_DELETE) {
-            mViewModel.delete(mSelectedIncome);
+            mIncomeAction = INCOME_ACTION_DELETE;
+            FragmentManager fm = getFragmentManager();
+            YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
+            dialog.setTargetFragment(this, REQUEST_YES_NO);
+            dialog.show(fm, DIALOG_YESNO);
             return;
         }
 
         mIncomeSourceType = incomeSourceType;
 
-        switch(incomeSourceType) {
+        switch(mSelectedIncome.getType()) {
             case INCOME_TYPE_SAVINGS:
                 if(action == INCOME_ACTION_EDIT) {
                     startSavingsIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT);
-                } else if(action == INCOME_ACTION_DELETE) {
-                    mIncomeAction = INCOME_ACTION_DELETE;
-                    FragmentManager fm = getFragmentManager();
-                    YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
-                    dialog.setTargetFragment(this, REQUEST_YES_NO);
-                    dialog.show(fm, DIALOG_YESNO);
                 }
                 break;
             case INCOME_TYPE_TAX_DEFERRED:
                 if(action == INCOME_ACTION_EDIT) {
                     startTaxDeferredIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT);
-                } else if(action == INCOME_ACTION_DELETE) {
-                    mIncomeAction = INCOME_ACTION_DELETE;
-                    FragmentManager fm = getFragmentManager();
-                    YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
-                    dialog.setTargetFragment(this, REQUEST_YES_NO);
-                    dialog.show(fm, DIALOG_YESNO);
                 }
                 break;
             case INCOME_TYPE_PENSION:
                 if(action == INCOME_ACTION_EDIT) {
                     startPensionIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT);
-                } else if(action == INCOME_ACTION_DELETE) {
-                    mIncomeAction = INCOME_ACTION_DELETE;
-                    FragmentManager fm = getFragmentManager();
-                    YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
-                    dialog.setTargetFragment(this, REQUEST_YES_NO);
-                    dialog.show(fm, DIALOG_YESNO);
                 }
                 break;
             case INCOME_TYPE_GOV_PENSION:
                 if(action == INCOME_ACTION_EDIT) {
                     startGovPensionIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT);
-                } else if(action == INCOME_ACTION_DELETE) {
-                    mIncomeAction = INCOME_ACTION_DELETE;
-                    FragmentManager fm = getFragmentManager();
-                    YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
-                    dialog.setTargetFragment(this, REQUEST_YES_NO);
-                    dialog.show(fm, DIALOG_YESNO);
                 }
                 break;
         }
@@ -275,7 +254,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     private void onHandleYesNo() {
         if (mIncomeAction == INCOME_ACTION_DELETE && mSelectedIncome.getId() != 0) {
             mViewModel.delete(mSelectedIncome);
-            SystemUtils.updateAppWidget(getActivity().getApplication());
+            mViewModel.updateAppWidget();
         }
     }
 
