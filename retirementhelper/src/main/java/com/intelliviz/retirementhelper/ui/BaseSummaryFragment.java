@@ -82,6 +82,10 @@ public abstract class BaseSummaryFragment extends Fragment implements
 /*
         SystemUtils.updateAppWidget(getActivity().getApplication());
         DataBaseUtils.updateMilestoneData(getContext());
+         public static void updateMilestoneData(Context context) {
+        Intent intent = new Intent(context, MilestoneSummaryIntentService.class);
+        context.startService(intent);
+    }
 */
 
         return view;

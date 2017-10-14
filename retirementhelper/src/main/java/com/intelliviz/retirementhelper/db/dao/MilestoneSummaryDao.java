@@ -18,7 +18,7 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface MilestoneSummaryDao {
     @Insert(onConflict = REPLACE)
-    long insert(MilestoneSummaryEntity govPension);
+    long insert(MilestoneSummaryEntity milestoneSummaryEntity);
 
     @Query("SELECT * FROM " + MilestoneSummaryEntity.TABLE_NAME + " WHERE id = :id")
     MilestoneSummaryEntity get(long id);
@@ -27,8 +27,11 @@ public interface MilestoneSummaryDao {
     List<MilestoneSummaryEntity> getAll();
 
     @Update(onConflict = REPLACE)
-    void update(MilestoneSummaryEntity govPension);
+    void update(MilestoneSummaryEntity milestoneSummaryEntity);
 
     @Delete
-    void delete(MilestoneSummaryEntity govPension);
+    void delete(MilestoneSummaryEntity milestoneSummaryEntity);
+
+    @Query("DELETE FROM " + MilestoneSummaryEntity.TABLE_NAME)
+    void deleteAll();
 }

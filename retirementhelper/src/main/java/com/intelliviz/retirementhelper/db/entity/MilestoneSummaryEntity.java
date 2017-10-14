@@ -44,6 +44,18 @@ public class MilestoneSummaryEntity {
 
     private int months;
 
+    public MilestoneSummaryEntity(int id, String monthlyBenefit, String startAge, String endAge, String minAge, String startBalance, String endBalance, String penalty, int months) {
+        this.id = id;
+        this.monthlyBenefit = monthlyBenefit;
+        this.startAge = startAge;
+        this.endAge = endAge;
+        this.minAge = minAge;
+        this.startBalance = startBalance;
+        this.endBalance = endBalance;
+        this.penalty = penalty;
+        this.months = months;
+    }
+
     public int getId() {
         return id;
     }

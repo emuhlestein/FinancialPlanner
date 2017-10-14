@@ -9,6 +9,7 @@ import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
+import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 
 import java.util.ArrayList;
@@ -158,5 +159,13 @@ public class DataBaseUtils {
         }
 
         return sumMilestones;
+    }
+
+    static void updateSummaryData(AppDatabase db) {
+        db.summaryDao().deleteAll();
+        List<MilestoneData> milestones = getAllMilestones(db);
+        for(MilestoneData msd : milestones) {
+            db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
+        }
     }
 }

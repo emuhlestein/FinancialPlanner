@@ -207,7 +207,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
 
     private void onHandleIncomeMenuSourceAction(Intent resultIntent) {
         int action = resultIntent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
-        if(mSelectedIncome.getId() < 0) {
+        if(mSelectedIncome.getId() == 0) {
             mSelectedIncome = null;
             return;
         }

@@ -1,6 +1,9 @@
 package com.intelliviz.retirementhelper.util;
 
 import android.app.Activity;
+import android.app.Application;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
@@ -12,6 +15,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.db.AppDatabase;
+import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -300,5 +305,14 @@ public class SystemUtils {
         sb.append(month);
         sb.append("m");
         return sb.toString();
+    }
+
+    public static void updateAppWidget(Application application) {
+        AppDatabase db = AppDatabase.getInstance(application);
+        DataBaseUtils.updateSummaryData(db);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(application);
+        ComponentName appWidget = new ComponentName(application, WidgetProvider.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
     }
 }

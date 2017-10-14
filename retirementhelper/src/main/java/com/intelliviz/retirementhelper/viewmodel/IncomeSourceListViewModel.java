@@ -13,10 +13,12 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
+import com.intelliviz.retirementhelper.db.entity.MilestoneSummaryEntity;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
+import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
@@ -67,29 +69,15 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         new UpdateAppWidgetAsyncTask().execute();
     }
 
+    public void updateMilestones() {
+        new UpdateSummaryMilestonesAsyncTask().execute();
+    }
+
     private class GetAllIncomeSourcesAsyncTask extends AsyncTask<Void, List<IncomeSourceEntityBase>, List<IncomeSourceEntityBase>> {
 
         @Override
         protected List<IncomeSourceEntityBase> doInBackground(Void... params) {
-            List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
-            List<TaxDeferredIncomeEntity> tdieList = mDB.taxDeferredIncomeDao().get();
-            for(TaxDeferredIncomeEntity tdie : tdieList) {
-                incomeSourceList.add(tdie);
-            }
-            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
-            for(GovPensionEntity gpie : gpeList) {
-                incomeSourceList.add(gpie);
-            }
-            List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
-            for(PensionIncomeEntity pie : pieList) {
-                incomeSourceList.add(pie);
-            }
-            List<SavingsIncomeEntity> sieList = mDB.savingsIncomeDao().get();
-            for(SavingsIncomeEntity sie : sieList) {
-                incomeSourceList.add(sie);
-            }
-
-            return incomeSourceList;
+            return getAllIncomeSources();
         }
 
         @Override
@@ -98,43 +86,63 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         }
     }
 
-    private class DeleteGovPensionAsyncTask extends AsyncTask<GovPensionEntity, Void, Void> {
+    private class DeleteGovPensionAsyncTask extends AsyncTask<GovPensionEntity, Void, List<IncomeSourceEntityBase>> {
 
         @Override
-        protected Void doInBackground(GovPensionEntity... params) {
+        protected List<IncomeSourceEntityBase> doInBackground(GovPensionEntity... params) {
             mDB.govPensionDao().delete(params[0]);
-            SystemUtils.updateAppWidget(getApplication());
-            return null;
+            updateAppWidgetSummaryData();
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
-    private class DeletePensionAsyncTask extends AsyncTask<PensionIncomeEntity, Void, Void> {
+    private class DeletePensionAsyncTask extends AsyncTask<PensionIncomeEntity, Void, List<IncomeSourceEntityBase>> {
 
         @Override
-        protected Void doInBackground(PensionIncomeEntity... params) {
+        protected List<IncomeSourceEntityBase> doInBackground(PensionIncomeEntity... params) {
             mDB.pensionIncomeDao().delete(params[0]);
-            SystemUtils.updateAppWidget(getApplication());
-            return null;
+            updateAppWidgetSummaryData();
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
-    private class DeleteSavingsAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, Void> {
+    private class DeleteSavingsAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeSourceEntityBase>> {
 
         @Override
-        protected Void doInBackground(SavingsIncomeEntity... params) {
+        protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
             mDB.savingsIncomeDao().delete(params[0]);
-            SystemUtils.updateAppWidget(getApplication());
-            return null;
+            updateAppWidgetSummaryData();
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
-    private class DeleteTaxDeferredAsyncTask extends AsyncTask<TaxDeferredIncomeEntity, Void, Void> {
+    private class DeleteTaxDeferredAsyncTask extends AsyncTask<TaxDeferredIncomeEntity, Void, List<IncomeSourceEntityBase>> {
 
         @Override
-        protected Void doInBackground(TaxDeferredIncomeEntity... params) {
+        protected List<IncomeSourceEntityBase> doInBackground(TaxDeferredIncomeEntity... params) {
             mDB.taxDeferredIncomeDao().delete(params[0]);
-            SystemUtils.updateAppWidget(getApplication());
-            return null;
+            updateAppWidgetSummaryData();
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
@@ -143,6 +151,20 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         protected Void doInBackground(Void... params) {
             updateAppWidgetSummaryData();
             return null;
+        }
+    }
+
+    private class UpdateSummaryMilestonesAsyncTask extends AsyncTask<Void, Void, List<IncomeSourceEntityBase>> {
+
+        @Override
+        protected List<IncomeSourceEntityBase> doInBackground(Void... params) {
+            updateMilestoneSummary();
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
@@ -162,4 +184,48 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
             db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
         }
     }
+
+
+    private void updateMilestoneSummary() {
+
+        mDB.milestoneSummaryDao().deleteAll();
+
+        List<MilestoneData> milestoneDataList = DataBaseUtils.getAllMilestones(mDB);
+
+        for (MilestoneData milestoneData : milestoneDataList) {
+            String monthlyBenefit = Double.toString(milestoneData.getMonthlyBenefit());
+            String startAge = milestoneData.getStartAge().getUnformattedString();
+            String endAge = milestoneData.getEndAge().getUnformattedString();
+            String minAge = milestoneData.getMinimumAge().getUnformattedString();
+            String startBalance = Double.toString(milestoneData.getStartBalance());
+            String endBalance = Double.toString(milestoneData.getEndBalance());
+            String penaltyAmount = Double.toString(milestoneData.getPenaltyAmount());
+            int numMonths = milestoneData.getMonthsFundsFillLast();
+            MilestoneSummaryEntity ent = new MilestoneSummaryEntity(0, monthlyBenefit, startAge, endAge, minAge, startBalance, endBalance, penaltyAmount, numMonths);
+            mDB.milestoneSummaryDao().insert(ent);
+        }
+    }
+
+    private List<IncomeSourceEntityBase> getAllIncomeSources() {
+        List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
+        List<TaxDeferredIncomeEntity> tdieList = mDB.taxDeferredIncomeDao().get();
+        for(TaxDeferredIncomeEntity tdie : tdieList) {
+            incomeSourceList.add(tdie);
+        }
+        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        for(GovPensionEntity gpie : gpeList) {
+            incomeSourceList.add(gpie);
+        }
+        List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
+        for(PensionIncomeEntity pie : pieList) {
+            incomeSourceList.add(pie);
+        }
+        List<SavingsIncomeEntity> sieList = mDB.savingsIncomeDao().get();
+        for(SavingsIncomeEntity sie : sieList) {
+            incomeSourceList.add(sie);
+        }
+
+        return incomeSourceList;
+    }
+
 }
