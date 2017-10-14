@@ -40,7 +40,6 @@ import butterknife.ButterKnife;
 import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
@@ -63,7 +62,6 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     private static final String DIALOG_YESNO = "DialogYesNo";
     private IncomeSourceEntityBase mSelectedIncome;
     private int mIncomeAction;
-    private int mIncomeSourceType;
     private List<IncomeSourceEntityBase> mIncomeSources = new ArrayList<>();
     private IncomeSourceListViewModel mViewModel;
 
@@ -209,9 +207,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
 
     private void onHandleIncomeMenuSourceAction(Intent resultIntent) {
         int action = resultIntent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
-        int incomeSourceType = resultIntent.getIntExtra(EXTRA_INCOME_SOURCE_TYPE, INCOME_TYPE_SAVINGS);
-        long incomeSourceId = resultIntent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
-        if(incomeSourceId < 0) {
+        if(mSelectedIncome.getId() < 0) {
             mSelectedIncome = null;
             return;
         }
@@ -224,8 +220,6 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
             dialog.show(fm, DIALOG_YESNO);
             return;
         }
-
-        mIncomeSourceType = incomeSourceType;
 
         switch(mSelectedIncome.getType()) {
             case INCOME_TYPE_SAVINGS:
