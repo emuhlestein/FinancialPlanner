@@ -21,12 +21,6 @@ public class RetirementConstants {
     public static final int INCOME_ACTION_UPDATE = 4;
     public static final int INCOME_ACTION_GET = 5;
 
-    public static final String EXTRA_DB_ACTION = "service action";
-    public static final int SERVICE_DB_QUERY = 1;
-    public static final int SERVICE_DB_UPDATE = 2;
-    public static final int SERVICE_DB_DELETE = 3;
-    public static final int SERVICE_DB_GET_MILESTONES = 4;
-
 
     public static final String DATE_FORMAT = "dd-MM-yyyy";
 
@@ -57,27 +51,4 @@ public class RetirementConstants {
     public static final int REQUEST_BIRTHDATE = 8;
     public static final int REQUEST_ADD_AGE = 9;
     public static final int REQUEST_ACTION_MENU = 10;
-
-    public static final String LOCAL_SAVINGS = "savingsDataBroadcast";
-    public static final String LOCAL_SAVINGS_RESULT = "savingsDataBroadcastResult";
-    public static final String LOCAL_TAX_DEFERRED = "viewTaxDeferredBroadcast";
-    public static final String LOCAL_TAX_DEFERRED_RESULT = "viewTaxDeferredBroadcastResult";
-    public static final String LOCAL_PENSION = "pensionBroadcast";
-    public static final String LOCAL_PENSION_RESULT = "pensionBroadcastResult";
-    public static final String LOCAL_GOV_PENSION = "govPensionBroadcast";
-    public static final String LOCAL_GOV_PENSION_RESULT = "govPensionBroadcast";
-    public static final String LOCAL_RETIRE_OPTIONS = "retireOptionsBroadcast";
-    public static final String LOCAL_MILESTONE_AGE = "milestoneAgeBroadcast";
-
-    public static final String EXTRA_DB_DATA = "db data";
-    public static final String EXTRA_DB_EXTRA_DATA = "db extra data";
-    public static final String EXTRA_DB_ROWS_UPDATED = "rows updated";
-    public static final String EXTRA_DB_ID = "db id";
-    public static final String EXTRA_DB_MILESTONES = "milestones";
-    public static final String EXTRA_DB_RESULT = "result";
-    public static final String EXTRA_DB_RESULT_TYPE = "result type";
-
-    public static final String EXTRA_DB_RESULT_TYPE_NUM_ROWS = "result type num ows";
-    public static final String EXTRA_DB_RESULT_TYPE_ID = "result id";
-
 }

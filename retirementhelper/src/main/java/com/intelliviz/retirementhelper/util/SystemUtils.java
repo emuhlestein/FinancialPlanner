@@ -1,9 +1,6 @@
 package com.intelliviz.retirementhelper.util;
 
 import android.app.Activity;
-import android.app.Application;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
@@ -15,8 +12,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -55,7 +50,7 @@ public class SystemUtils {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
     }
-
+/*
     public static void updateAppWidget(Application application) {
         AppDatabase db = AppDatabase.getInstance(application);
         DataBaseUtils.updateSummaryData(db);
@@ -64,6 +59,7 @@ public class SystemUtils {
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
     }
+    */
 
     public static boolean validateBirthday(String birthdate) {
         if(birthdate == null || birthdate.isEmpty()) {
@@ -124,7 +120,7 @@ public class SystemUtils {
 
     public static String getTodaysDate() {
         Date date = Calendar.getInstance().getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat(RetirementConstants.DATE_FORMAT, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         return sdf.format(date);
     }
 
@@ -233,15 +229,15 @@ public class SystemUtils {
         int month = 0;
         if(tokens.length == 1) {
             try {
-                year = Integer.parseInt(tokens[0]);
+                year = parseInt(tokens[0]);
             } catch (NumberFormatException e) {
                 return null;
             }
             return new AgeData(year, month);
         } else if(tokens.length == 2) {
             try {
-                year = Integer.parseInt(tokens[0]);
-                month = Integer.parseInt(tokens[1]);
+                year = parseInt(tokens[0]);
+                month = parseInt(tokens[1]);
             } catch (NumberFormatException e) {
                 return null;
             }
