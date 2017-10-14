@@ -145,6 +145,11 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(IncomeSourceListViewModel.class);
@@ -209,6 +214,11 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         long incomeSourceId = resultIntent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         if(incomeSourceId < 0) {
             mSelectedIncome = null;
+            return;
+        }
+
+        if(action == INCOME_ACTION_DELETE) {
+            mViewModel.delete(mSelectedIncome);
             return;
         }
 
