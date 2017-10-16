@@ -57,7 +57,7 @@ public class PensionIncomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_edit_pension_income);
+        setContentView(R.layout.activity_edit_pension_income);
 
         ButterKnife.bind(this);
 

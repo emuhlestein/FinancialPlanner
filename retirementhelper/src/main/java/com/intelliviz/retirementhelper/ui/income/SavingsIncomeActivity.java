@@ -61,7 +61,7 @@ public class SavingsIncomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_edit_savings_income);
+        setContentView(R.layout.activity_edit_savings_income);
 
         ButterKnife.bind(this);
 

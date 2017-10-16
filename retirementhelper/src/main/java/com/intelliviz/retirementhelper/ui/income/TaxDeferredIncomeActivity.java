@@ -65,7 +65,7 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_edit_tax_deferred_income);
+        setContentView(R.layout.activity_edit_tax_deferred_income);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
