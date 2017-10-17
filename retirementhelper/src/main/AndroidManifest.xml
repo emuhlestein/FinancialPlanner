@@ -43,12 +43,12 @@
         <activity
             android:name=".ui.ListMenuActivity"
             android:theme="@style/RetireDialog" />
-
         <activity android:name=".ui.BirthdateActivity" />
         <activity android:name=".ui.income.TaxDeferredIncomeActivity" />
         <activity android:name=".ui.income.SavingsIncomeActivity" />
         <activity android:name=".ui.income.GovPensionIncomeActivity" />
-        <activity android:name=".ui.income.PensionIncomeActivity"></activity>
+        <activity android:name=".ui.income.PensionIncomeActivity" />
+        <activity android:name=".ui.income.IncomeViewDetailsActivity"></activity>
     </application>
 
 </manifest>

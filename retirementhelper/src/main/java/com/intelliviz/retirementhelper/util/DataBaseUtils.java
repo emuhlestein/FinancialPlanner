@@ -2,6 +2,7 @@ package com.intelliviz.retirementhelper.util;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
@@ -35,7 +36,13 @@ public class DataBaseUtils {
         List<IncomeSourceEntityBase> allEntities = new ArrayList<>();
         List<GovPensionEntity> govEntities = mDB.govPensionDao().get();
         if(!govEntities.isEmpty()) {
-            allEntities.addAll(govEntities);
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            String birthdate = roe.getBirthdate();
+            for(GovPensionEntity gpe : govEntities) {
+                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, Double.parseDouble(gpe.getFullMonthlyBenefit()));
+                gpe.setRules(ssr);
+                allEntities.add(gpe);
+            }
         }
         List<PensionIncomeEntity> pensionEntities = mDB.pensionIncomeDao().get();
         if(!pensionEntities.isEmpty()) {

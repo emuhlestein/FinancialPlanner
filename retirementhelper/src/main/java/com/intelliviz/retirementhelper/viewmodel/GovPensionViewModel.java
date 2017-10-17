@@ -10,8 +10,10 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
+import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class GovPensionViewModel extends AndroidViewModel {
 
     public GovPensionViewModel(Application application, long incomeId) {
         super(application);
-        mDB = AppDatabase.getInstance(application); //GovPensionDatabase.getInstance(application);
+        mDB = AppDatabase.getInstance(application);
         new GetAsyncTask().execute(incomeId);
     }
 
@@ -71,7 +73,12 @@ public class GovPensionViewModel extends AndroidViewModel {
 
         @Override
         protected GovPensionEntity doInBackground(Long... params) {
-            return mDB.govPensionDao().get(params[0]);
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            String birthdate = roe.getBirthdate();
+            GovPensionEntity gpe = mDB.govPensionDao().get(params[0]);
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, Double.parseDouble(gpe.getFullMonthlyBenefit()));
+            gpe.setRules(ssr);
+            return gpe;
         }
 
         @Override

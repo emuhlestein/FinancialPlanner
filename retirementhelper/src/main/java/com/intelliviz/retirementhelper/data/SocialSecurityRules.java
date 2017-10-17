@@ -1,42 +1,41 @@
 package com.intelliviz.retirementhelper.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 /**
  * Created by edm on 8/14/2017.
  */
 
-public class SocialSecurityRules implements IncomeTypeRules, Parcelable {
+public class SocialSecurityRules implements IncomeTypeRules {
     private static final double MAX_SS_PENALTY = 30.0;
     private int mBirthYear;
     private AgeData mMinAge;
-    private AgeData mMaxAge;
-    private double mFullRetirementBenefit;
+    private double mFullMonthlyBenefit;
 
-    public SocialSecurityRules(String birthDate, AgeData minAge, AgeData maxAge, double fullRetirementBenefit) {
+    public SocialSecurityRules(String birthDate, double fullRetirementBenefit) {
         mBirthYear = SystemUtils.getBirthYear(birthDate);
-        mMinAge = minAge;
-        mMaxAge = maxAge;
-        mFullRetirementBenefit = fullRetirementBenefit;
+        mMinAge = new AgeData(62, 0);
+        mFullMonthlyBenefit = fullRetirementBenefit;
     }
 
     @Override
     public double getMonthlyBenefitForAge(AgeData startAge) {
+        if(startAge.isBefore(mMinAge)) {
+            return 0;
+        }
+
         AgeData retireAge = getFullRetirementAge(mBirthYear);
         AgeData diffAge = retireAge.subtract(startAge);
         int numMonths = diffAge.getNumberOfMonths();
         if(numMonths > 0) {
             double adjustment = getSocialSecurityAdjustment(mBirthYear, startAge);
-            return (1.0 - adjustment) * mFullRetirementBenefit;
+            return (1.0 - adjustment) * mFullMonthlyBenefit;
         } else if(numMonths < 0) {
-            double adjustment = getSocialSecurityAdjustment(mBirthYear, startAge);
+            double adjustment = -getSocialSecurityAdjustment(mBirthYear, startAge);
             adjustment += 1.0;
-            return mFullRetirementBenefit * adjustment;
+            return mFullMonthlyBenefit * adjustment;
         } else {
-            return mFullRetirementBenefit;
+            return mFullMonthlyBenefit;
         }
     }
 
@@ -47,17 +46,12 @@ public class SocialSecurityRules implements IncomeTypeRules, Parcelable {
 
     @Override
     public double getFullMonthlyBenefit() {
-        return mFullRetirementBenefit;
+        return mFullMonthlyBenefit;
     }
 
     @Override
     public AgeData getMinimumAge() {
         return mMinAge;
-    }
-
-    @Override
-    public AgeData getMaximumAge() {
-        return mMaxAge;
     }
 
     private AgeData getFullRetirementAge(int birthYear) {
@@ -130,58 +124,24 @@ public class SocialSecurityRules implements IncomeTypeRules, Parcelable {
         int numMonths = diffAge.getNumberOfMonths();
         if(numMonths > 0) {
             // this is early retirement; the adjustment will be a penalty.
+            double penalty = 0;
             if(numMonths < 37) {
-                return (numMonths * 5.0) / 9.0;
+                penalty = ((numMonths * 5.0) / 9.0)/100;
+                return penalty;
             } else {
-                double penalty = (numMonths * 5.0) / 12.0;
+                penalty = ((36 * 5.0) / 9.0)/100;
+                penalty += (((numMonths-36) * 5.0) / 12.0)/100;
                 if(penalty > MAX_SS_PENALTY) {
                     penalty = MAX_SS_PENALTY;
                 }
-                return penalty / 100;
+                return penalty;
             }
         } else if(numMonths < 0) {
             // this is delayed retirement; the adjustment is a credit.
             double annualCredit = getDelayedCredit(birthYear);
-            return numMonths * (annualCredit / 12.0);
+            return (numMonths * (annualCredit / 12.0))/100;
         } else {
             return 0; // exact retirement age
         }
     }
-
-    private SocialSecurityRules(Parcel in) {
-        readFromParcel(in);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mBirthYear);
-        dest.writeDouble(mFullRetirementBenefit);
-        dest.writeParcelable(mMinAge, flags);
-        dest.writeParcelable(mMaxAge, flags);
-    }
-
-    private void readFromParcel(Parcel in) {
-        mBirthYear = in.readInt();
-        mFullRetirementBenefit = in.readDouble();
-        mMinAge = in.readParcelable(AgeData.class.getClassLoader());
-        mMaxAge = in.readParcelable(AgeData.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<SocialSecurityRules> CREATOR = new Parcelable.Creator<SocialSecurityRules>()
-    {
-        @Override
-        public SocialSecurityRules createFromParcel(Parcel in) {
-            return new SocialSecurityRules(in);
-        }
-
-        @Override
-        public SocialSecurityRules[] newArray(int size) {
-            return new SocialSecurityRules[size];
-        }
-    };
 }

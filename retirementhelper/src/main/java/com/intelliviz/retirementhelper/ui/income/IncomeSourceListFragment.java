@@ -178,11 +178,17 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
 
     @Override
     public void onSelectIncomeSource(IncomeSourceEntityBase incomeSource, boolean showMenu) {
+        mSelectedIncome = incomeSource;
         if(showMenu) {
             // show edit/delete menu
-            mSelectedIncome = incomeSource;
             Intent intent = new Intent(getContext(), IncomeSourceListMenuFragment.class);
             startActivityForResult(intent, REQUEST_INCOME_MENU);
+        } else {
+            if(incomeSource.getType() == INCOME_TYPE_GOV_PENSION) {
+                Intent intent = new Intent(getContext(), IncomeViewDetailsActivity.class);
+                intent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedIncome.getId());
+                startActivity(intent);
+            }
         }
     }
 

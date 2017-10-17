@@ -9,5 +9,4 @@ public interface IncomeTypeRules {
     double getFullMonthlyBenefit();
     AgeData getFullRetirementAge();
     AgeData getMinimumAge();
-    AgeData getMaximumAge();
 }

@@ -16,34 +16,27 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.List;
 
 /**
- * Milestone summary adapter.
- * Created by Ed Muhlestein on 5/29/2017.
+ * Created by edm on 10/16/2017.
  */
 
-public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilestoneAdapter.MilestoneHolder> {
-    private SelectionMilestoneListener mListener;
+public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDetailsAdapter.IncomeViewDetailsHolder>{
     private List<MilestoneData> mMilestones;
     private Context mContext;
 
-    public interface SelectionMilestoneListener {
-        void onSelectMilestone(MilestoneData milestone);
-    }
-
-    public SummaryMilestoneAdapter(Context context, List<MilestoneData> milestones) {
+    public IncomeViewDetailsAdapter(Context context, List<MilestoneData> milestones) {
         mContext = context;
         mMilestones = milestones;
     }
 
     @Override
-    public MilestoneHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
+    public IncomeViewDetailsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.milestone_item_layout, parent, false);
-        return new MilestoneHolder(view);
+        return new IncomeViewDetailsHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MilestoneHolder holder, int position) {
+    public void onBindViewHolder(IncomeViewDetailsHolder holder, int position) {
         MilestoneData milestone = mMilestones.get(position);
         holder.bindMilestone(milestone);
     }
@@ -65,22 +58,15 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
         }
     }
 
-    /**
-     * Set the listerner for milestones selection.
-     * @param listener THe listener.
-     */
-    public void setOnSelectionMilestoneListener (SelectionMilestoneListener listener) {
-        mListener = listener;
-    }
-
-    class MilestoneHolder extends RecyclerView.ViewHolder
+    class IncomeViewDetailsHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
+
         private TextView mMilestoneTextView;
         private TextView mMonthlyAmountTextView;
         private LinearLayout mLinearLayout;
         private MilestoneData mMilestone;
 
-        private MilestoneHolder(View itemView) {
+        public IncomeViewDetailsHolder(View itemView) {
             super(itemView);
             mLinearLayout = itemView.findViewById(R.id.milestone_item_layout);
             mMilestoneTextView = itemView.findViewById(R.id.milestone_text_view);
@@ -134,9 +120,7 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
 
         @Override
         public void onClick(View v) {
-            if(mListener != null) {
-                mListener.onSelectMilestone(mMilestone);
-            }
+
         }
     }
 }
