@@ -8,7 +8,6 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,32 +69,15 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
             return milestones;
         }
 
-        int birthYear = SystemUtils.getBirthYear(rod.getBirthdate());
-        double monthlyBenefit = Double.parseDouble(fullMonthlyBenefit);
-
-        AgeData minimumAge;
-
         MilestoneData milestone;
         for(MilestoneAgeEntity msad : ages) {
             AgeData age = msad.getAge();
             if(mRules != null) {
-                minimumAge = mRules.getMinimumAge();
-                monthlyBenefit = mRules.getMonthlyBenefitForAge(age);
+                AgeData minimumAge = mRules.getMinimumAge();
+                double monthlyBenefit = mRules.getMonthlyBenefitForAge(age);
                 milestone = new MilestoneData(age, null, minimumAge, monthlyBenefit, 0, 0, 0, 0);
                 milestones.add(milestone);
-            /*
-            if(age.isBefore(minimumAge)) {
-                milestone = new MilestoneData(age, null, minimumAge, 0, 0, 0, 0, 0);
-            } else {
-                double factor = getSocialSecurityAdjustment(birthDate, age);
-
-                double factorAmount = (monthlyBenefit * factor) / 100.0;
-                double adjustedBenefit = monthlyBenefit - factorAmount;
-                milestone = new MilestoneData(age, null, minimumAge, adjustedBenefit, 0, 0, 0, 0);
             }
-            */
-            }
-            //milestones.add(milestone);
         }
         return milestones;
     }
