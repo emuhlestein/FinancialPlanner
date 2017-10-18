@@ -10,11 +10,13 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private static final double MAX_SS_PENALTY = 30.0;
     private int mBirthYear;
     private AgeData mMinAge;
+    private AgeData mMaxAge;
     private double mFullMonthlyBenefit;
 
     public SocialSecurityRules(String birthDate, double fullRetirementBenefit) {
         mBirthYear = SystemUtils.getBirthYear(birthDate);
         mMinAge = new AgeData(62, 0);
+        mMaxAge = new AgeData(70, 0);
         mFullMonthlyBenefit = fullRetirementBenefit;
     }
 
@@ -22,6 +24,10 @@ public class SocialSecurityRules implements IncomeTypeRules {
     public double getMonthlyBenefitForAge(AgeData startAge) {
         if(startAge.isBefore(mMinAge)) {
             return 0;
+        }
+
+        if(mMaxAge.isBefore(startAge)) {
+            startAge = mMaxAge;
         }
 
         AgeData retireAge = getFullRetirementAge(mBirthYear);
