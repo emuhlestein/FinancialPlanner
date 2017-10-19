@@ -68,7 +68,7 @@ public class GovPensionDetailsViewModel extends AndroidViewModel {
             SocialSecurityRules ssr = new SocialSecurityRules(birthdate, Double.parseDouble(entity.getFullMonthlyBenefit()));
             entity.setRules(ssr);
 
-            List<IncomeSourceEntityBase> list = new ArrayList<IncomeSourceEntityBase>();
+            List<IncomeSourceEntityBase> list = new ArrayList<>();
             list.add(entity);
             List<MilestoneData> milestones = DataBaseUtils.getAllMilestones(list, ages, rod);
             return milestones;

@@ -6,7 +6,6 @@ package com.intelliviz.retirementhelper.data;
 
 public interface IncomeTypeRules {
     double getMonthlyBenefitForAge(AgeData age);
-    double getFullMonthlyBenefit();
     AgeData getFullRetirementAge();
     AgeData getMinimumAge();
 }

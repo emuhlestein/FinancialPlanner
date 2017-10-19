@@ -9,8 +9,10 @@ import android.content.ComponentName;
 import android.os.AsyncTask;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
@@ -211,12 +213,18 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
     private List<IncomeSourceEntityBase> getAllIncomeSources() {
         List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
         List<TaxDeferredIncomeEntity> tdieList = mDB.taxDeferredIncomeDao().get();
+        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+        AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
         for(TaxDeferredIncomeEntity tdie : tdieList) {
+            TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(roe.getBirthdate(), endAge, Double.parseDouble(tdie.getBalance()),
+                    Double.parseDouble(tdie.getInterest()), Double.parseDouble(tdie.getMonthlyIncrease()), roe.getWithdrawMode(),
+                    Double.parseDouble(roe.getWithdrawAmount()));
+            tdie.setRules(tdir);
             incomeSourceList.add(tdie);
         }
         List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
         for(GovPensionEntity gpie : gpeList) {
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+
             String birthdate = roe.getBirthdate();
             SocialSecurityRules ssr = new SocialSecurityRules(birthdate, Double.parseDouble(gpie.getFullMonthlyBenefit()));
             gpie.setRules(ssr);

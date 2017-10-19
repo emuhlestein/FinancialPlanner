@@ -51,11 +51,6 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     @Override
-    public double getFullMonthlyBenefit() {
-        return mFullMonthlyBenefit;
-    }
-
-    @Override
     public AgeData getMinimumAge() {
         return mMinAge;
     }

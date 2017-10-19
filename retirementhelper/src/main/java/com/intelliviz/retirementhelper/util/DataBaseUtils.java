@@ -3,6 +3,7 @@ package com.intelliviz.retirementhelper.util;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
+import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
@@ -35,8 +36,8 @@ public class DataBaseUtils {
     public static List<IncomeSourceEntityBase> getAllIncomeEntities(AppDatabase mDB) {
         List<IncomeSourceEntityBase> allEntities = new ArrayList<>();
         List<GovPensionEntity> govEntities = mDB.govPensionDao().get();
+        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
         if(!govEntities.isEmpty()) {
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
             String birthdate = roe.getBirthdate();
             for(GovPensionEntity gpe : govEntities) {
                 SocialSecurityRules ssr = new SocialSecurityRules(birthdate, Double.parseDouble(gpe.getFullMonthlyBenefit()));
@@ -54,7 +55,15 @@ public class DataBaseUtils {
         }
         List<TaxDeferredIncomeEntity> taxDefEntities = mDB.taxDeferredIncomeDao().get();
         if(!taxDefEntities.isEmpty()) {
-            allEntities.addAll(taxDefEntities);
+            String birthdate = roe.getBirthdate();
+            AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
+            for(TaxDeferredIncomeEntity tde : taxDefEntities) {
+                TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(birthdate, endAge, Double.parseDouble(tde.getBalance()),
+                        Double.parseDouble(tde.getInterest()), Double.parseDouble(tde.getMonthlyIncrease()), roe.getWithdrawMode(),
+                        Double.parseDouble(roe.getWithdrawAmount()));
+                tde.setRules(tdir);
+                allEntities.add(tde);
+            }
         }
         return allEntities;
     }
