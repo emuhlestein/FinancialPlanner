@@ -121,9 +121,7 @@ public class TaxDeferredIncomeEntity extends IncomeSourceEntityBase {
         for(MilestoneAgeEntity msad : ages) {
             AgeData age = msad.getAge();
             if(mRules != null) {
-                AgeData minimumAge = mRules.getMinimumAge();
-                double monthlyBenefit = mRules.getMonthlyBenefitForAge(age);
-                milestone = new MilestoneData(age, null, minimumAge, monthlyBenefit, 0, 0, 0, 0);
+                milestone = mRules.getMilestone(age);
                 milestones.add(milestone);
             }
         }

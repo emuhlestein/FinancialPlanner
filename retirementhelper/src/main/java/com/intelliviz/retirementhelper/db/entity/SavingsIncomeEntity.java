@@ -2,17 +2,18 @@ package com.intelliviz.retirementhelper.db.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.data.SavingsIncomeRules;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity.TABLE_NAME;
-import static java.lang.Double.parseDouble;
 
 /**
  * Created by edm on 10/2/2017.
@@ -28,6 +29,9 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     private String monthlyIncrease;
 
     private String balance;
+
+    @Ignore
+    private SavingsIncomeRules mRules;
 
     public SavingsIncomeEntity(long id, int type, String name, String interest, String monthlyIncrease, String balance) {
         super(id, type, name);
@@ -60,24 +64,29 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         this.balance = balance;
     }
 
+    public void setRules(IncomeTypeRules rules) {
+        if(rules instanceof SavingsIncomeRules) {
+            mRules = (SavingsIncomeRules)rules;
+        } else {
+            mRules = null;
+        }
+    }
+
     @Override
     public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsEntity rod) {
-        String endAge = rod.getEndAge();
-        double withdrawAmount = parseDouble(rod.getWithdrawAmount());
         List<MilestoneData> milestones = new ArrayList<>();
         if(ages.isEmpty()) {
             return milestones;
         }
 
-        AgeData endOfLifeAge = SystemUtils.parseAgeString(endAge);
-
-        double dbalance = Double.parseDouble(balance);
-        double dinterest = Double.parseDouble(interest);
-        double dmonthlyIncrease = Double.parseDouble(monthlyIncrease);
-
-        List<Double> milestoneBalances = getMilestoneBalances(ages, dbalance, dinterest, dmonthlyIncrease);
-
-        milestones = getMilestones(endOfLifeAge, null, dinterest, 0, rod.getWithdrawMode(), withdrawAmount, ages, milestoneBalances);
+        MilestoneData milestone;
+        for(MilestoneAgeEntity msad : ages) {
+            AgeData age = msad.getAge();
+            if(mRules != null) {
+                milestone = mRules.getMilestone(age);
+                milestones.add(milestone);
+            }
+        }
         return milestones;
     }
 

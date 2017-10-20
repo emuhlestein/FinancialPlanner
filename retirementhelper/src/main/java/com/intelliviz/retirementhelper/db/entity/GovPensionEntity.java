@@ -73,9 +73,7 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         for(MilestoneAgeEntity msad : ages) {
             AgeData age = msad.getAge();
             if(mRules != null) {
-                AgeData minimumAge = mRules.getMinimumAge();
-                double monthlyBenefit = mRules.getMonthlyBenefitForAge(age);
-                milestone = new MilestoneData(age, null, minimumAge, monthlyBenefit, 0, 0, 0, 0);
+                milestone = mRules.getMilestone(age);
                 milestones.add(milestone);
             }
         }
@@ -84,11 +82,6 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
     @Override
     public List<AgeData> getAges() {
-        List<AgeData> ages = new ArrayList<>();
-        if(mRules != null) {
-            ages.add(mRules.getFullRetirementAge());
-            ages.add(mRules.getMinimumAge());
-        }
-        return ages;
+        return mRules.getAges();
     }
 }

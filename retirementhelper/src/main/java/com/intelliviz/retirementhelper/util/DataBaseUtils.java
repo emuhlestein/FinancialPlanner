@@ -2,6 +2,8 @@ package com.intelliviz.retirementhelper.util;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.PensionRules;
+import com.intelliviz.retirementhelper.data.SavingsIncomeRules;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
@@ -47,11 +49,25 @@ public class DataBaseUtils {
         }
         List<PensionIncomeEntity> pensionEntities = mDB.pensionIncomeDao().get();
         if(!pensionEntities.isEmpty()) {
-            allEntities.addAll(pensionEntities);
+            AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
+            for(PensionIncomeEntity pie : pensionEntities) {
+                AgeData minAge = SystemUtils.parseAgeString(pie.getMinAge());
+                PensionRules pr = new PensionRules(minAge, endAge, Double.parseDouble(pie.getMonthlyBenefit()));
+                pie.setRules(pr);
+                allEntities.add(pie);
+            }
         }
         List<SavingsIncomeEntity> savingsEntities = mDB.savingsIncomeDao().get();
         if(!savingsEntities.isEmpty()) {
-            allEntities.addAll(savingsEntities);
+            String birthdate = roe.getBirthdate();
+            AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
+            for(SavingsIncomeEntity se : savingsEntities) {
+                SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge,  Double.parseDouble(se.getBalance()),
+                        Double.parseDouble(se.getInterest()), Double.parseDouble(se.getMonthlyIncrease()),
+                                roe.getWithdrawMode(), Double.parseDouble(roe.getWithdrawAmount()));
+                se.setRules(sir);
+                allEntities.add(se);
+            }
         }
         List<TaxDeferredIncomeEntity> taxDefEntities = mDB.taxDeferredIncomeDao().get();
         if(!taxDefEntities.isEmpty()) {

@@ -2,6 +2,10 @@ package com.intelliviz.retirementhelper.data;
 
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by edm on 8/14/2017.
  */
@@ -46,13 +50,15 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     @Override
-    public AgeData getFullRetirementAge() {
-        return getFullRetirementAge(mBirthYear);
+    public List<AgeData> getAges() {
+        AgeData retireAge = getFullRetirementAge(mBirthYear);
+        return new ArrayList<>(Arrays.asList(mMinAge, retireAge, mMaxAge));
     }
 
     @Override
-    public AgeData getMinimumAge() {
-        return mMinAge;
+    public MilestoneData getMilestone(AgeData age) {
+        double monthlyBenefit = getMonthlyBenefitForAge(age);
+        return new MilestoneData(age, null, mMinAge, monthlyBenefit, 0, 0, 0, 0);
     }
 
     private AgeData getFullRetirementAge(int birthYear) {

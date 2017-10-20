@@ -2,9 +2,12 @@ package com.intelliviz.retirementhelper.db.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.PensionRules;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
@@ -28,6 +31,9 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
     @ColumnInfo(name = MONTHLY_BENEFIT_FIELD)
     private String monthlyBenefit;
 
+    @Ignore
+    private PensionRules mRules;
+
     public PensionIncomeEntity(long id, int type, String name, String minAge, String monthlyBenefit) {
         super(id, type, name);
         this.minAge = minAge;
@@ -48,6 +54,14 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
 
     public void setMonthlyBenefit(String monthlyBenefit) {
         this.monthlyBenefit = monthlyBenefit;
+    }
+
+    public void setRules(IncomeTypeRules rules) {
+        if(rules instanceof PensionRules) {
+            mRules = (PensionRules)rules;
+        } else {
+            mRules = null;
+        }
     }
 
     @Override
