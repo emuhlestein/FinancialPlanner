@@ -130,8 +130,8 @@ public class AgeData implements Parcelable {
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + mYear;
+        int result = 1;
+        result = 17 * result + mYear;
         result = 31 * result + mMonth;
         return result;
     }

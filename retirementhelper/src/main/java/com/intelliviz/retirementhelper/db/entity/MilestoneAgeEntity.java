@@ -58,17 +58,13 @@ public class MilestoneAgeEntity implements Comparable{
 
         MilestoneAgeEntity milestoneAge = (MilestoneAgeEntity)obj;
 
-        return milestoneAge.id == id && age.equals(milestoneAge.age);
+        return age.equals(milestoneAge.age);
     }
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + (int)id;
-        result = 31 * result + age.hashCode();
-        return result;
+        return age.hashCode();
     }
-
 
     @Override
     public int compareTo(@NonNull Object o) {

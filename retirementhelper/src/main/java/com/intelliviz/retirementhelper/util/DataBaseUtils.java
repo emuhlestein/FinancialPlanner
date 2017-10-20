@@ -92,8 +92,6 @@ public class DataBaseUtils {
         HashSet<MilestoneAgeEntity> ages = new HashSet<>();
         for(MilestoneAgeEntity age : ageEntities) {
             long id = age.getId();
-            //String ageString = age.getAge();
-            //AgeData ageData = SystemUtils.parseAgeString(ageString);
             ages.add(new MilestoneAgeEntity(id, age.getAge()));
         }
 
@@ -110,11 +108,6 @@ public class DataBaseUtils {
             // add birth date
             AgeData nowAge = SystemUtils.getAge(birthdate);
             ages.add(new MilestoneAgeEntity(0, nowAge));
-
-            // add full retirement age
-            //int year = SystemUtils.getBirthYear(birthdate);
-            //AgeData fullRetirementAge = GovPensionHelper.getFullRetirementAge(year);
-            //ages.add(new MilestoneAgeData(-1, fullRetirementAge));
         }
 
         // Need to get this age from deferred tax income source
