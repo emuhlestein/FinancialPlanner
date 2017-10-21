@@ -15,12 +15,14 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private int mBirthYear;
     private AgeData mMinAge;
     private AgeData mMaxAge;
+    private AgeData mEndAge;
     private double mFullMonthlyBenefit;
 
-    public SocialSecurityRules(String birthDate, double fullRetirementBenefit) {
+    public SocialSecurityRules(String birthDate, AgeData endAge, double fullRetirementBenefit) {
         mBirthYear = SystemUtils.getBirthYear(birthDate);
         mMinAge = new AgeData(62, 0);
         mMaxAge = new AgeData(70, 0);
+        mEndAge = endAge;
         mFullMonthlyBenefit = fullRetirementBenefit;
     }
 
@@ -58,7 +60,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     @Override
     public MilestoneData getMilestone(AgeData age) {
         double monthlyBenefit = getMonthlyBenefitForAge(age);
-        return new MilestoneData(age, null, mMinAge, monthlyBenefit, 0, 0, 0, 0);
+        return new MilestoneData(age, mEndAge, mMinAge, monthlyBenefit, 0, 0, 0, 0);
     }
 
     private AgeData getFullRetirementAge(int birthYear) {

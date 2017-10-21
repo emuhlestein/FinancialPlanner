@@ -226,7 +226,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         for(GovPensionEntity gpie : gpeList) {
 
             String birthdate = roe.getBirthdate();
-            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, Double.parseDouble(gpie.getFullMonthlyBenefit()));
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge, Double.parseDouble(gpie.getFullMonthlyBenefit()));
             gpie.setRules(ssr);
             incomeSourceList.add(gpie);
 

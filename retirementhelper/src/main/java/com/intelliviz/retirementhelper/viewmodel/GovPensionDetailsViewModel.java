@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
@@ -16,6 +17,7 @@ import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +67,8 @@ public class GovPensionDetailsViewModel extends AndroidViewModel {
             GovPensionEntity entity = mDB.govPensionDao().get(params[0]);
 
             String birthdate = rod.getBirthdate();
-            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, Double.parseDouble(entity.getFullMonthlyBenefit()));
+            AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge, Double.parseDouble(entity.getFullMonthlyBenefit()));
             entity.setRules(ssr);
 
             List<IncomeSourceEntityBase> list = new ArrayList<>();

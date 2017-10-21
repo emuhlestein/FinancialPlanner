@@ -39,17 +39,17 @@ public class DataBaseUtils {
         List<IncomeSourceEntityBase> allEntities = new ArrayList<>();
         List<GovPensionEntity> govEntities = mDB.govPensionDao().get();
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+        String birthdate = roe.getBirthdate();
+        AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
         if(!govEntities.isEmpty()) {
-            String birthdate = roe.getBirthdate();
             for(GovPensionEntity gpe : govEntities) {
-                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, Double.parseDouble(gpe.getFullMonthlyBenefit()));
+                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge, Double.parseDouble(gpe.getFullMonthlyBenefit()));
                 gpe.setRules(ssr);
                 allEntities.add(gpe);
             }
         }
         List<PensionIncomeEntity> pensionEntities = mDB.pensionIncomeDao().get();
         if(!pensionEntities.isEmpty()) {
-            AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
             for(PensionIncomeEntity pie : pensionEntities) {
                 AgeData minAge = SystemUtils.parseAgeString(pie.getMinAge());
                 PensionRules pr = new PensionRules(minAge, endAge, Double.parseDouble(pie.getMonthlyBenefit()));
@@ -59,8 +59,6 @@ public class DataBaseUtils {
         }
         List<SavingsIncomeEntity> savingsEntities = mDB.savingsIncomeDao().get();
         if(!savingsEntities.isEmpty()) {
-            String birthdate = roe.getBirthdate();
-            AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
             for(SavingsIncomeEntity se : savingsEntities) {
                 SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge,  Double.parseDouble(se.getBalance()),
                         Double.parseDouble(se.getInterest()), Double.parseDouble(se.getMonthlyIncrease()),
@@ -71,8 +69,6 @@ public class DataBaseUtils {
         }
         List<TaxDeferredIncomeEntity> taxDefEntities = mDB.taxDeferredIncomeDao().get();
         if(!taxDefEntities.isEmpty()) {
-            String birthdate = roe.getBirthdate();
-            AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
             for(TaxDeferredIncomeEntity tde : taxDefEntities) {
                 TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(birthdate, endAge, Double.parseDouble(tde.getBalance()),
                         Double.parseDouble(tde.getInterest()), Double.parseDouble(tde.getMonthlyIncrease()), roe.getWithdrawMode(),
