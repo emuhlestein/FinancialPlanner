@@ -79,14 +79,22 @@ public class GovPensionViewModel extends AndroidViewModel {
             String birthdate = roe.getBirthdate();
             AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
             GovPensionEntity gpe = mDB.govPensionDao().get(params[0]);
-            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge, Double.parseDouble(gpe.getFullMonthlyBenefit()));
-            gpe.setRules(ssr);
-            return gpe;
+            if(gpe != null) {
+                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge,
+                        Double.parseDouble(gpe.getFullMonthlyBenefit()),
+                        gpe.getSpouse(), Double.parseDouble(gpe.getSpouseBenefit()), gpe.getSpouseBirhtdate());
+                gpe.setRules(ssr);
+                return gpe;
+            } else {
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(GovPensionEntity gpid) {
-            mGPID.setValue(gpid);
+            if(gpid != null) {
+                mGPID.setValue(gpid);
+            }
         }
     }
 

@@ -10,11 +10,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.GovPensionViewModel;
@@ -36,14 +37,17 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.name_edit_text)
-    EditText mIncomeSourceName;
-
-    @Bind(R.id.min_age_text)
-    EditText mMinAge;
-
     @Bind(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
+
+    @Bind(R.id.spouse_check_box)
+    CheckBox mIncludeSpouse;
+
+    @Bind(R.id.spouse_monthly_benefit_text)
+    EditText mSpouseMonthlyBenefit;
+
+    @Bind(R.id.spouse_birthdate_edit_text)
+    EditText mSpouseBirthdate;
 
     @Bind(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -58,10 +62,24 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_gov_pension_income);
 
-
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
+        mIncludeSpouse.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    mSpouseMonthlyBenefit.setEnabled(true);
+                    mSpouseBirthdate.setEnabled(true);
+                } else {
+                    mSpouseMonthlyBenefit.setEnabled(false);
+                    mSpouseBirthdate.setEnabled(false);
+                }
+            }
+        });
+
+        mSpouseMonthlyBenefit.setEnabled(false);
+        mSpouseBirthdate.setEnabled(false);
 
         Intent intent = getIntent();
         mId = 0;
@@ -102,13 +120,16 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
         if(mGPID == null || mGPID.getId() == 0) {
             return;
         }
-        String name = mGPID.getName();
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getFullMonthlyBenefit());
-        String age = mGPID.getMinAge();
-
-        mIncomeSourceName.setText(name);
-        mMinAge.setText(age);
         mMonthlyBenefit.setText(monthlyBenefit);
+
+        boolean includeSpouse = mGPID.getSpouse() == 1;
+        if(includeSpouse) {
+            String spouseBenefit = SystemUtils.getFormattedCurrency(mGPID.getSpouseBenefit());
+            mSpouseMonthlyBenefit.setText(spouseBenefit);
+            mSpouseBirthdate.setText(mGPID.getSpouseBirhtdate());
+        }
+        mIncludeSpouse.setChecked(includeSpouse);
 
         int type = mGPID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);
@@ -116,25 +137,39 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
     }
 
     private void updateIncomeSourceData() {
-        String name = mIncomeSourceName.getText().toString();
-        String minimumAge = mMinAge.getText().toString();
         String value = mMonthlyBenefit.getText().toString();
         String benefit = getFloatValue(value);
-        if(benefit == null) {
+        if (benefit == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.monthly_benefit_not_valid) + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
 
-        minimumAge = SystemUtils.trimAge(minimumAge);
-        AgeData minAge = SystemUtils.parseAgeString(minimumAge);
-        if(minAge == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
-            snackbar.show();
-            return;
+        int includeSpouse = mIncludeSpouse.isChecked() ? 1 : 0;
+        String spouseBenefit = "0";
+        String spouseBirthdate = "0";
+
+        if (includeSpouse == 1) {
+            value = mSpouseMonthlyBenefit.getText().toString();
+            spouseBenefit = getFloatValue(value);
+            if (benefit == null) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.monthly_benefit_not_valid) + value, Snackbar.LENGTH_LONG);
+                snackbar.show();
+                return;
+            }
+
+            spouseBirthdate = mSpouseBirthdate.getText().toString();
+
+            if (!SystemUtils.validateBirthday(spouseBirthdate)) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.enter_birthdate), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                return;
+            }
         }
 
-        GovPensionEntity gpid = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, name, minimumAge, benefit);
+        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, INCOME_TYPE_GOV_PENSION);
+        GovPensionEntity gpid = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, incomeSourceTypeString ,
+                benefit, includeSpouse, spouseBenefit, spouseBirthdate);
         mViewModel.setData(gpid);
     }
 }

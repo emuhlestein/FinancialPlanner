@@ -20,30 +20,33 @@ import static com.intelliviz.retirementhelper.db.entity.GovPensionEntity.TABLE_N
 @Entity(tableName = TABLE_NAME)
 public class GovPensionEntity extends IncomeSourceEntityBase {
     public static final String TABLE_NAME = "gov_pension_income";
-    public static final String MIN_AGE_FIELD = "min_age";
-    public static final String MONTHLY_BENEFIT_FIELD = "full_monthly_benefit";
-
-    @ColumnInfo(name = MIN_AGE_FIELD)
-    private String minAge;
+    private static final String MONTHLY_BENEFIT_FIELD = "full_monthly_benefit";
+    private static final String SPOUSE_FIELD = "spouse";
+    private static final String SPOUSE_BENEFIT_FIELD = "spouse_benefit";
+    private static final String SPOUSE_BIRTHDATE_FIELD = "spouse_birthdate";
 
     @ColumnInfo(name = MONTHLY_BENEFIT_FIELD)
     private String fullMonthlyBenefit;
 
+    @ColumnInfo(name = SPOUSE_FIELD)
+    private int mSpouse;
+
+    @ColumnInfo(name = SPOUSE_BENEFIT_FIELD)
+    private String mSpouseBenefit;
+
+    @ColumnInfo(name = SPOUSE_BIRTHDATE_FIELD)
+    private String mSpouseBirhtdate;
+
     @Ignore
     private SocialSecurityRules mRules;
 
-    public GovPensionEntity(long id, int type, String name, String minAge, String fullMonthlyBenefit) {
+    public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit,
+                            int spouse, String spouseBenefit, String spouseBirhtdate) {
         super(id, type, name);
-        this.minAge = minAge;
         this.fullMonthlyBenefit = fullMonthlyBenefit;
-    }
-
-    public String getMinAge() {
-        return minAge;
-    }
-
-    public void setMinAge(String minAge) {
-        this.minAge = minAge;
+        mSpouse = spouse;
+        mSpouseBenefit = spouseBenefit;
+        mSpouseBirhtdate = spouseBirhtdate;
     }
 
     public String getFullMonthlyBenefit() {
@@ -52,6 +55,30 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
     public void setFullMonthlyBenefit(String fullMonthlyBenefit) {
         this.fullMonthlyBenefit = fullMonthlyBenefit;
+    }
+
+    public int getSpouse() {
+        return mSpouse;
+    }
+
+    public void setSpouse(int spouse) {
+        mSpouse = spouse;
+    }
+
+    public String getSpouseBenefit() {
+        return mSpouseBenefit;
+    }
+
+    public void setSpouseBenefit(String spouseBenefit) {
+        mSpouseBenefit = spouseBenefit;
+    }
+
+    public String getSpouseBirhtdate() {
+        return mSpouseBirhtdate;
+    }
+
+    public void setSpouseBirhtdate(String spouseBirhtdate) {
+        mSpouseBirhtdate = spouseBirhtdate;
     }
 
     public void setRules(IncomeTypeRules rules) {

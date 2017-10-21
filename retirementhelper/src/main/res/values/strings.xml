@@ -117,4 +117,5 @@
     <string name="overflow_menu">Overflow Menu</string>
     <string name="add_income_type">Add income source</string>
     <string name="add_milestone_age">Add retirement milestone age</string>
+    <string name="include_spouse">Include spouse</string>
 </resources>
