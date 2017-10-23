@@ -79,15 +79,6 @@ public abstract class BaseSummaryFragment extends Fragment implements
                 linearLayoutManager.getOrientation()));
         mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
-/*
-        SystemUtils.updateAppWidget(getActivity().getApplication());
-        DataBaseUtils.updateMilestoneData(getContext());
-         public static void updateMilestoneData(Context context) {
-        Intent intent = new Intent(context, MilestoneSummaryIntentService.class);
-        context.startService(intent);
-    }
-*/
-
         return view;
     }
 
@@ -115,22 +106,15 @@ public abstract class BaseSummaryFragment extends Fragment implements
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.update();
+    }
+
     public void createBannerAdd() {
 
     }
-
-    /*
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_BIRTHDATE:
-                    onHandleBirthdate(intent);
-                    break;
-            }
-        }
-    }
-    */
 
     @Override
     public void onSelectMilestone(MilestoneData milestone) {
@@ -138,20 +122,4 @@ public abstract class BaseSummaryFragment extends Fragment implements
         intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, milestone);
         startActivity(intent);
     }
-/*
-    private void onHandleBirthdate(Intent intent) {
-        String birthdate = intent.getStringExtra(EXTRA_DIALOG_INPUT_TEXT);
-        if (!SystemUtils.validateBirthday(birthdate)) {
-            String message = String.format(getString(R.string.enter_valid_birthdate), DATE_FORMAT);
-            FragmentManager fm = getFragmentManager();
-            SimpleTextDialog dialog = SimpleTextDialog.newInstance(message, birthdate);
-            dialog.setTargetFragment(this, REQUEST_BIRTHDATE);
-            dialog.show(fm, DIALOG_INPUT_TEXT);
-            return;
-        }
-
-        RetirementOptionsDatabase.getInstance(getContext()).saveBirthdate(birthdate);
-        SystemUtils.updateAppWidget(getContext());
-    }
-*/
 }

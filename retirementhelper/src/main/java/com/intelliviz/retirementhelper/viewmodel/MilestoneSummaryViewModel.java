@@ -30,6 +30,10 @@ public class MilestoneSummaryViewModel extends AndroidViewModel {
         return mMilestones;
     }
 
+    public void update() {
+        new MilestoneAsyncTask().execute();
+    }
+
     private class MilestoneAsyncTask extends AsyncTask<Void, Void, List<MilestoneData>> {
 
         @Override

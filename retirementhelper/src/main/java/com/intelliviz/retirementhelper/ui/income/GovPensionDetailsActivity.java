@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
-public class IncomeViewDetailsActivity extends AppCompatActivity {
+public class GovPensionDetailsActivity extends AppCompatActivity {
     private IncomeViewDetailsAdapter mAdapter;
     private List<MilestoneData> mMilestones;
     private GovPensionDetailsViewModel mViewModel;
