@@ -29,15 +29,21 @@ import java.util.List;
 public class TaxDeferredDetailsViewModel extends AndroidViewModel {
     private AppDatabase mDB;
     private MutableLiveData<List<MilestoneData>> mMilestones = new MutableLiveData<List<MilestoneData>>();
+    private long mIncomeId;
 
     public TaxDeferredDetailsViewModel(Application application, long incomeId) {
         super(application);
+        mIncomeId = incomeId;
         mDB = AppDatabase.getInstance(application);
         new GetAsyncTask().execute(incomeId);
     }
 
     public MutableLiveData<List<MilestoneData>> get() {
         return mMilestones;
+    }
+
+    public void update() {
+        new GetAsyncTask().execute(mIncomeId);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {

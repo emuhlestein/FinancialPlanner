@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.BalanceUtils.getFutureBalance;
-import static com.intelliviz.retirementhelper.util.BalanceUtils.getMonthlyAmount;
-
 /**
  * Created by edm on 10/18/2017.
  */
@@ -45,9 +42,9 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
         }
         AgeData diffAge = age.subtract(mCurrentAge);
         int numMonths = diffAge.getNumberOfMonths();
-        double futureBalance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
+        double futureBalance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
 
-        double monthlyAmount = getMonthlyAmount(mBalance, mWithdrawMode, mWithdrawAmount);
+        double monthlyAmount = BalanceUtils.getMonthlyAmount(futureBalance, mWithdrawMode, mWithdrawAmount);
         MilestoneData milestoneData = BalanceUtils.getMilestoneData(age, mEndAge, mInterest, futureBalance, monthlyAmount);
 
         if(age.isBefore(mMinAge)) {

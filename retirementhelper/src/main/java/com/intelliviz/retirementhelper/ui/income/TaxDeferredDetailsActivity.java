@@ -65,4 +65,10 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.update();
+    }
 }
