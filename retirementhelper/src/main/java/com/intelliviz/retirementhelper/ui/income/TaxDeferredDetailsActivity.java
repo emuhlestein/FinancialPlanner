@@ -13,7 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeViewDetailsAdapter;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.viewmodel.GovPensionDetailsViewModel;
+import com.intelliviz.retirementhelper.viewmodel.TaxDeferredDetailsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +23,11 @@ import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
-public class GovPensionDetailsActivity extends AppCompatActivity {
+public class TaxDeferredDetailsActivity extends AppCompatActivity {
+
     private IncomeViewDetailsAdapter mAdapter;
     private List<MilestoneData> mMilestones;
-    private GovPensionDetailsViewModel mViewModel;
+    private TaxDeferredDetailsViewModel mViewModel;
     private long mId;
 
     @Bind(R.id.recyclerview)
@@ -35,7 +36,7 @@ public class GovPensionDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gov_pension_details);
+        setContentView(R.layout.activity_tax_deferred_details);
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
@@ -52,10 +53,10 @@ public class GovPensionDetailsActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
                 linearLayoutManager.getOrientation()));
 
-        GovPensionDetailsViewModel.Factory factory = new
-                GovPensionDetailsViewModel.Factory(getApplication(), mId);
+        TaxDeferredDetailsViewModel.Factory factory = new
+                TaxDeferredDetailsViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(GovPensionDetailsViewModel.class);
+                get(TaxDeferredDetailsViewModel.class);
 
         mViewModel.get().observe(this, new Observer<List<MilestoneData>>() {
             @Override

@@ -184,10 +184,18 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
             Intent intent = new Intent(getContext(), IncomeSourceListMenuFragment.class);
             startActivityForResult(intent, REQUEST_INCOME_MENU);
         } else {
-            if(incomeSource.getType() == INCOME_TYPE_GOV_PENSION) {
-                Intent intent = new Intent(getContext(), GovPensionDetailsActivity.class);
-                intent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedIncome.getId());
-                startActivity(intent);
+            Intent intent;
+            switch(incomeSource.getType()) {
+                case INCOME_TYPE_GOV_PENSION:
+                    intent = new Intent(getContext(), GovPensionDetailsActivity.class);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedIncome.getId());
+                    startActivity(intent);
+                    break;
+                case INCOME_TYPE_TAX_DEFERRED:
+                    intent = new Intent(getContext(), TaxDeferredDetailsActivity.class);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedIncome.getId());
+                    startActivity(intent);
+                    break;
             }
         }
     }
