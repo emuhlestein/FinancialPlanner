@@ -67,6 +67,7 @@ public class PersonalInfoDialog extends AppCompatActivity {
                 Intent returnIntent = new Intent();
                 setResult(Activity.RESULT_CANCELED, returnIntent);
                 finish();
+                overridePendingTransition(0, R.anim.slide_right_out);
             }
         });
 
@@ -121,5 +122,6 @@ public class PersonalInfoDialog extends AppCompatActivity {
         returnIntent.putExtra(RetirementConstants.EXTRA_BIRTHDATE, birthday);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+        overridePendingTransition(0, R.anim.slide_right_out);
     }
 }

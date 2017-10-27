@@ -66,6 +66,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         Intent returnIntent = new Intent();
         setResult(Activity.RESULT_CANCELED, returnIntent);
         finish();
+        overridePendingTransition(0, R.anim.slide_right_out);
     }
 
     @Override
@@ -80,8 +81,6 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         Intent intent = getIntent();
         Bundle b = intent.getExtras();
         mROD = b.getParcelable(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-        String name = b.getString("test");
-        AgeData age = b.getParcelable("test1");
 
         updateUI();
     }
@@ -212,5 +211,6 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+        overridePendingTransition(0, R.anim.slide_right_out);
     }
 }

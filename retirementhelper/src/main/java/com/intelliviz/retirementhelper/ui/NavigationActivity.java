@@ -125,13 +125,14 @@ public class NavigationActivity extends AppCompatActivity {
                 b.putParcelable("test1", age);
                 intent.putExtras(b);
                 startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
+                overridePendingTransition(R.anim.slide_right_in, 0);
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
                 rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate());
                 intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
-
+                overridePendingTransition(R.anim.slide_right_in, 0);
                 break;
             case R.id.sign_out_item:
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
