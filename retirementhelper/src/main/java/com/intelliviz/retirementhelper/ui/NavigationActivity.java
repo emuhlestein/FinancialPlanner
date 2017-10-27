@@ -266,14 +266,14 @@ public class NavigationActivity extends AppCompatActivity {
     private void handleAnimation(FragmentTransaction ft, String oldTag, String newTag) {
 
         if (oldTag.isEmpty() || oldTag.equals(SUMMARY_FRAG_TAG)) {
-            ft.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
+            ft.setCustomAnimations(R.anim.slide_left_in,0);
         } else if (oldTag.equals(MILESTONES_FRAG_TAG)) {
-            ft.setCustomAnimations(R.anim.slide_right_out, R.anim.slide_left_in);
+            ft.setCustomAnimations(R.anim.slide_right_in, 0);
         } else if (oldTag.equals(INCOME_FRAG_TAG)) {
             if(newTag.equals(SUMMARY_FRAG_TAG)) {
-                ft.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
+                ft.setCustomAnimations(R.anim.slide_left_in, 0);
             } else {
-                ft.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
+                ft.setCustomAnimations(R.anim.slide_right_in, 0);
             }
         }
     }
