@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,6 +50,7 @@ public class NavigationActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
     private boolean mNeedToStartSummaryFragment;
     private int mStartFragment;
+    private int mPrevFragment;
     private NavigationModelView mViewModel;
     private RetirementOptionsEntity mROM;
 
@@ -242,11 +244,38 @@ public class NavigationActivity extends AppCompatActivity {
         }
         mStartFragment = item.getItemId();
 
+
+
         FragmentManager fm = getSupportFragmentManager();
+        Fragment frag = fm.findFragmentById(R.id.content_frame);
+        String oldTag = "";
+        if(frag != null) {
+            oldTag = frag.getTag();
+        }
+        Log.d(TAG, oldTag);
+        if(oldTag.equals(fragmentTag)) {
+            return;
+        }
         FragmentTransaction ft;
         ft = fm.beginTransaction();
+        handleAnimation(ft, oldTag, fragmentTag);
         ft.replace(R.id.content_frame, fragment, fragmentTag);
         ft.commit();
+    }
+
+    private void handleAnimation(FragmentTransaction ft, String oldTag, String newTag) {
+
+        if (oldTag.isEmpty() || oldTag.equals(SUMMARY_FRAG_TAG)) {
+            ft.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
+        } else if (oldTag.equals(MILESTONES_FRAG_TAG)) {
+            ft.setCustomAnimations(R.anim.slide_right_out, R.anim.slide_left_in);
+        } else if (oldTag.equals(INCOME_FRAG_TAG)) {
+            if(newTag.equals(SUMMARY_FRAG_TAG)) {
+                ft.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
+            } else {
+                ft.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
+            }
+        }
     }
 }
 

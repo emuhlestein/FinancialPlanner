@@ -41,6 +41,7 @@ public class ListMenuActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
                 sendResult(Activity.RESULT_OK, position);
                 finish();
+                overridePendingTransition(R.anim.slide_left_out, R.anim.slide_left_out);
             }
         });
     }

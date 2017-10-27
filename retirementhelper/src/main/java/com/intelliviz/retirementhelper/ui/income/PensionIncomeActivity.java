@@ -52,6 +52,7 @@ public class PensionIncomeActivity extends AppCompatActivity {
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
         finish();
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
     }
 
     @Override
