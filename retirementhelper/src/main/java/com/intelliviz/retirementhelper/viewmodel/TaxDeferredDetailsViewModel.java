@@ -28,6 +28,8 @@ import java.util.List;
 
 public class TaxDeferredDetailsViewModel extends AndroidViewModel {
     private AppDatabase mDB;
+    private MutableLiveData<TaxDeferredIncomeEntity> mTDID =
+            new MutableLiveData<>();
     private MutableLiveData<List<MilestoneData>> mMilestones = new MutableLiveData<List<MilestoneData>>();
     private long mIncomeId;
 
@@ -35,15 +37,20 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
         super(application);
         mIncomeId = incomeId;
         mDB = AppDatabase.getInstance(application);
+        new GetMilestonesAsyncTask().execute(incomeId);
         new GetAsyncTask().execute(incomeId);
     }
 
-    public MutableLiveData<List<MilestoneData>> get() {
+    public MutableLiveData<List<MilestoneData>> getMilestones() {
         return mMilestones;
     }
 
+    public MutableLiveData<TaxDeferredIncomeEntity> get() {
+        return mTDID;
+    }
+
     public void update() {
-        new GetAsyncTask().execute(mIncomeId);
+        new GetMilestonesAsyncTask().execute(mIncomeId);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -62,7 +69,23 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, List<MilestoneData>> {
+    private class GetAsyncTask extends AsyncTask<Long, Void, TaxDeferredIncomeEntity> {
+
+        public GetAsyncTask() {
+        }
+
+        @Override
+        protected TaxDeferredIncomeEntity doInBackground(Long... params) {
+            return mDB.taxDeferredIncomeDao().get(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(TaxDeferredIncomeEntity tdid) {
+            mTDID.setValue(tdid);
+        }
+    }
+
+    private class GetMilestonesAsyncTask extends AsyncTask<Long, Void, List<MilestoneData>> {
 
         @Override
         protected List<MilestoneData> doInBackground(Long... params) {

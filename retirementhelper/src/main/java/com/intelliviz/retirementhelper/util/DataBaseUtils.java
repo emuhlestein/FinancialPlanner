@@ -71,10 +71,11 @@ public class DataBaseUtils {
         }
         List<TaxDeferredIncomeEntity> taxDefEntities = mDB.taxDeferredIncomeDao().get();
         if(!taxDefEntities.isEmpty()) {
+            double amount = Double.parseDouble(roe.getWithdrawAmount());
             for(TaxDeferredIncomeEntity tde : taxDefEntities) {
                 TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(birthdate, endAge, Double.parseDouble(tde.getBalance()),
                         Double.parseDouble(tde.getInterest()), Double.parseDouble(tde.getMonthlyIncrease()), roe.getWithdrawMode(),
-                        Double.parseDouble(roe.getWithdrawAmount()));
+                        amount);
                 tde.setRules(tdir);
                 allEntities.add(tde);
             }
