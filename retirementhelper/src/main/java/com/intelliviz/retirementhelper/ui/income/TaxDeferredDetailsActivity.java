@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
@@ -35,6 +36,9 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity {
     private TaxDeferredIncomeEntity mTDIE;
     private long mId;
 
+    @Bind(R.id.income_source_toolbar)
+    Toolbar mToolbar;
+
     @Bind(R.id.name_text_view)
     TextView mIncomeSourceName;
 
@@ -47,12 +51,6 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity {
     @Bind(R.id.monthly_increase_text_view)
     TextView mMonthlyIncrease;
 
-    @Bind(R.id.penalty_age_text_view)
-    TextView mPenaltyAge;
-
-    @Bind(R.id.penalty_amount_text_view)
-    TextView mPenaltyAmount;
-
     @Bind(R.id.info_text_view)
     TextView mInfoText;
 
@@ -64,6 +62,8 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tax_deferred_details);
         ButterKnife.bind(this);
+
+        setSupportActionBar(mToolbar);
 
         Intent intent = getIntent();
         mId = 0;
@@ -111,6 +111,9 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity {
             return;
         }
 
+        SystemUtils.setToolbarSubtitle(this, "401(k)");
+
+        mInfoText.setText("There is a 10% penalty for withdrawing funds from a 401(k) before age 59y 6m.");
         mIncomeSourceName.setText(mTDIE.getName());
         String formattedCurrency = SystemUtils.getFormattedCurrency(mTDIE.getBalance());
         mCurrentBalance.setText(formattedCurrency);
@@ -119,8 +122,5 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity {
         formattedCurrency = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
         mMonthlyIncrease.setText(formattedCurrency);
         AgeData penaltyAge = SystemUtils.parseAgeString(mTDIE.getMinAge());
-        mPenaltyAge.setText(penaltyAge.toString());
-        mPenaltyAmount.setText(mTDIE.getPenalty() + "%");
-
     }
 }
