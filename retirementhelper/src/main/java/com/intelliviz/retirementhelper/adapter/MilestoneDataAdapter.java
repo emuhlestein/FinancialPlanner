@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.util.SelectionMilestoneDataListener;
+import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.List;
 public class MilestoneDataAdapter extends RecyclerView.Adapter<MilestoneDataAdapter.MilestoneDataHolder> {
     private List<MilestoneData> mMilestones;
     private Context mContext;
-    private SelectionMilestoneDataListener mListener;
+    private SelectMilestoneDataListener mListener;
 
     public MilestoneDataAdapter(Context context, List<MilestoneData> milestones) {
         mContext = context;
@@ -57,7 +57,7 @@ public class MilestoneDataAdapter extends RecyclerView.Adapter<MilestoneDataAdap
         notifyDataSetChanged();
     }
 
-    public void setOnSelectionMilestoneDataListener (SelectionMilestoneDataListener listener) {
+    public void setOnSelectionMilestoneDataListener (SelectMilestoneDataListener listener) {
         mListener = listener;
     }
 

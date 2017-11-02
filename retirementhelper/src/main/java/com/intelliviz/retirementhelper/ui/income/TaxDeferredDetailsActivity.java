@@ -17,6 +17,7 @@ import com.intelliviz.retirementhelper.adapter.IncomeViewDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
+import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.TaxDeferredDetailsViewModel;
 
@@ -28,7 +29,8 @@ import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
-public class TaxDeferredDetailsActivity extends AppCompatActivity {
+public class TaxDeferredDetailsActivity extends AppCompatActivity
+        implements SelectMilestoneDataListener{
 
     private IncomeViewDetailsAdapter mAdapter;
     private List<MilestoneData> mMilestones;
@@ -73,6 +75,7 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity {
 
         mMilestones = new ArrayList<>();
         mAdapter = new IncomeViewDetailsAdapter(this, mMilestones);
+        mAdapter.setOnSelectMilestoneDataListener(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
@@ -122,5 +125,10 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity {
         formattedCurrency = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
         mMonthlyIncrease.setText(formattedCurrency);
         AgeData penaltyAge = SystemUtils.parseAgeString(mTDIE.getMinAge());
+    }
+
+    @Override
+    public void onSelectMilestone(MilestoneData msd) {
+        // TODO start activity to show monthly benefits through life of retirement
     }
 }

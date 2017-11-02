@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDetailsAdapter.IncomeViewDetailsHolder>{
     private List<MilestoneData> mMilestones;
     private Context mContext;
+    private SelectMilestoneDataListener mListener;
 
     public IncomeViewDetailsAdapter(Context context, List<MilestoneData> milestones) {
         mContext = context;
@@ -48,6 +50,10 @@ public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDet
         } else {
             return 0;
         }
+    }
+
+    public void setOnSelectMilestoneDataListener(SelectMilestoneDataListener listener) {
+        mListener = listener;
     }
 
     public void update(List<MilestoneData> milestones) {
@@ -120,7 +126,9 @@ public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDet
 
         @Override
         public void onClick(View v) {
-
+            if(mListener != null) {
+                mListener.onSelectMilestone(mMilestone);
+            }
         }
     }
 }
