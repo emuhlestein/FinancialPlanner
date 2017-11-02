@@ -194,25 +194,17 @@ public class SystemUtils {
 
         int years = nowYear - birthYear;
 
-        int monthDiff = nowMonth - birthMonth;
-        if(monthDiff < 0) {
+        int months = nowMonth - birthMonth;
+        if(months < 0) {
             years--;
-        } else if(monthDiff == 0) {
+            months =+ 12;
+        } else if(months == 0) {
             int dayDiff = nowDay - birthDay;
             if(dayDiff < 0) {
                 years--;
+                months = 11;
             }
         }
-
-        int months = nowMonth - birthMonth;
-        if(months < 0) {
-            months += 12;
-        }
-        int dayDiff = nowDay - birthDay;
-        if(dayDiff < 0) {
-            months--;
-        }
-
         return new AgeData(years, months);
     }
 
