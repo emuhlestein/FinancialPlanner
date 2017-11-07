@@ -174,11 +174,13 @@ public class DataBaseUtils {
             }
         }
 
-        AgeData endAge = saveMilestones.get(0).getEndAge();
+        AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
         AgeData minimumAge = saveMilestones.get(0).getMinimumAge();
         for(int i = 0; i < ages.size(); i++) {
             AgeData startAge = ages.get(i).getAge();
-            MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i], sumStartBalance[i], sumEndBalance[i], 0, numMonthsFundsWillLast);
+            MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i],
+                    sumStartBalance[i], sumEndBalance[i], 0, 0, numMonthsFundsWillLast, rod.getWithdrawMode(),
+                    Double.parseDouble(rod.getWithdrawAmount()));
             sumMilestones.add(milestoneData);
         }
 

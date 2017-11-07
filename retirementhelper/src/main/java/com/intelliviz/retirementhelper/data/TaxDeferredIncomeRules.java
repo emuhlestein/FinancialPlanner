@@ -35,32 +35,27 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
         mWithdrawMode = withdrawMode;
     }
 
-    @Override
-    public double getMonthlyBenefitForAge(AgeData age) {
+    public MilestoneData getMilestone(AgeData age) {
         if(age.isBefore(mCurrentAge)) {
-            return 0;
+            return null;
         }
         AgeData diffAge = age.subtract(mCurrentAge);
         int numMonths = diffAge.getNumberOfMonths();
         double futureBalance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
 
         double monthlyAmount = BalanceUtils.getMonthlyAmount(futureBalance, mWithdrawMode, mWithdrawAmount);
-        MilestoneData milestoneData = BalanceUtils.getMilestoneData(age, mEndAge, mInterest, futureBalance, monthlyAmount);
+        MilestoneData milestoneData =
+                BalanceUtils.getMilestoneData(age, mEndAge, mInterest, futureBalance, monthlyAmount, mWithdrawMode, mWithdrawAmount);
 
         if(age.isBefore(mMinAge)) {
 
         }
 
-        return milestoneData.getMonthlyBenefit();
+        return milestoneData;
     }
 
     @Override
     public List<AgeData> getAges() {
         return new ArrayList<>(Arrays.asList(mMinAge));
-    }
-
-    public MilestoneData getMilestone(AgeData age) {
-        double monthlyBenefit = getMonthlyBenefitForAge(age);
-        return new MilestoneData(age, null, mMinAge, monthlyBenefit, 0, 0, 0, 0);
     }
 }

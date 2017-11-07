@@ -1,8 +1,10 @@
 package com.intelliviz.retirementhelper.util;
 
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.AmountData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 
+import static com.intelliviz.retirementhelper.R.string.balance;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_AMOUNT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
 
@@ -44,7 +46,8 @@ public class BalanceUtils {
         return monthlyAmount;
     }
 
-    public static MilestoneData getMilestoneData(AgeData startAge, AgeData endAge, double interest, double startBalance, double monthlyAmount) {
+    public static MilestoneData getMilestoneData(AgeData startAge, AgeData endAge, double interest,
+                                                 double startBalance, double monthlyAmount, int withdrawMode, double withdrawAmount) {
         AgeData age = endAge.subtract(startAge);
         int numMonthsInRetirement = age.getNumberOfMonths();
         double lastBalance = startBalance;
@@ -67,6 +70,37 @@ public class BalanceUtils {
             numMonths--;
         }
 
-        return new MilestoneData(startAge, endAge, null, monthlyAmount, startBalance, lastBalance, 0, numMonths);
+        return new MilestoneData(startAge, endAge, null, monthlyAmount, startBalance, lastBalance, interest, 0, numMonths, withdrawMode, withdrawAmount);
+    }
+
+    public static AmountData getAmountData(AgeData startAge, AgeData endAge, double interest, double startBalance, int withdrawMode, double withdrawAmount) {
+        AgeData ageDiff = endAge.subtract(startAge);
+        int numMonths = ageDiff.getNumberOfMonths();
+        AgeData age = new AgeData(startAge.getYear(), startAge.getMonth());
+        if(numMonths == 0) {
+            return new AmountData(age, getMonthlyAmount(balance, withdrawMode, withdrawAmount),  startBalance);
+        }
+        double balance = startBalance;
+        double monthlyInterest = interest / 1200;
+        double monthlyAmount = 0;
+
+        for(int mon = 0; mon < numMonths; mon++) {
+            if(balance <= 0) {
+                break;
+            }
+
+            monthlyAmount = getMonthlyAmount(balance, withdrawMode, withdrawAmount);
+            balance = balance - monthlyAmount;
+            double monthlyIncrease = balance * monthlyInterest;
+            balance = balance + monthlyIncrease;
+
+            if(balance < 0) {
+                balance = 0;
+                mon--;
+                break;
+            }
+        }
+
+        return new AmountData(age, monthlyAmount,  balance);
     }
 }

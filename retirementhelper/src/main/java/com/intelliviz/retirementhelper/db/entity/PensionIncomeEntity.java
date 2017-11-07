@@ -79,12 +79,12 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
         for(MilestoneAgeEntity msad : ages) {
             AgeData age = msad.getAge();
             if(age.isBefore(minimumAge)) {
-                milestone = new MilestoneData(age, endAge, minimumAge, 0, 0, 0, 0, 0);
+                milestone = new MilestoneData(age, endAge, minimumAge, 0, 0, 0, 0, 0, 0, 0, 0);
             } else {
                 AgeData diffAge = endAge.subtract(age);
                 int numMonths = diffAge.getNumberOfMonths();
 
-                milestone = new MilestoneData(age, endAge, minimumAge, monthlyBenefit, 0, 0, 0, numMonths);
+                milestone = new MilestoneData(age, endAge, minimumAge, monthlyBenefit, 0, 0, 0, numMonths, 0, 0, 0);
             }
             milestones.add(milestone);
         }

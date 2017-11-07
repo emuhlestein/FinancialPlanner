@@ -12,14 +12,12 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -102,10 +100,7 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
                     rod.getWithdrawMode(), Double.parseDouble(rod.getWithdrawAmount()));
             entity.setRules(tdir);
 
-            List<IncomeSourceEntityBase> list = new ArrayList<>();
-            list.add(entity);
-            List<MilestoneData> milestones = DataBaseUtils.getAllMilestones(list, ages, rod);
-            return milestones;
+            return entity.getMilestones(ages, rod);
         }
 
         @Override

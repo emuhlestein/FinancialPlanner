@@ -17,6 +17,7 @@ import com.intelliviz.retirementhelper.adapter.IncomeViewDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
+import com.intelliviz.retirementhelper.ui.RetirementDetailsActivity;
 import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.TaxDeferredDetailsViewModel;
@@ -129,6 +130,8 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
 
     @Override
     public void onSelectMilestone(MilestoneData msd) {
-        // TODO start activity to show monthly benefits through life of retirement
+        Intent intent = new Intent(this, RetirementDetailsActivity.class);
+        intent.putExtra("milestone", msd);
+        startActivity(intent);
     }
 }

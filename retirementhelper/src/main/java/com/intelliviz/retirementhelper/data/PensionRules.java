@@ -20,15 +20,6 @@ public class PensionRules implements IncomeTypeRules {
     }
 
     @Override
-    public double getMonthlyBenefitForAge(AgeData age) {
-        if(age.isBefore(mMinAge)) {
-            return 0;
-        } else {
-            return mMonthlyAmount;
-        }
-    }
-
-    @Override
     public List<AgeData> getAges() {
         return new ArrayList<>(Arrays.asList(mMinAge));
     }
@@ -37,14 +28,13 @@ public class PensionRules implements IncomeTypeRules {
     public MilestoneData getMilestone(AgeData age) {
         MilestoneData milestone;
         if(age.isBefore(mMinAge)) {
-            milestone = new MilestoneData(age, mEndAge, mMinAge, 0, 0, 0, 0, 0);
+            milestone = new MilestoneData(age, mEndAge, mMinAge, 0, 0, 0, 0, 0, 0, 0, 0);
         } else {
             AgeData diffAge = mEndAge.subtract(age);
             int numMonths = diffAge.getNumberOfMonths();
 
-            milestone = new MilestoneData(age, mEndAge, mMinAge, mMonthlyAmount, 0, 0, 0, numMonths);
+            milestone = new MilestoneData(age, mEndAge, mMinAge, mMonthlyAmount, 0, 0, 0, numMonths, 0, 0, 0);
         }
         return milestone;
     }
-
 }

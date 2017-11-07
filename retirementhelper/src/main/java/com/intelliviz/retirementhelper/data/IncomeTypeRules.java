@@ -7,7 +7,6 @@ import java.util.List;
  */
 
 public interface IncomeTypeRules {
-    double getMonthlyBenefitForAge(AgeData age);
     List<AgeData> getAges();
     MilestoneData getMilestone(AgeData age);
 }

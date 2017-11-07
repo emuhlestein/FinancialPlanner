@@ -9,9 +9,6 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_AMOUNT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
-
 /**
  * Created by edm on 10/3/2017.
  */
@@ -111,6 +108,7 @@ public abstract class IncomeSourceEntityBase implements IncomeSourceType {
         return balance * monthlyInterest;
     }
 
+    /*
     protected static List<MilestoneData> getMilestones(AgeData endOfLifeAge, AgeData minimumAge,
                                                        double interestRate, double penalty, int withdrawMode, double withdrawAmount,
                                                        List<MilestoneAgeEntity> ages, List<Double> milestoneBalances) {
@@ -134,7 +132,8 @@ public abstract class IncomeSourceEntityBase implements IncomeSourceType {
         }
         return milestones;
     }
-
+    */
+/*
     private static double getMonthlyAmount(double balance, int withdrawMode, double withdrawAmount) {
         double monthlyAmount;
         switch(withdrawMode) {
@@ -149,7 +148,8 @@ public abstract class IncomeSourceEntityBase implements IncomeSourceType {
         }
         return monthlyAmount;
     }
-
+    */
+/*
     private static MilestoneData getMonthlyBalances(AgeData startAge, AgeData endAge, AgeData minimumAge,
                                                     double startBalance, double interestRate, double monthlyAmount,
                                                     double penalty) {
@@ -177,5 +177,6 @@ public abstract class IncomeSourceEntityBase implements IncomeSourceType {
 
         return new MilestoneData(startAge, endAge, minimumAge, monthlyAmount, startBalance, lastBalance, penalty, numMonths);
     }
+    */
 
 }

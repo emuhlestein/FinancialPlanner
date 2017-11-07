@@ -40,6 +40,18 @@ public class AgeData implements Parcelable {
         return (mYear < age.getYear() ||  (mYear == age.getYear() && mMonth < age.getMonth()));
     }
 
+    public void addMonths(int numMonths) {
+        if(numMonths <= 0) {
+            return;
+        }
+
+        mMonth += numMonths;
+        int years = mMonth / 12;
+        mYear += years;
+
+        mMonth = mMonth % 12;
+    }
+
     /**
      * Subtract the specified age from this age.
      * @param ageData The specified age.

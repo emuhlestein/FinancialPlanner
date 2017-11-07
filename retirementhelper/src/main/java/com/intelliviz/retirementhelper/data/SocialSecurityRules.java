@@ -34,8 +34,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         mSpouseBirthdate = spouseBirthdate;
     }
 
-    @Override
-    public double getMonthlyBenefitForAge(AgeData startAge) {
+    private double getMonthlyBenefitForAge(AgeData startAge) {
         if(startAge.isBefore(mMinAge)) {
             return 0;
         }
@@ -93,7 +92,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     @Override
     public MilestoneData getMilestone(AgeData age) {
         double monthlyBenefit = getMonthlyBenefitForAge(age);
-        return new MilestoneData(age, mEndAge, mMinAge, monthlyBenefit, 0, 0, 0, 0);
+        return new MilestoneData(age, mEndAge, mMinAge, monthlyBenefit, 0, 0, 0, 0, 0, 0, 0);
     }
 
     private AgeData getFullRetirementAge(int birthYear) {

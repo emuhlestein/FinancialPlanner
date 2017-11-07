@@ -15,15 +15,18 @@ public class MilestoneData implements Parcelable {
     private double mMonthlyBenefit;
     private double mStartBalance;
     private double mEndBalance;
+    private double mInterest;
     private double mPenaltyAmount;
     private int mMonthsFundsFillLast;
+    private int mWithdrawMode;
+    private double mWithdrawAmount;
 
     /**
      * Constructor.
      * @param startAge The start age.
      */
     public MilestoneData(AgeData startAge) {
-        this(startAge, startAge, startAge, 0, 0, 0, 0, 0);
+        this(startAge, startAge, startAge, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     /**
@@ -36,18 +39,24 @@ public class MilestoneData implements Parcelable {
      * @param endBalance The end balance.
      * @param penaltyAmount The penalty amount.
      * @param monthsFundsWillLast The number of months the funds will last.
+     * @param withdrawMode How the balance will be drawn down: percentage or amount.
+     * @param withdrawAmount The amount to withdraw: a percentage or a dollar amount.
      */
     public MilestoneData(AgeData startAge, AgeData endAge, AgeData minimumAge,
                          double monthlyBenefit, double startBalance, double endBalance,
-                         double penaltyAmount, int monthsFundsWillLast) {
+                         double interest, double penaltyAmount, int monthsFundsWillLast,
+                         int withdrawMode, double withdrawAmount) {
         mStartAge = startAge;
         mEndAge = endAge;
         mMinimumAge = minimumAge;
         mMonthlyBenefit = monthlyBenefit;
         mStartBalance = startBalance;
         mEndBalance = endBalance;
+        mInterest = interest;
         mPenaltyAmount = penaltyAmount;
         mMonthsFundsFillLast = monthsFundsWillLast;
+        mWithdrawMode = withdrawMode;
+        mWithdrawAmount = withdrawAmount;
     }
 
     /**
@@ -98,6 +107,10 @@ public class MilestoneData implements Parcelable {
         return mEndBalance;
     }
 
+    public double getInterest() {
+        return mInterest;
+    }
+
     /**
      * Get the penalty amount.
      * @return The penalty amount.
@@ -112,6 +125,14 @@ public class MilestoneData implements Parcelable {
      */
     public int getMonthsFundsFillLast() {
         return mMonthsFundsFillLast;
+    }
+
+    public int getWithdrawMode() {
+        return mWithdrawMode;
+    }
+
+    public double getWithdrawAmount() {
+        return mWithdrawAmount;
     }
 
     private MilestoneData(Parcel in) {
@@ -131,8 +152,11 @@ public class MilestoneData implements Parcelable {
         dest.writeDouble(mMonthlyBenefit);
         dest.writeDouble(mStartBalance);
         dest.writeDouble(mEndBalance);
+        dest.writeDouble(mInterest);
         dest.writeDouble(mPenaltyAmount);
         dest.writeInt(mMonthsFundsFillLast);
+        dest.writeInt(mWithdrawMode);
+        dest.writeDouble(mWithdrawAmount);
     }
 
     private void readFromParcel(Parcel in) {
@@ -142,8 +166,11 @@ public class MilestoneData implements Parcelable {
         mMonthlyBenefit = in.readDouble();
         mStartBalance = in.readDouble();
         mEndBalance = in.readDouble();
+        mInterest = in.readDouble();
         mPenaltyAmount = in.readDouble();
         mMonthsFundsFillLast = in.readInt();
+        mWithdrawMode = in.readInt();
+        mWithdrawAmount = in .readDouble();
     }
 
     public static final Parcelable.Creator<MilestoneData> CREATOR = new Parcelable.Creator<MilestoneData>()
