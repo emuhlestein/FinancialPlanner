@@ -18,6 +18,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.AmountData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.util.BalanceUtils;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,9 @@ public class RetirementDetailsActivity extends AppCompatActivity implements Sele
 
     @Override
     public void onSelectAmount(AmountData amountData) {
-        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Test Message", Snackbar.LENGTH_INDEFINITE);
+        String balance = SystemUtils.getFormattedCurrency(amountData.getBalance());
+        String message = "Balance: " + balance + "\nAge: " + amountData.getAge().toString();
+        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
