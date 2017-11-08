@@ -3,11 +3,13 @@ package com.intelliviz.retirementhelper.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
@@ -23,7 +25,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class RetirementDetailsActivity extends AppCompatActivity {
+public class RetirementDetailsActivity extends AppCompatActivity implements SelectAmountListener {
 
     private RetirementDetailsAdapter mRetirementDetailsAdapter;
     private List<AmountData> mAmountData;
@@ -53,6 +55,7 @@ public class RetirementDetailsActivity extends AppCompatActivity {
 
         mAmountData = new ArrayList<>();
         mRetirementDetailsAdapter = new RetirementDetailsAdapter(this, mAmountData);
+        mRetirementDetailsAdapter.setOnSelectAmountListener(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mRetirementDetailsAdapter);
@@ -75,10 +78,23 @@ public class RetirementDetailsActivity extends AppCompatActivity {
         stopAge.addMonths(12);
         for(AgeData age = startAge; age.isBefore(endAge); age.addMonths(12)) {
             AmountData amountData = BalanceUtils.getAmountData(age, stopAge, interest, balance, withdrawMode, withdrawAmount);
+            balance = amountData.getBalance();
             amountDatas.add(amountData);
             stopAge.addMonths(12);
         }
 
         mRetirementDetailsAdapter.update(amountDatas);
+    }
+
+    @Override
+    public void onSelectAmount(AmountData amountData) {
+        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Test Message", Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snackbar.dismiss();
+            }
+        });
+        snackbar.show();
     }
 }

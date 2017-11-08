@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.AmountData;
+import com.intelliviz.retirementhelper.ui.SelectAmountListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class RetirementDetailsAdapter extends
         RecyclerView.Adapter<RetirementDetailsAdapter.AmountDataHolder>{
     private Context mContext;
     private List<AmountData> mAmountData;
+    private SelectAmountListener mListener;
 
     public RetirementDetailsAdapter(Context context, List<AmountData> amountData) {
         mContext = context;
@@ -50,13 +52,17 @@ public class RetirementDetailsAdapter extends
         }
     }
 
+    public void setOnSelectAmountListener(SelectAmountListener listener) {
+        mListener = listener;
+    }
+
     public void update(List<AmountData> amountData) {
         mAmountData.clear();
         mAmountData.addAll(amountData);
         notifyDataSetChanged();
     }
 
-    class AmountDataHolder extends RecyclerView.ViewHolder {
+    class AmountDataHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mMilestoneTextView;
         private TextView mMonthlyAmountTextView;
         private LinearLayout mLinearLayout;
@@ -67,6 +73,7 @@ public class RetirementDetailsAdapter extends
             mLinearLayout = itemView.findViewById(R.id.milestone_item_layout);
             mMilestoneTextView = itemView.findViewById(R.id.milestone_text_view);
             mMonthlyAmountTextView = itemView.findViewById(R.id.monthly_amount_text_view);
+            itemView.setOnClickListener(this);
         }
 
         private void bindAmount(AmountData amountData) {
@@ -77,6 +84,13 @@ public class RetirementDetailsAdapter extends
             String formattedCurrency = SystemUtils.getFormattedCurrency(amount);
             mMonthlyAmountTextView.setText(formattedCurrency);
             mMilestoneTextView.setText(SystemUtils.getFormattedAge(age));
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(mListener != null) {
+                mListener.onSelectAmount(mAmount);
+            }
         }
     }
 }
