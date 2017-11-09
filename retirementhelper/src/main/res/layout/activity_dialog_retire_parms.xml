@@ -18,21 +18,25 @@
         android:layout_height="1dp"
         android:background="@drawable/separator" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/input_end_age"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/end_age"
-            android:textSize="22sp" />
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp">
 
         <EditText
             android:id="@+id/end_age_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:ems="10"
+            android:hint="@string/end_age"
+            android:inputType="numberDecimal"
             style="@style/ThreeDigitPositiveNumber"/>
-    </LinearLayout>
+    </android.support.design.widget.TextInputLayout>
 
     <RadioGroup
         android:id="@+id/withdraw_mode_radio_group"
@@ -57,21 +61,46 @@
 
     </RadioGroup>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/input_withdraw_percent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/amount_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp" />
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp">
 
         <EditText
             android:id="@+id/withdraw_percent_edit_text"
-            style="@style/FiveDigitPositiveNumber"/>
-    </LinearLayout>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:ems="10"
+            android:hint="@string/percentage"
+            android:inputType="numberDecimal"
+            style="@style/ThreeDigitPositiveNumber"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/input_withdraw_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp">
+
+        <EditText
+            android:id="@+id/withdraw_amount_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:ems="10"
+            android:hint="@string/amount"
+            android:inputType="numberDecimal"
+            style="@style/ThreeDigitPositiveNumber"/>
+    </android.support.design.widget.TextInputLayout>
+
 
     <View
         android:id="@+id/divider2"

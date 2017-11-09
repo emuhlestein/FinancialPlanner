@@ -74,6 +74,8 @@ public class RetirementDetailsActivity extends AppCompatActivity implements Sele
         double withdrawAmount = mMSD.getWithdrawAmount();
         double interest = mMSD.getInterest();
 
+        mCurrentBalanceTextView.setText(SystemUtils.getFormattedCurrency(balance));
+
         List<AmountData> amountDatas = new ArrayList<>();
         AgeData stopAge = new AgeData(startAge.getYear(), startAge.getMonth());
         stopAge.addMonths(12);

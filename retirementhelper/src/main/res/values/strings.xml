@@ -3,8 +3,8 @@
     <string name="retirement_options">Retirement Options</string>
     <string name="start_age">Start Age:</string>
     <string name="end_age">End Age:</string>
-    <string name="withdraw_amount">Withdraw Amount:</string>
-    <string name="withdraw_percentage">Withdraw Percentage:</string>
+    <string name="withdraw_amount">Withdraw Amount</string>
+    <string name="withdraw_percentage">Withdraw Percentage</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
 
@@ -119,4 +119,6 @@
     <string name="add_milestone_age">Add retirement milestone age</string>
     <string name="include_spouse">Include spouse</string>
     <string name="penalty_age">Penalty Age:</string>
+    <string name="amount">Amount</string>
+    <string name="percentage">Percentage</string>
 </resources>

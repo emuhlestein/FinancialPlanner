@@ -43,14 +43,20 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     @Bind(R.id.withdraw_percent_button)
     RadioButton mWithdrawPercentButton;
 
-    @Bind(R.id.amount_text_view)
-    TextView mAmountTextView;
+    @Bind(R.id.input_withdraw_percent)
+    android.support.design.widget.TextInputLayout mInputWithdrawPercentage;
+
+    @Bind(R.id.input_withdraw_amount)
+    android.support.design.widget.TextInputLayout mInputWithdrawAmount;
+
+    @Bind(R.id.withdraw_amount_edit_text)
+    TextView mWithdrawAmountTextView;
+
+    @Bind(R.id.withdraw_percent_edit_text)
+    TextView mWithdrawPercentTextView;
 
     @Bind(R.id.withdraw_mode_radio_group)
     RadioGroup mWithdrawModeRadioGroup;
-
-    @Bind(R.id.withdraw_percent_edit_text)
-    EditText mWithdrawAmount;
 
     @Bind(R.id.retirement_parms_ok)
     Button mOk;
@@ -88,9 +94,13 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.withdraw_percent_button) {
-            mAmountTextView.setText(R.string.percent_amount);
+            mInputWithdrawPercentage.setVisibility(View.GONE);
+            mInputWithdrawAmount.setVisibility(View.VISIBLE);
+            mWithdrawPercentTextView.setText(mROD.getWithdrawAmount());
         } else {
-            mAmountTextView.setText(R.string.dollar_amount);
+            mInputWithdrawAmount.setVisibility(View.GONE);
+            mInputWithdrawPercentage.setVisibility(View.VISIBLE);
+            mWithdrawAmountTextView.setText(mROD.getWithdrawAmount());
         }
     }
 
@@ -114,35 +124,42 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         switch(mode) {
             case RetirementConstants.WITHDRAW_MODE_AMOUNT:
                 mWithdrawModeRadioGroup.check(mWithdrawAmountButton.getId());
-                mAmountTextView.setText(R.string.dollar_amount);
+                mWithdrawAmountTextView.setText(withDrawAmount);
+                mInputWithdrawAmount.setVisibility(View.VISIBLE);
+                mInputWithdrawPercentage.setVisibility(View.GONE);
                 break;
             case RetirementConstants.WITHDRAW_MODE_PERCENT:
                 mWithdrawModeRadioGroup.check(mWithdrawPercentButton.getId());
-                mAmountTextView.setText(R.string.percent_amount);
+                mWithdrawPercentTextView.setText(withDrawAmount);
+                mInputWithdrawAmount.setVisibility(View.GONE);
+                mInputWithdrawPercentage.setVisibility(View.VISIBLE);
                 break;
             default:
                 mWithdrawModeRadioGroup.check(mWithdrawAmountButton.getId());
-                mAmountTextView.setText(R.string.dollar_amount);
+                mWithdrawAmountTextView.setText(withDrawAmount);
+                mInputWithdrawAmount.setVisibility(View.GONE);
+                mInputWithdrawPercentage.setVisibility(View.VISIBLE);
         }
-
-        mWithdrawAmount.setText(withDrawAmount);
     }
 
     private void sendData() {
         String endAge = mEndAgeEditText.getText().toString();
         int withdrawMode;
+        String withdrawAmount;
         switch(mWithdrawModeRadioGroup.getCheckedRadioButtonId()) {
             case R.id.withdraw_amount_button:
                 withdrawMode = RetirementConstants.WITHDRAW_MODE_AMOUNT;
+                withdrawAmount = mWithdrawAmountTextView.getText().toString();
                 break;
             case R.id.withdraw_percent_button:
                 withdrawMode = RetirementConstants.WITHDRAW_MODE_PERCENT;
+                withdrawAmount = mWithdrawPercentTextView.getText().toString();
                 break;
             default:
                 withdrawMode = RetirementConstants.WITHDRAW_MODE_AMOUNT;
+                withdrawAmount = mWithdrawAmountTextView.getText().toString();
         }
 
-        String withdrawAmount = mWithdrawAmount.getText().toString();
         if(withdrawAmount.isEmpty()) {
             AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
             alertDialog.setTitle(getString(R.string.alert));
