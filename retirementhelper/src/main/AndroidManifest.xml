@@ -16,9 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.NavigationActivity" />
-        <activity
-            android:name=".ui.RetirementOptionsDialog"
-            android:theme="@style/RetireDialog" />
+        <activity android:name=".ui.RetirementOptionsDialog"/>
 
         <receiver android:name=".widget.WidgetProvider">
             <intent-filter>
