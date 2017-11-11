@@ -19,7 +19,7 @@
             android:layout_marginTop="30dp"
             android:ems="10"
             android:hint="@string/year"
-            style="@style/FourDigitPositiveNumber"/>
+            style="@style/ThreeDigitPositiveNumber"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout

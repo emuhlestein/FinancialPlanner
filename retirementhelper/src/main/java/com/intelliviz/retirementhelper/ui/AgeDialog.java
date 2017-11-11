@@ -14,14 +14,16 @@ import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MONTH;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_YEAR;
 
 
 public class AgeDialog extends DialogFragment {
 
     private static final String ARG_YEAR = "year";
     private static final String ARG_MONTH = "month";
-    private EditText mInputText;
+    private EditText mYearEditText;
+    private EditText mMonthEditText;
 
     public static AgeDialog newInstance(String year, String month) {
         Bundle args = new Bundle();
@@ -36,16 +38,18 @@ public class AgeDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String year = getArguments().getString(ARG_YEAR);
-        String inputText = getArguments().getString(ARG_MONTH);
+        String month = getArguments().getString(ARG_MONTH);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.age_year_month_layout, null);
 
+        mYearEditText = view.findViewById(R.id.year_edit_text);
+        mMonthEditText = view.findViewById(R.id.month_edit_text);
+
+        mYearEditText.setText(year);
+        mMonthEditText.setText(month);
+
         setCancelable(false);
-        //mInputText = new EditText(getContext());
-        //mInputText.setEms(9);
-        //mInputText.setText(inputText);
-        //mInputText.setInputType(InputType.TYPE_CLASS_DATETIME);
 
         return new AlertDialog.Builder(getActivity())
                 .setMessage("Add Age")
@@ -72,9 +76,11 @@ public class AgeDialog extends DialogFragment {
         if(getTargetFragment() == null) {
             return;
         }
-        String enteredText = mInputText.getText().toString();
+        String year = mYearEditText.getText().toString();
+        String month = mMonthEditText.getText().toString();
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, enteredText);
+        intent.putExtra(EXTRA_YEAR, year);
+        intent.putExtra(EXTRA_MONTH, month);
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
     }
 }

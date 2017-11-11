@@ -133,7 +133,7 @@ public class MilestoneAgeViewModel extends AndroidViewModel {
     }
 
     private List<MilestoneAgeEntity> deleteTheAge(MilestoneAgeEntity age) {
-        mDB.milestoneAgeDao().insert(age);
+        mDB.milestoneAgeDao().delete(age);
         SystemUtils.updateAppWidget(getApplication());
         return DataBaseUtils.getMilestoneAges(mDB);
     }

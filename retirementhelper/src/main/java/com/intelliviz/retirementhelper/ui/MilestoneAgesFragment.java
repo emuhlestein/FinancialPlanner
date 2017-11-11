@@ -36,9 +36,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MONTH;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_YEAR;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ACTION_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_ADD_AGE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
@@ -184,13 +185,14 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
     }
 
     private void onHandleAddAge(Intent intent) {
-        String ageString = intent.getStringExtra(EXTRA_DIALOG_INPUT_TEXT);
-        if(ageString != null) {
-            mNewAge = SystemUtils.parseAgeString(ageString);
-            if(mNewAge == null) {
-                return;
-            }
-        } else {
+        String year = intent.getStringExtra(EXTRA_YEAR);
+        String month = intent.getStringExtra(EXTRA_MONTH);
+        if(year == null || month == null) {
+            return;
+        }
+
+        mNewAge = SystemUtils.parseAgeString(year + " " + month);
+        if(mNewAge == null) {
             return;
         }
 
