@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
+import com.intelliviz.retirementhelper.ui.BirthdateActivity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.GovPensionViewModel;
 
@@ -24,8 +25,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 
 public class GovPensionIncomeActivity extends AppCompatActivity {
@@ -49,8 +52,13 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
     @Bind(R.id.spouse_monthly_benefit_text)
     EditText mSpouseMonthlyBenefit;
 
-    @Bind(R.id.spouse_birthdate_edit_text)
-    EditText mSpouseBirthdate;
+    @Bind(R.id.spouse_birthdate_text_view)
+    TextView mSpouseBirthdate;
+
+    @OnClick(R.id.edit_birthdate_button) void editBirthdate() {
+        Intent newIntent = new Intent(this, BirthdateActivity.class);
+        startActivityForResult(newIntent, REQUEST_BIRTHDATE);
+    }
 
     @Bind(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -117,6 +125,15 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
                 updateUI();
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if(resultCode == RESULT_OK && requestCode == REQUEST_BIRTHDATE) {
+            String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+            mSpouseBirthdate.setText(birthdate);
+        }
     }
 
     private void updateUI() {

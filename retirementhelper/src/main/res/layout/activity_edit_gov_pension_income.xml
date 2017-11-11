@@ -70,6 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
                 android:text="@string/include_spouse" />
 
             <android.support.design.widget.TextInputLayout
@@ -92,25 +93,28 @@
                     android:inputType="number" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_spouse_birthdate"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:paddingTop="24dp">
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/spouse_birthdate_edit_text"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/spouse_birthdate_text_view"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="18sp"/>
+
+                <Button
+                    android:id="@+id/edit_birthdate_button"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:ems="10"
-                    android:hint="@string/birthday_year_format"
-                    android:inputType="date" />
-            </android.support.design.widget.TextInputLayout>
+                    android:contentDescription="@string/edit_birthdate_desc"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="16dp"
+                    android:text="@string/edit_birthdate" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/add_income_source_button"
