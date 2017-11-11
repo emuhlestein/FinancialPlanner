@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
@@ -80,22 +81,27 @@ public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapte
             implements View.OnClickListener
     {
         private TextView mMilestoneAgeTextView;
+        private ImageView mImage;
         private MilestoneAgeEntity mAge;
 
         private MilestoneAgeHolder(View itemView) {
             super(itemView);
-            mMilestoneAgeTextView = (TextView) itemView.findViewById(R.id.milestone_age_text_view);
+            mMilestoneAgeTextView = itemView.findViewById(R.id.milestone_age_text_view);
+            mImage = itemView.findViewById(R.id.overflow_image_view);
             itemView.setOnClickListener(this);
         }
 
         private void bindMilestone(MilestoneAgeEntity ageData) {
             mMilestoneAgeTextView.setText(SystemUtils.getFormattedAge(ageData.getAge()));
+            if(ageData.getId() == 0) {
+                mImage.setVisibility(View.GONE);
+            }
             mAge = ageData;
         }
 
         @Override
         public void onClick(View v) {
-            if(mListener != null) {
+            if(mListener != null && mAge.getId() != 0) {
                 mListener.onSelectMilestoneAge(mAge);
             }
         }
