@@ -40,6 +40,9 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
     @Bind(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
 
+    @Bind(R.id.start_age_text)
+    EditText mStartAge;
+
     @Bind(R.id.spouse_check_box)
     CheckBox mIncludeSpouse;
 
@@ -122,6 +125,7 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
         }
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getFullMonthlyBenefit());
         mMonthlyBenefit.setText(monthlyBenefit);
+        mStartAge.setText(mGPID.getStartAge().toString());
 
         boolean includeSpouse = mGPID.getSpouse() == 1;
         if(includeSpouse) {
@@ -167,9 +171,11 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
             }
         }
 
+        String age = mStartAge.getText().toString();
+
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, INCOME_TYPE_GOV_PENSION);
         GovPensionEntity gpid = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, incomeSourceTypeString ,
-                benefit, includeSpouse, spouseBenefit, spouseBirthdate);
+                benefit, includeSpouse, spouseBenefit, spouseBirthdate, age);
         mViewModel.setData(gpid);
     }
 }

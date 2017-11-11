@@ -12,12 +12,14 @@ public class RetirementOptionsData implements Parcelable {
     private int mWithdrawMode;
     private String mWithdrawAmount;
     private String mBirthdate;
+    private String mPercentIncrease;
 
-    public RetirementOptionsData(String endAge, int withdrawMode, String withdrawAmount, String birthdate) {
+    public RetirementOptionsData(String endAge, int withdrawMode, String withdrawAmount, String birthdate, String percentIncrease) {
         mEndAge = endAge;
         mWithdrawMode = withdrawMode;
         mWithdrawAmount = withdrawAmount;
         mBirthdate = birthdate;
+        mPercentIncrease = percentIncrease;
     }
 
     public String getEndAge() {
@@ -36,15 +38,16 @@ public class RetirementOptionsData implements Parcelable {
         return mBirthdate;
     }
 
-
-
-
+    public String getPercentIncrease() {
+        return mPercentIncrease;
+    }
 
     protected RetirementOptionsData(Parcel in) {
         mEndAge = in.readString();
         mWithdrawMode = in.readInt();
         mWithdrawAmount = in.readString();
         mBirthdate = in.readString();
+        mPercentIncrease = in.readString();
     }
 
     @Override
@@ -58,6 +61,7 @@ public class RetirementOptionsData implements Parcelable {
         dest.writeInt(mWithdrawMode);
         dest.writeString(mWithdrawAmount);
         dest.writeString(mBirthdate);
+        dest.writeString(mPercentIncrease);
     }
 
     @SuppressWarnings("unused")

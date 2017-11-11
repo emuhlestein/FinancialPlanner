@@ -106,7 +106,7 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
                 snackbar.show();
 
                 FragmentManager fm = getFragmentManager();
-                SimpleTextDialog dialog = SimpleTextDialog.newInstance(getString(R.string.add_age), "");
+                AgeDialog dialog = AgeDialog.newInstance("", "");
                 dialog.setTargetFragment(MilestoneAgesFragment.this, REQUEST_ADD_AGE);
                 dialog.show(fm, DIALOG_INPUT_TEXT);
             }
@@ -195,13 +195,6 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
         }
 
         mViewModel.addAge(mNewAge);
-/*
-        RetirementOptionsDatabase.getInstance(getContext()).addAge(newAge);
-        //RetirementOptionsHelper.addAge(getContext(), newAge);
-        SystemUtils.updateAppWidget(getContext());
-        milestoneAges = getMilestoneAges(getContext(), mROD);
-        mAdapter.update(milestoneAges);
-*/
     }
 
     private void onStatusChanged(int status) {

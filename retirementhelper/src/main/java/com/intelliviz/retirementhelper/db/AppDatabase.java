@@ -35,7 +35,7 @@ import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 
 @Database(entities = {MilestoneAgeEntity.class, GovPensionEntity.class, IncomeTypeEntity.class,
         MilestoneSummaryEntity.class, PensionIncomeEntity.class, RetirementOptionsEntity.class,
-        SavingsIncomeEntity.class, SummaryEntity.class, TaxDeferredIncomeEntity.class}, version = 3)
+        SavingsIncomeEntity.class, SummaryEntity.class, TaxDeferredIncomeEntity.class}, version = 1)
 @TypeConverters({AgeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private volatile static AppDatabase mINSTANCE;
@@ -52,11 +52,15 @@ public abstract class AppDatabase extends RoomDatabase {
                             values.put(RetirementOptionsEntity.WITHDRAW_MODE_FIELD, 0);
                             values.put(RetirementOptionsEntity.WITHDRAW_AMOUNT_FIELD, "4");
                             values.put(RetirementOptionsEntity.BIRTHDATE_FIELD, 0);
+                            values.put(RetirementOptionsEntity.PERCENT_INCREASE_FIELD, 0);
                             db.insert(RetirementOptionsEntity.TABLE_NAME, OnConflictStrategy.IGNORE, values);
                         }
                     };
 
-                    mINSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "income_db").addCallback(rdc).build();
+                    mINSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                            AppDatabase.class, "income_db")
+                            .addCallback(rdc)
+                            .build();
                 }
             }
         }

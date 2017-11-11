@@ -41,7 +41,27 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:ems="10"
-                    android:hint="@string/monthly_benefit"
+                    android:hint="@string/full_monthly_benefit"
+                    android:inputType="number" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_start_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:paddingTop="24dp">
+
+                <EditText
+                    android:id="@+id/start_age_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:ems="10"
+                    android:hint="@string/start_age"
                     android:inputType="number" />
             </android.support.design.widget.TextInputLayout>
 

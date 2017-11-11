@@ -17,6 +17,7 @@ public class RetirementOptionsEntity {
     public static final String WITHDRAW_MODE_FIELD = "withdraw_mode";
     public static final String WITHDRAW_AMOUNT_FIELD = "withdraw_amount";
     public static final String BIRTHDATE_FIELD = "birthdate";
+    public static final String PERCENT_INCREASE_FIELD = "percent_increase";
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -28,13 +29,16 @@ public class RetirementOptionsEntity {
     private String withdrawAmount;
     @ColumnInfo(name = BIRTHDATE_FIELD)
     private String birthdate;
+    @ColumnInfo(name = PERCENT_INCREASE_FIELD)
+    private String percentIncrease;
 
-    public RetirementOptionsEntity(int id, String endAge, int withdrawMode, String withdrawAmount, String birthdate) {
+    public RetirementOptionsEntity(int id, String endAge, int withdrawMode, String withdrawAmount, String birthdate, String percentIncrease) {
         this.id = id;
         this.endAge = endAge;
         this.withdrawMode = withdrawMode;
         this.withdrawAmount = withdrawAmount;
         this.birthdate = birthdate;
+        this.percentIncrease = percentIncrease;
     }
 
     public int getId() {
@@ -75,5 +79,13 @@ public class RetirementOptionsEntity {
 
     public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
+    }
+
+    public String getPercentIncrease() {
+        return percentIncrease;
+    }
+
+    public void setPercentIncrease(String percentIncrease) {
+        this.percentIncrease = percentIncrease;
     }
 }

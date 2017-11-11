@@ -119,7 +119,7 @@ public class NavigationActivity extends AppCompatActivity {
             case R.id.retirement_options_item:
                 intent = new Intent(this, RetirementOptionsDialog.class);
                 Bundle b = new Bundle();
-                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate());
+                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate(), mROM.getPercentIncrease());
                 AgeData age = new AgeData(2,3);
                 b.putParcelable(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
                 b.putParcelable("test1", age);
@@ -129,7 +129,7 @@ public class NavigationActivity extends AppCompatActivity {
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
-                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate());
+                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate(), mROM.getPercentIncrease());
                 intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 overridePendingTransition(R.anim.slide_right_in, 0);
@@ -199,7 +199,7 @@ public class NavigationActivity extends AppCompatActivity {
             case REQUEST_RETIRE_OPTIONS:
                 if (resultCode == RESULT_OK) {
                     RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                    mROM = new RetirementOptionsEntity(mROM.getId(), rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate());
+                    mROM = new RetirementOptionsEntity(mROM.getId(), rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate(), rod.getPercentIncrease());
                     mViewModel.update(mROM.getId(), rod);
                 }
                 break;

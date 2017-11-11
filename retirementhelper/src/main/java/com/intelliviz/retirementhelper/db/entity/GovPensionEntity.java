@@ -24,6 +24,7 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     private static final String SPOUSE_FIELD = "spouse";
     private static final String SPOUSE_BENEFIT_FIELD = "spouse_benefit";
     private static final String SPOUSE_BIRTHDATE_FIELD = "spouse_birthdate";
+    private static final String START_AGE_FIELD = "start_age";
 
     @ColumnInfo(name = MONTHLY_BENEFIT_FIELD)
     private String fullMonthlyBenefit;
@@ -37,16 +38,20 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     @ColumnInfo(name = SPOUSE_BIRTHDATE_FIELD)
     private String mSpouseBirhtdate;
 
+    @ColumnInfo(name = START_AGE_FIELD)
+    private String mStartAge;
+
     @Ignore
     private SocialSecurityRules mRules;
 
     public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit,
-                            int spouse, String spouseBenefit, String spouseBirhtdate) {
+                            int spouse, String spouseBenefit, String spouseBirhtdate, String startAge) {
         super(id, type, name);
         this.fullMonthlyBenefit = fullMonthlyBenefit;
         mSpouse = spouse;
         mSpouseBenefit = spouseBenefit;
         mSpouseBirhtdate = spouseBirhtdate;
+        mStartAge = startAge;
     }
 
     public String getFullMonthlyBenefit() {
@@ -81,6 +86,14 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         mSpouseBirhtdate = spouseBirhtdate;
     }
 
+    public String getStartAge() {
+        return mStartAge;
+    }
+
+    public void setStartAge(String startAge) {
+        mStartAge = startAge;
+    }
+
     public void setRules(IncomeTypeRules rules) {
         if(rules instanceof SocialSecurityRules) {
             mRules = (SocialSecurityRules)rules;
@@ -111,4 +124,6 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     public List<AgeData> getAges() {
         return mRules.getAges();
     }
+
+
 }

@@ -55,6 +55,9 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     @Bind(R.id.withdraw_percent_edit_text)
     TextView mWithdrawPercentTextView;
 
+    @Bind(R.id.annual_percent_increase_edit_text)
+    TextView mPercentIncreaseTextView;
+
     @Bind(R.id.withdraw_mode_radio_group)
     RadioGroup mWithdrawModeRadioGroup;
 
@@ -140,6 +143,8 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
                 mInputWithdrawAmount.setVisibility(View.GONE);
                 mInputWithdrawPercentage.setVisibility(View.VISIBLE);
         }
+
+        mPercentIncreaseTextView.setText(mROD.getPercentIncrease());
     }
 
     private void sendData() {
@@ -222,7 +227,9 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         }
         endAge = age.getUnformattedString();
 
-        RetirementOptionsData rod = new RetirementOptionsData(endAge, withdrawMode, withdrawAmount, mROD.getBirthdate());
+        String percentIncrease = mPercentIncreaseTextView.getText().toString();
+
+        RetirementOptionsData rod = new RetirementOptionsData(endAge, withdrawMode, withdrawAmount, mROD.getBirthdate(), percentIncrease);
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);

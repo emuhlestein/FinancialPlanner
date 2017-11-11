@@ -30,7 +30,7 @@ public class NavigationModelView extends AndroidViewModel {
     }
 
     public void update(int id, RetirementOptionsData rod) {
-        RetirementOptionsEntity rom = new RetirementOptionsEntity(id, rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate());
+        RetirementOptionsEntity rom = new RetirementOptionsEntity(id, rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate(), rod.getPercentIncrease());
         new UpdateRetirementOptionsAsyncTask().execute(rom);
         RetirementOptionsEntity r =  mROM.getValue();
         Log.d("edm", r.getBirthdate());
@@ -39,7 +39,7 @@ public class NavigationModelView extends AndroidViewModel {
 
     public void updateBirthdate(String birthdate) {
         RetirementOptionsEntity rom = mROM.getValue();
-        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), rom.getWithdrawMode(), rom.getWithdrawAmount(), birthdate);
+        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), rom.getWithdrawMode(), rom.getWithdrawAmount(), birthdate, rom.getPercentIncrease());
         mROM.setValue(newRom);
         new UpdateRetirementOptionsAsyncTask().execute(newRom);
     }
