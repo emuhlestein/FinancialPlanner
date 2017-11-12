@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -16,7 +17,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
+import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.ui.BirthdateActivity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.GovPensionViewModel;
@@ -30,8 +33,9 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
+import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
-public class GovPensionIncomeActivity extends AppCompatActivity {
+public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
 
     private GovPensionEntity mGPID;
     private long mId;
@@ -43,8 +47,16 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
     @Bind(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
 
-    @Bind(R.id.start_age_text)
-    EditText mStartAge;
+    @Bind(R.id.start_age_text_view)
+    TextView mStartAge;
+
+    @OnClick(R.id.edit_start_age_button) void editAge() {
+        String age = mGPID.getStartAge();
+        AgeData startAge = SystemUtils.parseAgeString(age);
+        FragmentManager fm = getSupportFragmentManager();
+        AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
+        dialog.show(fm, "");
+    }
 
     @Bind(R.id.spouse_check_box)
     CheckBox mIncludeSpouse;
@@ -142,7 +154,9 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
         }
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getFullMonthlyBenefit());
         mMonthlyBenefit.setText(monthlyBenefit);
-        mStartAge.setText(mGPID.getStartAge().toString());
+
+        AgeData age = SystemUtils.parseAgeString(mGPID.getStartAge());
+        mStartAge.setText(age.toString());
 
         boolean includeSpouse = mGPID.getSpouse() == 1;
         if(includeSpouse) {
@@ -189,10 +203,17 @@ public class GovPensionIncomeActivity extends AppCompatActivity {
         }
 
         String age = mStartAge.getText().toString();
+        String age2 = SystemUtils.trimAge(age);
 
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, INCOME_TYPE_GOV_PENSION);
         GovPensionEntity gpid = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, incomeSourceTypeString ,
-                benefit, includeSpouse, spouseBenefit, spouseBirthdate, age);
+                benefit, includeSpouse, spouseBenefit, spouseBirthdate, age2);
         mViewModel.setData(gpid);
+    }
+
+    @Override
+    public void onEditAge(String year, String month) {
+        AgeData age = parseAgeString(year, month);
+        mStartAge.setText(age.toString());
     }
 }

@@ -63,10 +63,10 @@
                     android:id="@+id/edit_start_age_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/edit_birthdate_desc"
+                    android:contentDescription="@string/edit_age_desc"
                     android:layout_gravity="right"
                     android:layout_marginRight="16dp"
-                    android:text="@string/edit_birthdate" />
+                    android:text="@string/edit_age" />
             </LinearLayout>
 
             <CheckBox

@@ -127,4 +127,6 @@
     <string name="year">Year</string>
     <string name="month">Month</string>
     <string name="edit_birthdate_desc">edit birthdate</string>
+    <string name="edit_age_desc">Edit age</string>
+    <string name="edit_age">Edit Age</string>
 </resources>

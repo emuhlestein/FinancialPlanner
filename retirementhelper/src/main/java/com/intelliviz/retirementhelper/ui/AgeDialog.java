@@ -3,6 +3,7 @@ package com.intelliviz.retirementhelper.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,11 @@ public class AgeDialog extends DialogFragment {
     private static final String ARG_MONTH = "month";
     private EditText mYearEditText;
     private EditText mMonthEditText;
+    private OnAgeEditListener mListener;
+
+    public interface OnAgeEditListener {
+        void onEditAge(String year, String month);
+    }
 
     public static AgeDialog newInstance(String year, String month) {
         Bundle args = new Bundle();
@@ -72,15 +78,34 @@ public class AgeDialog extends DialogFragment {
                 .create();
     }
 
-    private void sendResult() {
-        if(getTargetFragment() == null) {
-            return;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof OnAgeEditListener) {
+            mListener = (OnAgeEditListener) context;
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    private void sendResult() {
         String year = mYearEditText.getText().toString();
         String month = mMonthEditText.getText().toString();
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_YEAR, year);
-        intent.putExtra(EXTRA_MONTH, month);
-        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+        if(mListener != null) {
+            mListener.onEditAge(year, month);
+        } else {
+            if (getTargetFragment() == null) {
+                return;
+            }
+
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_YEAR, year);
+            intent.putExtra(EXTRA_MONTH, month);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+        }
     }
 }
