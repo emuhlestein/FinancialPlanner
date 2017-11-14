@@ -36,7 +36,7 @@ import com.intelliviz.retirementhelper.viewmodel.IncomeSourceListViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
@@ -67,16 +67,16 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     private List<IncomeSourceEntityBase> mIncomeSources = new ArrayList<>();
     private IncomeSourceListViewModel mViewModel;
 
-    @Bind(R.id.recyclerview)
+    @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.emptyView)
+    @BindView(R.id.emptyView)
     TextView mEmptyView;
 
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.addIncomeTypeFAB)
+    @BindView(R.id.addIncomeTypeFAB)
     FloatingActionButton mAddIncomeSourceFAB;
 
     /**

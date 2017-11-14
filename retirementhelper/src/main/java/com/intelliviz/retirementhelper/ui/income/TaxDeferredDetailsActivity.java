@@ -25,7 +25,7 @@ import com.intelliviz.retirementhelper.viewmodel.TaxDeferredDetailsViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
@@ -39,25 +39,25 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
     private TaxDeferredIncomeEntity mTDIE;
     private long mId;
 
-    @Bind(R.id.income_source_toolbar)
+    @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.name_text_view)
+    @BindView(R.id.name_text_view)
     TextView mIncomeSourceName;
 
-    @Bind(R.id.current_balance_text_view)
+    @BindView(R.id.current_balance_text_view)
     TextView mCurrentBalance;
 
-    @Bind(R.id.annual_interest_text_view)
+    @BindView(R.id.annual_interest_text_view)
     TextView mAnnualInterest;
 
-    @Bind(R.id.monthly_increase_text_view)
+    @BindView(R.id.monthly_increase_text_view)
     TextView mMonthlyIncrease;
 
-    @Bind(R.id.info_text_view)
+    @BindView(R.id.info_text_view)
     TextView mInfoText;
 
-    @Bind(R.id.recyclerview)
+    @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
 
     @Override

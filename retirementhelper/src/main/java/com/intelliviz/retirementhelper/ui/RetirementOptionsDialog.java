@@ -19,7 +19,7 @@ import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -34,37 +34,37 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     private static final String DEFAULT_WITHDRAW_AMOUNT = "4";
     private RetirementOptionsData mROD;
 
-    @Bind(R.id.end_age_edit_text)
+    @BindView(R.id.end_age_edit_text)
     EditText mEndAgeEditText;
 
-    @Bind(R.id.withdraw_amount_button)
+    @BindView(R.id.withdraw_amount_button)
     RadioButton mWithdrawAmountButton;
 
-    @Bind(R.id.withdraw_percent_button)
+    @BindView(R.id.withdraw_percent_button)
     RadioButton mWithdrawPercentButton;
 
-    @Bind(R.id.input_withdraw_percent)
+    @BindView(R.id.input_withdraw_percent)
     android.support.design.widget.TextInputLayout mInputWithdrawPercentage;
 
-    @Bind(R.id.input_withdraw_amount)
+    @BindView(R.id.input_withdraw_amount)
     android.support.design.widget.TextInputLayout mInputWithdrawAmount;
 
-    @Bind(R.id.withdraw_amount_edit_text)
+    @BindView(R.id.withdraw_amount_edit_text)
     TextView mWithdrawAmountTextView;
 
-    @Bind(R.id.withdraw_percent_edit_text)
+    @BindView(R.id.withdraw_percent_edit_text)
     TextView mWithdrawPercentTextView;
 
-    @Bind(R.id.annual_percent_increase_edit_text)
+    @BindView(R.id.annual_percent_increase_edit_text)
     TextView mPercentIncreaseTextView;
 
-    @Bind(R.id.withdraw_mode_radio_group)
+    @BindView(R.id.withdraw_mode_radio_group)
     RadioGroup mWithdrawModeRadioGroup;
 
-    @Bind(R.id.retirement_parms_ok)
+    @BindView(R.id.retirement_parms_ok)
     Button mOk;
 
-    @Bind(R.id.retirement_parms_cancel)
+    @BindView(R.id.retirement_parms_cancel)
     Button mCancel;
 
     @OnClick(R.id.retirement_parms_ok) void onClickOk() {

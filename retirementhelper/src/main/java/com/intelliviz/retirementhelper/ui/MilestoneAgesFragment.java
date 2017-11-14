@@ -32,7 +32,7 @@ import com.intelliviz.retirementhelper.viewmodel.MilestoneAgeViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
@@ -58,16 +58,16 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
     private List<MilestoneAgeEntity> mMilestoneAges = new ArrayList<>();
     private AgeData mNewAge;
 
-    @Bind(R.id.recyclerview)
+    @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.emptyView)
+    @BindView(R.id.emptyView)
     TextView mEmptyView;
 
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.add_milestone_age_fab)
+    @BindView(R.id.add_milestone_age_fab)
     FloatingActionButton mAddMilestoneAgeFAB;
 
     public MilestoneAgesFragment() {

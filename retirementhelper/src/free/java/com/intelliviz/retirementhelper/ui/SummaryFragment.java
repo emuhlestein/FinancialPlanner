@@ -4,7 +4,8 @@ package com.intelliviz.retirementhelper.ui;
 import com.google.android.gms.ads.AdRequest;
 import com.intelliviz.retirementhelper.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * The summary fragment.
@@ -12,7 +13,7 @@ import butterknife.Bind;
  */
 public class SummaryFragment extends BaseSummaryFragment {
 
-    @Bind(R.id.adView)
+    @BindView(R.id.adView)
     com.google.android.gms.ads.AdView mBannerAdd;
 
     @Override

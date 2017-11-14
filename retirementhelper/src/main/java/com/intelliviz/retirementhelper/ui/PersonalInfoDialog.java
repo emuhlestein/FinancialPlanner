@@ -18,7 +18,7 @@ import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
@@ -30,22 +30,22 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORM
  */
 public class PersonalInfoDialog extends AppCompatActivity {
     private RetirementOptionsData mROD;
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.name_edit_text)
+    @BindView(R.id.name_edit_text)
     TextView mNameTextView;
 
-    @Bind(R.id.email_edit_text)
+    @BindView(R.id.email_edit_text)
     TextView mEmailTextView;
 
-    @Bind(R.id.birthdate_edit_text)
+    @BindView(R.id.birthdate_edit_text)
     EditText mBirthDateEditText;
 
-    @Bind(R.id.personal_info_ok)
+    @BindView(R.id.personal_info_ok)
     Button mOk;
 
-    @Bind(R.id.personal_info_cancel)
+    @BindView(R.id.personal_info_cancel)
     Button mCancel;
 
     @Override

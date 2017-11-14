@@ -23,7 +23,7 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RetirementDetailsActivity extends AppCompatActivity implements SelectAmountListener {
@@ -31,16 +31,16 @@ public class RetirementDetailsActivity extends AppCompatActivity implements Sele
     private RetirementDetailsAdapter mRetirementDetailsAdapter;
     private List<AmountData> mAmountData;
     private MilestoneData mMSD;
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.recyclerview)
+    @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.current_balance_text_view)
+    @BindView(R.id.current_balance_text_view)
     TextView mCurrentBalanceTextView;
 
-    @Bind(R.id.retirement_details_toolbar)
+    @BindView(R.id.retirement_details_toolbar)
     Toolbar mToolbar;
 
     @Override

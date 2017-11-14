@@ -23,7 +23,7 @@ import com.intelliviz.retirementhelper.viewmodel.StartUpViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -47,7 +47,7 @@ public class StartActivity extends AppCompatActivity implements
     private boolean mValidBirthdate = false;
     StartUpViewModel.BirthdateInfo mBirthdateInfo;
 
-    @Bind(R.id.login_button)
+    @BindView(R.id.login_button)
     Button mLoginButton;
 
     @OnClick(R.id.login_button)

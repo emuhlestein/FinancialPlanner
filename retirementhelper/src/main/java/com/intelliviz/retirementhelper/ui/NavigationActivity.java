@@ -31,7 +31,7 @@ import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.viewmodel.NavigationModelView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
@@ -54,10 +54,10 @@ public class NavigationActivity extends AppCompatActivity {
     private NavigationModelView mViewModel;
     private RetirementOptionsEntity mROM;
 
-    @Bind(R.id.summary_toolbar)
+    @BindView(R.id.summary_toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.bottom_navigation)
+    @BindView(R.id.bottom_navigation)
     BottomNavigationView mBottomNavigation;
 
     @Override

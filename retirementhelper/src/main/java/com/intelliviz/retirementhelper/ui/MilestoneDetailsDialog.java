@@ -11,7 +11,7 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -21,25 +21,25 @@ import butterknife.ButterKnife;
  */
 public class MilestoneDetailsDialog extends AppCompatActivity {
 
-    @Bind(R.id.milestone_age_text_view)
+    @BindView(R.id.milestone_age_text_view)
     TextView mAge;
 
-    @Bind(R.id.monthly_amount_text_view)
+    @BindView(R.id.monthly_amount_text_view)
     TextView mMonthlyAmount;
 
-    @Bind(R.id.start_balance_text_view)
+    @BindView(R.id.start_balance_text_view)
     TextView mStartBalance;
 
-    @Bind(R.id.final_balance_text_view)
+    @BindView(R.id.final_balance_text_view)
     TextView mFinalBalance;
 
-    @Bind(R.id.retire_length_text_view)
+    @BindView(R.id.retire_length_text_view)
     TextView mRetirementDuration;
 
-    @Bind(R.id.money_last_text_view)
+    @BindView(R.id.money_last_text_view)
     TextView mFundsDuration;
 
-    @Bind(R.id.info_text_view)
+    @BindView(R.id.info_text_view)
     TextView mInfoText;
 
     @Override

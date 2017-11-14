@@ -1,6 +1,11 @@
 apply plugin: 'com.android.application'
 
+
+
 android {
+    productFlavors {
+
+    }
     signingConfigs {
         config {
             keyAlias 'CapstoneKey'
@@ -22,13 +27,14 @@ android {
         }
     }
     compileSdkVersion 26
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.intelliviz.retirementhelper"
         minSdkVersion 17
         targetSdkVersion 17
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -46,18 +52,22 @@ android {
         }
     }
 
+    flavorDimensions "tier"
+
     productFlavors {
         free {
             applicationIdSuffix ".free"
             buildConfigField 'String', 'AUTHORITY', '"com.intelliviz.retirementhelper.free.RetirementProvider"'
             minSdkVersion 17
             signingConfig signingConfigs.freeConfig
+            dimension "tier"
         }
         paid {
             applicationIdSuffix ".paid"
             buildConfigField 'String', 'AUTHORITY', '"com.intelliviz.retirementhelper.paid.RetirementProvider"'
             minSdkVersion 17
             signingConfig signingConfigs.paidConfig
+            dimension "tier"
         }
     }
 }
@@ -68,23 +78,24 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'android.arch.lifecycle:extensions:1.0.0-alpha8'
-    compile 'android.arch.persistence.room:runtime:1.0.0-alpha8'
+    compile 'android.arch.lifecycle:extensions:1.0.0'
+    compile 'android.arch.persistence.room:runtime:1.0.0'
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:support-v4:26.1.0'
     compile 'com.android.support:customtabs:26.1.0'
     compile 'com.android.support:design:26.1.0'
     compile 'com.android.support:cardview-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.google.firebase:firebase-core:11.0.2'
-    compile 'com.google.firebase:firebase-auth:11.0.2'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    compile 'com.google.firebase:firebase-core:11.6.0'
+    compile 'com.google.firebase:firebase-auth:11.6.0'
     compile 'com.firebaseui:firebase-ui-auth:2.0.1'
-    compile 'com.google.android.gms:play-services-auth:11.0.2'
+    compile 'com.google.android.gms:play-services-auth:11.6.0'
     testCompile 'junit:junit:4.12'
-    annotationProcessor 'android.arch.lifecycle:compiler:1.0.0-alpha8'
-    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0-alpha8'
-    freeCompile 'com.google.firebase:firebase-ads:11.0.2'
+    annotationProcessor 'android.arch.lifecycle:compiler:1.0.0'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    freeCompile 'com.google.firebase:firebase-ads:11.6.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import com.intelliviz.retirementhelper.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
@@ -32,7 +32,7 @@ public class IncomeSourceListMenuFragment extends AppCompatActivity {
     private long mIncomeSourceId;
     private int mIncomeSourceType;
 
-    @Bind(R.id.list_view)
+    @BindView(R.id.list_view)
     ListView mListView;
 
     @Override

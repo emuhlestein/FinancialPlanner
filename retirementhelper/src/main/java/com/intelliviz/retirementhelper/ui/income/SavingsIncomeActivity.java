@@ -19,7 +19,7 @@ import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.SavingsViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -32,22 +32,22 @@ public class SavingsIncomeActivity extends AppCompatActivity {
     private SavingsViewModel mViewModel;
     private SavingsIncomeEntity mSID;
 
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.name_edit_text)
+    @BindView(R.id.name_edit_text)
     EditText mIncomeSourceName;
 
-    @Bind(R.id.balance_text)
+    @BindView(R.id.balance_text)
     EditText mBalance;
 
-    @Bind(R.id.annual_interest_text)
+    @BindView(R.id.annual_interest_text)
     EditText mAnnualInterest;
 
-    @Bind(R.id.monthly_increase_text)
+    @BindView(R.id.monthly_increase_text)
     EditText mMonthlyIncrease;
 
-    @Bind(R.id.add_income_source_button)
+    @BindView(R.id.add_income_source_button)
     Button mAddIncomeSource;
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
@@ -55,7 +55,7 @@ public class SavingsIncomeActivity extends AppCompatActivity {
         finish();
     }
 
-    @Bind(R.id.income_source_toolbar)
+    @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
 
     @Override

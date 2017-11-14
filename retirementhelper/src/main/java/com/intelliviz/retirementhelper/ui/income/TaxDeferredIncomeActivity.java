@@ -20,7 +20,7 @@ import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.TaxDeferredViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -33,28 +33,28 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
     private long mId;
     private TaxDeferredViewModel mViewModel;
 
-    @Bind(R.id.income_source_toolbar)
+    @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.name_edit_text)
+    @BindView(R.id.name_edit_text)
     EditText mIncomeSourceName;
 
-    @Bind(R.id.balance_text)
+    @BindView(R.id.balance_text)
     EditText mBalance;
 
-    @Bind(R.id.annual_interest_text)
+    @BindView(R.id.annual_interest_text)
     EditText mAnnualInterest;
 
-    @Bind(R.id.monthly_increase_text)
+    @BindView(R.id.monthly_increase_text)
     EditText mMonthlyIncrease;
 
-    @Bind(R.id.penalty_age_text)
+    @BindView(R.id.penalty_age_text)
     EditText mPenaltyAge;
 
-    @Bind(R.id.penalty_amount_text)
+    @BindView(R.id.penalty_amount_text)
     EditText mPenaltyAmount;
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {

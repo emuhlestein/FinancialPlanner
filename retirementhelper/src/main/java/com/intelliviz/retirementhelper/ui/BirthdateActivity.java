@@ -15,23 +15,23 @@ import android.widget.EditText;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.R.id.edit_text_day;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
 
 public class BirthdateActivity extends AppCompatActivity {
-    @Bind(edit_text_day)
+    @BindView(edit_text_day)
     EditText mEditTextDay;
 
-    @Bind(R.id.edit_text_month)
+    @BindView(R.id.edit_text_month)
     EditText mEditTextMonth;
 
-    @Bind(R.id.edit_text_year)
+    @BindView(R.id.edit_text_year)
     EditText mEditTextYear;
 
-    @Bind(R.id.save_birthdate_button)
+    @BindView(R.id.save_birthdate_button)
     Button mSaveBirthdateButton;
 
     @Override

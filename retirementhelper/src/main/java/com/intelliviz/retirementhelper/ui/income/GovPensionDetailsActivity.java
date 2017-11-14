@@ -18,7 +18,7 @@ import com.intelliviz.retirementhelper.viewmodel.GovPensionDetailsViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
@@ -29,7 +29,7 @@ public class GovPensionDetailsActivity extends AppCompatActivity {
     private GovPensionDetailsViewModel mViewModel;
     private long mId;
 
-    @Bind(R.id.recyclerview)
+    @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
 
     @Override

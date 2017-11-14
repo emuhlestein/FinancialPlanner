@@ -24,7 +24,7 @@ import com.intelliviz.retirementhelper.ui.BirthdateActivity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.GovPensionViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -41,13 +41,13 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
     private long mId;
     private GovPensionViewModel mViewModel;
 
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.monthly_benefit_text)
+    @BindView(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
 
-    @Bind(R.id.start_age_text_view)
+    @BindView(R.id.start_age_text_view)
     TextView mStartAge;
 
     @OnClick(R.id.edit_start_age_button) void editAge() {
@@ -58,13 +58,13 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
         dialog.show(fm, "");
     }
 
-    @Bind(R.id.spouse_check_box)
+    @BindView(R.id.spouse_check_box)
     CheckBox mIncludeSpouse;
 
-    @Bind(R.id.spouse_monthly_benefit_text)
+    @BindView(R.id.spouse_monthly_benefit_text)
     EditText mSpouseMonthlyBenefit;
 
-    @Bind(R.id.spouse_birthdate_text_view)
+    @BindView(R.id.spouse_birthdate_text_view)
     TextView mSpouseBirthdate;
 
     @OnClick(R.id.edit_birthdate_button) void editBirthdate() {
@@ -72,7 +72,7 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
         startActivityForResult(newIntent, REQUEST_BIRTHDATE);
     }
 
-    @Bind(R.id.income_source_toolbar)
+    @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {

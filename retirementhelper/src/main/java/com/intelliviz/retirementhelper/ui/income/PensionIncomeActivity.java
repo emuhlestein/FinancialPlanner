@@ -19,7 +19,7 @@ import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.PensionViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -33,20 +33,20 @@ public class PensionIncomeActivity extends AppCompatActivity {
     private long mId;
     private PensionViewModel mViewModel;
 
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.name_edit_text)
+    @BindView(R.id.name_edit_text)
     EditText mIncomeSourceName;
 
-    @Bind(R.id.age_text)
+    @BindView(R.id.age_text)
     EditText mMinAge;
 
-    @Bind(R.id.monthly_benefit_text)
+    @BindView(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
 
 
-    @Bind(R.id.income_source_toolbar)
+    @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {

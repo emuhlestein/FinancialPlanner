@@ -27,7 +27,7 @@ import com.intelliviz.retirementhelper.viewmodel.MilestoneSummaryViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -42,13 +42,13 @@ public abstract class BaseSummaryFragment extends Fragment implements
     private List<MilestoneData> mMilestones;
     private MilestoneSummaryViewModel mViewModel;
 
-    @Bind(R.id.coordinatorLayout)
+    @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.recyclerview)
+    @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.current_balance_text_view)
+    @BindView(R.id.current_balance_text_view)
     TextView mCurrentBalanceTextView;
 
     @Override

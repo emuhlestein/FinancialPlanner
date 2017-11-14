@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import com.intelliviz.retirementhelper.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
@@ -23,7 +23,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SEL
  * @author Ed Muhlestein
  */
 public class ListMenuActivity extends AppCompatActivity {
-    @Bind(R.id.list_view)
+    @BindView(R.id.list_view)
     ListView mListView;
 
     @Override
