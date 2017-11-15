@@ -128,5 +128,6 @@
     <string name="month">Month</string>
     <string name="edit_birthdate_desc">edit birthdate</string>
     <string name="edit_age_desc">Edit age</string>
-    <string name="edit_age">Edit Age</string>
+    <string name="edit_age">Start Retirement Age</string>
+    <string name="spouse_full_retirement_age">Spouse Full Retirement Age:</string>
 </resources>

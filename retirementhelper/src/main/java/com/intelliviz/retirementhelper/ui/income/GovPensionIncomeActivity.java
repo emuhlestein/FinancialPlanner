@@ -47,11 +47,11 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
     @BindView(R.id.full_retirement_age_text_view)
     TextView mFullRetirementAge;
 
+    @BindView(R.id.start_age_text_view)
+    TextView mStartRetirementAge;
+
     @BindView(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
-
-    @BindView(R.id.start_age_text_view)
-    TextView mStartAge;
 
     @OnClick(R.id.edit_start_age_button) void editAge() {
         String age = mGPID.getStartAge();
@@ -63,6 +63,9 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
 
     @BindView(R.id.spouse_check_box)
     CheckBox mIncludeSpouse;
+
+    @BindView(R.id.spouse_full_retirement_age_text_view)
+    TextView mSpouseFullRetirementAge;
 
     @BindView(R.id.spouse_monthly_benefit_text)
     EditText mSpouseMonthlyBenefit;
@@ -163,7 +166,7 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
         mMonthlyBenefit.setText(monthlyBenefit);
 
         age = SystemUtils.parseAgeString(mGPID.getStartAge());
-        mStartAge.setText(age.toString());
+        mStartRetirementAge.setText(age.toString());
 
         boolean includeSpouse = mGPID.getSpouse() == 1;
         if(includeSpouse) {
@@ -172,6 +175,9 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
             mSpouseBirthdate.setText(mGPID.getSpouseBirhtdate());
         }
         mIncludeSpouse.setChecked(includeSpouse);
+
+        AgeData spouseFullRetirementAge = mGPID.getFullRetirementAge(mGPID.getSpouseBirhtdate());
+        mSpouseFullRetirementAge.setText(spouseFullRetirementAge.toString());
 
         int type = mGPID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);
@@ -209,7 +215,7 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
             }
         }
 
-        String age = mStartAge.getText().toString();
+        String age = mStartRetirementAge.getText().toString();
         String age2 = SystemUtils.trimAge(age);
 
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, INCOME_TYPE_GOV_PENSION);
@@ -221,6 +227,6 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
     @Override
     public void onEditAge(String year, String month) {
         AgeData age = parseAgeString(year, month);
-        mStartAge.setText(age.toString());
+        mStartRetirementAge.setText(age.toString());
     }
 }
