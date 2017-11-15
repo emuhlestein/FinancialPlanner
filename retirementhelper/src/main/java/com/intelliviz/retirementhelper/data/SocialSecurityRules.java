@@ -44,13 +44,13 @@ public class SocialSecurityRules implements IncomeTypeRules {
         }
 
         int birthYear = SystemUtils.getBirthYear(mBirthdate);
-        AgeData retireAge = getFullRetirementAge(birthYear);
+        AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
         double monthlyBenefit = getMonthlyBenefit(startAge, birthYear, retireAge, mFullMonthlyBenefit);
         double monthlySpouseBenefit;
 
         if(mIncludeSpouse) {
             int spouseBirthyear = SystemUtils.getBirthYear(mSpouseBirthdate);
-            AgeData spouseRetireAge = getFullRetirementAge(spouseBirthyear);
+            AgeData spouseRetireAge = getFullRetirementAgeFromYear(spouseBirthyear);
             if(mSpouseFullBenefit < mFullMonthlyBenefit / 2) {
                 if(startAge.isBefore(spouseRetireAge)) {
                     monthlySpouseBenefit = getMonthlyBenefit(startAge, birthYear, spouseRetireAge, mSpouseFullBenefit);
@@ -79,10 +79,10 @@ public class SocialSecurityRules implements IncomeTypeRules {
     @Override
     public List<AgeData> getAges() {
         int birthyear = SystemUtils.getBirthYear(mBirthdate);
-        AgeData retireAge = getFullRetirementAge(birthyear);
+        AgeData retireAge = getFullRetirementAgeFromYear(birthyear);
         if(mIncludeSpouse) {
             birthyear = SystemUtils.getBirthYear(mSpouseBirthdate);
-            AgeData spouseRetireAge = getFullRetirementAge(birthyear);
+            AgeData spouseRetireAge = getFullRetirementAgeFromYear(birthyear);
             return new ArrayList<>(Arrays.asList(mMinAge, retireAge, spouseRetireAge, mMaxAge));
         } else {
             return new ArrayList<>(Arrays.asList(mMinAge, retireAge, mMaxAge));
@@ -95,7 +95,17 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return new MilestoneData(age, mEndAge, mMinAge, monthlyBenefit, 0, 0, 0, 0, 0, 0, 0);
     }
 
-    private AgeData getFullRetirementAge(int birthYear) {
+    public AgeData getFullRetirementAge() {
+        int birthyear = SystemUtils.getBirthYear(mBirthdate);
+        return getFullRetirementAgeFromYear(birthyear);
+    }
+
+    public AgeData getFullRetirementAge(String birthdate) {
+        int birthyear = SystemUtils.getBirthYear(birthdate);
+        return getFullRetirementAgeFromYear(birthyear);
+    }
+
+    private AgeData getFullRetirementAgeFromYear(int birthYear) {
         AgeData fullAge;
         if(birthYear <= 1937) {
             fullAge = new AgeData(65, 0);
@@ -160,7 +170,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     private double getSocialSecurityAdjustment(int birthYear, AgeData startAge) {
-        AgeData retireAge = getFullRetirementAge(birthYear);
+        AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
         AgeData diffAge = retireAge.subtract(startAge);
         int numMonths = diffAge.getNumberOfMonths();
         if(numMonths > 0) {

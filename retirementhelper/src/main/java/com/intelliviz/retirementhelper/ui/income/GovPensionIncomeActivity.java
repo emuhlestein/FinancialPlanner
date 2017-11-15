@@ -44,6 +44,9 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
+    @BindView(R.id.full_retirement_age_text_view)
+    TextView mFullRetirementAge;
+
     @BindView(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
 
@@ -152,10 +155,14 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
         if(mGPID == null || mGPID.getId() == 0) {
             return;
         }
+
+        AgeData age = mGPID.getFullRetirementAge();
+        mFullRetirementAge.setText(age.toString());
+
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getFullMonthlyBenefit());
         mMonthlyBenefit.setText(monthlyBenefit);
 
-        AgeData age = SystemUtils.parseAgeString(mGPID.getStartAge());
+        age = SystemUtils.parseAgeString(mGPID.getStartAge());
         mStartAge.setText(age.toString());
 
         boolean includeSpouse = mGPID.getSpouse() == 1;

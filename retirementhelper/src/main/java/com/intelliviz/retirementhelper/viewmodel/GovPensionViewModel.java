@@ -26,6 +26,7 @@ import java.util.List;
 public class GovPensionViewModel extends AndroidViewModel {
     private MutableLiveData<GovPensionEntity> mGPID =
             new MutableLiveData<>();
+    private MutableLiveData<String> mBirthdate = new MutableLiveData<>();
     private AppDatabase mDB;
 
     public GovPensionViewModel(Application application, long incomeId) {

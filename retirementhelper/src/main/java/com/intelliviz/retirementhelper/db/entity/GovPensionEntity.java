@@ -94,6 +94,14 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         mStartAge = startAge;
     }
 
+    public AgeData getFullRetirementAge() {
+        return mRules.getFullRetirementAge();
+    }
+
+    public AgeData getFullRetirementAge(String birthdate) {
+        return mRules.getFullRetirementAge(birthdate);
+    }
+
     public void setRules(IncomeTypeRules rules) {
         if(rules instanceof SocialSecurityRules) {
             mRules = (SocialSecurityRules)rules;
