@@ -75,8 +75,13 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
 
     @OnClick(R.id.edit_birthdate_button) void editBirthdate() {
         Intent newIntent = new Intent(this, BirthdateActivity.class);
+        String birthdate = mGPID.getSpouseBirhtdate();
+        newIntent.putExtra(EXTRA_BIRTHDATE, birthdate);
         startActivityForResult(newIntent, REQUEST_BIRTHDATE);
     }
+
+    @BindView(R.id.edit_birthdate_button)
+    TextView mSpouseBirthdateButton;
 
     @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -100,15 +105,18 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
                 if(isChecked) {
                     mSpouseMonthlyBenefit.setEnabled(true);
                     mSpouseBirthdate.setEnabled(true);
+                    mSpouseBirthdateButton.setEnabled(true);
                 } else {
                     mSpouseMonthlyBenefit.setEnabled(false);
                     mSpouseBirthdate.setEnabled(false);
+                    mSpouseBirthdateButton.setEnabled(false);
                 }
             }
         });
 
         mSpouseMonthlyBenefit.setEnabled(false);
         mSpouseBirthdate.setEnabled(false);
+        mSpouseBirthdateButton.setEnabled(false);
 
         Intent intent = getIntent();
         mId = 0;
@@ -173,11 +181,10 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
             String spouseBenefit = SystemUtils.getFormattedCurrency(mGPID.getSpouseBenefit());
             mSpouseMonthlyBenefit.setText(spouseBenefit);
             mSpouseBirthdate.setText(mGPID.getSpouseBirhtdate());
+            AgeData spouseFullRetirementAge = mGPID.getFullRetirementAge(mGPID.getSpouseBirhtdate());
+            mSpouseFullRetirementAge.setText(spouseFullRetirementAge.toString());
         }
         mIncludeSpouse.setChecked(includeSpouse);
-
-        AgeData spouseFullRetirementAge = mGPID.getFullRetirementAge(mGPID.getSpouseBirhtdate());
-        mSpouseFullRetirementAge.setText(spouseFullRetirementAge.toString());
 
         int type = mGPID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);

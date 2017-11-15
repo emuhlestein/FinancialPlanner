@@ -26,6 +26,7 @@ import java.util.List;
 public class GovPensionViewModel extends AndroidViewModel {
     private MutableLiveData<GovPensionEntity> mGPID =
             new MutableLiveData<>();
+    private RetirementOptionsEntity mROE;
     private MutableLiveData<String> mBirthdate = new MutableLiveData<>();
     private AppDatabase mDB;
 
@@ -43,12 +44,18 @@ public class GovPensionViewModel extends AndroidViewModel {
         return null;
     }
 
-    public void setData(GovPensionEntity gpid) {
-        mGPID.setValue(gpid);
-        if(gpid.getId() == 0) {
-            new InsertAsyncTask().execute(gpid);
+    public void setData(GovPensionEntity gpe) {
+        String birthdate = mROE.getBirthdate();
+        AgeData endAge = SystemUtils.parseAgeString(mROE.getEndAge());
+        SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge,
+                Double.parseDouble(gpe.getFullMonthlyBenefit()),
+                gpe.getSpouse(), Double.parseDouble(gpe.getSpouseBenefit()), gpe.getSpouseBirhtdate());
+        gpe.setRules(ssr);
+        mGPID.setValue(gpe);
+        if(gpe.getId() == 0) {
+            new InsertAsyncTask().execute(gpe);
         } else {
-            new UpdateAsyncTask().execute(gpid);
+            new UpdateAsyncTask().execute(gpe);
         }
     }
 
@@ -76,9 +83,9 @@ public class GovPensionViewModel extends AndroidViewModel {
 
         @Override
         protected GovPensionEntity doInBackground(Long... params) {
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-            String birthdate = roe.getBirthdate();
-            AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
+            mROE = mDB.retirementOptionsDao().get();
+            String birthdate = mROE.getBirthdate();
+            AgeData endAge = SystemUtils.parseAgeString(mROE.getEndAge());
             GovPensionEntity gpe = mDB.govPensionDao().get(params[0]);
             if(gpe != null) {
                 SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge,

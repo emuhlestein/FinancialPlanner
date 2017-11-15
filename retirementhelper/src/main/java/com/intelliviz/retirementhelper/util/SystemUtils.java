@@ -160,8 +160,14 @@ public class SystemUtils {
     }
 
     public static int getBirthYear(String birthdate) {
+        if(birthdate == null || birthdate.isEmpty()) {
+            return 0;
+        }
         String[] birthTokens = birthdate.split("-");
-        return parseInt(birthTokens[2]);
+        if(birthTokens.length != 3) {
+            return 0;
+        }
+        return Integer.parseInt(birthTokens[2]);
     }
 
     public static int getBirthMonth(String birthdate) {
