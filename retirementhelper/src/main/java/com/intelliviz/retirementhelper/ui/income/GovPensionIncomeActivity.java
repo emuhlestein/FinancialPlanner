@@ -67,6 +67,9 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
     @BindView(R.id.spouse_full_retirement_age_text_view)
     TextView mSpouseFullRetirementAge;
 
+    @BindView(R.id.spouse_full_retirement_age_label)
+    TextView mSpouseFullRetirementAgeLabel;
+
     @BindView(R.id.spouse_monthly_benefit_text)
     EditText mSpouseMonthlyBenefit;
 
@@ -88,7 +91,6 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
-        finish();
     }
 
     @Override
@@ -106,10 +108,14 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
                     mSpouseMonthlyBenefit.setEnabled(true);
                     mSpouseBirthdate.setEnabled(true);
                     mSpouseBirthdateButton.setEnabled(true);
+                    mSpouseFullRetirementAgeLabel.setEnabled(true);
+                    mSpouseFullRetirementAge.setEnabled(true);
                 } else {
                     mSpouseMonthlyBenefit.setEnabled(false);
                     mSpouseBirthdate.setEnabled(false);
                     mSpouseBirthdateButton.setEnabled(false);
+                    mSpouseFullRetirementAgeLabel.setEnabled(false);
+                    mSpouseFullRetirementAge.setEnabled(false);
                 }
             }
         });
@@ -117,6 +123,8 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
         mSpouseMonthlyBenefit.setEnabled(false);
         mSpouseBirthdate.setEnabled(false);
         mSpouseBirthdateButton.setEnabled(false);
+        mSpouseFullRetirementAgeLabel.setEnabled(false);
+        mSpouseFullRetirementAge.setEnabled(false);
 
         Intent intent = getIntent();
         mId = 0;
@@ -207,7 +215,7 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
         if (includeSpouse == 1) {
             value = mSpouseMonthlyBenefit.getText().toString();
             spouseBenefit = getFloatValue(value);
-            if (benefit == null) {
+            if (spouseBenefit == null) {
                 Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.monthly_benefit_not_valid) + value, Snackbar.LENGTH_LONG);
                 snackbar.show();
                 return;
@@ -229,6 +237,8 @@ public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDi
         GovPensionEntity gpid = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, incomeSourceTypeString ,
                 benefit, includeSpouse, spouseBenefit, spouseBirthdate, age2);
         mViewModel.setData(gpid);
+
+        finish();
     }
 
     @Override

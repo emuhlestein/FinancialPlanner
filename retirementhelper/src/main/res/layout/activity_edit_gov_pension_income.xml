@@ -133,6 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:padding="8dp"
+                    android:minEms="7"
                     android:textSize="18sp"/>
 
             </LinearLayout>
