@@ -6,12 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.IncomeViewDetailsAdapter;
+import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
+import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.viewmodel.GovPensionDetailsViewModel;
 
@@ -24,8 +25,8 @@ import butterknife.ButterKnife;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 public class GovPensionDetailsActivity extends AppCompatActivity {
-    private IncomeViewDetailsAdapter mAdapter;
-    private List<MilestoneData> mMilestones;
+    private IncomeDetailsAdapter mAdapter;
+    private List<IncomeDetails> mIncomeDetails;
     private GovPensionDetailsViewModel mViewModel;
     private long mId;
 
@@ -44,14 +45,15 @@ public class GovPensionDetailsActivity extends AppCompatActivity {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         }
 
-        mMilestones = new ArrayList<>();
-        mAdapter = new IncomeViewDetailsAdapter(this, mMilestones);
+        mIncomeDetails = new ArrayList<>();
+        mAdapter = new IncomeDetailsAdapter(this, mIncomeDetails);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
-                linearLayoutManager.getOrientation()));
 
+        // For adding dividing line between views
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
+        //        linearLayoutManager.getOrientation()));
         GovPensionDetailsViewModel.Factory factory = new
                 GovPensionDetailsViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
@@ -60,7 +62,14 @@ public class GovPensionDetailsActivity extends AppCompatActivity {
         mViewModel.get().observe(this, new Observer<List<MilestoneData>>() {
             @Override
             public void onChanged(@Nullable List<MilestoneData> milestones) {
-                mAdapter.update(milestones);
+
+                List<IncomeDetails> incomeDetails = new ArrayList<>();
+                for(MilestoneData milestoneData : milestones) {
+                    AgeData age = milestoneData.getStartAge();
+                    IncomeDetails incomeDetail = new IncomeDetails(age.toString(), "Spouse");
+                    incomeDetails.add(incomeDetail);
+                }
+                mAdapter.update(incomeDetails);
             }
         });
     }

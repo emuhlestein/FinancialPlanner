@@ -9,70 +9,68 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
-import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.data.IncomeDetails;
+import com.intelliviz.retirementhelper.util.SelectIncomeDetailsListener;
 
 import java.util.List;
 
 /**
- * Created by edm on 10/16/2017.
+ * Created by edm on 11/16/2017.
  */
 
-public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDetailsAdapter.IncomeViewDetailsHolder>{
-    private List<MilestoneData> mMilestones;
+public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdapter.GovPensionHolder>{
+    private List<IncomeDetails> mIncomeDetails;
     private Context mContext;
-    private SelectMilestoneDataListener mListener;
+    private SelectIncomeDetailsListener mListener;
 
-    public IncomeViewDetailsAdapter(Context context, List<MilestoneData> milestones) {
+    public IncomeDetailsAdapter(Context context, List<IncomeDetails> milestones) {
         mContext = context;
-        mMilestones = milestones;
+        mIncomeDetails = milestones;
     }
 
     @Override
-    public IncomeViewDetailsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public IncomeDetailsAdapter.GovPensionHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.card_layout, parent, false);
-        return new IncomeViewDetailsHolder(view);
+        return new IncomeDetailsAdapter.GovPensionHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(IncomeViewDetailsHolder holder, int position) {
-        MilestoneData milestone = mMilestones.get(position);
-        holder.bindMilestone(milestone);
+    public void onBindViewHolder(IncomeDetailsAdapter.GovPensionHolder holder, int position) {
+        IncomeDetails incomeDetails = mIncomeDetails.get(position);
+        holder.bindIncomeDetails(incomeDetails);
     }
 
     @Override
     public int getItemCount() {
-        if(mMilestones != null) {
-            return mMilestones.size();
+        if(mIncomeDetails != null) {
+            return mIncomeDetails.size();
         } else {
             return 0;
         }
     }
 
-    public void setOnSelectMilestoneDataListener(SelectMilestoneDataListener listener) {
+    public void setSelectIncomeDetailsListener(SelectIncomeDetailsListener listener) {
         mListener = listener;
     }
 
-    public void update(List<MilestoneData> milestones) {
-        if(milestones != null) {
-            mMilestones.clear();
-            mMilestones.addAll(milestones);
+    public void update(List<IncomeDetails> incomeDetails) {
+        if(incomeDetails != null) {
+            mIncomeDetails.clear();
+            mIncomeDetails.addAll(incomeDetails);
             notifyDataSetChanged();
         }
     }
 
-    class IncomeViewDetailsHolder extends RecyclerView.ViewHolder
+    class GovPensionHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
         private TextView mLine1TextView;
         private TextView mLine2TextView;
         private LinearLayout mLinearLayout;
-        private MilestoneData mMilestone;
+        private IncomeDetails mIncomeDetails;
 
-        public IncomeViewDetailsHolder(View itemView) {
+        public GovPensionHolder(View itemView) {
             super(itemView);
             mLinearLayout = itemView.findViewById(R.id.gov_pension_item_layout);
             mLine1TextView = itemView.findViewById(R.id.line1);
@@ -80,14 +78,10 @@ public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDet
             itemView.setOnClickListener(this);
         }
 
-        private void bindMilestone(MilestoneData milestone) {
+        private void bindIncomeDetails(IncomeDetails incomeDetails) {
 
-            mMilestone = milestone;
-            double monthlyBenefit = milestone.getMonthlyBenefit();
-            double endBalance = milestone.getEndBalance();
-            double penalty = milestone.getPenaltyAmount();
-            AgeData startAge = milestone.getStartAge();
-
+            mIncomeDetails = incomeDetails;
+/*
             final int sdk = android.os.Build.VERSION.SDK_INT;
             double annualAmount = monthlyBenefit * 12;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -119,15 +113,15 @@ public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDet
                 formattedCurrency = SystemUtils.getFormattedCurrency(monthlyBenefit);
                 formattedCurrency = formattedCurrency + "*";
             }
-
-            mLine2TextView.setText(formattedCurrency);
-            mLine1TextView.setText(SystemUtils.getFormattedAge(startAge));
+*/
+            mLine1TextView.setText(incomeDetails.getLine1());
+            mLine2TextView.setText(incomeDetails.getLine2());
         }
 
         @Override
         public void onClick(View v) {
             if(mListener != null) {
-                mListener.onSelectMilestone(mMilestone);
+                mListener.onSelectIncomeDetails(mIncomeDetails);
             }
         }
     }
