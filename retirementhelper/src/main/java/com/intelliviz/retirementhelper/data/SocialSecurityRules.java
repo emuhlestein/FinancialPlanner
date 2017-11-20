@@ -256,7 +256,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private double getSocialSecurityAdjustment(int birthYear, AgeData startAge) {
         AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
         int numMonths = retireAge.diff(startAge);
-        if(numMonths > 0) {
+        if(startAge.isBefore(retireAge)) {
             // this is early retirement; the adjustment will be a penalty.
             double penalty;
             if(numMonths < 37) {
@@ -270,27 +270,22 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 }
                 return penalty;
             }
-        } else if(numMonths < 0) {
+        } else {
             // this is delayed retirement; the adjustment is a credit.
             double annualCredit = getDelayedCredit(birthYear);
             return (numMonths * (annualCredit / 12.0))/100;
-        } else {
-            return 0; // exact retirement age
         }
     }
 
     private double getMonthlyBenefit(AgeData startAge, int birthYear, double monthlyBenefit) {
         AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
-        int numMonths = retireAge.diff(startAge);
-        if(numMonths > 0) {
+        if(startAge.isBefore(retireAge)) {
             double adjustment = getSocialSecurityAdjustment(birthYear, startAge);
             return (1.0 - adjustment) * monthlyBenefit;
-        } else if(numMonths < 0) {
-            double adjustment = -getSocialSecurityAdjustment(birthYear, startAge);
+        } else {
+            double adjustment = getSocialSecurityAdjustment(birthYear, startAge);
             adjustment += 1.0;
             return monthlyBenefit * adjustment;
-        } else {
-            return monthlyBenefit;
         }
     }
 }
