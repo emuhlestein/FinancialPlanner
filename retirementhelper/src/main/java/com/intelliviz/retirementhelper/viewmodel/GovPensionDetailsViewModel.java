@@ -9,11 +9,10 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.GovPensionData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
-import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
@@ -27,10 +26,10 @@ import java.util.List;
  */
 
 public class GovPensionDetailsViewModel extends AndroidViewModel {
-    private MutableLiveData<GovPensionEntity> mGPID =
+    private MutableLiveData<GovPensionData> mGPID =
             new MutableLiveData<>();
     private AppDatabase mDB;
-    private MutableLiveData<List<MilestoneData>> mMilestones = new MutableLiveData<List<MilestoneData>>();
+    private MutableLiveData<List<GovPensionData>> mGovPensionData = new MutableLiveData<List<GovPensionData>>();
 
     public GovPensionDetailsViewModel(Application application, long incomeId) {
         super(application);
@@ -38,8 +37,8 @@ public class GovPensionDetailsViewModel extends AndroidViewModel {
         new GetAsyncTask().execute(incomeId);
     }
 
-    public MutableLiveData<List<MilestoneData>> get() {
-        return mMilestones;
+    public MutableLiveData<List<GovPensionData>> get() {
+        return mGovPensionData;
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -58,10 +57,10 @@ public class GovPensionDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, List<MilestoneData>> {
+    private class GetAsyncTask extends AsyncTask<Long, Void, List<GovPensionData>> {
 
         @Override
-        protected List<MilestoneData> doInBackground(Long... params) {
+        protected List<GovPensionData> doInBackground(Long... params) {
             List<MilestoneAgeEntity> ages = DataBaseUtils.getMilestoneAges(mDB);
             RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
             GovPensionEntity entity = mDB.govPensionDao().get(params[0]);
@@ -74,15 +73,21 @@ public class GovPensionDetailsViewModel extends AndroidViewModel {
                     Double.parseDouble(entity.getSpouseBenefit()), entity.getSpouseBirhtdate());
             entity.setRules(ssr);
 
-            List<IncomeSourceEntityBase> list = new ArrayList<>();
-            list.add(entity);
-            List<MilestoneData> milestones = DataBaseUtils.getAllMilestones(list, ages, rod);
-            return milestones;
+            List<GovPensionData> listGovPensionData = new ArrayList<>();
+            for(MilestoneAgeEntity age : ages) {
+                GovPensionData data = entity.getMonthlyBenefitForAge(age.getAge());
+                if(data != null) {
+                    listGovPensionData.add(data);
+                }
+
+            }
+
+            return listGovPensionData;
         }
 
         @Override
-        protected void onPostExecute(List<MilestoneData> milestones) {
-            mMilestones.setValue(milestones);
+        protected void onPostExecute(List<GovPensionData> entities) {
+            mGovPensionData.setValue(entities);
         }
     }
 }

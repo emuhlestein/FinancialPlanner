@@ -30,8 +30,7 @@ public class PensionRules implements IncomeTypeRules {
         if(age.isBefore(mMinAge)) {
             milestone = new MilestoneData(age, mEndAge, mMinAge, 0, 0, 0, 0, 0, 0, 0, 0);
         } else {
-            AgeData diffAge = mEndAge.subtract(age);
-            int numMonths = diffAge.getNumberOfMonths();
+            int numMonths =  mEndAge.diff(age);
 
             milestone = new MilestoneData(age, mEndAge, mMinAge, mMonthlyAmount, 0, 0, 0, numMonths, 0, 0, 0);
         }

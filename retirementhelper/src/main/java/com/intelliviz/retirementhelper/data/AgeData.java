@@ -9,15 +9,13 @@ import android.os.Parcelable;
  */
 
 public class AgeData implements Parcelable {
-    private int mYear;
-    private int mMonth;
+    private int mNumMonths;
 
     /**
      * Default constructor.
      */
     public AgeData() {
-        mYear = 0;
-        mMonth = 0;
+        mNumMonths = 0;
     }
 
     /**
@@ -27,8 +25,16 @@ public class AgeData implements Parcelable {
      * @param month The month.
      */
     public AgeData(int year, int month) {
-        mYear = year;
-        mMonth = month;
+        mNumMonths = year * 12 + month;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param numMonths The number of months.
+     */
+    public AgeData(int numMonths) {
+        mNumMonths = numMonths;
     }
 
     /**
@@ -37,19 +43,14 @@ public class AgeData implements Parcelable {
      * @return True if age comes before this age. False otherwise.
      */
     public boolean isBefore(AgeData age) {
-        return (mYear < age.getYear() ||  (mYear == age.getYear() && mMonth < age.getMonth()));
+        return getNumberOfMonths() < age.getNumberOfMonths();
     }
 
     public void addMonths(int numMonths) {
         if(numMonths <= 0) {
             return;
         }
-
-        mMonth += numMonths;
-        int years = mMonth / 12;
-        mYear += years;
-
-        mMonth = mMonth % 12;
+        mNumMonths += numMonths;
     }
 
     /**
@@ -58,14 +59,28 @@ public class AgeData implements Parcelable {
      * @return The age difference.
      */
     public AgeData subtract(AgeData ageData) {
-        int year = mYear - ageData.getYear();
-        int month = mMonth - ageData.getMonth();
-        if(month < 0) {
-            year--;
-            month = 12 + month;
-        }
+        return new AgeData(mNumMonths - ageData.getNumberOfMonths());
+    }
 
-        return new AgeData(year, month);
+    public AgeData subtract(int numMonths) {
+        return new AgeData(getNumberOfMonths() - numMonths);
+    }
+
+    /**
+     * Add the specified age to this age.
+     * @param ageData The age.
+     * @return The sum age.
+     */
+    public AgeData add(AgeData ageData) {
+        return new AgeData(mNumMonths + ageData.getNumberOfMonths());
+    }
+
+    public AgeData add(int numMonths) {
+        return new AgeData(getNumberOfMonths() + numMonths);
+    }
+
+    public int diff(AgeData ageData) {
+        return Math.abs(mNumMonths - ageData.getNumberOfMonths());
     }
 
     /**
@@ -73,7 +88,7 @@ public class AgeData implements Parcelable {
      * @return THe number of months.
      */
     public int getNumberOfMonths() {
-        return mYear * 12 + mMonth;
+        return mNumMonths;
     }
 
     /**
@@ -81,7 +96,7 @@ public class AgeData implements Parcelable {
      * @return The year.
      */
     public int getYear() {
-        return mYear;
+        return mNumMonths / 12;
     }
 
     /**
@@ -89,7 +104,7 @@ public class AgeData implements Parcelable {
      * @return The month.
      */
     public int getMonth() {
-        return mMonth;
+        return mNumMonths % 12;
     }
 
     /**
@@ -102,7 +117,7 @@ public class AgeData implements Parcelable {
 
     @Override
     public String toString() {
-        return Integer.toString(mYear) + "y " + Integer.toString(mMonth) + "m";
+        return Integer.toString(getYear()) + "y " + Integer.toString(getMonth()) + "m";
     }
 
     /**
@@ -110,7 +125,7 @@ public class AgeData implements Parcelable {
      * @return The unformatted string.
      */
     public String getUnformattedString() {
-        return Integer.toString(mYear) + " " + Integer.toString(mMonth);
+        return Integer.toString(getYear()) + " " + Integer.toString(getMonth());
     }
 
     @Override
@@ -129,22 +144,13 @@ public class AgeData implements Parcelable {
 
         AgeData ageData = (AgeData)obj;
 
-        if(ageData.mYear != mYear) {
-            return false;
-        }
-
-        if(ageData.mMonth != mMonth) {
-            return false;
-        }
-
-        return true;
+        return(ageData.mNumMonths != mNumMonths);
     }
 
     @Override
     public int hashCode() {
         int result = 1;
-        result = 17 * result + mYear;
-        result = 31 * result + mMonth;
+        result = 17 * result + mNumMonths;
         return result;
     }
 
@@ -155,13 +161,11 @@ public class AgeData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mYear);
-        dest.writeInt(mMonth);
+        dest.writeInt(mNumMonths);
     }
 
     private void readFromParcel(Parcel in) {
-        mYear = in.readInt();
-        mMonth = in.readInt();
+        mNumMonths = in.readInt();
     }
 
     public static final Parcelable.Creator<AgeData> CREATOR = new Parcelable.Creator<AgeData>()

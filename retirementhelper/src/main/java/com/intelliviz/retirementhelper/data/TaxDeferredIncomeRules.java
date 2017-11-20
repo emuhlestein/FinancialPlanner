@@ -39,8 +39,7 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
         if(age.isBefore(mCurrentAge)) {
             return null;
         }
-        AgeData diffAge = age.subtract(mCurrentAge);
-        int numMonths = diffAge.getNumberOfMonths();
+        int numMonths =  age.diff(mCurrentAge);
         double futureBalance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
 
         double monthlyAmount = BalanceUtils.getMonthlyAmount(futureBalance, mWithdrawMode, mWithdrawAmount);

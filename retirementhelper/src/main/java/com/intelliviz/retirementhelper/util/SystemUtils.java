@@ -313,4 +313,22 @@ public class SystemUtils {
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
     }
+
+    /**
+     * Get the start age for the spouse.
+     * @param startAge The start age.
+     * @param spouseAge The age of the spouse.
+     * @return The spouse start age.
+     */
+    public static AgeData getSpouseStartAge(AgeData age, AgeData spouseAge, AgeData startAge) {
+        int numMonths = age.diff(spouseAge);
+
+        if(spouseAge.isBefore(age)) {
+            // spouse is younger
+            return startAge.subtract(numMonths);
+        } else {
+            // spouse is older
+            return startAge.add(numMonths);
+        }
+    }
 }

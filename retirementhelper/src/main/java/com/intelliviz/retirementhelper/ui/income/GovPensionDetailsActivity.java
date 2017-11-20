@@ -12,8 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.GovPensionData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
-import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.GovPensionDetailsViewModel;
 
 import java.util.ArrayList;
@@ -59,14 +60,22 @@ public class GovPensionDetailsActivity extends AppCompatActivity {
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionDetailsViewModel.class);
 
-        mViewModel.get().observe(this, new Observer<List<MilestoneData>>() {
+        mViewModel.get().observe(this, new Observer<List<GovPensionData>>() {
             @Override
-            public void onChanged(@Nullable List<MilestoneData> milestones) {
+            public void onChanged(@Nullable List<GovPensionData> govPensionData) {
 
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
-                for(MilestoneData milestoneData : milestones) {
-                    AgeData age = milestoneData.getStartAge();
-                    IncomeDetails incomeDetail = new IncomeDetails(age.toString(), "Spouse");
+                for(GovPensionData pensionData : govPensionData) {
+                    AgeData age = pensionData.getAge();
+                    String amount = SystemUtils.getFormattedCurrency(pensionData.getBenefit());
+                    String line1 = age.toString() + "   " + amount;
+                    String line2 = "";
+                    if(pensionData.isIncludeSpouse()) {
+                        amount = SystemUtils.getFormattedCurrency(pensionData.getSpouseBenefit());
+                        line2 = "Spouse: " + pensionData.getSpouseAge().toString() + " " + amount;
+                    }
+
+                    IncomeDetails incomeDetail = new IncomeDetails(line1, line2);
                     incomeDetails.add(incomeDetail);
                 }
                 mAdapter.update(incomeDetails);

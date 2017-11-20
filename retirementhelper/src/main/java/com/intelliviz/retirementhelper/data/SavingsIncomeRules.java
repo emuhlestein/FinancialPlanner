@@ -32,8 +32,7 @@ public class SavingsIncomeRules implements IncomeTypeRules {
 
     @Override
     public MilestoneData getMilestone(AgeData age) {
-        AgeData diffAge = age.subtract(mCurrentAge);
-        int numMonths = diffAge.getNumberOfMonths();
+        int numMonths = age.diff(mCurrentAge);
         double futureBalance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
 
         double monthlyAmount = BalanceUtils.getMonthlyAmount(mBalance, mWithdrawMode, mWithdrawAmount);

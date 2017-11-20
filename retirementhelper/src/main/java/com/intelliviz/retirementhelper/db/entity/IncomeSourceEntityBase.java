@@ -80,8 +80,7 @@ public abstract class IncomeSourceEntityBase implements IncomeSourceType {
         balances.add(newBalance);
         for (int i = 1; i < ages.size(); i++) {
             AgeData age = ages.get(i).getAge();
-            AgeData diffAge = age.subtract(refAge);
-            int numMonths = diffAge.getNumberOfMonths();
+            int numMonths =  age.diff(refAge);
             newBalance = getFutureBalance(newBalance, numMonths, interest, monthlyIncrease);
             balances.add(newBalance);
             refAge = age;
