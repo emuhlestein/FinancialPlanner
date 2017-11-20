@@ -144,7 +144,7 @@ public class AgeData implements Parcelable {
 
         AgeData ageData = (AgeData)obj;
 
-        return(ageData.mNumMonths != mNumMonths);
+        return(ageData.mNumMonths == mNumMonths);
     }
 
     @Override

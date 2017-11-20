@@ -131,7 +131,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         AgeData spouseAge = SystemUtils.getAge(mSpouseBirthdate);
         AgeData spouseStartAge = SystemUtils.getSpouseStartAge(age, spouseAge, startAge);
 
-        if(age.isBefore(mMinAge)) {
+        if(startAge.isBefore(mMinAge)) {
             return new GovPensionData(startAge, 0, 0, true, spouseStartAge, 0);
         }
         int birthYear = SystemUtils.getBirthYear(mBirthdate);
