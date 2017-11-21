@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.NavigationActivity" />
-        <activity android:name=".ui.RetirementOptionsDialog"/>
+        <activity android:name=".ui.RetirementOptionsDialog" />
 
         <receiver android:name=".widget.WidgetProvider">
             <intent-filter>
@@ -48,7 +48,8 @@
         <activity android:name=".ui.income.PensionIncomeActivity" />
         <activity android:name=".ui.income.GovPensionDetailsActivity" />
         <activity android:name=".ui.income.TaxDeferredDetailsActivity" />
-        <activity android:name=".ui.RetirementDetailsActivity"></activity>
+        <activity android:name=".ui.RetirementDetailsActivity" />
+        <activity android:name=".ui.income.PensionIncomeDetailsActivity"></activity>
     </application>
 
 </manifest>

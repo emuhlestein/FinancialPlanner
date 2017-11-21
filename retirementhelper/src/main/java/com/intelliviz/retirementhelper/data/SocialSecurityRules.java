@@ -71,11 +71,9 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 return calculateSpousalBenefits(startAge);
             }
 
-            AgeData age = SystemUtils.getAge(mBirthdate);
             int birthYear = SystemUtils.getBirthYear(mBirthdate);
             AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
 
-            AgeData spouseAge = SystemUtils.getAge(mSpouseBirthdate);
             AgeData spouseStartAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, startAge);
             int spouseBirthyear = SystemUtils.getBirthYear(mSpouseBirthdate);
 

@@ -36,4 +36,12 @@ public class PensionRules implements IncomeTypeRules {
         }
         return milestone;
     }
+
+    public PensionData getMonthlyBenefitForAge(AgeData startAge) {
+        if(startAge.isBefore(mMinAge)) {
+            return new PensionData(startAge, 0, 0);
+        } else {
+            return new PensionData(startAge, mMonthlyAmount, 2);
+        }
+    }
 }

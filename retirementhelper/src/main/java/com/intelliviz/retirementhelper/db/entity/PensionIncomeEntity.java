@@ -7,6 +7,7 @@ import android.arch.persistence.room.Ignore;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.PensionData;
 import com.intelliviz.retirementhelper.data.PensionRules;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -96,5 +97,13 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
         List<AgeData> ages = new ArrayList<>();
         ages.add(ageData);
         return ages;
+    }
+
+    public PensionData getMonthlyBenefitForAge(AgeData startAge) {
+        if(mRules != null) {
+            return mRules.getMonthlyBenefitForAge(startAge);
+        } else {
+            return null;
+        }
     }
 }

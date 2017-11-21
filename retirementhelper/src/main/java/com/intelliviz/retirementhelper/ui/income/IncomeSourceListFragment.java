@@ -205,6 +205,11 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
                     intent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedIncome.getId());
                     startActivity(intent);
                     break;
+                case INCOME_TYPE_PENSION:
+                    intent = new Intent(getContext(), PensionIncomeDetailsActivity.class);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedIncome.getId());
+                    startActivity(intent);
+                    break;
             }
         }
     }
