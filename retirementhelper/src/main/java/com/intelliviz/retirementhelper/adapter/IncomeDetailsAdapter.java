@@ -107,16 +107,6 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
                 }
             }
 
-            /*
-            String formattedCurrency = SystemUtils.getFormattedCurrency(monthlyBenefit);
-            if(penalty > 0) {
-                double monthlyPenalty = monthlyBenefit * penalty / 100.0;
-                monthlyBenefit = monthlyBenefit - monthlyPenalty;
-                formattedCurrency = SystemUtils.getFormattedCurrency(monthlyBenefit);
-                formattedCurrency = formattedCurrency + "*";
-            }
-            */
-
             mLine1TextView.setText(incomeDetails.getLine1());
             mLine2TextView.setText(incomeDetails.getLine2());
         }
