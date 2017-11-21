@@ -41,7 +41,8 @@ public class SocialSecurityRules implements IncomeTypeRules {
         if(mIncludeSpouse) {
             birthyear = SystemUtils.getBirthYear(mSpouseBirthdate);
             AgeData spouseRetireAge = getFullRetirementAgeFromYear(birthyear);
-            return new ArrayList<>(Arrays.asList(mMinAge, retireAge, spouseRetireAge, mMaxAge));
+            AgeData age1 = SystemUtils.getAge(mBirthdate, mSpouseBirthdate, spouseRetireAge);
+            return new ArrayList<>(Arrays.asList(mMinAge, retireAge, age1, mMaxAge));
         } else {
             return new ArrayList<>(Arrays.asList(mMinAge, retireAge, mMaxAge));
         }
@@ -75,7 +76,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
             AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
 
             AgeData spouseAge = SystemUtils.getAge(mSpouseBirthdate);
-            AgeData spouseStartAge = SystemUtils.getSpouseStartAge(age, spouseAge, startAge);
+            AgeData spouseStartAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, startAge);
             int spouseBirthyear = SystemUtils.getBirthYear(mSpouseBirthdate);
 
             double monthlySpouseBenefit;
@@ -129,7 +130,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private GovPensionData calculateSpousalBenefits(AgeData startAge) {
         AgeData age = SystemUtils.getAge(mBirthdate);
         AgeData spouseAge = SystemUtils.getAge(mSpouseBirthdate);
-        AgeData spouseStartAge = SystemUtils.getSpouseStartAge(age, spouseAge, startAge);
+        AgeData spouseStartAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, startAge);
 
         if(startAge.isBefore(mMinAge)) {
             return new GovPensionData(startAge, 0, 0, true, spouseStartAge, 0);

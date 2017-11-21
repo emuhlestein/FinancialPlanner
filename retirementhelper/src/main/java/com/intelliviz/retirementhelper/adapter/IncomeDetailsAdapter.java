@@ -5,12 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
-import com.intelliviz.retirementhelper.util.SelectIncomeDetailsListener;
 
 import java.util.List;
 
@@ -21,17 +19,22 @@ import java.util.List;
 public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdapter.GovPensionHolder>{
     private List<IncomeDetails> mIncomeDetails;
     private Context mContext;
-    private SelectIncomeDetailsListener mListener;
+    private int mNumLines;
 
-    public IncomeDetailsAdapter(Context context, List<IncomeDetails> milestones) {
+    public IncomeDetailsAdapter(Context context, List<IncomeDetails> incomeDetails) {
         mContext = context;
-        mIncomeDetails = milestones;
+        mIncomeDetails = incomeDetails;
     }
 
     @Override
     public IncomeDetailsAdapter.GovPensionHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.card_layout, parent, false);
+        View view;
+        if(mNumLines == 1) {
+            view = inflater.inflate(R.layout.card_layout1, parent, false);
+        } else {
+            view = inflater.inflate(R.layout.card_layout, parent, false);
+        }
         return new IncomeDetailsAdapter.GovPensionHolder(view);
     }
 
@@ -50,12 +53,9 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         }
     }
 
-    public void setSelectIncomeDetailsListener(SelectIncomeDetailsListener listener) {
-        mListener = listener;
-    }
-
     public void update(List<IncomeDetails> incomeDetails) {
-        if(incomeDetails != null) {
+        if(incomeDetails != null || incomeDetails.isEmpty()) {
+            mNumLines = incomeDetails.get(0).getNumLines();
             mIncomeDetails.clear();
             mIncomeDetails.addAll(incomeDetails);
             notifyDataSetChanged();
@@ -67,22 +67,23 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
 
         private TextView mLine1TextView;
         private TextView mLine2TextView;
-        private LinearLayout mLinearLayout;
-        private IncomeDetails mIncomeDetails;
+        private TextView mLine3TextView;
         private android.support.v7.widget.CardView mCardView;
 
         public GovPensionHolder(View itemView) {
             super(itemView);
-            mLinearLayout = itemView.findViewById(R.id.gov_pension_item_layout);
             mCardView = itemView.findViewById(R.id.card_view);
-            mLine1TextView = itemView.findViewById(R.id.line1);
-            mLine2TextView = itemView.findViewById(R.id.line2);
+            if(mNumLines == 1) {
+                mLine1TextView = itemView.findViewById(R.id.line1);
+            } else {
+                mLine1TextView = itemView.findViewById(R.id.line1);
+                mLine2TextView = itemView.findViewById(R.id.line2);
+                mLine3TextView = itemView.findViewById(R.id.line3);
+            }
             itemView.setOnClickListener(this);
         }
 
         private void bindIncomeDetails(IncomeDetails incomeDetails) {
-
-            mIncomeDetails = incomeDetails;
 
             final int sdk = android.os.Build.VERSION.SDK_INT;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -107,15 +108,17 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
                 }
             }
 
-            mLine1TextView.setText(incomeDetails.getLine1());
-            mLine2TextView.setText(incomeDetails.getLine2());
+            if(incomeDetails.getNumLines() == 1) {
+                mLine1TextView.setText(incomeDetails.getLine1());
+            } else {
+                mLine1TextView.setText(incomeDetails.getLine1());
+                mLine2TextView.setText(incomeDetails.getLine2());
+                mLine3TextView.setText(incomeDetails.getLine3());
+            }
         }
 
         @Override
         public void onClick(View v) {
-            if(mListener != null) {
-                mListener.onSelectIncomeDetails(mIncomeDetails);
-            }
         }
     }
 }

@@ -315,20 +315,44 @@ public class SystemUtils {
     }
 
     /**
-     * Get the start age for the spouse.
-     * @param startAge The start age.
-     * @param spouseAge The age of the spouse.
+     * Get the age for the spouse, given the other spouse's age.
+     * @param birthdate The birthdate.
+     * @param spouseBirthdate The spouse's birthdate.
+     * @param age The age.
      * @return The spouse start age.
      */
-    public static AgeData getSpouseStartAge(AgeData age, AgeData spouseAge, AgeData startAge) {
-        int numMonths = age.diff(spouseAge);
+    public static AgeData getSpouseAge(String birthdate, String spouseBirthdate, AgeData age) {
+        AgeData currentAge = SystemUtils.getAge(birthdate);
+        AgeData spouseAge =  SystemUtils.getAge(spouseBirthdate);
+        int numMonths = currentAge.diff(spouseAge);
 
-        if(spouseAge.isBefore(age)) {
+        if(spouseAge.isBefore(currentAge)) {
             // spouse is younger
-            return startAge.subtract(numMonths);
+            return age.subtract(numMonths);
         } else {
             // spouse is older
-            return startAge.add(numMonths);
+            return age.add(numMonths);
+        }
+    }
+
+    /**
+     * Get the age for the spouse, given the other spouse's age.
+     * @param birthdate The birthdate.
+     * @param spouseBirthdate The spouse's birthdate.
+     * @param spouseAge The age.
+     * @return The spouse start age.
+     */
+    public static AgeData getAge(String birthdate, String spouseBirthdate, AgeData spouseAge) {
+        AgeData currentAge = SystemUtils.getAge(birthdate);
+        AgeData spouseCurrentAge = SystemUtils.getAge(spouseBirthdate);
+        int numMonths = spouseCurrentAge.diff(currentAge);
+
+        if(currentAge.isBefore(spouseCurrentAge)) {
+            // spouse is younger
+            return spouseAge.subtract(numMonths);
+        } else {
+            // spouse is older
+             return spouseAge.add(numMonths);
         }
     }
 }
