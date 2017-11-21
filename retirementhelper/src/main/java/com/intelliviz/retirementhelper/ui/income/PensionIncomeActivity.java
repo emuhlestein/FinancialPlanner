@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
+import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.PensionViewModel;
 
@@ -26,8 +28,9 @@ import butterknife.OnClick;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
+import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
-public class PensionIncomeActivity extends AppCompatActivity {
+public class PensionIncomeActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
     private static final String TAG = PensionIncomeActivity.class.getSimpleName();
     private PensionIncomeEntity mPID;
     private long mId;
@@ -39,12 +42,19 @@ public class PensionIncomeActivity extends AppCompatActivity {
     @BindView(R.id.name_edit_text)
     EditText mIncomeSourceName;
 
-    @BindView(R.id.age_text)
-    EditText mMinAge;
+    @BindView(R.id.minimum_age_text)
+    TextView mMinAge;
+
+    @OnClick(R.id.edit_minimum_age_button) void editAge() {
+        String age = mPID.getMinAge();
+        AgeData startAge = SystemUtils.parseAgeString(age);
+        FragmentManager fm = getSupportFragmentManager();
+        AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
+        dialog.show(fm, "");
+    }
 
     @BindView(R.id.monthly_benefit_text)
     EditText mMonthlyBenefit;
-
 
     @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -110,14 +120,15 @@ public class PensionIncomeActivity extends AppCompatActivity {
         String age = mPID.getMinAge();
 
         mIncomeSourceName.setText(name);
-        mMinAge.setText(age);
+
+        AgeData minAge = SystemUtils.parseAgeString(age);
+        mMinAge.setText(minAge.toString());
         mMonthlyBenefit.setText(monthlyBenefit);
 
         int type = mPID.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);
         SystemUtils.setToolbarSubtitle(this, incomeSourceTypeString);
     }
-
 
     public void updateIncomeSourceData() {
         String name = mIncomeSourceName.getText().toString();
@@ -140,5 +151,11 @@ public class PensionIncomeActivity extends AppCompatActivity {
 
         PensionIncomeEntity pid = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name, age, benefit);
         mViewModel.setData(pid);
+    }
+
+    @Override
+    public void onEditAge(String year, String month) {
+        AgeData age = parseAgeString(year, month);
+        mMinAge.setText(age.toString());
     }
 }
