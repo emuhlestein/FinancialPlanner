@@ -75,7 +75,7 @@ public class GovPensionDetailsActivity extends AppCompatActivity {
                         line2 = "Spouse: " + pensionData.getSpouseAge().toString() + " " + amount;
                     }
 
-                    IncomeDetails incomeDetail = new IncomeDetails(line1, line2);
+                    IncomeDetails incomeDetail = new IncomeDetails(line1, line2, pensionData.getBenefitInfo());
                     incomeDetails.add(incomeDetail);
                 }
                 mAdapter.update(incomeDetails);

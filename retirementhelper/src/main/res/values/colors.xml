@@ -9,4 +9,7 @@
     <color name="centerProgress">#FF4081</color>
     <color name="toolbarTextColor">#FFFFFF</color>
     <color name="green">#00FF00</color>
+    <color name="card_green">#81C784</color>
+    <color name="card_yellow">#d1c700</color>
+    <color name="card_red">#b04444</color>
 </resources>

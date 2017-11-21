@@ -69,10 +69,12 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         private TextView mLine2TextView;
         private LinearLayout mLinearLayout;
         private IncomeDetails mIncomeDetails;
+        private android.support.v7.widget.CardView mCardView;
 
         public GovPensionHolder(View itemView) {
             super(itemView);
             mLinearLayout = itemView.findViewById(R.id.gov_pension_item_layout);
+            mCardView = itemView.findViewById(R.id.card_view);
             mLine1TextView = itemView.findViewById(R.id.line1);
             mLine2TextView = itemView.findViewById(R.id.line2);
             itemView.setOnClickListener(this);
@@ -81,31 +83,31 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         private void bindIncomeDetails(IncomeDetails incomeDetails) {
 
             mIncomeDetails = incomeDetails;
-/*
+
             final int sdk = android.os.Build.VERSION.SDK_INT;
-            double annualAmount = monthlyBenefit * 12;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                if(endBalance == 0) {
-                    mLinearLayout.setBackground( mContext.getResources().getDrawable(R.drawable.red_ripple_effect) );
+                if(incomeDetails.getBenefitInfo() == 0) {
+                    mCardView.setCardBackgroundColor( mContext.getResources().getColor(R.color.card_red) );
                 } else {
-                    if(endBalance < annualAmount) {
-                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
+                    if(incomeDetails.getBenefitInfo() == 1) {
+                        mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_yellow));
                     } else {
-                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
+                        mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_green));
                     }
                 }
             } else {
-                if(endBalance == 0) {
-                    mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.red_ripple_effect));
+                if(incomeDetails.getBenefitInfo() == 0) {
+                    mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_red));
                 } else {
-                    if(endBalance < annualAmount) {
-                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_ripple_effect));
+                    if(incomeDetails.getBenefitInfo() == 1) {
+                        mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_yellow));
                     } else {
-                        mLinearLayout.setBackground(mContext.getResources().getDrawable(R.drawable.green_ripple_effect));
+                        mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_green));
                     }
                 }
             }
 
+            /*
             String formattedCurrency = SystemUtils.getFormattedCurrency(monthlyBenefit);
             if(penalty > 0) {
                 double monthlyPenalty = monthlyBenefit * penalty / 100.0;
@@ -113,7 +115,8 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
                 formattedCurrency = SystemUtils.getFormattedCurrency(monthlyBenefit);
                 formattedCurrency = formattedCurrency + "*";
             }
-*/
+            */
+
             mLine1TextView.setText(incomeDetails.getLine1());
             mLine2TextView.setText(incomeDetails.getLine2());
         }
