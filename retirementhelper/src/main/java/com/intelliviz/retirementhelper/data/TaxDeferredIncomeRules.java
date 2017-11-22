@@ -57,4 +57,15 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
     public List<AgeData> getAges() {
         return new ArrayList<>(Arrays.asList(mMinAge));
     }
+
+    public TaxDeferredData getMonthlyBenefitForAge(AgeData startAge) {
+        if(startAge.isBefore(mCurrentAge)) {
+            return null;
+        }
+
+        int numMonths =  startAge.diff(mCurrentAge);
+        double futureBalance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
+
+        return new TaxDeferredData(startAge, futureBalance, mWithdrawAmount, mWithdrawMode);
+    }
 }

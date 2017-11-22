@@ -6,16 +6,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.IncomeViewDetailsAdapter;
+import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.TaxDeferredData;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.ui.RetirementDetailsActivity;
 import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
@@ -33,8 +34,8 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 public class TaxDeferredDetailsActivity extends AppCompatActivity
         implements SelectMilestoneDataListener{
 
-    private IncomeViewDetailsAdapter mAdapter;
-    private List<MilestoneData> mMilestones;
+    private IncomeDetailsAdapter mAdapter;
+    private List<IncomeDetails> mIncomeDetails;
     private TaxDeferredDetailsViewModel mViewModel;
     private TaxDeferredIncomeEntity mTDIE;
     private long mId;
@@ -74,24 +75,33 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         }
 
-        mMilestones = new ArrayList<>();
-        mAdapter = new IncomeViewDetailsAdapter(this, mMilestones);
-        mAdapter.setOnSelectMilestoneDataListener(this);
+        mIncomeDetails = new ArrayList<>();
+        mAdapter = new IncomeDetailsAdapter(this, mIncomeDetails);
+        //mAdapter.setOnSelectMilestoneDataListener(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
-                linearLayoutManager.getOrientation()));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
+        //        linearLayoutManager.getOrientation()));
 
         TaxDeferredDetailsViewModel.Factory factory = new
                 TaxDeferredDetailsViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(TaxDeferredDetailsViewModel.class);
 
-        mViewModel.getMilestones().observe(this, new Observer<List<MilestoneData>>() {
+        mViewModel.getList().observe(this, new Observer<List<TaxDeferredData>>() {
             @Override
-            public void onChanged(@Nullable List<MilestoneData> milestones) {
-                mAdapter.update(milestones);
+            public void onChanged(@Nullable List<TaxDeferredData> taxDeferredData) {
+                List<IncomeDetails> incomeDetails = new ArrayList<>();
+                for(TaxDeferredData taxDefData : taxDeferredData) {
+                    AgeData age = taxDefData.getAge();
+                    String amount = SystemUtils.getFormattedCurrency(taxDefData.getAmount());
+                    String line1 = age.toString() + "   " + amount;
+                    IncomeDetails incomeDetail;
+                    incomeDetail = new IncomeDetails(line1, 2);
+                    incomeDetails.add(incomeDetail);
+                }
+                mAdapter.update(incomeDetails);
             }
         });
 

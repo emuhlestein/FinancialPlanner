@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.data.TaxDeferredData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
@@ -18,6 +18,7 @@ import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,19 +29,19 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
     private AppDatabase mDB;
     private MutableLiveData<TaxDeferredIncomeEntity> mTDID =
             new MutableLiveData<>();
-    private MutableLiveData<List<MilestoneData>> mMilestones = new MutableLiveData<List<MilestoneData>>();
+    private MutableLiveData<List<TaxDeferredData>> mListTaxDeferredData = new MutableLiveData<List<TaxDeferredData>>();
     private long mIncomeId;
 
     public TaxDeferredDetailsViewModel(Application application, long incomeId) {
         super(application);
         mIncomeId = incomeId;
         mDB = AppDatabase.getInstance(application);
-        new GetMilestonesAsyncTask().execute(incomeId);
+        new GetTaxDeferredDataAsyncTask().execute(incomeId);
         new GetAsyncTask().execute(incomeId);
     }
 
-    public MutableLiveData<List<MilestoneData>> getMilestones() {
-        return mMilestones;
+    public MutableLiveData<List<TaxDeferredData>> getList() {
+        return mListTaxDeferredData;
     }
 
     public MutableLiveData<TaxDeferredIncomeEntity> get() {
@@ -48,7 +49,7 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
     }
 
     public void update() {
-        new GetMilestonesAsyncTask().execute(mIncomeId);
+        new GetTaxDeferredDataAsyncTask().execute(mIncomeId);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -83,10 +84,10 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetMilestonesAsyncTask extends AsyncTask<Long, Void, List<MilestoneData>> {
+    private class GetTaxDeferredDataAsyncTask extends AsyncTask<Long, Void, List<TaxDeferredData>> {
 
         @Override
-        protected List<MilestoneData> doInBackground(Long... params) {
+        protected List<TaxDeferredData> doInBackground(Long... params) {
             List<MilestoneAgeEntity> ages = DataBaseUtils.getMilestoneAges(mDB);
             RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
             TaxDeferredIncomeEntity entity = mDB.taxDeferredIncomeDao().get(params[0]);
@@ -100,12 +101,20 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
                     rod.getWithdrawMode(), Double.parseDouble(rod.getWithdrawAmount()));
             entity.setRules(tdir);
 
-            return entity.getMilestones(ages, rod);
+            List<TaxDeferredData> listTaxDeferredData = new ArrayList<>();
+            for(MilestoneAgeEntity age : ages) {
+                TaxDeferredData data = entity.getMonthlyBenefitForAge(age.getAge());
+                if(data != null) {
+                    listTaxDeferredData.add(data);
+                }
+            }
+
+            return listTaxDeferredData;
         }
 
         @Override
-        protected void onPostExecute(List<MilestoneData> milestones) {
-            mMilestones.setValue(milestones);
+        protected void onPostExecute(List<TaxDeferredData> milestones) {
+            mListTaxDeferredData.setValue(milestones);
         }
     }
 }
