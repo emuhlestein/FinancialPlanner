@@ -1,48 +1,55 @@
 package com.intelliviz.retirementhelper.data;
 
-import com.intelliviz.retirementhelper.util.RetirementConstants;
-
 /**
  * Created by edm on 11/21/2017.
  */
 
 public class TaxDeferredData {
     private AgeData mAge;
-    private double mBalance;
+    private int mNumMonths;
+    private double mStartBalance;
+    private double mEndBalance;
     private double mWithdrawAmount;
-    private int mWithdrawMode;
-    private double mAmount;
+    private double mFinalWithdrawAmount;
+    private int mStatus;
 
-    public TaxDeferredData(AgeData age, double balance, double withdrawAmount, int withdrawMode) {
+
+    public TaxDeferredData(AgeData age, int numMonths, double startBalance, double endBalance,
+                           double withdrawAmount, double finalWithdrawAmount, int status) {
         mAge = age;
-        mBalance = balance;
+        mNumMonths = numMonths;
+        mStartBalance = startBalance;
+        mEndBalance = endBalance;
         mWithdrawAmount = withdrawAmount;
-        mWithdrawMode = withdrawMode;
-
-        if(mWithdrawMode == RetirementConstants.WITHDRAW_MODE_PERCENT) {
-            mAmount = mBalance * (mWithdrawAmount / 1200);
-        } else {
-            mAmount = mBalance - mWithdrawAmount;
-        }
+        mFinalWithdrawAmount = finalWithdrawAmount;
+        mStatus = status;
     }
 
     public AgeData getAge() {
         return mAge;
     }
 
-    public double getBalance() {
-        return mBalance;
+    public double getStartBalance() {
+        return mStartBalance;
     }
 
     public double getWithdrawAmount() {
         return mWithdrawAmount;
     }
 
-    public int getWithdrawMode() {
-        return mWithdrawMode;
+    public int getNumMonths() {
+        return mNumMonths;
     }
 
-    public double getAmount() {
-        return mAmount;
+    public double getEndBalance() {
+        return mEndBalance;
+    }
+
+    public double getFinalWithdrawAmount() {
+        return mFinalWithdrawAmount;
+    }
+
+    public int getStatus() {
+        return mStatus;
     }
 }

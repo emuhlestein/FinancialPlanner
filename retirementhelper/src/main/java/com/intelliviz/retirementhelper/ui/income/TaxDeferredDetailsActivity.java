@@ -95,10 +95,13 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
                 for(TaxDeferredData taxDefData : taxDeferredData) {
                     AgeData age = taxDefData.getAge();
-                    String amount = SystemUtils.getFormattedCurrency(taxDefData.getAmount());
-                    String line1 = age.toString() + "   " + amount;
-                    IncomeDetails incomeDetail;
-                    incomeDetail = new IncomeDetails(line1, 2);
+                    String balance = SystemUtils.getFormattedCurrency(taxDefData.getStartBalance());
+                    String amount = SystemUtils.getFormattedCurrency(taxDefData.getWithdrawAmount());
+                    String line1 = age.toString() + "   " + amount + "  " + balance;
+                    String line2 = SystemUtils.getFormattedCurrency(taxDefData.getEndBalance()) + "  " +
+                            SystemUtils.getFormattedCurrency(taxDefData.getFinalWithdrawAmount());
+                    String line3 = "";
+                    IncomeDetails incomeDetail = new IncomeDetails(line1, line2, line3, taxDefData.getStatus());
                     incomeDetails.add(incomeDetail);
                 }
                 mAdapter.update(incomeDetails);
