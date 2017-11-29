@@ -6,6 +6,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.migration.Migration;
 import android.content.ContentValues;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -35,7 +36,7 @@ import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 
 @Database(entities = {MilestoneAgeEntity.class, GovPensionEntity.class, IncomeTypeEntity.class,
         MilestoneSummaryEntity.class, PensionIncomeEntity.class, RetirementOptionsEntity.class,
-        SavingsIncomeEntity.class, SummaryEntity.class, TaxDeferredIncomeEntity.class}, version = 1)
+        SavingsIncomeEntity.class, SummaryEntity.class, TaxDeferredIncomeEntity.class}, version = 2)
 @TypeConverters({AgeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private volatile static AppDatabase mINSTANCE;
@@ -60,12 +61,21 @@ public abstract class AppDatabase extends RoomDatabase {
                     mINSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "income_db")
                             .addCallback(rdc)
+                            .addMigrations(MIGRATION_1_2)
                             .build();
                 }
             }
         }
         return mINSTANCE;
     }
+
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE tax_deferred_income "
+                    + " ADD COLUMN start_age TEXT");
+        }
+    };
 
     public abstract MilestoneAgeDao milestoneAgeDao();
     public abstract GovPensionDao govPensionDao();

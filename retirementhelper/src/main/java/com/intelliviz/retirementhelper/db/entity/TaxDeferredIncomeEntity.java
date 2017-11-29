@@ -26,6 +26,7 @@ public class TaxDeferredIncomeEntity extends IncomeSourceEntityBase {
     public static final String MONTHLY_INCREASE_FIELD = "monthly_increase";
     public static final String MIN_AGE_FIELD = "min_age";
     public static final String IS_401K_FIELD = "is_401k";
+    private static final String START_AGE_FIELD = "start_age";
 
     @ColumnInfo(name = MONTHLY_INCREASE_FIELD)
     private String monthlyIncrease;
@@ -42,17 +43,21 @@ public class TaxDeferredIncomeEntity extends IncomeSourceEntityBase {
 
     private String balance;
 
+    @ColumnInfo(name = START_AGE_FIELD)
+    private String mStartAge;
+
     @Ignore
     private TaxDeferredIncomeRules mRules;
 
-    public TaxDeferredIncomeEntity(long id, int type, String name, String interest, String monthlyIncrease, String penalty, String minAge, int is401k, String balance) {
+    public TaxDeferredIncomeEntity(long id, int type, String name, String interest, String monthlyIncrease, String penalty, String minAge, int is401k, String balance, String startAge) {
         super(id, type, name);
         this.interest = interest;
         this.monthlyIncrease = monthlyIncrease;
         this.penalty = penalty;
-        this.minAge = minAge;
+        this.minAge = minAge = "59 6";
         this.is401k = is401k;
         this.balance = balance;
+        this.mStartAge = startAge;
     }
 
     public String getInterest() {
@@ -101,6 +106,10 @@ public class TaxDeferredIncomeEntity extends IncomeSourceEntityBase {
 
     public void setBalance(String balance) {
         this.balance = balance;
+    }
+
+    public String getStartAge() {
+        return mStartAge;
     }
 
     public void setRules(IncomeTypeRules rules) {

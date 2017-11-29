@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
+import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.TaxDeferredViewModel;
 
@@ -27,8 +29,9 @@ import butterknife.OnClick;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
+import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
-public class TaxDeferredIncomeActivity extends AppCompatActivity {
+public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
     private TaxDeferredIncomeEntity mTDID;
     private long mId;
     private TaxDeferredViewModel mViewModel;
@@ -51,15 +54,23 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
     @BindView(R.id.monthly_increase_text)
     EditText mMonthlyIncrease;
 
-    @BindView(R.id.penalty_age_text)
-    EditText mPenaltyAge;
-
-    @BindView(R.id.penalty_amount_text)
-    EditText mPenaltyAmount;
+    @BindView(R.id.start_age_text_view)
+    TextView mStartAge;
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
         finish();
+    }
+
+    @OnClick(R.id.edit_start_age_button) void editStartAge() {
+        String age = mTDID.getStartAge();
+        AgeData startAge = SystemUtils.parseAgeString(age);
+        if(startAge == null) {
+            startAge = new AgeData(59, 6);
+        }
+        FragmentManager fm = getSupportFragmentManager();
+        AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
+        dialog.show(fm, "");
     }
 
     @Override
@@ -127,23 +138,6 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
             }
         });
 
-        mPenaltyAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    TextView textView = (TextView)v;
-                    String interest = textView.getText().toString();
-                    interest = getFloatValue(interest);
-                    if(interest != null) {
-                        interest += "%";
-                        mPenaltyAmount.setText(interest);
-                    } else {
-                        mPenaltyAmount.setText("");
-                    }
-                }
-            }
-        });
-
         TaxDeferredViewModel.Factory factory = new
                 TaxDeferredViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
@@ -173,11 +167,8 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
         balanceString = SystemUtils.getFormattedCurrency(balanceString);
 
         String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mTDID.getMonthlyIncrease());
-        String minimumAge = mTDID.getMinAge();
-        AgeData age = SystemUtils.parseAgeString(minimumAge);
-        minimumAge = SystemUtils.getFormattedAge(age);
+        AgeData age;
 
-        String penaltyAmount = mTDID.getPenalty() + "%";
 
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
@@ -189,8 +180,12 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
         String interest = mTDID.getInterest()+"%";
         mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(monthlyIncreaseString);
-        mPenaltyAge.setText(minimumAge);
-        mPenaltyAmount.setText(penaltyAmount);
+
+        age = SystemUtils.parseAgeString(mTDID.getStartAge());
+        if(age == null) {
+            age = new AgeData(59, 6);
+        }
+        mStartAge.setText(age.toString());
     }
 
     public void updateIncomeSourceData() {
@@ -217,31 +212,17 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-
-        value = mPenaltyAmount.getText().toString();
-        String penaltyAmount = getFloatValue(value);
-        if(penaltyAmount == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
-            snackbar.show();
-            return;
-        }
-
-        String minimumAge = mPenaltyAge.getText().toString();
-        minimumAge = SystemUtils.trimAge(minimumAge);
-        AgeData minAge = SystemUtils.parseAgeString(minimumAge);
-        if(minAge == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
-            snackbar.show();
-            return;
-        }
+        String age = mStartAge.getText().toString();
+        String age2 = SystemUtils.trimAge(age);
 
         String name = mIncomeSourceName.getText().toString();
-
-        double annualInterest = Double.parseDouble(interest);
-        double increase = Double.parseDouble(monthlyIncrease);
-        double penalty = Double.parseDouble(penaltyAmount);
-        double dbalance = Double.parseDouble(balance);
-        TaxDeferredIncomeEntity tdid = new TaxDeferredIncomeEntity(mId, INCOME_TYPE_TAX_DEFERRED, name, interest, monthlyIncrease, penaltyAmount, minimumAge, 1, balance);
+        TaxDeferredIncomeEntity tdid = new TaxDeferredIncomeEntity(mId, INCOME_TYPE_TAX_DEFERRED, name, interest, monthlyIncrease, "10", "59 6", 1, balance, age2);
         mViewModel.setData(tdid);
+    }
+
+    @Override
+    public void onEditAge(String year, String month) {
+        AgeData age = parseAgeString(year, month);
+        mStartAge.setText(age.toString());
     }
 }
