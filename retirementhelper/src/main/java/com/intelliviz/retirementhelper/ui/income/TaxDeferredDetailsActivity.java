@@ -43,12 +43,6 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
     @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
 
-    @BindView(R.id.name_text_view)
-    TextView mIncomeSourceName;
-
-    @BindView(R.id.current_balance_text_view)
-    TextView mCurrentBalance;
-
     @BindView(R.id.annual_interest_text_view)
     TextView mAnnualInterest;
 
@@ -77,12 +71,9 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
 
         mIncomeDetails = new ArrayList<>();
         mAdapter = new IncomeDetailsAdapter(this, mIncomeDetails);
-        //mAdapter.setOnSelectMilestoneDataListener(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-        //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
-        //        linearLayoutManager.getOrientation()));
 
         TaxDeferredDetailsViewModel.Factory factory = new
                 TaxDeferredDetailsViewModel.Factory(getApplication(), mId);
@@ -125,15 +116,12 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
             return;
         }
 
-        SystemUtils.setToolbarSubtitle(this, "401(k)");
+        SystemUtils.setToolbarSubtitle(this, "401(k) - " + mTDIE.getName());
 
         mInfoText.setText("There is a 10% penalty for withdrawing funds from a 401(k) before age 59y 6m.");
-        mIncomeSourceName.setText(mTDIE.getName());
-        String formattedCurrency = SystemUtils.getFormattedCurrency(mTDIE.getBalance());
-        mCurrentBalance.setText(formattedCurrency);
         String formattedInterest = mTDIE.getInterest() + "%";
         mAnnualInterest.setText(formattedInterest);
-        formattedCurrency = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
+        String formattedCurrency = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
         mMonthlyIncrease.setText(formattedCurrency);
         AgeData penaltyAge = SystemUtils.parseAgeString(mTDIE.getMinAge());
     }
