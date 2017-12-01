@@ -13,6 +13,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_
  */
 
 public class BalanceUtils {
+
     public static double getFutureBalance(double balance, int numMonths, double interest, double monthlyIncrease) {
         double cumulativeBalance = balance;
         for(int i = 0; i < numMonths; i++) {
@@ -76,7 +77,7 @@ public class BalanceUtils {
         int numMonths = endAge.diff(startAge);
         AgeData age = new AgeData(startAge.getYear(), startAge.getMonth());
         if(numMonths == 0) {
-            return new AmountData(age, getMonthlyAmount(balance, withdrawMode, withdrawAmount),  startBalance);
+            return new AmountData(age, getMonthlyAmount(balance, withdrawMode, withdrawAmount),  startBalance, 0);
         }
         double balance = startBalance;
         double monthlyInterest = interest / 1200;
@@ -99,6 +100,6 @@ public class BalanceUtils {
             }
         }
 
-        return new AmountData(age, monthlyAmount,  balance);
+        return new AmountData(age, monthlyAmount,  balance, 0);
     }
 }

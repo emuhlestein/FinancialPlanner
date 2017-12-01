@@ -14,9 +14,9 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.AmountData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.TaxDeferredData;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.ui.RetirementDetailsActivity;
 import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
@@ -89,19 +89,16 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
         mViewModel = ViewModelProviders.of(this, factory).
                 get(TaxDeferredDetailsViewModel.class);
 
-        mViewModel.getList().observe(this, new Observer<List<TaxDeferredData>>() {
+        mViewModel.getList().observe(this, new Observer<List<AmountData>>() {
             @Override
-            public void onChanged(@Nullable List<TaxDeferredData> taxDeferredData) {
+            public void onChanged(@Nullable List<AmountData> taxDeferredData) {
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
-                for(TaxDeferredData taxDefData : taxDeferredData) {
+                for(AmountData taxDefData : taxDeferredData) {
                     AgeData age = taxDefData.getAge();
-                    String balance = SystemUtils.getFormattedCurrency(taxDefData.getStartBalance());
-                    String amount = SystemUtils.getFormattedCurrency(taxDefData.getWithdrawAmount());
+                    String balance = SystemUtils.getFormattedCurrency(taxDefData.getBalance());
+                    String amount = SystemUtils.getFormattedCurrency(taxDefData.getMonthlyAmount());
                     String line1 = age.toString() + "   " + amount + "  " + balance;
-                    String line2 = SystemUtils.getFormattedCurrency(taxDefData.getEndBalance()) + "  " +
-                            SystemUtils.getFormattedCurrency(taxDefData.getFinalWithdrawAmount());
-                    String line3 = "";
-                    IncomeDetails incomeDetail = new IncomeDetails(line1, line2, line3, taxDefData.getStatus());
+                    IncomeDetails incomeDetail = new IncomeDetails(line1, taxDefData.getBalanceState());
                     incomeDetails.add(incomeDetail);
                 }
                 mAdapter.update(incomeDetails);

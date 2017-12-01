@@ -216,7 +216,8 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
         AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
         for(TaxDeferredIncomeEntity tdie : tdieList) {
-            TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(roe.getBirthdate(), endAge, Double.parseDouble(tdie.getBalance()),
+            AgeData startAge = SystemUtils.parseAgeString(tdie.getStartAge());
+            TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(tdie.getBalance()),
                     Double.parseDouble(tdie.getInterest()), Double.parseDouble(tdie.getMonthlyIncrease()), roe.getWithdrawMode(),
                     Double.parseDouble(roe.getWithdrawAmount()));
             tdie.setRules(tdir);

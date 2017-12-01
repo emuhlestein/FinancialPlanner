@@ -1,12 +1,13 @@
 package com.intelliviz.retirementhelper.data;
 
 import com.intelliviz.retirementhelper.util.BalanceUtils;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
 
 /**
  * Created by edm on 10/18/2017.
@@ -16,6 +17,7 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
     private AgeData mMinAge;
     private AgeData mCurrentAge;
     private AgeData mEndAge;
+    private AgeData mStartAge;
     private double mBalance;
     private double mInterest;
     private double mMonthlyIncrease;
@@ -23,13 +25,14 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
     private int mWithdrawMode;
     private double mWithdrawAmount;
 
-    public TaxDeferredIncomeRules(String birthDate, AgeData endAge, double balance,
+    public TaxDeferredIncomeRules(String birthDate, AgeData endAge, AgeData startAge, double balance,
                                   double interest, double monthlyIncrease, int withdrawMode, double withdrawAmount) {
         mCurrentAge = SystemUtils.getAge(birthDate);
         mMinAge = new AgeData(59, 6);
+        mStartAge = startAge;
         mInterest = interest;
         mMonthlyIncrease = monthlyIncrease;
-        mPenalty = 0.10;
+        mPenalty = 10;
         mBalance = balance;
         mEndAge = endAge;
         mWithdrawAmount = withdrawAmount;
@@ -59,6 +62,24 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
         return new ArrayList<>(Arrays.asList(mMinAge));
     }
 
+    public AmountData getMonthlyBenefit(AgeData age, double balance, AmountData amountData) {
+        if(age.isBefore(mCurrentAge)) {
+            return null;
+        }
+
+        int numMonths = age.diff(mCurrentAge);
+        if(amountData == null) {
+            double futureBalance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
+            double monthlyAmount = BalanceUtils.getMonthlyAmount(futureBalance, mWithdrawMode, mWithdrawAmount);
+            return new AmountData(age, monthlyAmount, futureBalance, 0);
+        } else {
+            if(age.isBefore(amountData.getAge())) {
+                return null;
+            }
+            return null;
+        }
+    }
+
     public TaxDeferredData getMonthlyBenefitForAge(AgeData startAge) {
         if(startAge.isBefore(mCurrentAge)) {
             return null;
@@ -80,7 +101,7 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
         double monthlyInterest = interest / 1200;
 
         double initialAmount;
-        if(withdrawMode == RetirementConstants.WITHDRAW_MODE_PERCENT) {
+        if(withdrawMode == WITHDRAW_MODE_PERCENT) {
             double percent = withdrawAmount / 1200;
             initialAmount = startBalance * percent;
         } else {
@@ -129,5 +150,68 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
         // Need the following:
         // Start Balance, End Balance, num months, init withdraw amount, final withdraw amount, did money run out
         return new TaxDeferredData(startAge, numMonths, startBalance, lastBalance, initialAmount, monthlyAmount, status);
+    }
+
+    public List<AmountData> getMonthlyAmountData() {
+        AgeData age = mStartAge;
+        double balance = mBalance;
+        double monthlyWithdrawAmount = getInitMonthlyWithdrawAmount();
+
+        List<AmountData> listAmountDate = new ArrayList<>();
+
+        int balanceState = 2;
+        AmountData amountData = new AmountData(age, monthlyWithdrawAmount, balance, balanceState);
+        listAmountDate.add(amountData);
+
+        while(true) {
+            // get next age
+            AgeData nextAge = new AgeData(age.getYear()+1, 0);
+            if(nextAge.isAfter(mEndAge)) {
+                break;
+            }
+            int numMonths = nextAge.diff(age);
+
+            age = new AgeData(nextAge.getYear(), 0);
+
+            balance = getNewBalance(numMonths, balance, monthlyWithdrawAmount, mInterest);
+            if(balance < 0) {
+                balance = 0;
+                balanceState = 0;
+            } else {
+                if(monthlyWithdrawAmount*12 > balance) {
+                    balanceState = 1;
+                }
+            }
+
+            // increase month withdraw amount
+            double mWithdrawPercentIncrease = 0;
+            double withdrawAmountIncrease = monthlyWithdrawAmount * mWithdrawPercentIncrease / 1200;
+            monthlyWithdrawAmount += withdrawAmountIncrease;
+
+            amountData = new AmountData(nextAge, monthlyWithdrawAmount, balance, balanceState);
+            listAmountDate.add(amountData);
+        }
+
+        return listAmountDate;
+    }
+
+    private double getInitMonthlyWithdrawAmount() {
+        if(mWithdrawMode == WITHDRAW_MODE_PERCENT) {
+            return mBalance * mWithdrawAmount / 1200;
+        } else {
+            return mWithdrawAmount;
+        }
+    }
+
+    private double getNewBalance(int numMonths, double balance, double monthlyWithdrawAmount, double annualInterest) {
+        double monthlyInterest = annualInterest / 1200;
+        double newBalance = balance;
+        for(int month = 0; month < numMonths; month++) {
+            newBalance -= monthlyWithdrawAmount;
+            double monthlyIncrease = newBalance * monthlyInterest;
+            newBalance += monthlyIncrease;
+        }
+
+        return newBalance;
     }
 }

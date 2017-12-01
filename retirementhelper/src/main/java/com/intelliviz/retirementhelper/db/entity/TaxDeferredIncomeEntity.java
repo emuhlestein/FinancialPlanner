@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.AmountData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.TaxDeferredData;
@@ -26,7 +27,7 @@ public class TaxDeferredIncomeEntity extends IncomeSourceEntityBase {
     public static final String MONTHLY_INCREASE_FIELD = "monthly_increase";
     public static final String MIN_AGE_FIELD = "min_age";
     public static final String IS_401K_FIELD = "is_401k";
-    private static final String START_AGE_FIELD = "start_age";
+    public static final String START_AGE_FIELD = "start_age";
 
     @ColumnInfo(name = MONTHLY_INCREASE_FIELD)
     private String monthlyIncrease;
@@ -143,6 +144,14 @@ public class TaxDeferredIncomeEntity extends IncomeSourceEntityBase {
         List<AgeData> ages = new ArrayList<>();
         ages.add(SystemUtils.parseAgeString(minAge));
         return ages;
+    }
+
+    public List<AmountData> getMonthlyAmountData() {
+        if(mRules != null) {
+            return mRules.getMonthlyAmountData();
+        } else {
+            return null;
+        }
     }
 
     public TaxDeferredData getMonthlyBenefitForAge(AgeData startAge) {

@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.TaxDeferredData;
+import com.intelliviz.retirementhelper.data.AmountData;
 import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
@@ -18,7 +18,6 @@ import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,18 +28,18 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
     private AppDatabase mDB;
     private MutableLiveData<TaxDeferredIncomeEntity> mTDID =
             new MutableLiveData<>();
-    private MutableLiveData<List<TaxDeferredData>> mListTaxDeferredData = new MutableLiveData<List<TaxDeferredData>>();
+    private MutableLiveData<List<AmountData>> mListTaxDeferredData = new MutableLiveData<List<AmountData>>();
     private long mIncomeId;
 
     public TaxDeferredDetailsViewModel(Application application, long incomeId) {
         super(application);
         mIncomeId = incomeId;
         mDB = AppDatabase.getInstance(application);
-        new GetTaxDeferredDataAsyncTask().execute(incomeId);
         new GetAsyncTask().execute(incomeId);
+        new GetTaxDeferredDataAsyncTask().execute(incomeId);
     }
 
-    public MutableLiveData<List<TaxDeferredData>> getList() {
+    public MutableLiveData<List<AmountData>> getList() {
         return mListTaxDeferredData;
     }
 
@@ -84,37 +83,46 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetTaxDeferredDataAsyncTask extends AsyncTask<Long, Void, List<TaxDeferredData>> {
+    private class GetTaxDeferredDataAsyncTask extends AsyncTask<Long, Void, List<AmountData>> {
 
         @Override
-        protected List<TaxDeferredData> doInBackground(Long... params) {
+        protected List<AmountData> doInBackground(Long... params) {
+            TaxDeferredIncomeEntity tdid = mDB.taxDeferredIncomeDao().get(params[0]);
             List<MilestoneAgeEntity> ages = DataBaseUtils.getMilestoneAges(mDB);
             RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
             TaxDeferredIncomeEntity entity = mDB.taxDeferredIncomeDao().get(params[0]);
-
             String birthdate = rod.getBirthdate();
             AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
-            TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(birthdate, endAge,
+            AgeData startAge = SystemUtils.parseAgeString(tdid.getStartAge());
+            TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(birthdate, endAge, startAge,
                     Double.parseDouble(entity.getBalance()),
                     Double.parseDouble(entity.getInterest()),
                     Double.parseDouble(entity.getMonthlyIncrease()),
                     rod.getWithdrawMode(), Double.parseDouble(rod.getWithdrawAmount()));
             entity.setRules(tdir);
 
-            List<TaxDeferredData> listTaxDeferredData = new ArrayList<>();
+            return entity.getMonthlyAmountData();
+
+//            List<TaxDeferredData> listTaxDeferredData = new ArrayList<>();
+            //TaxDeferredData data = entity.getMonthlyBenefitForAge(age);
+/*
+
             for(MilestoneAgeEntity age : ages) {
                 TaxDeferredData data = entity.getMonthlyBenefitForAge(age.getAge());
                 if(data != null) {
                     listTaxDeferredData.add(data);
                 }
             }
+*/
 
-            return listTaxDeferredData;
+//            return listTaxDeferredData;
         }
 
         @Override
-        protected void onPostExecute(List<TaxDeferredData> milestones) {
+        protected void onPostExecute(List<AmountData> milestones) {
             mListTaxDeferredData.setValue(milestones);
         }
     }
+
+
 }
