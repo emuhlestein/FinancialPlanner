@@ -5,11 +5,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
@@ -32,7 +33,7 @@ import butterknife.ButterKnife;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 public class TaxDeferredDetailsActivity extends AppCompatActivity
-        implements SelectMilestoneDataListener{
+        implements SelectMilestoneDataListener {
 
     private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
@@ -43,14 +44,20 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
     @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
 
-    @BindView(R.id.annual_interest_text_view)
-    TextView mAnnualInterest;
+    @BindView(R.id.appbar)
+    android.support.design.widget.AppBarLayout mAppBarLayout;
 
-    @BindView(R.id.monthly_increase_text_view)
-    TextView mMonthlyIncrease;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
 
-    @BindView(R.id.info_text_view)
-    TextView mInfoText;
+    //@BindView(R.id.annual_interest_text_view)
+    //TextView mAnnualInterest;
+
+    //@BindView(R.id.monthly_increase_text_view)
+    //TextView mMonthlyIncrease;
+
+    //@BindView(R.id.info_text_view)
+    //TextView mInfoText;
 
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
@@ -68,6 +75,27 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         }
+
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    isShow = true;
+                    //showOption(R.id.action_info);
+                } else if (isShow) {
+                    isShow = false;
+                    //hideOption(R.id.action_info);
+                }
+            }
+        });
+
+        //mAppBarLayout.addOnOffsetChangedListener(new ScrollingHelper(mAppBarLayout.getTotalScrollRange(), this));
 
         mIncomeDetails = new ArrayList<>();
         mAdapter = new IncomeDetailsAdapter(this, mIncomeDetails);
@@ -118,11 +146,11 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
 
         SystemUtils.setToolbarSubtitle(this, "401(k) - " + mTDIE.getName());
 
-        mInfoText.setText("There is a 10% penalty for withdrawing funds from a 401(k) before age 59y 6m.");
+        //mInfoText.setText("There is a 10% penalty for withdrawing funds from a 401(k) before age 59y 6m.");
         String formattedInterest = mTDIE.getInterest() + "%";
-        mAnnualInterest.setText(formattedInterest);
+        //mAnnualInterest.setText(formattedInterest);
         String formattedCurrency = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
-        mMonthlyIncrease.setText(formattedCurrency);
+        //mMonthlyIncrease.setText(formattedCurrency);
         AgeData penaltyAge = SystemUtils.parseAgeString(mTDIE.getMinAge());
     }
 
