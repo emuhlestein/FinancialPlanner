@@ -2,7 +2,9 @@ package com.intelliviz.retirementhelper.ui.income;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -11,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
@@ -47,6 +51,9 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
     @BindView(R.id.appbar)
     android.support.design.widget.AppBarLayout mAppBarLayout;
 
+    @BindView(R.id.expanded_text_view)
+    TextView mExpandedTextView;
+
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
 
@@ -76,6 +83,9 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         }
 
+        mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
+
+
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -87,10 +97,12 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
                 }
                 if (scrollRange + verticalOffset == 0) {
                     isShow = true;
-                    //showOption(R.id.action_info);
-                } else if (isShow) {
+                    mExpandedTextView.setVisibility(View.GONE);
+                    mCollapsingToolbarLayout.setTitle(getApplicationName(TaxDeferredDetailsActivity.this));
+                } else {
                     isShow = false;
-                    //hideOption(R.id.action_info);
+                    mExpandedTextView.setVisibility(View.VISIBLE);
+                    mCollapsingToolbarLayout.setTitle("");
                 }
             }
         });
@@ -159,5 +171,11 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
         Intent intent = new Intent(this, RetirementDetailsActivity.class);
         intent.putExtra("milestone", msd);
         startActivity(intent);
+    }
+
+    public String getApplicationName(Context context) {
+        ApplicationInfo applicationInfo = context.getApplicationInfo();
+        int stringId = applicationInfo.labelRes;
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
     }
 }
