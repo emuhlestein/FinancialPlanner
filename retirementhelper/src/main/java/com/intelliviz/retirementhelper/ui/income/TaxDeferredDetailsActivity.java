@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -56,6 +57,9 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
 
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
+
+    @BindView(R.id.editTaxDeferredFAB)
+    FloatingActionButton mEditTaxDeferredFAB;
 
     //@BindView(R.id.annual_interest_text_view)
     //TextView mAnnualInterest;
@@ -114,6 +118,16 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+        // The FAB will pop up an activity to allow a new income source to be created.
+        mEditTaxDeferredFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(TaxDeferredDetailsActivity.this, TaxDeferredIncomeActivity.class);
+                intent.putExtra(EXTRA_INCOME_SOURCE_ID, mId);
+                startActivity(intent);
+            }
+        });
 
         TaxDeferredDetailsViewModel.Factory factory = new
                 TaxDeferredDetailsViewModel.Factory(getApplication(), mId);

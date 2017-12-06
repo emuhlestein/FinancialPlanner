@@ -121,6 +121,17 @@
 
         </LinearLayout>-->
     </LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/editTaxDeferredFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/layout_margin"
+        app:srcCompat="@android:drawable/ic_menu_edit"
+        app:backgroundTint="@color/colorAccent"
+        app:layout_anchor="@+id/appbar"
+        app:layout_anchorGravity="bottom|right|end"
+        android:contentDescription="@string/add_income_source"/>
 
 
 </android.support.design.widget.CoordinatorLayout>

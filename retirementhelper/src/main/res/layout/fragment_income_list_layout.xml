@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="@dimen/layout_margin"
-        android:src="@drawable/fab_plus"
+        app:srcCompat="@drawable/fab_plus"
         app:backgroundTint="@color/colorAccent"
         app:layout_anchor="@+id/layoutView"
         app:layout_anchorGravity="bottom|right|end"
