@@ -212,7 +212,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         String birthdate = mROD.getBirthdate();
         AgeData nowAge = SystemUtils.getAge(birthdate);
         if(age.isBefore(nowAge)) {
-            String message = getString(R.string.age_greater_thna_your_age) + nowAge.toString();
+            String message = getString(R.string.age_greater_than_your_age) + nowAge.toString();
             AlertDialog alertDialog = new AlertDialog.Builder(RetirementOptionsDialog.this).create();
             alertDialog.setTitle(getString(R.string.alert));
             alertDialog.setMessage(message);

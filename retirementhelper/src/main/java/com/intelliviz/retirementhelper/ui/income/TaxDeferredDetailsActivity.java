@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
@@ -52,8 +53,23 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
     @BindView(R.id.appbar)
     android.support.design.widget.AppBarLayout mAppBarLayout;
 
-    @BindView(R.id.expanded_text_view)
-    TextView mExpandedTextView;
+    @BindView(R.id.name_text_view)
+    TextView mNameTextView;
+
+    @BindView(R.id.start_age_text_view)
+    TextView mStartAgeTextView;
+
+    @BindView(R.id.annual_interest_text_view)
+    TextView mAnnualInterestTextView;
+
+    @BindView(R.id.monthly_interest_text_view)
+    TextView mMonthlyIncreaseTextView;
+
+    @BindView(R.id.balance_text_view)
+    TextView mBalanceTextView;
+
+    @BindView(R.id.expanded_text_layout)
+    LinearLayout mExpandedTextLayout;
 
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -101,11 +117,11 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
                 }
                 if (scrollRange + verticalOffset == 0) {
                     isShow = true;
-                    mExpandedTextView.setVisibility(View.GONE);
+                    mExpandedTextLayout.setVisibility(View.GONE);
                     mCollapsingToolbarLayout.setTitle(getApplicationName(TaxDeferredDetailsActivity.this));
                 } else {
                     isShow = false;
-                    mExpandedTextView.setVisibility(View.VISIBLE);
+                    mExpandedTextLayout.setVisibility(View.VISIBLE);
                     mCollapsingToolbarLayout.setTitle("");
                 }
             }
@@ -171,6 +187,19 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
         }
 
         SystemUtils.setToolbarSubtitle(this, "401(k) - " + mTDIE.getName());
+
+        mNameTextView.setText(mTDIE.getName());
+
+        mStartAgeTextView.setText(mTDIE.getStartAge());
+
+        String formattedValue = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
+        mMonthlyIncreaseTextView.setText(formattedValue);
+
+        formattedValue = mTDIE.getInterest() + "%";
+        mAnnualInterestTextView.setText(formattedValue);
+
+        formattedValue = SystemUtils.getFormattedCurrency(mTDIE.getBalance());
+        mBalanceTextView.setText(formattedValue);
 
         //mInfoText.setText("There is a 10% penalty for withdrawing funds from a 401(k) before age 59y 6m.");
         String formattedInterest = mTDIE.getInterest() + "%";

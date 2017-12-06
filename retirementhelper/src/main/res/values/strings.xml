@@ -114,7 +114,7 @@
     <string name="withdraw_requires_value">Withdraw amount requires a value.</string>
     <string name="invalid_widthdraw_amount">Invalid withdraw amount.</string>
     <string name="age_invalid">Age is invalid</string>
-    <string name="age_greater_thna_your_age">End age must be greater than your current age:</string>
+    <string name="age_greater_than_your_age">End age must be greater than your current age:</string>
     <string name="milestones">Milestones</string>
     <string name="overflow_menu">Overflow Menu</string>
     <string name="add_income_type">Add income source</string>
