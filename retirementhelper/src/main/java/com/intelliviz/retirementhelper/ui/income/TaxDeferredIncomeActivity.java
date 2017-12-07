@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.ui.income;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.TaxDeferredViewModel;
 
@@ -34,6 +36,7 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
     private TaxDeferredIncomeEntity mTDID;
     private long mId;
+    private boolean mActivityResult;
     private TaxDeferredViewModel mViewModel;
 
     @BindView(R.id.income_source_toolbar)
@@ -85,6 +88,8 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
         mId = 0;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
+            int rc = intent.getIntExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, 0);
+            mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
         }
 
         mTDID = null;
@@ -188,7 +193,7 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
         mStartAge.setText(age.toString());
     }
 
-    public void updateIncomeSourceData() {
+    private void updateIncomeSourceData() {
         String value = mBalance.getText().toString();
         String balance = getFloatValue(value);
         if(balance == null) {
@@ -217,12 +222,28 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
 
         String name = mIncomeSourceName.getText().toString();
         TaxDeferredIncomeEntity tdid = new TaxDeferredIncomeEntity(mId, INCOME_TYPE_TAX_DEFERRED, name, interest, monthlyIncrease, "10", "59 6", 1, balance, age2);
-        mViewModel.setData(tdid);
+        if(mActivityResult) {
+            sendData(mId, name, interest, monthlyIncrease, "10", "59 6", 1, balance, age2);
+        } else {
+            mViewModel.setData(tdid);
+        }
     }
 
     @Override
     public void onEditAge(String year, String month) {
         AgeData age = parseAgeString(year, month);
         mStartAge.setText(age.toString());
+    }
+
+    private void sendData(long id, String name, String interest, String monthlyIncrease, String penalty, String minAge, int is401k, String balance, String startAge) {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, id);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE, startAge);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, interest);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE, monthlyIncrease);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 }

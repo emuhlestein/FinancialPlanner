@@ -154,11 +154,11 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
 
     public List<AmountData> getMonthlyAmountData() {
         AgeData age = mStartAge;
-        ;
-        double monthlyWithdrawAmount = getInitMonthlyWithdrawAmount();
+
 
         int numMonths = mStartAge.diff(mCurrentAge);
         double balance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
+        double monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
 
         List<AmountData> listAmountDate = new ArrayList<>();
 
@@ -198,9 +198,9 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
         return listAmountDate;
     }
 
-    private double getInitMonthlyWithdrawAmount() {
+    private double getInitMonthlyWithdrawAmount(double balance) {
         if(mWithdrawMode == WITHDRAW_MODE_PERCENT) {
-            return mBalance * mWithdrawAmount / 1200;
+            return balance * mWithdrawAmount / 1200;
         } else {
             return mWithdrawAmount;
         }

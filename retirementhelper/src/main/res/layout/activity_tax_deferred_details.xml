@@ -119,7 +119,7 @@
                         android:layout_gravity="bottom"
                         android:layout_marginStart="16dp"
                         android:textSize="22sp"
-                        android:text="@string/balance" />
+                        android:text="@string/current_balance" />
 
                     <TextView
                         android:id="@+id/balance_text_view"

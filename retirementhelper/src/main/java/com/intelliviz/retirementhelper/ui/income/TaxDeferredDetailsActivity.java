@@ -26,6 +26,7 @@ import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.ui.RetirementDetailsActivity;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.TaxDeferredDetailsViewModel;
@@ -37,6 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
 
 public class TaxDeferredDetailsActivity extends AppCompatActivity
         implements SelectMilestoneDataListener {
@@ -105,7 +107,6 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
 
-
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -140,8 +141,9 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(TaxDeferredDetailsActivity.this, TaxDeferredIncomeActivity.class);
-                intent.putExtra(EXTRA_INCOME_SOURCE_ID, mId);
-                startActivity(intent);
+                intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, mId);
+                intent.putExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, RetirementConstants.ACTIVITY_RESULT);
+                startActivityForResult(intent, RetirementConstants.ACTIVITY_RESULT);
             }
         });
 
@@ -181,6 +183,26 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
         mViewModel.update();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode != RESULT_OK) {
+            return;
+        }
+
+        if(requestCode == RetirementConstants.ACTIVITY_RESULT) {
+            String name = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
+            String startAge = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
+            String balance = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
+            String interest = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
+            String monthlyIncrease = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE);
+            TaxDeferredIncomeEntity tdid = new TaxDeferredIncomeEntity(mId, INCOME_TYPE_TAX_DEFERRED, name,
+                    interest, monthlyIncrease, "10", "59 6", 1, balance, startAge);
+            mViewModel.setData(tdid);
+
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void updateUI() {
         if(mTDIE == null) {
             return;
@@ -190,7 +212,7 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
 
         mNameTextView.setText(mTDIE.getName());
 
-        mStartAgeTextView.setText(mTDIE.getStartAge());
+        mStartAgeTextView.setText(mTDIE.getStartAge().toString());
 
         String formattedValue = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
         mMonthlyIncreaseTextView.setText(formattedValue);
@@ -200,13 +222,6 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
 
         formattedValue = SystemUtils.getFormattedCurrency(mTDIE.getBalance());
         mBalanceTextView.setText(formattedValue);
-
-        //mInfoText.setText("There is a 10% penalty for withdrawing funds from a 401(k) before age 59y 6m.");
-        String formattedInterest = mTDIE.getInterest() + "%";
-        //mAnnualInterest.setText(formattedInterest);
-        String formattedCurrency = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
-        //mMonthlyIncrease.setText(formattedCurrency);
-        AgeData penaltyAge = SystemUtils.parseAgeString(mTDIE.getMinAge());
     }
 
     @Override

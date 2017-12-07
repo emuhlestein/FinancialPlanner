@@ -20,6 +20,7 @@ public class RetirementConstants {
     public static final int INCOME_ACTION_DELETE = 3;
     public static final int INCOME_ACTION_UPDATE = 4;
     public static final int INCOME_ACTION_GET = 5;
+    public static final int ACTIVITY_RESULT = 99;
 
 
     public static final String DATE_FORMAT = "dd-MM-yyyy";
@@ -30,6 +31,13 @@ public class RetirementConstants {
 
     public static final String EXTRA_INCOME_SOURCE_ID = "income source id";
     public static final String EXTRA_INCOME_SOURCE_TYPE = "income source type";
+    public static final String EXTRA_ACTIVITY_RESULT = "activity result";
+    public static final String EXTRA_INCOME_SOURCE_NAME = "income source name";
+    public static final String EXTRA_INCOME_SOURCE_START_AGE = "income source start age";
+    public static final String EXTRA_INCOME_SOURCE_BALANCE = "income source balance";
+    public static final String EXTRA_INCOME_SOURCE_INTEREST = "income source interest";
+    public static final String EXTRA_INCOME_SOURCE_INCREASE = "income source increase";
+
 
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
     public static final String EXTRA_BIRTHDATE = "birthdate";
@@ -53,4 +61,5 @@ public class RetirementConstants {
     public static final int REQUEST_BIRTHDATE = 8;
     public static final int REQUEST_ADD_AGE = 9;
     public static final int REQUEST_ACTION_MENU = 10;
+    public static final int REQUEST_TAX_DEF_INCOME = 11;
 }

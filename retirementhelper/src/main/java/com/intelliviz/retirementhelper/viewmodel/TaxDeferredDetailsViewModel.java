@@ -51,6 +51,11 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
         new GetTaxDeferredDataAsyncTask().execute(mIncomeId);
     }
 
+    public void setData(TaxDeferredIncomeEntity tdid) {
+        mTDID.setValue(tdid);
+        new TaxDeferredDetailsViewModel.UpdateAsyncTask().execute(tdid);
+    }
+
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         @NonNull
         private final Application mApplication;
@@ -124,5 +129,15 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
         }
     }
 
+    private class UpdateAsyncTask extends AsyncTask<TaxDeferredIncomeEntity, Void, Integer> {
 
+        @Override
+        protected Integer doInBackground(TaxDeferredIncomeEntity... params) {
+            return mDB.taxDeferredIncomeDao().update(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Integer numRowsUpdated) {
+        }
+    }
 }
