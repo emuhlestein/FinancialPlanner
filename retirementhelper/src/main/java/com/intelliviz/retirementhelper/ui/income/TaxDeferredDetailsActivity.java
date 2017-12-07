@@ -79,15 +79,6 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
     @BindView(R.id.editTaxDeferredFAB)
     FloatingActionButton mEditTaxDeferredFAB;
 
-    //@BindView(R.id.annual_interest_text_view)
-    //TextView mAnnualInterest;
-
-    //@BindView(R.id.monthly_increase_text_view)
-    //TextView mMonthlyIncrease;
-
-    //@BindView(R.id.info_text_view)
-    //TextView mInfoText;
-
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
 
@@ -212,7 +203,8 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
 
         mNameTextView.setText(mTDIE.getName());
 
-        mStartAgeTextView.setText(mTDIE.getStartAge().toString());
+        AgeData age = SystemUtils.parseAgeString(mTDIE.getStartAge());
+        mStartAgeTextView.setText(age.toString());
 
         String formattedValue = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
         mMonthlyIncreaseTextView.setText(formattedValue);
