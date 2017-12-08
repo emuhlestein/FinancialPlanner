@@ -75,9 +75,9 @@ public class GovPensionDetailsActivity extends AppCompatActivity {
                         String     line2 = "Spouse: " + pensionData.getSpouseAge().toString() + " " + amount;
                         amount =  SystemUtils.getFormattedCurrency(pensionData.getBenefit() + pensionData.getSpouseBenefit());
                         String line3 = "Combined: " + amount;
-                        incomeDetail = new IncomeDetails(line1, line2, line3, pensionData.getBenefitInfo());
+                        incomeDetail = new IncomeDetails(line1, line2, line3, pensionData.getBenefitInfo(), "");
                     } else {
-                        incomeDetail = new IncomeDetails(line1, pensionData.getBenefitInfo());
+                        incomeDetail = new IncomeDetails(line1, pensionData.getBenefitInfo(), "");
                     }
 
                     incomeDetails.add(incomeDetail);

@@ -9,12 +9,14 @@ public class AmountData {
     private double mMonthlyAmount;
     private double mBalance;
     private int mBalanceState;
+    private boolean mPenalty;
 
-    public AmountData(AgeData age, double monthlyAmount, double balance, int balanceState) {
+    public AmountData(AgeData age, double monthlyAmount, double balance, int balanceState, boolean penalty) {
         mAge = age;
         mMonthlyAmount = monthlyAmount;
         mBalance = balance;
         mBalanceState = balanceState;
+        mPenalty = penalty;
     }
 
     public AgeData getAge() {
@@ -31,5 +33,9 @@ public class AmountData {
 
     public int getBalanceState() {
         return mBalanceState;
+    }
+
+    public boolean isPenalty() {
+        return mPenalty;
     }
 }

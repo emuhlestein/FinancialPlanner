@@ -14,6 +14,8 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_
  */
 
 public class TaxDeferredIncomeRules implements IncomeTypeRules {
+    private static final double PENALTY_PERCENT = 10.0;
+    private static final AgeData PENALTY_AGE = new AgeData(59, 6);
     private AgeData mMinAge;
     private AgeData mCurrentAge;
     private AgeData mEndAge;
@@ -28,11 +30,11 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
     public TaxDeferredIncomeRules(String birthDate, AgeData endAge, AgeData startAge, double balance,
                                   double interest, double monthlyIncrease, int withdrawMode, double withdrawAmount) {
         mCurrentAge = SystemUtils.getAge(birthDate);
-        mMinAge = new AgeData(59, 6);
+        mMinAge = PENALTY_AGE;
         mStartAge = startAge;
         mInterest = interest;
         mMonthlyIncrease = monthlyIncrease;
-        mPenalty = 10;
+        mPenalty = PENALTY_PERCENT;
         mBalance = balance;
         mEndAge = endAge;
         mWithdrawAmount = withdrawAmount;
@@ -62,7 +64,7 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
         return new ArrayList<>(Arrays.asList(mMinAge));
     }
 
-    public AmountData getMonthlyBenefit(AgeData age, double balance, AmountData amountData) {
+    private AmountData getMonthlyBenefit(AgeData age, double balance, AmountData amountData) {
         if(age.isBefore(mCurrentAge)) {
             return null;
         }
@@ -71,7 +73,7 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
         if(amountData == null) {
             double futureBalance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
             double monthlyAmount = BalanceUtils.getMonthlyAmount(futureBalance, mWithdrawMode, mWithdrawAmount);
-            return new AmountData(age, monthlyAmount, futureBalance, 0);
+            return new AmountData(age, monthlyAmount, futureBalance, 0, false);
         } else {
             if(age.isBefore(amountData.getAge())) {
                 return null;
@@ -155,15 +157,19 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
     public List<AmountData> getMonthlyAmountData() {
         AgeData age = mStartAge;
 
-
+        double penaltyPercent = (100 - PENALTY_PERCENT)/1200;
         int numMonths = mStartAge.diff(mCurrentAge);
         double balance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
         double monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
 
         List<AmountData> listAmountDate = new ArrayList<>();
 
+        boolean penalty = false;
+        if(age.isBefore(PENALTY_AGE)) {
+            penalty = true;
+        }
         int balanceState = 2;
-        AmountData amountData = new AmountData(age, monthlyWithdrawAmount, balance, balanceState);
+        AmountData amountData = new AmountData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
         listAmountDate.add(amountData);
 
         while(true) {
@@ -191,7 +197,12 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
             double withdrawAmountIncrease = monthlyWithdrawAmount * mWithdrawPercentIncrease / 1200;
             monthlyWithdrawAmount += withdrawAmountIncrease;
 
-            amountData = new AmountData(nextAge, monthlyWithdrawAmount, balance, balanceState);
+            penalty = false;
+            if(nextAge.isBefore(PENALTY_AGE)) {
+                penalty = true;
+                monthlyWithdrawAmount *= penaltyPercent;
+            }
+            amountData = new AmountData(nextAge, monthlyWithdrawAmount, balance, balanceState, penalty);
             listAmountDate.add(amountData);
         }
 

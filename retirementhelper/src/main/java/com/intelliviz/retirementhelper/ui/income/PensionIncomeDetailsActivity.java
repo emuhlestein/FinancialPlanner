@@ -71,7 +71,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
                     String amount = SystemUtils.getFormattedCurrency(pensionData.getBenefit());
                     String line1 = age.toString() + "   " + amount;
                     IncomeDetails incomeDetail;
-                    incomeDetail = new IncomeDetails(line1, pensionData.getBenefitInfo());
+                    incomeDetail = new IncomeDetails(line1, pensionData.getBenefitInfo(), "");
                     incomeDetails.add(incomeDetail);
                 }
                 mAdapter.update(incomeDetails);

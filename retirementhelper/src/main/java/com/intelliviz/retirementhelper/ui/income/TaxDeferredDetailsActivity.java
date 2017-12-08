@@ -152,7 +152,12 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
                     String balance = SystemUtils.getFormattedCurrency(taxDefData.getBalance());
                     String amount = SystemUtils.getFormattedCurrency(taxDefData.getMonthlyAmount());
                     String line1 = age.toString() + "   " + amount + "  " + balance;
-                    IncomeDetails incomeDetail = new IncomeDetails(line1, taxDefData.getBalanceState());
+
+                    int status = taxDefData.getBalanceState();
+                    if(taxDefData.isPenalty()) {
+                        status = 0;
+                    }
+                    IncomeDetails incomeDetail = new IncomeDetails(line1, status, "");
                     incomeDetails.add(incomeDetail);
                 }
                 mAdapter.update(incomeDetails);

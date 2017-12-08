@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
+import com.intelliviz.retirementhelper.ui.income.IncomeDetailsSelectListener;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
     private List<IncomeDetails> mIncomeDetails;
     private Context mContext;
     private int mNumLines;
+    private IncomeDetailsSelectListener mListener;
 
     public IncomeDetailsAdapter(Context context, List<IncomeDetails> incomeDetails) {
         mContext = context;
@@ -62,9 +64,14 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         }
     }
 
+    public void setIncomeDetailsSelectListener(IncomeDetailsSelectListener listener) {
+        mListener = listener;
+    }
+
     class GovPensionHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
+        private IncomeDetails mIncomeDetails;
         private TextView mLine1TextView;
         private TextView mLine2TextView;
         private TextView mLine3TextView;
@@ -84,6 +91,8 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         }
 
         private void bindIncomeDetails(IncomeDetails incomeDetails) {
+
+            mIncomeDetails = incomeDetails;
 
             final int sdk = android.os.Build.VERSION.SDK_INT;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -119,6 +128,9 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
 
         @Override
         public void onClick(View v) {
+            if(mListener != null) {
+                mListener.onIncomeDetailsSelect(mIncomeDetails);
+            }
         }
     }
 }
