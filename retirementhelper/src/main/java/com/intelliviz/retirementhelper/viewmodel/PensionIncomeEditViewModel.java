@@ -9,6 +9,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.intelliviz.retirementhelper.data.PensionRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 
@@ -70,7 +71,13 @@ public class PensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         protected PensionIncomeEntity doInBackground(Long... params) {
-            return mDB.pensionIncomeDao().get(params[0]);
+            long id = params[0];
+            if(id == 0) {
+                // need to create default
+                return new PensionIncomeEntity(0, -1, "", PensionRules.DEFAULT_MIN_AGE, "0");
+            } else {
+                return mDB.pensionIncomeDao().get(params[0]);
+            }
         }
 
         @Override

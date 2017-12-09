@@ -125,8 +125,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
         mMinAge.setText(minAge.toString());
         mMonthlyBenefit.setText(monthlyBenefit);
 
-        int type = mPID.getType();
-        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);
+        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, INCOME_TYPE_PENSION);
         SystemUtils.setToolbarSubtitle(this, incomeSourceTypeString);
     }
 
