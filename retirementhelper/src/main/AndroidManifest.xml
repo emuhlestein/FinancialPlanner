@@ -43,7 +43,6 @@
             android:theme="@style/RetireDialog" />
         <activity android:name=".ui.BirthdateActivity" />
         <activity android:name=".ui.income.SavingsIncomeEditActivity" />
-        <activity android:name=".ui.income.SavingsIncomeActivity" />
         <activity android:name=".ui.income.GovPensionIncomeActivity" />
         <activity android:name=".ui.income.PensionIncomeActivity" />
         <activity android:name=".ui.income.GovPensionDetailsActivity" />

@@ -298,13 +298,6 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         startActivity(intent);
     }
 
-    private void startSavingsIncomeSourceActivityOld(long id, int action) {
-        Intent intent = new Intent(getContext(), SavingsIncomeActivity.class);
-        intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
-        startActivity(intent);
-    }
-
     private void startGovPensionIncomeSourceActivity(long id, int action) {
         Intent intent = new Intent(getContext(), GovPensionIncomeActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
