@@ -9,4 +9,5 @@ import java.util.List;
 public interface IncomeTypeRules {
     List<AgeData> getAges();
     MilestoneData getMilestone(AgeData age);
+    List<AmountData> getMonthlyAmountData();
 }

@@ -30,7 +30,6 @@ import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_TYPE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_401K;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
@@ -218,7 +217,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         String age2 = SystemUtils.trimAge(age);
 
         String name = mIncomeSourceName.getText().toString();
-        SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, INCOME_TYPE_401K, name, balance, interest, monthlyAddition, age2);
+        SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, mIncomeType, name, balance, interest, monthlyAddition, age2);
         if(mActivityResult) {
             sendData(mId, name, interest, monthlyAddition, "10", "59 6", 1, balance, age2);
         } else {

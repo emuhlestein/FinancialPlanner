@@ -54,6 +54,11 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return new MilestoneData(age, mEndAge, mMinAge, monthlyBenefit, 0, 0, 0, 0, 0, 0, 0);
     }
 
+    @Override
+    public List<AmountData> getMonthlyAmountData() {
+        return null;
+    }
+
     public AgeData getFullRetirementAge() {
         int birthyear = SystemUtils.getBirthYear(mBirthdate);
         return getFullRetirementAgeFromYear(birthyear);

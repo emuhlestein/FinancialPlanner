@@ -9,7 +9,6 @@ import com.intelliviz.retirementhelper.data.AmountData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.TaxDeferredData;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,6 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     public static final String INTEREST_FIELD = "interest";
     public static final String MONTHLY_ADDITION_FIELD = "monthly_addition";
     public static final String START_AGE_FIELD = "start_age";
-    public static final String SAVINGS_TYPE_FIELD = "savings_type";
 
     @ColumnInfo(name = BALANCE_FIELD)
     private String mBalance;
@@ -41,7 +39,7 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     private String mStartAge;
 
     @Ignore
-    private TaxDeferredIncomeRules mRules;
+    private IncomeTypeRules mRules;
 
     public SavingsIncomeEntity(long id, int type, String name, String balance, String interest, String monthlyAddition, String startAge) {
         super(id, type, name);
@@ -84,11 +82,7 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     }
 
     public void setRules(IncomeTypeRules rules) {
-        if(rules instanceof TaxDeferredIncomeRules) {
-            mRules = (TaxDeferredIncomeRules)rules;
-        } else {
-            mRules = null;
-        }
+        mRules = rules;
     }
 
 
@@ -127,7 +121,7 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
 
     public TaxDeferredData getMonthlyBenefitForAge(AgeData startAge) {
         if(mRules != null) {
-            return mRules.getMonthlyBenefitForAge(startAge);
+            return null;
         } else {
             return null;
         }

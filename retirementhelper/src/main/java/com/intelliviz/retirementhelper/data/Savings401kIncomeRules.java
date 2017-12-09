@@ -13,7 +13,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_
  * Created by edm on 10/18/2017.
  */
 
-public class TaxDeferredIncomeRules implements IncomeTypeRules {
+public class Savings401kIncomeRules implements IncomeTypeRules {
     private static final double PENALTY_PERCENT = 10.0;
     private static final AgeData PENALTY_AGE = new AgeData(59, 6);
     private AgeData mMinAge;
@@ -27,7 +27,7 @@ public class TaxDeferredIncomeRules implements IncomeTypeRules {
     private int mWithdrawMode;
     private double mWithdrawAmount;
 
-    public TaxDeferredIncomeRules(String birthDate, AgeData endAge, AgeData startAge, double balance,
+    public Savings401kIncomeRules(String birthDate, AgeData endAge, AgeData startAge, double balance,
                                   double interest, double monthlyIncrease, int withdrawMode, double withdrawAmount) {
         mCurrentAge = SystemUtils.getAge(birthDate);
         mMinAge = PENALTY_AGE;

@@ -60,7 +60,8 @@ public class DataBaseUtils {
         List<SavingsIncomeEntity> savingsEntities = mDB.savingsIncomeDao().get();
         if(!savingsEntities.isEmpty()) {
             for(SavingsIncomeEntity se : savingsEntities) {
-                SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge,  Double.parseDouble(se.getBalance()),
+                AgeData startAge = SystemUtils.parseAgeString(se.getStartAge());
+                SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge, startAge, Double.parseDouble(se.getBalance()),
                         Double.parseDouble(se.getInterest()), Double.parseDouble(se.getMonthlyAddition()),
                                 roe.getWithdrawMode(), Double.parseDouble(roe.getWithdrawAmount()));
                 se.setRules(sir);

@@ -12,7 +12,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
+import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
@@ -216,7 +216,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
         for(SavingsIncomeEntity tdie : tdieList) {
             AgeData startAge = SystemUtils.parseAgeString(tdie.getStartAge());
-            TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(tdie.getBalance()),
+            Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(tdie.getBalance()),
                     Double.parseDouble(tdie.getInterest()), Double.parseDouble(tdie.getMonthlyAddition()), roe.getWithdrawMode(),
                     Double.parseDouble(roe.getWithdrawAmount()));
             tdie.setRules(tdir);

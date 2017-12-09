@@ -10,12 +10,12 @@ import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.AmountData;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
+import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
+import com.intelliviz.retirementhelper.data.SavingsIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -92,19 +92,28 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
 
         @Override
         protected List<AmountData> doInBackground(Long... params) {
-            SavingsIncomeEntity tdid = mDB.savingsIncomeDao().get(params[0]);
-            List<MilestoneAgeEntity> ages = DataBaseUtils.getMilestoneAges(mDB);
+            SavingsIncomeEntity sie = mDB.savingsIncomeDao().get(params[0]);
             RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
             SavingsIncomeEntity entity = mDB.savingsIncomeDao().get(params[0]);
             String birthdate = rod.getBirthdate();
             AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
-            AgeData startAge = SystemUtils.parseAgeString(tdid.getStartAge());
-            TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(birthdate, endAge, startAge,
-                    Double.parseDouble(entity.getBalance()),
-                    Double.parseDouble(entity.getInterest()),
-                    Double.parseDouble(entity.getMonthlyAddition()),
-                    rod.getWithdrawMode(), Double.parseDouble(rod.getWithdrawAmount()));
-            entity.setRules(tdir);
+            AgeData startAge = SystemUtils.parseAgeString(sie.getStartAge());
+            if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
+                Savings401kIncomeRules tdir = new Savings401kIncomeRules(birthdate, endAge, startAge,
+                        Double.parseDouble(entity.getBalance()),
+                        Double.parseDouble(entity.getInterest()),
+                        Double.parseDouble(entity.getMonthlyAddition()),
+                        rod.getWithdrawMode(), Double.parseDouble(rod.getWithdrawAmount()));
+                entity.setRules(tdir);
+            } else {
+                SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge, startAge,
+                        Double.parseDouble(entity.getBalance()),
+                        Double.parseDouble(entity.getInterest()),
+                        Double.parseDouble(entity.getMonthlyAddition()),
+                        rod.getWithdrawMode(), Double.parseDouble(rod.getWithdrawAmount()));
+                entity.setRules(sir);
+
+            }
 
             return entity.getMonthlyAmountData();
 

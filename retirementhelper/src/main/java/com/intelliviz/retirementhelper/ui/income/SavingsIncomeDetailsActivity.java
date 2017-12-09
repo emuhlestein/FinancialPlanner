@@ -146,16 +146,16 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
 
         mViewModel.getList().observe(this, new Observer<List<AmountData>>() {
             @Override
-            public void onChanged(@Nullable List<AmountData> taxDeferredData) {
+            public void onChanged(@Nullable List<AmountData> amountDataList) {
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
-                for(AmountData taxDefData : taxDeferredData) {
-                    AgeData age = taxDefData.getAge();
-                    String balance = SystemUtils.getFormattedCurrency(taxDefData.getBalance());
-                    String amount = SystemUtils.getFormattedCurrency(taxDefData.getMonthlyAmount());
+                for(AmountData amountData : amountDataList) {
+                    AgeData age = amountData.getAge();
+                    String balance = SystemUtils.getFormattedCurrency(amountData.getBalance());
+                    String amount = SystemUtils.getFormattedCurrency(amountData.getMonthlyAmount());
                     String line1 = age.toString() + "   " + amount + "  " + balance;
 
-                    int status = taxDefData.getBalanceState();
-                    if(taxDefData.isPenalty()) {
+                    int status = amountData.getBalanceState();
+                    if(amountData.isPenalty()) {
                         status = 0;
                     }
                     IncomeDetails incomeDetail = new IncomeDetails(line1, status, "");
