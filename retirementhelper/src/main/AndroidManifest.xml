@@ -45,7 +45,7 @@
         <activity android:name=".ui.income.SavingsIncomeEditActivity" />
         <activity android:name=".ui.income.GovPensionIncomeEditActivity" />
         <activity android:name=".ui.income.PensionIncomeEditActivity" />
-        <activity android:name=".ui.income.GovPensionDetailsActivity" />
+        <activity android:name=".ui.income.GovPensionIncomeDetailsActivity" />
         <activity android:name=".ui.income.SavingsIncomeDetailsActivity" />
         <activity android:name=".ui.RetirementDetailsActivity" />
         <activity android:name=".ui.income.PensionIncomeDetailsActivity"></activity>

@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
-public class GovPensionDetailsActivity extends AppCompatActivity {
+public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
     private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
     private GovPensionDetailsViewModel mViewModel;
