@@ -147,7 +147,7 @@ public class SavingsIncomeActivity extends AppCompatActivity {
         SystemUtils.setToolbarSubtitle(this, incomeSourceTypeString);
 
         String balanceString = SystemUtils.getFormattedCurrency(mSID.getBalance());
-        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mSID.getMonthlyIncrease());
+        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mSID.getMonthlyAddition());
         String interestString = String.valueOf(mSID.getInterest());
 
         mIncomeSourceName.setText(incomeSourceName);
@@ -173,8 +173,8 @@ public class SavingsIncomeActivity extends AppCompatActivity {
         }
 
         value = mMonthlyIncrease.getText().toString();
-        String monthlyIncrease = SystemUtils.getFloatValue(value);
-        if(monthlyIncrease == null) {
+        String monthlyAddition = SystemUtils.getFloatValue(value);
+        if(monthlyAddition == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
@@ -183,9 +183,9 @@ public class SavingsIncomeActivity extends AppCompatActivity {
         String name = mIncomeSourceName.getText().toString();
         double dbalance = Double.parseDouble(balance);
         double dinterest = Double.parseDouble(interest);
-        double dmonthlyIncrease = Double.parseDouble(monthlyIncrease);
+        double dmonthlyAddition = Double.parseDouble(monthlyAddition);
 
-        SavingsIncomeEntity sid = new SavingsIncomeEntity(mId, INCOME_TYPE_SAVINGS, name, interest, monthlyIncrease, balance);
+        SavingsIncomeEntity sid = new SavingsIncomeEntity(mId, INCOME_TYPE_SAVINGS, name, balance, interest, monthlyAddition, "");
         mViewModel.setData(sid);
     }
 

@@ -14,7 +14,7 @@ import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
+import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -24,14 +24,14 @@ import java.util.List;
  * Created by edm on 10/23/2017.
  */
 
-public class TaxDeferredDetailsViewModel extends AndroidViewModel {
+public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
     private AppDatabase mDB;
-    private MutableLiveData<TaxDeferredIncomeEntity> mTDID =
+    private MutableLiveData<SavingsIncomeEntity> mSIE =
             new MutableLiveData<>();
     private MutableLiveData<List<AmountData>> mListTaxDeferredData = new MutableLiveData<List<AmountData>>();
     private long mIncomeId;
 
-    public TaxDeferredDetailsViewModel(Application application, long incomeId) {
+    public SavingsIncomeDetailsViewModel(Application application, long incomeId) {
         super(application);
         mIncomeId = incomeId;
         mDB = AppDatabase.getInstance(application);
@@ -43,17 +43,17 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
         return mListTaxDeferredData;
     }
 
-    public MutableLiveData<TaxDeferredIncomeEntity> get() {
-        return mTDID;
+    public MutableLiveData<SavingsIncomeEntity> get() {
+        return mSIE;
     }
 
     public void update() {
         new GetTaxDeferredDataAsyncTask().execute(mIncomeId);
     }
 
-    public void setData(TaxDeferredIncomeEntity tdid) {
-        mTDID.setValue(tdid);
-        new TaxDeferredDetailsViewModel.UpdateAsyncTask().execute(tdid);
+    public void setData(SavingsIncomeEntity tdid) {
+        mSIE.setValue(tdid);
+        new SavingsIncomeDetailsViewModel.UpdateAsyncTask().execute(tdid);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -68,23 +68,23 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new TaxDeferredDetailsViewModel(mApplication, mIncomeId);
+            return (T) new SavingsIncomeDetailsViewModel(mApplication, mIncomeId);
         }
     }
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, TaxDeferredIncomeEntity> {
+    private class GetAsyncTask extends AsyncTask<Long, Void, SavingsIncomeEntity> {
 
         public GetAsyncTask() {
         }
 
         @Override
-        protected TaxDeferredIncomeEntity doInBackground(Long... params) {
-            return mDB.taxDeferredIncomeDao().get(params[0]);
+        protected SavingsIncomeEntity doInBackground(Long... params) {
+            return mDB.savingsIncomeDao().get(params[0]);
         }
 
         @Override
-        protected void onPostExecute(TaxDeferredIncomeEntity tdid) {
-            mTDID.setValue(tdid);
+        protected void onPostExecute(SavingsIncomeEntity tdid) {
+            mSIE.setValue(tdid);
         }
     }
 
@@ -92,17 +92,17 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
 
         @Override
         protected List<AmountData> doInBackground(Long... params) {
-            TaxDeferredIncomeEntity tdid = mDB.taxDeferredIncomeDao().get(params[0]);
+            SavingsIncomeEntity tdid = mDB.savingsIncomeDao().get(params[0]);
             List<MilestoneAgeEntity> ages = DataBaseUtils.getMilestoneAges(mDB);
             RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
-            TaxDeferredIncomeEntity entity = mDB.taxDeferredIncomeDao().get(params[0]);
+            SavingsIncomeEntity entity = mDB.savingsIncomeDao().get(params[0]);
             String birthdate = rod.getBirthdate();
             AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
             AgeData startAge = SystemUtils.parseAgeString(tdid.getStartAge());
             TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(birthdate, endAge, startAge,
                     Double.parseDouble(entity.getBalance()),
                     Double.parseDouble(entity.getInterest()),
-                    Double.parseDouble(entity.getMonthlyIncrease()),
+                    Double.parseDouble(entity.getMonthlyAddition()),
                     rod.getWithdrawMode(), Double.parseDouble(rod.getWithdrawAmount()));
             entity.setRules(tdir);
 
@@ -129,11 +129,11 @@ public class TaxDeferredDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class UpdateAsyncTask extends AsyncTask<TaxDeferredIncomeEntity, Void, Integer> {
+    private class UpdateAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, Integer> {
 
         @Override
-        protected Integer doInBackground(TaxDeferredIncomeEntity... params) {
-            return mDB.taxDeferredIncomeDao().update(params[0]);
+        protected Integer doInBackground(SavingsIncomeEntity... params) {
+            return mDB.savingsIncomeDao().update(params[0]);
         }
 
         @Override

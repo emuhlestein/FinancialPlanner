@@ -42,6 +42,7 @@ import butterknife.ButterKnife;
 import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_TYPE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
@@ -50,7 +51,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_AC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_401K;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_INCOME_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
 
@@ -200,8 +201,8 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
                     intent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedIncome.getId());
                     startActivity(intent);
                     break;
-                case INCOME_TYPE_TAX_DEFERRED:
-                    intent = new Intent(getContext(), TaxDeferredDetailsActivity.class);
+                case INCOME_TYPE_401K:
+                    intent = new Intent(getContext(), SavingsIncomeDetailsActivity.class);
                     intent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedIncome.getId());
                     startActivity(intent);
                     break;
@@ -219,10 +220,10 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         int item = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
         switch (item) {
             case INCOME_TYPE_SAVINGS:
-                startSavingsIncomeSourceActivity(0, RetirementConstants.INCOME_ACTION_ADD);
+                startSavingsIncomeSourceActivity(0, RetirementConstants.INCOME_ACTION_ADD, RetirementConstants.INCOME_TYPE_SAVINGS);
                 break;
-            case INCOME_TYPE_TAX_DEFERRED:
-                startTaxDeferredIncomeSourceActivity(0, RetirementConstants.INCOME_ACTION_ADD);
+            case INCOME_TYPE_401K:
+                startSavingsIncomeSourceActivity(0, RetirementConstants.INCOME_ACTION_ADD, RetirementConstants.INCOME_TYPE_401K);
                 break;
             case INCOME_TYPE_PENSION:
                 startPensionIncomeSourceActivity(0, RetirementConstants.INCOME_ACTION_ADD);
@@ -252,13 +253,13 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         switch(mSelectedIncome.getType()) {
             case INCOME_TYPE_SAVINGS:
                 if(action == INCOME_ACTION_EDIT) {
-                    startSavingsIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT);
+                    startSavingsIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT, RetirementConstants.INCOME_TYPE_SAVINGS);
                     getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 }
                 break;
-            case INCOME_TYPE_TAX_DEFERRED:
+            case INCOME_TYPE_401K:
                 if(action == INCOME_ACTION_EDIT) {
-                    startTaxDeferredIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT);
+                    startSavingsIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT, RetirementConstants.INCOME_TYPE_401K);
                     getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 }
                 break;
@@ -284,14 +285,15 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         }
     }
 
-    private void startTaxDeferredIncomeSourceActivity(long id, int action) {
-        Intent intent = new Intent(getContext(), TaxDeferredIncomeActivity.class);
+    private void startSavingsIncomeSourceActivity(long id, int action, int incomeType) {
+        Intent intent = new Intent(getContext(), SavingsIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+        intent.putExtra(EXTRA_INCOME_TYPE, incomeType);
         startActivity(intent);
     }
 
-    private void startSavingsIncomeSourceActivity(long id, int action) {
+    private void startSavingsIncomeSourceActivityOld(long id, int action) {
         Intent intent = new Intent(getContext(), SavingsIncomeActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);

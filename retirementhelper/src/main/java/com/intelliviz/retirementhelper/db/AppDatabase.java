@@ -18,7 +18,6 @@ import com.intelliviz.retirementhelper.db.dao.PensionIncomeDao;
 import com.intelliviz.retirementhelper.db.dao.RetirementOptionsDao;
 import com.intelliviz.retirementhelper.db.dao.SavingsIncomeDao;
 import com.intelliviz.retirementhelper.db.dao.SummaryDao;
-import com.intelliviz.retirementhelper.db.dao.TaxDeferredIncomeDao;
 import com.intelliviz.retirementhelper.db.entity.AgeConverter;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeTypeEntity;
@@ -28,7 +27,6 @@ import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
-import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 
 /**
  * Created by edm on 10/2/2017.
@@ -36,7 +34,7 @@ import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 
 @Database(entities = {MilestoneAgeEntity.class, GovPensionEntity.class, IncomeTypeEntity.class,
         MilestoneSummaryEntity.class, PensionIncomeEntity.class, RetirementOptionsEntity.class,
-        SavingsIncomeEntity.class, SummaryEntity.class, TaxDeferredIncomeEntity.class}, version = 2)
+        SavingsIncomeEntity.class, SummaryEntity.class}, version = 1)
 @TypeConverters({AgeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private volatile static AppDatabase mINSTANCE;
@@ -48,6 +46,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     RoomDatabase.Callback rdc = new RoomDatabase.Callback() {
                         @Override
                         public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                            // set default values
                             ContentValues values = new ContentValues();
                             values.put(RetirementOptionsEntity.END_AGE_FIELD, "90");
                             values.put(RetirementOptionsEntity.WITHDRAW_MODE_FIELD, 0);
@@ -61,7 +60,6 @@ public abstract class AppDatabase extends RoomDatabase {
                     mINSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "income_db")
                             .addCallback(rdc)
-                            .addMigrations(MIGRATION_1_2)
                             .build();
                 }
             }
@@ -81,7 +79,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract GovPensionDao govPensionDao();
     public abstract PensionIncomeDao pensionIncomeDao();
     public abstract SavingsIncomeDao savingsIncomeDao();
-    public abstract TaxDeferredIncomeDao taxDeferredIncomeDao();
     public abstract RetirementOptionsDao retirementOptionsDao();
     public abstract MilestoneSummaryDao milestoneSummaryDao();
     public abstract SummaryDao summaryDao();

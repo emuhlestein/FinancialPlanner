@@ -18,26 +18,28 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
+import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.viewmodel.TaxDeferredViewModel;
+import com.intelliviz.retirementhelper.viewmodel.SavingsIncomeEditViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_TYPE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_401K;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
-public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
-    private TaxDeferredIncomeEntity mTDID;
+public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
+    private SavingsIncomeEntity mSIE;
     private long mId;
+    private int mIncomeType;
     private boolean mActivityResult;
-    private TaxDeferredViewModel mViewModel;
+    private SavingsIncomeEditViewModel mViewModel;
 
     @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -66,11 +68,8 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
     }
 
     @OnClick(R.id.edit_start_age_button) void editStartAge() {
-        String age = mTDID.getStartAge();
+        String age = mSIE.getStartAge();
         AgeData startAge = SystemUtils.parseAgeString(age);
-        if(startAge == null) {
-            startAge = new AgeData(59, 6);
-        }
         FragmentManager fm = getSupportFragmentManager();
         AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
         dialog.show(fm, "");
@@ -88,11 +87,12 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
         mId = 0;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
+            mIncomeType = intent.getIntExtra(EXTRA_INCOME_TYPE, 0);
             int rc = intent.getIntExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, 0);
             mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
         }
 
-        mTDID = null;
+        mSIE = null;
 
         mBalance.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -143,35 +143,35 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
             }
         });
 
-        TaxDeferredViewModel.Factory factory = new
-                TaxDeferredViewModel.Factory(getApplication(), mId);
+        SavingsIncomeEditViewModel.Factory factory = new
+                SavingsIncomeEditViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(TaxDeferredViewModel.class);
+                get(SavingsIncomeEditViewModel.class);
 
-        mViewModel.getData().observe(this, new Observer<TaxDeferredIncomeEntity>() {
+        mViewModel.getData().observe(this, new Observer<SavingsIncomeEntity>() {
             @Override
-            public void onChanged(@Nullable TaxDeferredIncomeEntity data) {
-                mTDID = data;
+            public void onChanged(@Nullable SavingsIncomeEntity data) {
+                mSIE = data;
                 updateUI();
             }
         });
     }
 
     private void updateUI() {
-        if (mTDID == null || mTDID.getId() == 0) {
+        if (mSIE == null) {
             return;
         }
 
-        String incomeSourceName = mTDID.getName();
-        int type = mTDID.getType();
-        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);
+        String incomeSourceName = mSIE.getName();
+        int type = mSIE.getType();
+        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, mIncomeType);
         SystemUtils.setToolbarSubtitle(this, incomeSourceTypeString);
 
         String balanceString;
-        balanceString = mTDID.getBalance();
+        balanceString = mSIE.getBalance();
         balanceString = SystemUtils.getFormattedCurrency(balanceString);
 
-        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mTDID.getMonthlyIncrease());
+        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mSIE.getMonthlyAddition());
         AgeData age;
 
 
@@ -182,14 +182,11 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
         mIncomeSourceName.setText(incomeSourceName);
         mBalance.setText(balanceString);
 
-        String interest = mTDID.getInterest()+"%";
+        String interest = mSIE.getInterest()+"%";
         mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(monthlyIncreaseString);
 
-        age = SystemUtils.parseAgeString(mTDID.getStartAge());
-        if(age == null) {
-            age = new AgeData(59, 6);
-        }
+        age = SystemUtils.parseAgeString(mSIE.getStartAge());
         mStartAge.setText(age.toString());
     }
 
@@ -211,8 +208,8 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
         }
 
         value = mMonthlyIncrease.getText().toString();
-        String monthlyIncrease = getFloatValue(value);
-        if(monthlyIncrease == null) {
+        String monthlyAddition = getFloatValue(value);
+        if(monthlyAddition == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
@@ -221,9 +218,9 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
         String age2 = SystemUtils.trimAge(age);
 
         String name = mIncomeSourceName.getText().toString();
-        TaxDeferredIncomeEntity tdid = new TaxDeferredIncomeEntity(mId, INCOME_TYPE_TAX_DEFERRED, name, interest, monthlyIncrease, "10", "59 6", 1, balance, age2);
+        SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, INCOME_TYPE_401K, name, balance, interest, monthlyAddition, age2);
         if(mActivityResult) {
-            sendData(mId, name, interest, monthlyIncrease, "10", "59 6", 1, balance, age2);
+            sendData(mId, name, interest, monthlyAddition, "10", "59 6", 1, balance, age2);
         } else {
             mViewModel.setData(tdid);
         }
@@ -243,6 +240,7 @@ public class TaxDeferredIncomeActivity extends AppCompatActivity implements AgeD
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, interest);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE, monthlyIncrease);
+        returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SAVINGS_TYPE, mIncomeType);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }

@@ -7,8 +7,10 @@ package com.intelliviz.retirementhelper.util;
 
 public class RetirementConstants {
     // Income types also used as transaction type
+    public static final String EXTRA_INCOME_TYPE = "income type";
+    public static final int INCOME_TYPE_UNKNOWN = -1;
     public static final int INCOME_TYPE_SAVINGS = 0;
-    public static final int INCOME_TYPE_TAX_DEFERRED = 1; // 401(k)
+    public static final int INCOME_TYPE_401K = 1; // 401(k)
     public static final int INCOME_TYPE_PENSION = 2;
     public static final int INCOME_TYPE_GOV_PENSION = 3; //eg social security
     public static final int TRANS_TYPE_MILESTONE_SUMMARY = 4;
@@ -21,7 +23,6 @@ public class RetirementConstants {
     public static final int INCOME_ACTION_UPDATE = 4;
     public static final int INCOME_ACTION_GET = 5;
     public static final int ACTIVITY_RESULT = 99;
-
 
     public static final String DATE_FORMAT = "dd-MM-yyyy";
 
@@ -37,6 +38,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_BALANCE = "income source balance";
     public static final String EXTRA_INCOME_SOURCE_INTEREST = "income source interest";
     public static final String EXTRA_INCOME_SOURCE_INCREASE = "income source increase";
+    public static final String EXTRA_INCOME_SAVINGS_TYPE = "income source savings type";
 
 
     public static final String EXTRA_LOGIN_RESPONSE = "login response";

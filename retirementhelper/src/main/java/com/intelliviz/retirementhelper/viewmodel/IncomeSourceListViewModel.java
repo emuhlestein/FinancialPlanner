@@ -21,7 +21,6 @@ import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
-import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
@@ -63,8 +62,8 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         } else if(incomeSource instanceof SavingsIncomeEntity) {
             SavingsIncomeEntity entity = (SavingsIncomeEntity)incomeSource;
             new DeleteSavingsAsyncTask().execute(entity);
-        } else if(incomeSource instanceof TaxDeferredIncomeEntity) {
-            TaxDeferredIncomeEntity entity = (TaxDeferredIncomeEntity)incomeSource;
+        } else if(incomeSource instanceof SavingsIncomeEntity) {
+            SavingsIncomeEntity entity = (SavingsIncomeEntity)incomeSource;
             new DeleteTaxDeferredAsyncTask().execute(entity);
         }
     }
@@ -135,11 +134,11 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         }
     }
 
-    private class DeleteTaxDeferredAsyncTask extends AsyncTask<TaxDeferredIncomeEntity, Void, List<IncomeSourceEntityBase>> {
+    private class DeleteTaxDeferredAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeSourceEntityBase>> {
 
         @Override
-        protected List<IncomeSourceEntityBase> doInBackground(TaxDeferredIncomeEntity... params) {
-            mDB.taxDeferredIncomeDao().delete(params[0]);
+        protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
+            mDB.savingsIncomeDao().delete(params[0]);
             updateAppWidgetSummaryData();
             return getAllIncomeSources();
         }
@@ -212,13 +211,13 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
 
     private List<IncomeSourceEntityBase> getAllIncomeSources() {
         List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
-        List<TaxDeferredIncomeEntity> tdieList = mDB.taxDeferredIncomeDao().get();
+        List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
         AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
-        for(TaxDeferredIncomeEntity tdie : tdieList) {
+        for(SavingsIncomeEntity tdie : tdieList) {
             AgeData startAge = SystemUtils.parseAgeString(tdie.getStartAge());
             TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(tdie.getBalance()),
-                    Double.parseDouble(tdie.getInterest()), Double.parseDouble(tdie.getMonthlyIncrease()), roe.getWithdrawMode(),
+                    Double.parseDouble(tdie.getInterest()), Double.parseDouble(tdie.getMonthlyAddition()), roe.getWithdrawMode(),
                     Double.parseDouble(roe.getWithdrawAmount()));
             tdie.setRules(tdir);
             incomeSourceList.add(tdie);
@@ -237,10 +236,6 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
         for(PensionIncomeEntity pie : pieList) {
             incomeSourceList.add(pie);
-        }
-        List<SavingsIncomeEntity> sieList = mDB.savingsIncomeDao().get();
-        for(SavingsIncomeEntity sie : sieList) {
-            incomeSourceList.add(sie);
         }
 
         return incomeSourceList;

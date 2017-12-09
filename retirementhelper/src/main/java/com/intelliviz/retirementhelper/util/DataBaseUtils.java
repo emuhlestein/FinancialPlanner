@@ -5,7 +5,6 @@ import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PensionRules;
 import com.intelliviz.retirementhelper.data.SavingsIncomeRules;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
-import com.intelliviz.retirementhelper.data.TaxDeferredIncomeRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
@@ -14,7 +13,6 @@ import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
-import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,23 +61,10 @@ public class DataBaseUtils {
         if(!savingsEntities.isEmpty()) {
             for(SavingsIncomeEntity se : savingsEntities) {
                 SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge,  Double.parseDouble(se.getBalance()),
-                        Double.parseDouble(se.getInterest()), Double.parseDouble(se.getMonthlyIncrease()),
+                        Double.parseDouble(se.getInterest()), Double.parseDouble(se.getMonthlyAddition()),
                                 roe.getWithdrawMode(), Double.parseDouble(roe.getWithdrawAmount()));
                 se.setRules(sir);
                 allEntities.add(se);
-            }
-        }
-        List<TaxDeferredIncomeEntity> taxDefEntities = mDB.taxDeferredIncomeDao().get();
-        if(!taxDefEntities.isEmpty()) {
-            double amount = Double.parseDouble(roe.getWithdrawAmount());
-
-            for(TaxDeferredIncomeEntity tde : taxDefEntities) {
-                AgeData startAge = SystemUtils.parseAgeString(tde.getStartAge());
-                TaxDeferredIncomeRules tdir = new TaxDeferredIncomeRules(birthdate, endAge, startAge, Double.parseDouble(tde.getBalance()),
-                        Double.parseDouble(tde.getInterest()), Double.parseDouble(tde.getMonthlyIncrease()), roe.getWithdrawMode(),
-                        amount);
-                tde.setRules(tdir);
-                allEntities.add(tde);
             }
         }
         return allEntities;
@@ -177,13 +162,15 @@ public class DataBaseUtils {
         }
 
         AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
-        AgeData minimumAge = saveMilestones.get(0).getMinimumAge();
-        for(int i = 0; i < ages.size(); i++) {
-            AgeData startAge = ages.get(i).getAge();
-            MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i],
-                    sumStartBalance[i], sumEndBalance[i], 0, 0, numMonthsFundsWillLast, rod.getWithdrawMode(),
-                    Double.parseDouble(rod.getWithdrawAmount()));
-            sumMilestones.add(milestoneData);
+        if(saveMilestones != null) {
+            AgeData minimumAge = saveMilestones.get(0).getMinimumAge();
+            for (int i = 0; i < ages.size(); i++) {
+                AgeData startAge = ages.get(i).getAge();
+                MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i],
+                        sumStartBalance[i], sumEndBalance[i], 0, 0, numMonthsFundsWillLast, rod.getWithdrawMode(),
+                        Double.parseDouble(rod.getWithdrawAmount()));
+                sumMilestones.add(milestoneData);
+            }
         }
 
         return sumMilestones;

@@ -24,12 +24,12 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.AmountData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.db.entity.TaxDeferredIncomeEntity;
+import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.ui.RetirementDetailsActivity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.viewmodel.TaxDeferredDetailsViewModel;
+import com.intelliviz.retirementhelper.viewmodel.SavingsIncomeDetailsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,16 +38,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_TAX_DEFERRED;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_401K;
 
-public class TaxDeferredDetailsActivity extends AppCompatActivity
+public class SavingsIncomeDetailsActivity extends AppCompatActivity
         implements SelectMilestoneDataListener {
 
     private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
-    private TaxDeferredDetailsViewModel mViewModel;
-    private TaxDeferredIncomeEntity mTDIE;
+    private SavingsIncomeDetailsViewModel mViewModel;
+    private SavingsIncomeEntity mSIE;
     private long mId;
+    private int mSavingsType;
 
     @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -110,7 +111,7 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
                 if (scrollRange + verticalOffset == 0) {
                     isShow = true;
                     mExpandedTextLayout.setVisibility(View.GONE);
-                    mCollapsingToolbarLayout.setTitle(getApplicationName(TaxDeferredDetailsActivity.this));
+                    mCollapsingToolbarLayout.setTitle(getApplicationName(SavingsIncomeDetailsActivity.this));
                 } else {
                     isShow = false;
                     mExpandedTextLayout.setVisibility(View.VISIBLE);
@@ -131,17 +132,17 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
         mEditTaxDeferredFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(TaxDeferredDetailsActivity.this, TaxDeferredIncomeActivity.class);
+                Intent intent = new Intent(SavingsIncomeDetailsActivity.this, SavingsIncomeEditActivity.class);
                 intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, mId);
                 intent.putExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, RetirementConstants.ACTIVITY_RESULT);
                 startActivityForResult(intent, RetirementConstants.ACTIVITY_RESULT);
             }
         });
 
-        TaxDeferredDetailsViewModel.Factory factory = new
-                TaxDeferredDetailsViewModel.Factory(getApplication(), mId);
+        SavingsIncomeDetailsViewModel.Factory factory = new
+                SavingsIncomeDetailsViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(TaxDeferredDetailsViewModel.class);
+                get(SavingsIncomeDetailsViewModel.class);
 
         mViewModel.getList().observe(this, new Observer<List<AmountData>>() {
             @Override
@@ -164,10 +165,10 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
             }
         });
 
-        mViewModel.get().observe(this, new Observer<TaxDeferredIncomeEntity>() {
+        mViewModel.get().observe(this, new Observer<SavingsIncomeEntity>() {
             @Override
-            public void onChanged(@Nullable TaxDeferredIncomeEntity tdie) {
-                mTDIE = tdie;
+            public void onChanged(@Nullable SavingsIncomeEntity tdie) {
+                mSIE = tdie;
                 updateUI();
             }
         });
@@ -190,9 +191,9 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
             String startAge = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
             String balance = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
             String interest = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
-            String monthlyIncrease = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE);
-            TaxDeferredIncomeEntity tdid = new TaxDeferredIncomeEntity(mId, INCOME_TYPE_TAX_DEFERRED, name,
-                    interest, monthlyIncrease, "10", "59 6", 1, balance, startAge);
+            String monthlyAddition = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE);
+            SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, INCOME_TYPE_401K, name,
+                    balance, interest, monthlyAddition, startAge);
             mViewModel.setData(tdid);
 
         }
@@ -200,24 +201,24 @@ public class TaxDeferredDetailsActivity extends AppCompatActivity
     }
 
     private void updateUI() {
-        if(mTDIE == null) {
+        if(mSIE == null) {
             return;
         }
 
-        SystemUtils.setToolbarSubtitle(this, "401(k) - " + mTDIE.getName());
+        SystemUtils.setToolbarSubtitle(this, "401(k) - " + mSIE.getName());
 
-        mNameTextView.setText(mTDIE.getName());
+        mNameTextView.setText(mSIE.getName());
 
-        AgeData age = SystemUtils.parseAgeString(mTDIE.getStartAge());
+        AgeData age = SystemUtils.parseAgeString(mSIE.getStartAge());
         mStartAgeTextView.setText(age.toString());
 
-        String formattedValue = SystemUtils.getFormattedCurrency(mTDIE.getMonthlyIncrease());
+        String formattedValue = SystemUtils.getFormattedCurrency(mSIE.getMonthlyAddition());
         mMonthlyIncreaseTextView.setText(formattedValue);
 
-        formattedValue = mTDIE.getInterest() + "%";
+        formattedValue = mSIE.getInterest() + "%";
         mAnnualInterestTextView.setText(formattedValue);
 
-        formattedValue = SystemUtils.getFormattedCurrency(mTDIE.getBalance());
+        formattedValue = SystemUtils.getFormattedCurrency(mSIE.getBalance());
         mBalanceTextView.setText(formattedValue);
     }
 
