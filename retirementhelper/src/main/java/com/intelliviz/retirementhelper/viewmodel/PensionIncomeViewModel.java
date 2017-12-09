@@ -18,12 +18,12 @@ import java.util.List;
  * Created by edm on 9/30/2017.
  */
 
-public class PensionViewModel extends AndroidViewModel {
+public class PensionIncomeViewModel extends AndroidViewModel {
     private MutableLiveData<PensionIncomeEntity> mPID =
             new MutableLiveData<>();
     private AppDatabase mDB;
 
-    public PensionViewModel(Application application, long incomeId) {
+    public PensionIncomeViewModel(Application application, long incomeId) {
         super(application);
         mDB = AppDatabase.getInstance(application); //PensionDatabase.getInstance(this.getApplication());
         new GetAsyncTask().execute(incomeId);
@@ -62,7 +62,7 @@ public class PensionViewModel extends AndroidViewModel {
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new PensionViewModel(mApplication, mIncomeId);
+            return (T) new PensionIncomeViewModel(mApplication, mIncomeId);
         }
     }
 

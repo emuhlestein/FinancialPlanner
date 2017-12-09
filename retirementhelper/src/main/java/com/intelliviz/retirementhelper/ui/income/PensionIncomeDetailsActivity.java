@@ -15,7 +15,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.PensionData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.viewmodel.PensionDetailsViewModel;
+import com.intelliviz.retirementhelper.viewmodel.PensionIncomeDetailsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
 
     private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
-    private PensionDetailsViewModel mViewModel;
+    private PensionIncomeDetailsViewModel mViewModel;
     private long mId;
 
     @BindView(R.id.recyclerview)
@@ -56,10 +56,10 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         // For adding dividing line between views
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
         //        linearLayoutManager.getOrientation()));
-        PensionDetailsViewModel.Factory factory = new
-                PensionDetailsViewModel.Factory(getApplication(), mId);
+        PensionIncomeDetailsViewModel.Factory factory = new
+                PensionIncomeDetailsViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(PensionDetailsViewModel.class);
+                get(PensionIncomeDetailsViewModel.class);
 
         mViewModel.get().observe(this, new Observer<List<PensionData>>() {
             @Override

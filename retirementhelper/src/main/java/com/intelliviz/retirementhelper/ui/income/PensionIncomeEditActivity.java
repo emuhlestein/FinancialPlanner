@@ -19,7 +19,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.viewmodel.PensionViewModel;
+import com.intelliviz.retirementhelper.viewmodel.PensionIncomeViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +34,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
     private PensionIncomeEntity mPID;
     private long mId;
-    private PensionViewModel mViewModel;
+    private PensionIncomeViewModel mViewModel;
 
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -97,10 +97,10 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             }
         });
 
-        PensionViewModel.Factory factory = new
-                PensionViewModel.Factory(getApplication(), mId);
+        PensionIncomeViewModel.Factory factory = new
+                PensionIncomeViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(PensionViewModel.class);
+                get(PensionIncomeViewModel.class);
 
         mViewModel.getData().observe(this, new Observer<PensionIncomeEntity>() {
             @Override

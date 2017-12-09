@@ -25,16 +25,16 @@ import java.util.List;
  * Created by edm on 11/21/2017.
  */
 
-public class PensionDetailsViewModel extends AndroidViewModel {
+public class PensionIncomeDetailsViewModel extends AndroidViewModel {
     private MutableLiveData<PensionData> mPID =
             new MutableLiveData<>();
     private AppDatabase mDB;
     private MutableLiveData<List<PensionData>> mPensionData = new MutableLiveData<List<PensionData>>();
 
-    public PensionDetailsViewModel(Application application, long incomeId) {
+    public PensionIncomeDetailsViewModel(Application application, long incomeId) {
         super(application);
         mDB = AppDatabase.getInstance(application);
-        new PensionDetailsViewModel.GetAsyncTask().execute(incomeId);
+        new PensionIncomeDetailsViewModel.GetAsyncTask().execute(incomeId);
     }
 
     public MutableLiveData<List<PensionData>> get() {
@@ -53,7 +53,7 @@ public class PensionDetailsViewModel extends AndroidViewModel {
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new PensionDetailsViewModel(mApplication, mIncomeId);
+            return (T) new PensionIncomeDetailsViewModel(mApplication, mIncomeId);
         }
     }
 
