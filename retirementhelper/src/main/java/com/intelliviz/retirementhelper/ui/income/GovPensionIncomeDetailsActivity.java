@@ -15,7 +15,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.GovPensionData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.viewmodel.GovPensionDetailsViewModel;
+import com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeDetailsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
     private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
-    private GovPensionDetailsViewModel mViewModel;
+    private GovPensionIncomeDetailsViewModel mViewModel;
     private long mId;
 
     @BindView(R.id.recyclerview)
@@ -55,10 +55,10 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         // For adding dividing line between views
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
         //        linearLayoutManager.getOrientation()));
-        GovPensionDetailsViewModel.Factory factory = new
-                GovPensionDetailsViewModel.Factory(getApplication(), mId);
+        GovPensionIncomeDetailsViewModel.Factory factory = new
+                GovPensionIncomeDetailsViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(GovPensionDetailsViewModel.class);
+                get(GovPensionIncomeDetailsViewModel.class);
 
         mViewModel.get().observe(this, new Observer<List<GovPensionData>>() {
             @Override

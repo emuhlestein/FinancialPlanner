@@ -22,7 +22,7 @@ import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.ui.BirthdateActivity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
-import com.intelliviz.retirementhelper.viewmodel.GovPensionViewModel;
+import com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,7 +39,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
     private GovPensionEntity mGPID;
     private long mId;
-    private GovPensionViewModel mViewModel;
+    private GovPensionIncomeEditViewModel mViewModel;
 
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -147,10 +147,10 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             }
         });
 
-        GovPensionViewModel.Factory factory = new
-                GovPensionViewModel.Factory(getApplication(), mId);
+        GovPensionIncomeEditViewModel.Factory factory = new
+                GovPensionIncomeEditViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(GovPensionViewModel.class);
+                get(GovPensionIncomeEditViewModel.class);
 
         mViewModel.getData().observe(this, new Observer<GovPensionEntity>() {
             @Override

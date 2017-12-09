@@ -25,13 +25,13 @@ import java.util.List;
  * Created by edm on 10/16/2017.
  */
 
-public class GovPensionDetailsViewModel extends AndroidViewModel {
+public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
     private MutableLiveData<GovPensionData> mGPID =
             new MutableLiveData<>();
     private AppDatabase mDB;
     private MutableLiveData<List<GovPensionData>> mGovPensionData = new MutableLiveData<List<GovPensionData>>();
 
-    public GovPensionDetailsViewModel(Application application, long incomeId) {
+    public GovPensionIncomeDetailsViewModel(Application application, long incomeId) {
         super(application);
         mDB = AppDatabase.getInstance(application);
         new GetAsyncTask().execute(incomeId);
@@ -53,7 +53,7 @@ public class GovPensionDetailsViewModel extends AndroidViewModel {
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new GovPensionDetailsViewModel(mApplication, mIncomeId);
+            return (T) new GovPensionIncomeDetailsViewModel(mApplication, mIncomeId);
         }
     }
 

@@ -23,14 +23,14 @@ import java.util.List;
  * Created by edm on 9/26/2017.
  */
 
-public class GovPensionViewModel extends AndroidViewModel {
+public class GovPensionIncomeEditViewModel extends AndroidViewModel {
     private MutableLiveData<GovPensionEntity> mGPID =
             new MutableLiveData<>();
     private RetirementOptionsEntity mROE;
     private MutableLiveData<String> mBirthdate = new MutableLiveData<>();
     private AppDatabase mDB;
 
-    public GovPensionViewModel(Application application, long incomeId) {
+    public GovPensionIncomeEditViewModel(Application application, long incomeId) {
         super(application);
         mDB = AppDatabase.getInstance(application);
         new GetAsyncTask().execute(incomeId);
@@ -75,7 +75,7 @@ public class GovPensionViewModel extends AndroidViewModel {
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new GovPensionViewModel(mApplication, mIncomeId);
+            return (T) new GovPensionIncomeEditViewModel(mApplication, mIncomeId);
         }
     }
 
