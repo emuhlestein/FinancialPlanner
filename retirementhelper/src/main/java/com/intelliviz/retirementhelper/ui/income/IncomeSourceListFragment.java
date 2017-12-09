@@ -299,7 +299,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     }
 
     private void startGovPensionIncomeSourceActivity(long id, int action) {
-        Intent intent = new Intent(getContext(), GovPensionIncomeActivity.class);
+        Intent intent = new Intent(getContext(), GovPensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
         startActivity(intent);

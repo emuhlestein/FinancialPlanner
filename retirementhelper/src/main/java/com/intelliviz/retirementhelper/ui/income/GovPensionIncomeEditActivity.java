@@ -35,7 +35,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_B
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
-public class GovPensionIncomeActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
+public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
 
     private GovPensionEntity mGPID;
     private long mId;
