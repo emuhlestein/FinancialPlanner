@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.AmountData;
 import com.intelliviz.retirementhelper.data.GovPensionData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
@@ -108,6 +109,15 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
             mRules = (SocialSecurityRules)rules;
         } else {
             mRules = null;
+        }
+    }
+
+    @Override
+    public List<AmountData> getMonthlyAmountData() {
+        if(mRules != null) {
+            return mRules.getMonthlyAmountData();
+        } else {
+            return null;
         }
     }
 

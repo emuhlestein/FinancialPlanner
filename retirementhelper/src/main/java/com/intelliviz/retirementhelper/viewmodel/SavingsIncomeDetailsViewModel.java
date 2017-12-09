@@ -116,20 +116,6 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
             }
 
             return entity.getMonthlyAmountData();
-
-//            List<TaxDeferredData> listTaxDeferredData = new ArrayList<>();
-            //TaxDeferredData data = entity.getMonthlyBenefitForAge(age);
-/*
-
-            for(MilestoneAgeEntity age : ages) {
-                TaxDeferredData data = entity.getMonthlyBenefitForAge(age.getAge());
-                if(data != null) {
-                    listTaxDeferredData.add(data);
-                }
-            }
-*/
-
-//            return listTaxDeferredData;
         }
 
         @Override

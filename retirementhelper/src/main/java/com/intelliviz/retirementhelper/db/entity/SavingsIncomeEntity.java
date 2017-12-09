@@ -111,6 +111,7 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         return ages;
     }
 
+    @Override
     public List<AmountData> getMonthlyAmountData() {
         if(mRules != null) {
             return mRules.getMonthlyAmountData();
