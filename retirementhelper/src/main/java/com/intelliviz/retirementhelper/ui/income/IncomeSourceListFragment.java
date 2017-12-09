@@ -197,7 +197,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
             Intent intent;
             switch(incomeSource.getType()) {
                 case INCOME_TYPE_GOV_PENSION:
-                    intent = new Intent(getContext(), GovPensionDetailsActivity.class);
+                    intent = new Intent(getContext(), GovPensionIncomeDetailsActivity.class);
                     intent.putExtra(EXTRA_INCOME_SOURCE_ID, mSelectedIncome.getId());
                     startActivity(intent);
                     break;
