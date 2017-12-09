@@ -30,8 +30,8 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TY
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
-public class PensionIncomeActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
-    private static final String TAG = PensionIncomeActivity.class.getSimpleName();
+public class PensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
+    private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
     private PensionIncomeEntity mPID;
     private long mId;
     private PensionViewModel mViewModel;
