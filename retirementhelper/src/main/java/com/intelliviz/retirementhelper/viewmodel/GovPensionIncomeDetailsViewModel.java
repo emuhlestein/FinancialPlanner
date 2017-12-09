@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by edm on 10/16/2017.
+ * Created by Ed Muhlestein on 10/16/2017.
  */
 
 public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
@@ -79,7 +79,6 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
                 if(data != null) {
                     listGovPensionData.add(data);
                 }
-
             }
 
             return listGovPensionData;
