@@ -15,6 +15,7 @@ import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -83,16 +84,27 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         protected GovPensionEntity doInBackground(Long... params) {
+            long id = params[0];
+            GovPensionEntity entity;
             mROE = mDB.retirementOptionsDao().get();
             String birthdate = mROE.getBirthdate();
+            AgeData startAge = SystemUtils.getAge(birthdate);
             AgeData endAge = SystemUtils.parseAgeString(mROE.getEndAge());
-            GovPensionEntity gpe = mDB.govPensionDao().get(params[0]);
-            if(gpe != null) {
+            if(id == 0) {
+                // create default entity
+                entity = new GovPensionEntity(id, RetirementConstants.INCOME_TYPE_GOV_PENSION,
+                        "Social Security", "0", 0, "0",
+                        "0", startAge.getUnformattedString() );
+            } else {
+                entity = mDB.govPensionDao().get(params[0]);
+            }
+
+            if(entity != null) {
                 SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge,
-                        Double.parseDouble(gpe.getFullMonthlyBenefit()),
-                        gpe.getSpouse(), Double.parseDouble(gpe.getSpouseBenefit()), gpe.getSpouseBirhtdate());
-                gpe.setRules(ssr);
-                return gpe;
+                        Double.parseDouble(entity.getFullMonthlyBenefit()),
+                        entity.getSpouse(), Double.parseDouble(entity.getSpouseBenefit()), entity.getSpouseBirhtdate());
+                entity.setRules(ssr);
+                return entity;
             } else {
                 return null;
             }

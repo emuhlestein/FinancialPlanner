@@ -171,7 +171,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     }
 
     private void updateUI() {
-        if(mGPID == null || mGPID.getId() == 0) {
+        if(mGPID == null) {
             return;
         }
 
