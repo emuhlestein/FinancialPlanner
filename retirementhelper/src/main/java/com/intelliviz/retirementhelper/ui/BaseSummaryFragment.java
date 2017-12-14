@@ -19,9 +19,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
+import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.AmountData;
+import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.MilestoneSummaryViewModel;
 
 import java.util.ArrayList;
@@ -38,8 +43,8 @@ import butterknife.ButterKnife;
 public abstract class BaseSummaryFragment extends Fragment implements
         SummaryMilestoneAdapter.SelectionMilestoneListener{
     private static final String DIALOG_INPUT_TEXT = "DialogInputText";
-    private SummaryMilestoneAdapter mMilestoneAdapter;
-    private List<MilestoneData> mMilestones;
+    private IncomeDetailsAdapter mIncomeDetailsAdapter;
+    private List<IncomeDetails> mIncomeDetails;
     private MilestoneSummaryViewModel mViewModel;
 
     @BindView(R.id.coordinatorLayout)
@@ -70,14 +75,13 @@ public abstract class BaseSummaryFragment extends Fragment implements
             actionBar.setSubtitle(getString(R.string.summary_screen_subtitle));
         }
 
-        mMilestones = new ArrayList<>();
-        mMilestoneAdapter = new SummaryMilestoneAdapter(getContext(), mMilestones);
+        mIncomeDetails = new ArrayList<>();
+        mIncomeDetailsAdapter = new IncomeDetailsAdapter(getContext(), mIncomeDetails);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mMilestoneAdapter);
+        mRecyclerView.setAdapter(mIncomeDetailsAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
                 linearLayoutManager.getOrientation()));
-        mMilestoneAdapter.setOnSelectionMilestoneListener(this);
 
         return view;
     }
@@ -87,11 +91,20 @@ public abstract class BaseSummaryFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(MilestoneSummaryViewModel.class);
 
-        mViewModel.getList().observe(this, new Observer<List<MilestoneData>>() {
+        mViewModel.getList().observe(this, new Observer<List<AmountData>>() {
             @Override
-            public void onChanged(@Nullable List<MilestoneData> milestones) {
-                mMilestoneAdapter.update(milestones);
-                if (milestones.isEmpty()) {
+            public void onChanged(@Nullable List<AmountData> amountDataList) {
+                List<IncomeDetails> incomeDetails = new ArrayList<>();
+
+                for(AmountData amountData : amountDataList) {
+                    AgeData age = amountData.getAge();
+                    String amount = SystemUtils.getFormattedCurrency(amountData.getMonthlyAmount());
+                    String line1 = age.toString() + "   " + amount;
+                    IncomeDetails incomeDetail = new IncomeDetails(line1, 2, "");
+                    incomeDetails.add(incomeDetail);
+                }
+                mIncomeDetailsAdapter.update(incomeDetails);
+                if (amountDataList.isEmpty()) {
 
                     final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.add_income_source_message, Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction(R.string.dismiss, new View.OnClickListener() {

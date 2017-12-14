@@ -56,7 +56,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
     }
 
     public void update(List<IncomeDetails> incomeDetails) {
-        if(incomeDetails != null || incomeDetails.isEmpty()) {
+        if(incomeDetails != null && !incomeDetails.isEmpty()) {
             mNumLines = incomeDetails.get(0).getNumLines();
             mIncomeDetails.clear();
             mIncomeDetails.addAll(incomeDetails);

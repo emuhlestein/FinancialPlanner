@@ -56,7 +56,29 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
     @Override
     public List<AmountData> getMonthlyAmountData() {
-        return null;
+        AgeData age = mMinAge;
+        List<AmountData> listAmountDate = new ArrayList<>();
+
+        int birthYear = SystemUtils.getBirthYear(mBirthdate);
+        double amount = getMonthlyBenefit(age, birthYear, mFullMonthlyBenefit);
+
+        AmountData amountData = new AmountData(age, amount, 0, 0, false);
+        listAmountDate.add(amountData);
+
+        while(true) {
+            // get next age
+            AgeData nextAge = new AgeData(age.getYear()+1, 0);
+            if(nextAge.isAfter(mEndAge)) {
+                break;
+            }
+
+            age = new AgeData(nextAge.getYear(), 0);
+
+            amountData = new AmountData(nextAge, amount, 0, 0, false);
+            listAmountDate.add(amountData);
+        }
+
+        return listAmountDate;
     }
 
     public AgeData getFullRetirementAge() {

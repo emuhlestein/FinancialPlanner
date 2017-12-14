@@ -40,7 +40,26 @@ public class PensionRules implements IncomeTypeRules {
 
     @Override
     public List<AmountData> getMonthlyAmountData() {
-        return null;
+        AgeData age = mMinAge;
+        List<AmountData> listAmountDate = new ArrayList<>();
+
+        AmountData amountData = new AmountData(age, mMonthlyAmount, 0, 0, false);
+        listAmountDate.add(amountData);
+
+        while(true) {
+            // get next age
+            AgeData nextAge = new AgeData(age.getYear()+1, 0);
+            if(nextAge.isAfter(mEndAge)) {
+                break;
+            }
+
+            age = new AgeData(nextAge.getYear(), 0);
+
+            amountData = new AmountData(nextAge, mMonthlyAmount, 0, 0, false);
+            listAmountDate.add(amountData);
+        }
+
+        return listAmountDate;
     }
 
     public PensionData getMonthlyBenefitForAge(AgeData startAge) {
