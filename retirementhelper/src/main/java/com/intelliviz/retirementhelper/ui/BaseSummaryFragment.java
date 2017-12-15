@@ -10,13 +10,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
@@ -53,9 +51,6 @@ public abstract class BaseSummaryFragment extends Fragment implements
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.current_balance_text_view)
-    TextView mCurrentBalanceTextView;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,8 +75,8 @@ public abstract class BaseSummaryFragment extends Fragment implements
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mIncomeDetailsAdapter);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
-                linearLayoutManager.getOrientation()));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
+        //        linearLayoutManager.getOrientation()));
 
         return view;
     }

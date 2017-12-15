@@ -6,7 +6,6 @@ import com.intelliviz.retirementhelper.R;
 
 import butterknife.BindView;
 
-
 /**
  * The summary fragment.
  * @author Ed Muhlestein
