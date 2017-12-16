@@ -1,10 +1,18 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.os.Bundle;
+
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_FULL_BENEFIT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_INCLUDE_SPOUSE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BENEFIT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
 
 /**
  * Created by edm on 8/14/2017.
@@ -16,22 +24,26 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private AgeData mMinAge;
     private AgeData mMaxAge;
     private AgeData mEndAge;
+    private AgeData mStartAge;
     private double mFullMonthlyBenefit;
     private boolean mIncludeSpouse;
     private double mSpouseFullBenefit;
     private String mSpouseBirthdate;
 
-    public SocialSecurityRules(String birthDate, AgeData endAge, double fullRetirementBenefit,
-                               int includeSpouse, double spouseBenefit, String spouseBirthdate) {
+    public SocialSecurityRules(String birthDate, AgeData endAge) {
         mBirthdate = birthDate;
-        //mBirthYear = SystemUtils.getBirthYear(birthDate);
         mMinAge = new AgeData(62, 0);
         mMaxAge = new AgeData(70, 0);
         mEndAge = endAge;
-        mFullMonthlyBenefit = fullRetirementBenefit;
-        mIncludeSpouse = includeSpouse == 1;
-        mSpouseFullBenefit = spouseBenefit;
-        mSpouseBirthdate = spouseBirthdate;
+    }
+
+    @Override
+    public void setValues(Bundle bundle) {
+        mFullMonthlyBenefit = bundle.getDouble(EXTRA_INCOME_FULL_BENEFIT);
+        mStartAge = bundle.getParcelable(EXTRA_INCOME_START_AGE);
+        mIncludeSpouse = bundle.getBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, false);
+        mSpouseFullBenefit = bundle.getDouble(EXTRA_INCOME_SPOUSE_BENEFIT);
+        mSpouseBirthdate = bundle.getString(EXTRA_INCOME_SPOUSE_BIRTHDATE);
     }
 
     @Override
@@ -61,6 +73,12 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
         int birthYear = SystemUtils.getBirthYear(mBirthdate);
         double amount = getMonthlyBenefit(age, birthYear, mFullMonthlyBenefit);
+
+        if(mStartAge.isBefore(mEndAge)) {
+            age = mMinAge;
+        } else {
+            age = mStartAge;
+        }
 
         AmountData amountData = new AmountData(age, amount, 0, 0, false);
         listAmountDate.add(amountData);
@@ -153,8 +171,6 @@ public class SocialSecurityRules implements IncomeTypeRules {
      * @return The government pension data. null if there are no spousal benefits.
      */
     private GovPensionData calculateSpousalBenefits(AgeData startAge) {
-        AgeData age = SystemUtils.getAge(mBirthdate);
-        AgeData spouseAge = SystemUtils.getAge(mSpouseBirthdate);
         AgeData spouseStartAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, startAge);
 
         if(startAge.isBefore(mMinAge)) {

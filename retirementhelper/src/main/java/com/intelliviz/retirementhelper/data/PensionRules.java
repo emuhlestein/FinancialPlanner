@@ -1,5 +1,7 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.os.Bundle;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +20,10 @@ public class PensionRules implements IncomeTypeRules {
         mMinAge = minAge;
         mEndAge = endAge;
         mMonthlyAmount = monthlyAmount;
+    }
+
+    @Override
+    public void setValues(Bundle bundle) {
     }
 
     @Override

@@ -40,6 +40,13 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_INCREASE = "income source increase";
     public static final String EXTRA_INCOME_SAVINGS_TYPE = "income source savings type";
 
+    public static final String EXTRA_INCOME_INCLUDE_SPOUSE = "include spouse";
+    public static final String EXTRA_INCOME_SPOUSE_BENEFIT = "spouse benefit";
+    public static final String EXTRA_INCOME_SPOUSE_BIRTHDATE = "spouse birthdate";
+    public static final String EXTRA_INCOME_FULL_BENEFIT = "full benefit";
+    public static final String EXTRA_INCOME_START_AGE = "start age";
+
+
 
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
     public static final String EXTRA_BIRTHDATE = "birthdate";

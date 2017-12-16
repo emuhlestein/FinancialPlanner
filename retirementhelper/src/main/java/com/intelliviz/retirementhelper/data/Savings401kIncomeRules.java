@@ -1,5 +1,7 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.os.Bundle;
+
 import com.intelliviz.retirementhelper.util.BalanceUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -39,6 +41,10 @@ public class Savings401kIncomeRules implements IncomeTypeRules {
         mEndAge = endAge;
         mWithdrawAmount = withdrawAmount;
         mWithdrawMode = withdrawMode;
+    }
+
+    @Override
+    public void setValues(Bundle bundle) {
     }
 
     public MilestoneData getMilestone(AgeData age) {
@@ -156,6 +162,9 @@ public class Savings401kIncomeRules implements IncomeTypeRules {
 
     public List<AmountData> getMonthlyAmountData() {
         AgeData age = mStartAge;
+        if(age.getMonth() > 0) {
+            age = new AgeData(age.getYear()+1, 0);
+        }
 
         double penaltyPercent = (100 - PENALTY_PERCENT)/1200;
         int numMonths = mStartAge.diff(mCurrentAge);

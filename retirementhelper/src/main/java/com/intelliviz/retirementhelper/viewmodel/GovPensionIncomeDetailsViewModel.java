@@ -67,10 +67,7 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
 
             String birthdate = rod.getBirthdate();
             AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
-            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge,
-                    Double.parseDouble(entity.getFullMonthlyBenefit()),
-                    entity.getSpouse(),
-                    Double.parseDouble(entity.getSpouseBenefit()), entity.getSpouseBirhtdate());
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
             entity.setRules(ssr);
 
             List<GovPensionData> listGovPensionData = new ArrayList<>();

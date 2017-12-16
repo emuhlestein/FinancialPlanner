@@ -41,9 +41,8 @@ public class DataBaseUtils {
         AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
         if(!govEntities.isEmpty()) {
             for(GovPensionEntity gpe : govEntities) {
-                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge,
-                        Double.parseDouble(gpe.getFullMonthlyBenefit()), gpe.getSpouse(),
-                                Double.parseDouble(gpe.getSpouseBenefit()), gpe.getSpouseBirhtdate());
+                AgeData startAge = SystemUtils.parseAgeString(gpe.getStartAge());
+                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
                 gpe.setRules(ssr);
                 allEntities.add(gpe);
             }

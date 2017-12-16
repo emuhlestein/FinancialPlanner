@@ -3,6 +3,7 @@ package com.intelliviz.retirementhelper.db.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.os.Bundle;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.AmountData;
@@ -10,11 +11,17 @@ import com.intelliviz.retirementhelper.data.GovPensionData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.db.entity.GovPensionEntity.TABLE_NAME;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_FULL_BENEFIT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_INCLUDE_SPOUSE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BENEFIT;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
 
 /**
  * Created by edm on 10/2/2017.
@@ -107,6 +114,14 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     public void setRules(IncomeTypeRules rules) {
         if(rules instanceof SocialSecurityRules) {
             mRules = (SocialSecurityRules)rules;
+
+            Bundle bundle = new Bundle();
+            bundle.putDouble(EXTRA_INCOME_FULL_BENEFIT, Double.parseDouble(fullMonthlyBenefit));
+            bundle.putParcelable(EXTRA_INCOME_START_AGE, SystemUtils.parseAgeString(mStartAge));
+            bundle.putBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, mSpouse == 1);
+            bundle.putDouble(EXTRA_INCOME_SPOUSE_BENEFIT, Double.parseDouble(mSpouseBenefit));
+            bundle.putString(EXTRA_INCOME_SPOUSE_BIRTHDATE, mSpouseBirhtdate);
+            mRules.setValues(bundle);
         } else {
             mRules = null;
         }

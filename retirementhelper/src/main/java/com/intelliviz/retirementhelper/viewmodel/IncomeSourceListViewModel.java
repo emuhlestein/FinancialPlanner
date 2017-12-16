@@ -188,7 +188,6 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         }
     }
 
-
     private void updateMilestoneSummary() {
 
         mDB.milestoneSummaryDao().deleteAll();
@@ -226,9 +225,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         for(GovPensionEntity gpie : gpeList) {
 
             String birthdate = roe.getBirthdate();
-            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge,
-                    Double.parseDouble(gpie.getFullMonthlyBenefit()), gpie.getSpouse(),
-                    Double.parseDouble(gpie.getSpouseBenefit()), gpie.getSpouseBirhtdate());
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
             gpie.setRules(ssr);
             incomeSourceList.add(gpie);
 
@@ -240,5 +237,4 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
 
         return incomeSourceList;
     }
-
 }

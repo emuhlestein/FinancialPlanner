@@ -88,9 +88,7 @@ public class MilestoneSummaryViewModel extends AndroidViewModel {
         for(GovPensionEntity gpie : gpeList) {
 
             String birthdate = roe.getBirthdate();
-            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge,
-                    Double.parseDouble(gpie.getFullMonthlyBenefit()), gpie.getSpouse(),
-                    Double.parseDouble(gpie.getSpouseBenefit()), gpie.getSpouseBirhtdate());
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
             gpie.setRules(ssr);
             allIncomeSources.add(gpie.getMonthlyAmountData());
 

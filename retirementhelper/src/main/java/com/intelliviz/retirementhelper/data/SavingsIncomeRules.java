@@ -1,5 +1,7 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.os.Bundle;
+
 import com.intelliviz.retirementhelper.util.BalanceUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -33,6 +35,10 @@ public class SavingsIncomeRules implements IncomeTypeRules {
         mMonthlyIncrease = monthlyIncrease;
         mWithdrawAmount = withdrawAmount;
         mWithdrawMode = withdrawMode;
+    }
+
+    @Override
+    public void setValues(Bundle bundle) {
     }
 
     @Override
