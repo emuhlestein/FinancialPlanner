@@ -33,7 +33,7 @@ public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDet
     @Override
     public IncomeViewDetailsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.card_layout, parent, false);
+        View view = inflater.inflate(R.layout.card_layout_3line, parent, false);
         return new IncomeViewDetailsHolder(view);
     }
 

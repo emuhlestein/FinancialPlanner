@@ -33,9 +33,9 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view;
         if(mNumLines == 1) {
-            view = inflater.inflate(R.layout.card_layout1, parent, false);
+            view = inflater.inflate(R.layout.card_layout_1line, parent, false);
         } else {
-            view = inflater.inflate(R.layout.card_layout, parent, false);
+            view = inflater.inflate(R.layout.card_layout_3line, parent, false);
         }
         return new IncomeDetailsAdapter.GovPensionHolder(view);
     }
@@ -82,6 +82,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
             mCardView = itemView.findViewById(R.id.card_view);
             if(mNumLines == 1) {
                 mLine1TextView = itemView.findViewById(R.id.line1);
+                
             } else {
                 mLine1TextView = itemView.findViewById(R.id.line1);
                 mLine2TextView = itemView.findViewById(R.id.line2);
@@ -119,6 +120,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
 
             if(incomeDetails.getNumLines() == 1) {
                 mLine1TextView.setText(incomeDetails.getLine1());
+                //mLine1TextView.setText("Line 1\nLine 2\nLine 3\nLine 4");
             } else {
                 mLine1TextView.setText(incomeDetails.getLine1());
                 mLine2TextView.setText(incomeDetails.getLine2());
