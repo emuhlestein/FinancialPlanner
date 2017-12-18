@@ -97,12 +97,12 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.withdraw_percent_button) {
-            mInputWithdrawPercentage.setVisibility(View.GONE);
-            mInputWithdrawAmount.setVisibility(View.VISIBLE);
-            mWithdrawPercentTextView.setText(mROD.getWithdrawAmount());
-        } else {
             mInputWithdrawAmount.setVisibility(View.GONE);
             mInputWithdrawPercentage.setVisibility(View.VISIBLE);
+            mWithdrawPercentTextView.setText(mROD.getWithdrawAmount());
+        } else {
+            mInputWithdrawPercentage.setVisibility(View.GONE);
+            mInputWithdrawAmount.setVisibility(View.VISIBLE);
             mWithdrawAmountTextView.setText(mROD.getWithdrawAmount());
         }
     }
