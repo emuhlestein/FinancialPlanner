@@ -117,7 +117,8 @@ public class NavigationActivity extends AppCompatActivity {
         RetirementOptionsData rod;
         switch (item.getItemId()) {
             case R.id.retirement_options_item:
-                intent = new Intent(this, RetirementOptionsDialog.class);
+                intent = new Intent(this, RetirementOptionsActivity.class);
+                //intent = new Intent(this, RetirementOptionsDialog.class);
                 Bundle b = new Bundle();
                 rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate(), mROM.getPercentIncrease());
                 AgeData age = new AgeData(2,3);

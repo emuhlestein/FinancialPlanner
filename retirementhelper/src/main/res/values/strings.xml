@@ -55,6 +55,15 @@
         <item>@string/social_security</item>
     </string-array>
 
+    <string name="when_reach_amount">When Reach Amount</string>
+    <string name="when_reach_percentage">When Reach Percentage</string>
+    <string-array name="app_modes">
+        <item>@string/withdraw_percentage</item>
+        <item>@string/withdraw_amount</item>
+        <item>@string/when_reach_amount</item>
+        <item>@string/when_reach_percentage</item>
+    </string-array>
+
     <string name="age_not_valid">Age is not valid</string>
     <string name="balance_not_valid">Balance value is not valid</string>
     <string name="interest_not_valid">Interest value is not valid</string>
@@ -133,4 +142,6 @@
     <string name="edit_min_age">Edit minimum age</string>
     <string name="edit_age">Start Retirement Age</string>
     <string name="spouse_full_retirement_age">Spouse Full Retirement Age:</string>
+    <string name="reach_amount">When to reach amount</string>
+    <string name="reach_percent_income">When reach percent income</string>
 </resources>
