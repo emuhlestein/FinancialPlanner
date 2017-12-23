@@ -2,6 +2,7 @@ package com.intelliviz.retirementhelper.db.entity;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
@@ -19,6 +20,7 @@ public class MilestoneAgeEntity implements Comparable{
     @PrimaryKey(autoGenerate = true)
     private long id;
 
+    @TypeConverters({AgeConverter.class})
     private AgeData age;
 
     public MilestoneAgeEntity(long id, AgeData age) {

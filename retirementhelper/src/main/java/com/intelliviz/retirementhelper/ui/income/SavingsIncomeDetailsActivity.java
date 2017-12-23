@@ -188,7 +188,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
 
         if(requestCode == RetirementConstants.ACTIVITY_RESULT) {
             String name = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
-            String startAge = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
+            AgeData startAge = data.getParcelableExtra(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
             String balance = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
             String interest = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
             String monthlyAddition = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE);
@@ -209,7 +209,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
 
         mNameTextView.setText(mSIE.getName());
 
-        AgeData age = SystemUtils.parseAgeString(mSIE.getStartAge());
+        AgeData age = mSIE.getStartAge();
         mStartAgeTextView.setText(age.toString());
 
         String formattedValue = SystemUtils.getFormattedCurrency(mSIE.getMonthlyAddition());

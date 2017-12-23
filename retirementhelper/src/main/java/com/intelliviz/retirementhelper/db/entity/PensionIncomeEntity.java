@@ -3,6 +3,7 @@ package com.intelliviz.retirementhelper.db.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.TypeConverters;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.AmountData;
@@ -10,13 +11,11 @@ import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.PensionData;
 import com.intelliviz.retirementhelper.data.PensionRules;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity.TABLE_NAME;
-import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
 /**
  * Created by edm on 10/2/2017.
@@ -27,8 +26,9 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
     public static final String MIN_AGE_FIELD = "min_age";
     public static final String MONTHLY_BENEFIT_FIELD = "monthly_benefit";
 
+    @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = MIN_AGE_FIELD)
-    private String minAge;
+    private AgeData minAge;
 
     @ColumnInfo(name = MONTHLY_BENEFIT_FIELD)
     private String monthlyBenefit;
@@ -36,17 +36,17 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
     @Ignore
     private PensionRules mRules;
 
-    public PensionIncomeEntity(long id, int type, String name, String minAge, String monthlyBenefit) {
+    public PensionIncomeEntity(long id, int type, String name, AgeData minAge, String monthlyBenefit) {
         super(id, type, name);
         this.minAge = minAge;
         this.monthlyBenefit = monthlyBenefit;
     }
 
-    public String getMinAge() {
+    public AgeData getMinAge() {
         return minAge;
     }
 
-    public void setMinAge(String minAge) {
+    public void setMinAge(AgeData minAge) {
         this.minAge = minAge;
     }
 
@@ -82,19 +82,18 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
             return milestones;
         }
 
-        AgeData minimumAge = parseAgeString(minAge);
-        AgeData endAge = parseAgeString(rod.getEndAge());
+        AgeData endAge = rod.getEndAge();
         double monthlyBenefit = Double.parseDouble(this.monthlyBenefit);
 
         MilestoneData milestone;
         for(MilestoneAgeEntity msad : ages) {
             AgeData age = msad.getAge();
-            if(age.isBefore(minimumAge)) {
-                milestone = new MilestoneData(age, endAge, minimumAge, 0, 0, 0, 0, 0, 0, 0, 0);
+            if(age.isBefore(minAge)) {
+                milestone = new MilestoneData(age, endAge, minAge, 0, 0, 0, 0, 0, 0, 0, 0);
             } else {
                 int numMonths = endAge.diff(age);
 
-                milestone = new MilestoneData(age, endAge, minimumAge, monthlyBenefit, 0, 0, 0, numMonths, 0, 0, 0);
+                milestone = new MilestoneData(age, endAge, minAge, monthlyBenefit, 0, 0, 0, numMonths, 0, 0, 0);
             }
             milestones.add(milestone);
         }
@@ -103,9 +102,8 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
 
     @Override
     public List<AgeData> getAges() {
-        AgeData ageData = SystemUtils.parseAgeString(minAge);
         List<AgeData> ages = new ArrayList<>();
-        ages.add(ageData);
+        ages.add(minAge);
         return ages;
     }
 

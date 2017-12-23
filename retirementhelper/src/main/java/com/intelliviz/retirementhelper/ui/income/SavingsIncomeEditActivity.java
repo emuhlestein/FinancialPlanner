@@ -67,8 +67,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
     }
 
     @OnClick(R.id.edit_start_age_button) void editStartAge() {
-        String age = mSIE.getStartAge();
-        AgeData startAge = SystemUtils.parseAgeString(age);
+        AgeData startAge = mSIE.getStartAge();
         FragmentManager fm = getSupportFragmentManager();
         AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
         dialog.show(fm, "");
@@ -185,7 +184,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         mAnnualInterest.setText(interest);
         mMonthlyIncrease.setText(monthlyIncreaseString);
 
-        age = SystemUtils.parseAgeString(mSIE.getStartAge());
+        age = mSIE.getStartAge();
         mStartAge.setText(age.toString());
     }
 
@@ -215,11 +214,12 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         }
         String age = mStartAge.getText().toString();
         String age2 = SystemUtils.trimAge(age);
+        AgeData startAge = SystemUtils.parseAgeString(age2);
 
         String name = mIncomeSourceName.getText().toString();
-        SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, mIncomeType, name, balance, interest, monthlyAddition, age2);
+        SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, mIncomeType, name, balance, interest, monthlyAddition, startAge);
         if(mActivityResult) {
-            sendData(mId, name, interest, monthlyAddition, "10", "59 6", 1, balance, age2);
+            sendData(mId, name, interest, monthlyAddition, "10", "59 6", 1, balance, startAge);
         } else {
             mViewModel.setData(tdid);
         }
@@ -231,7 +231,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         mStartAge.setText(age.toString());
     }
 
-    private void sendData(long id, String name, String interest, String monthlyIncrease, String penalty, String minAge, int is401k, String balance, String startAge) {
+    private void sendData(long id, String name, String interest, String monthlyIncrease, String penalty, String minAge, int is401k, String balance, AgeData startAge) {
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, id);
         returnIntent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);

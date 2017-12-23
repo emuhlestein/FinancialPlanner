@@ -18,7 +18,6 @@ import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,9 +61,9 @@ public class MilestoneSummaryViewModel extends AndroidViewModel {
         List<List<AmountData>> allIncomeSources = new ArrayList<>();
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-        AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
+        AgeData endAge = roe.getEndAge();
         for(SavingsIncomeEntity tdie : tdieList) {
-            AgeData startAge = SystemUtils.parseAgeString(tdie.getStartAge());
+            AgeData startAge = tdie.getStartAge();
             if(tdie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
                 SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, startAge,
                         Double.parseDouble(tdie.getBalance()),
@@ -95,7 +94,7 @@ public class MilestoneSummaryViewModel extends AndroidViewModel {
         }
         List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
         for(PensionIncomeEntity pie : pieList) {
-            AgeData minAge = SystemUtils.parseAgeString(pie.getMinAge());
+            AgeData minAge = pie.getMinAge();
             PensionRules pr = new PensionRules(minAge, endAge,  Double.parseDouble(pie.getMonthlyBenefit()));
             pie.setRules(pr);
             allIncomeSources.add(pie.getMonthlyAmountData());

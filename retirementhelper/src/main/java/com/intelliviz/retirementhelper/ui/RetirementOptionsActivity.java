@@ -1,6 +1,9 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,15 +14,22 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.SaveRetirementOptionEntityListener;
+import com.intelliviz.retirementhelper.viewmodel.RetirementOptionsViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RetirementOptionsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class RetirementOptionsActivity extends AppCompatActivity implements
+        AdapterView.OnItemSelectedListener, SaveRetirementOptionEntityListener {
     private static final String WITHDRAW_PERCENT_FRAG_TAG = "withdraw percent frag tag";
     private static final String WITHDRAW_AMOUNT_FRAG_TAG = "withdraw amount frag tag";
     private static final String WHEN_REACH_PERCENT_INCOME_FRAG_TAG = "when reach percent income frag tag";
     private static final String WHEN_REACH_AMOUNT_FRAG_TAG = "when reach amount frag tag";
+
+    private RetirementOptionsViewModel mViewModel;
+    private RetirementOptionsEntity mROE;
 
     @BindView(R.id.retirementModeSpinner)
     Spinner mRetirementModes;
@@ -33,6 +43,15 @@ public class RetirementOptionsActivity extends AppCompatActivity implements Adap
         ArrayAdapter adapter = new ArrayAdapter(this, R.layout.layout_spinner_item, appModes);
         mRetirementModes.setAdapter(adapter);
         mRetirementModes.setOnItemSelectedListener(this);
+
+        mViewModel = ViewModelProviders.of(this).get(RetirementOptionsViewModel.class);
+
+        mViewModel.get().observe(this, new Observer<RetirementOptionsEntity>() {
+            @Override
+            public void onChanged(@Nullable RetirementOptionsEntity roe) {
+                mROE = roe;
+            }
+        });
     }
 
     @Override
@@ -79,5 +98,11 @@ public class RetirementOptionsActivity extends AppCompatActivity implements Adap
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    @Override
+    public void onSaveRetirementOptionEntity(RetirementOptionsEntity roe) {
+        mViewModel.put(roe);
+        finish();
     }
 }

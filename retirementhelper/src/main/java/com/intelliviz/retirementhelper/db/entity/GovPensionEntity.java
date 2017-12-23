@@ -3,6 +3,7 @@ package com.intelliviz.retirementhelper.db.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.TypeConverters;
 import android.os.Bundle;
 
 import com.intelliviz.retirementhelper.data.AgeData;
@@ -11,7 +12,6 @@ import com.intelliviz.retirementhelper.data.GovPensionData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +47,15 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     @ColumnInfo(name = SPOUSE_BIRTHDATE_FIELD)
     private String mSpouseBirhtdate;
 
+    @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = START_AGE_FIELD)
-    private String mStartAge;
+    private AgeData mStartAge;
 
     @Ignore
     private SocialSecurityRules mRules;
 
     public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit,
-                            int spouse, String spouseBenefit, String spouseBirhtdate, String startAge) {
+                            int spouse, String spouseBenefit, String spouseBirhtdate, AgeData startAge) {
         super(id, type, name);
         this.fullMonthlyBenefit = fullMonthlyBenefit;
         mSpouse = spouse;
@@ -95,11 +96,11 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         mSpouseBirhtdate = spouseBirhtdate;
     }
 
-    public String getStartAge() {
+    public AgeData getStartAge() {
         return mStartAge;
     }
 
-    public void setStartAge(String startAge) {
+    public void setStartAge(AgeData startAge) {
         mStartAge = startAge;
     }
 
@@ -117,7 +118,7 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
             Bundle bundle = new Bundle();
             bundle.putDouble(EXTRA_INCOME_FULL_BENEFIT, Double.parseDouble(fullMonthlyBenefit));
-            bundle.putParcelable(EXTRA_INCOME_START_AGE, SystemUtils.parseAgeString(mStartAge));
+            bundle.putParcelable(EXTRA_INCOME_START_AGE, mStartAge);
             bundle.putBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, mSpouse == 1);
             bundle.putDouble(EXTRA_INCOME_SPOUSE_BENEFIT, Double.parseDouble(mSpouseBenefit));
             bundle.putString(EXTRA_INCOME_SPOUSE_BIRTHDATE, mSpouseBirhtdate);

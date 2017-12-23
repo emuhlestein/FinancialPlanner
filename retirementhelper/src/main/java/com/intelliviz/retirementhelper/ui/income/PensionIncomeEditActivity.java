@@ -32,7 +32,7 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
 public class PensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
-    private PensionIncomeEntity mPID;
+    private PensionIncomeEntity mPIE;
     private long mId;
     private PensionIncomeEditViewModel mViewModel;
 
@@ -46,8 +46,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
     TextView mMinAge;
 
     @OnClick(R.id.edit_minimum_age_button) void editAge() {
-        String age = mPID.getMinAge();
-        AgeData startAge = SystemUtils.parseAgeString(age);
+        AgeData startAge = mPIE.getMinAge();
         FragmentManager fm = getSupportFragmentManager();
         AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
         dialog.show(fm, "");
@@ -80,7 +79,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         }
 
-        mPID = null;
+        mPIE = null;
 
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -105,23 +104,21 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
         mViewModel.getData().observe(this, new Observer<PensionIncomeEntity>() {
             @Override
             public void onChanged(@Nullable PensionIncomeEntity data) {
-                mPID = data;
+                mPIE = data;
                 updateUI();
             }
         });
     }
 
     private void updateUI() {
-        if(mPID == null) {
+        if(mPIE == null) {
             return;
         }
-        String name = mPID.getName();
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPID.getMonthlyBenefit());
-        String age = mPID.getMinAge();
+        String name = mPIE.getName();
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPIE.getMonthlyBenefit());
+        AgeData minAge = mPIE.getMinAge();
 
         mIncomeSourceName.setText(name);
-
-        AgeData minAge = SystemUtils.parseAgeString(age);
         mMinAge.setText(minAge.toString());
         mMonthlyBenefit.setText(monthlyBenefit);
 
@@ -148,7 +145,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             return;
         }
 
-        PensionIncomeEntity pid = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name, age, benefit);
+        PensionIncomeEntity pid = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name, minAge, benefit);
         mViewModel.setData(pid);
     }
 

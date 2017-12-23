@@ -3,6 +3,7 @@ package com.intelliviz.retirementhelper.db.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.TypeConverters;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.AmountData;
@@ -35,13 +36,14 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     @ColumnInfo(name = MONTHLY_ADDITION_FIELD)
     private String mMonthlyAddition;
 
+    @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = START_AGE_FIELD)
-    private String mStartAge;
+    private AgeData mStartAge;
 
     @Ignore
     private IncomeTypeRules mRules;
 
-    public SavingsIncomeEntity(long id, int type, String name, String balance, String interest, String monthlyAddition, String startAge) {
+    public SavingsIncomeEntity(long id, int type, String name, String balance, String interest, String monthlyAddition, AgeData startAge) {
         super(id, type, name);
         mBalance = balance;
         mInterest = interest;
@@ -73,11 +75,11 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mMonthlyAddition = monthlyAddition;
     }
 
-    public String getStartAge() {
+    public AgeData getStartAge() {
         return mStartAge;
     }
 
-    public void setStartAge(String startAge) {
+    public void setStartAge(AgeData startAge) {
         mStartAge = startAge;
     }
 

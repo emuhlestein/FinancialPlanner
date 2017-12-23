@@ -1,22 +1,24 @@
 package com.intelliviz.retirementhelper.ui;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.viewmodel.RetirementOptionsViewModel;
 
 import butterknife.ButterKnife;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link WhenReachAmountFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class WhenReachAmountFragment extends Fragment {
+
+    private RetirementOptionsViewModel mViewModel;
 
     public WhenReachAmountFragment() {
         // Required empty public constructor
@@ -40,4 +42,19 @@ public class WhenReachAmountFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = ViewModelProviders.of(getActivity()).get(RetirementOptionsViewModel.class);
+        mViewModel.get().observe(this, new Observer<RetirementOptionsEntity>() {
+            @Override
+            public void onChanged(@Nullable RetirementOptionsEntity roe) {
+                updateUI(roe);
+            }
+        });
+    }
+
+    private void updateUI(RetirementOptionsEntity roe) {
+
+    }
 }

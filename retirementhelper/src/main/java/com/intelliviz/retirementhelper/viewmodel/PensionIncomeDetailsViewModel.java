@@ -16,7 +16,6 @@ import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.util.DataBaseUtils;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,9 +64,8 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
             RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
             PensionIncomeEntity entity = mDB.pensionIncomeDao().get(params[0]);
 
-            String birthdate = rod.getBirthdate();
-            AgeData minAge = SystemUtils.parseAgeString(entity.getMinAge());
-            AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
+            AgeData minAge = entity.getMinAge();
+            AgeData endAge = rod.getEndAge();
 
             PensionRules pr = new PensionRules(minAge, endAge,  Double.parseDouble(entity.getMonthlyBenefit()));
             entity.setRules(pr);

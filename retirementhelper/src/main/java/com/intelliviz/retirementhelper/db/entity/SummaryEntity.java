@@ -2,6 +2,7 @@ package com.intelliviz.retirementhelper.db.entity;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 
@@ -17,6 +18,7 @@ public class SummaryEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
+    @TypeConverters({AgeConverter.class})
     private AgeData age;
 
     private String amount;

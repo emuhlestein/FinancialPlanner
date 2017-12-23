@@ -16,7 +16,6 @@ import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
@@ -96,8 +95,8 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
             RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
             SavingsIncomeEntity entity = mDB.savingsIncomeDao().get(params[0]);
             String birthdate = rod.getBirthdate();
-            AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
-            AgeData startAge = SystemUtils.parseAgeString(sie.getStartAge());
+            AgeData endAge = rod.getEndAge();
+            AgeData startAge = sie.getStartAge();
             if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
                 Savings401kIncomeRules tdir = new Savings401kIncomeRules(birthdate, endAge, startAge,
                         Double.parseDouble(entity.getBalance()),

@@ -196,9 +196,9 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
 
         for (MilestoneData milestoneData : milestoneDataList) {
             String monthlyBenefit = Double.toString(milestoneData.getMonthlyBenefit());
-            String startAge = milestoneData.getStartAge().getUnformattedString();
-            String endAge = milestoneData.getEndAge().getUnformattedString();
-            String minAge = milestoneData.getMinimumAge().getUnformattedString();
+            AgeData startAge = milestoneData.getStartAge();
+            AgeData endAge = milestoneData.getEndAge();
+            AgeData minAge = milestoneData.getMinimumAge();
             String startBalance = Double.toString(milestoneData.getStartBalance());
             String endBalance = Double.toString(milestoneData.getEndBalance());
             String penaltyAmount = Double.toString(milestoneData.getPenaltyAmount());
@@ -212,9 +212,9 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-        AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
+        AgeData endAge = roe.getEndAge();
         for(SavingsIncomeEntity tdie : tdieList) {
-            AgeData startAge = SystemUtils.parseAgeString(tdie.getStartAge());
+            AgeData startAge = tdie.getStartAge();
             Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(tdie.getBalance()),
                     Double.parseDouble(tdie.getInterest()), Double.parseDouble(tdie.getMonthlyAddition()), roe.getWithdrawMode(),
                     Double.parseDouble(roe.getWithdrawAmount()));

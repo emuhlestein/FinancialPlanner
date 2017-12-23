@@ -1,99 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout android:id="@+id/coordinatorLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_end_age"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp">
-
-        <EditText
-            android:id="@+id/end_age_edit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:hint="@string/end_age"
-            android:inputType="numberDecimal"
-            style="@style/FiveDigitPositiveNumber"/>
-    </android.support.design.widget.TextInputLayout>
-
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_withdraw_percent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp">
-
-        <EditText
-            android:id="@+id/withdraw_percent_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:ems="10"
-            android:hint="@string/percentage"
-            android:inputType="numberDecimal"
-            style="@style/ThreeDigitPositiveNumber"/>
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_annual_percent_increase"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp">
-
-        <EditText
-            android:id="@+id/annual_percent_increase_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:ems="10"
-            android:hint="@string/annual_percent_increase"
-            android:inputType="numberDecimal"
-            style="@style/ThreeDigitPositiveNumber"/>
-    </android.support.design.widget.TextInputLayout>
-
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@drawable/separator" />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/retirement_parms_cancel"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/cancel"
-            android:contentDescription="@string/cancel"/>
+            android:layout_marginLeft="16sp"
+            android:layout_marginRight="16sp"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/retirement_parms_ok"
-            android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/edit_end_age_button"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/edit_age_desc"
+                android:layout_gravity="start"
+                android:layout_marginStart="16dp"
+                android:text="@string/edit_start_age_desc" />
+
+            <TextView
+                android:id="@+id/end_age"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:textSize="22sp" />
+        </LinearLayout>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_withdraw_percent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/ok"
-            android:contentDescription="@string/ok"/>
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp">
+
+            <EditText
+                android:id="@+id/withdraw_percent_edit_text"
+                style="@style/ThreeDigitPositiveNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:hint="@string/percentage"
+                android:inputType="numberDecimal" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_annual_percent_increase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp">
+
+            <EditText
+                android:id="@+id/annual_percent_increase_edit_text"
+                style="@style/ThreeDigitPositiveNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:hint="@string/annual_percent_increase"
+                android:inputType="numberDecimal" />
+        </android.support.design.widget.TextInputLayout>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/separator" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <Button
+                android:id="@+id/retirement_options_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/cancel"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/retirement_options_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/ok"
+                android:text="@string/ok" />
+        </LinearLayout>
+
+
     </LinearLayout>
-
-
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -38,10 +38,9 @@ public class DataBaseUtils {
         List<GovPensionEntity> govEntities = mDB.govPensionDao().get();
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
         String birthdate = roe.getBirthdate();
-        AgeData endAge = SystemUtils.parseAgeString(roe.getEndAge());
+        AgeData endAge = roe.getEndAge();
         if(!govEntities.isEmpty()) {
             for(GovPensionEntity gpe : govEntities) {
-                AgeData startAge = SystemUtils.parseAgeString(gpe.getStartAge());
                 SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
                 gpe.setRules(ssr);
                 allEntities.add(gpe);
@@ -50,7 +49,7 @@ public class DataBaseUtils {
         List<PensionIncomeEntity> pensionEntities = mDB.pensionIncomeDao().get();
         if(!pensionEntities.isEmpty()) {
             for(PensionIncomeEntity pie : pensionEntities) {
-                AgeData minAge = SystemUtils.parseAgeString(pie.getMinAge());
+                AgeData minAge = pie.getMinAge();
                 PensionRules pr = new PensionRules(minAge, endAge, Double.parseDouble(pie.getMonthlyBenefit()));
                 pie.setRules(pr);
                 allEntities.add(pie);
@@ -59,7 +58,7 @@ public class DataBaseUtils {
         List<SavingsIncomeEntity> savingsEntities = mDB.savingsIncomeDao().get();
         if(!savingsEntities.isEmpty()) {
             for(SavingsIncomeEntity se : savingsEntities) {
-                AgeData startAge = SystemUtils.parseAgeString(se.getStartAge());
+                AgeData startAge = se.getStartAge();
                 SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge, startAge, Double.parseDouble(se.getBalance()),
                         Double.parseDouble(se.getInterest()), Double.parseDouble(se.getMonthlyAddition()),
                                 roe.getWithdrawMode(), Double.parseDouble(roe.getWithdrawAmount()));
@@ -161,7 +160,7 @@ public class DataBaseUtils {
             }
         }
 
-        AgeData endAge = SystemUtils.parseAgeString(rod.getEndAge());
+        AgeData endAge = rod.getEndAge();
         if(saveMilestones != null) {
             AgeData minimumAge = saveMilestones.get(0).getMinimumAge();
             for (int i = 0; i < ages.size(); i++) {

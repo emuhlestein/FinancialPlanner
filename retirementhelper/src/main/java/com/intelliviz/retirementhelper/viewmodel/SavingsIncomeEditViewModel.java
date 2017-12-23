@@ -82,7 +82,7 @@ public class SavingsIncomeEditViewModel extends AndroidViewModel {
                 String birthdate = roe.getBirthdate();
                 AgeData startAge = SystemUtils.getAge(birthdate);
                 return new SavingsIncomeEntity(id, INCOME_TYPE_UNKNOWN,
-                        "", "0", "0", "0", startAge.getUnformattedString());
+                        "", "0", "0", "0", startAge);
             } else {
                 return mDB.savingsIncomeDao().get(id);
             }

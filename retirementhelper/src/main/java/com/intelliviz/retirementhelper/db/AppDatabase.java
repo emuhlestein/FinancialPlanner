@@ -5,7 +5,6 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,7 +17,6 @@ import com.intelliviz.retirementhelper.db.dao.PensionIncomeDao;
 import com.intelliviz.retirementhelper.db.dao.RetirementOptionsDao;
 import com.intelliviz.retirementhelper.db.dao.SavingsIncomeDao;
 import com.intelliviz.retirementhelper.db.dao.SummaryDao;
-import com.intelliviz.retirementhelper.db.entity.AgeConverter;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeTypeEntity;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
@@ -35,7 +33,6 @@ import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
 @Database(entities = {MilestoneAgeEntity.class, GovPensionEntity.class, IncomeTypeEntity.class,
         MilestoneSummaryEntity.class, PensionIncomeEntity.class, RetirementOptionsEntity.class,
         SavingsIncomeEntity.class, SummaryEntity.class}, version = 1)
-@TypeConverters({AgeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private volatile static AppDatabase mINSTANCE;
 
@@ -48,9 +45,10 @@ public abstract class AppDatabase extends RoomDatabase {
                         public void onCreate(@NonNull SupportSQLiteDatabase db) {
                             // set default values
                             ContentValues values = new ContentValues();
-                            values.put(RetirementOptionsEntity.END_AGE_FIELD, "90");
+                            values.put(RetirementOptionsEntity.END_AGE_FIELD, 90*12);
                             values.put(RetirementOptionsEntity.WITHDRAW_MODE_FIELD, 0);
-                            values.put(RetirementOptionsEntity.WITHDRAW_AMOUNT_FIELD, "4");
+                            values.put(RetirementOptionsEntity.WITHDRAW_AMOUNT_FIELD, "1000");
+                            values.put(RetirementOptionsEntity.WITHDRAW_PERCENT_FIELD, "4");
                             values.put(RetirementOptionsEntity.BIRTHDATE_FIELD, 0);
                             values.put(RetirementOptionsEntity.PERCENT_INCREASE_FIELD, 0);
                             db.insert(RetirementOptionsEntity.TABLE_NAME, OnConflictStrategy.IGNORE, values);

@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class PensionRules implements IncomeTypeRules {
-    public static final String DEFAULT_MIN_AGE = "65 0";
+    public static final AgeData DEFAULT_MIN_AGE = new AgeData(65, 0);
     private AgeData mMinAge;
     private AgeData mEndAge;
     private double mMonthlyAmount;

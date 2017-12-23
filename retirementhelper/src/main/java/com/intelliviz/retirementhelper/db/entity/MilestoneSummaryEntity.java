@@ -3,6 +3,9 @@ package com.intelliviz.retirementhelper.db.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import com.intelliviz.retirementhelper.data.AgeData;
 
 import static com.intelliviz.retirementhelper.db.entity.MilestoneSummaryEntity.TABLE_NAME;
 
@@ -25,14 +28,17 @@ public class MilestoneSummaryEntity {
     @ColumnInfo(name = MONTHLY_BENEFIT_FIELD)
     private String monthlyBenefit;
 
+    @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = START_AGE_FIELD)
-    private String startAge;
+    private AgeData startAge;
 
+    @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = END_AGE_FIELD)
-    private String endAge;
+    private AgeData endAge;
 
+    @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = MIN_AGE_FIELD)
-    private String minAge;
+    private AgeData minAge;
 
     @ColumnInfo(name = START_BALANCE_FIELD)
     private String startBalance;
@@ -44,7 +50,7 @@ public class MilestoneSummaryEntity {
 
     private int months;
 
-    public MilestoneSummaryEntity(int id, String monthlyBenefit, String startAge, String endAge, String minAge, String startBalance, String endBalance, String penalty, int months) {
+    public MilestoneSummaryEntity(int id, String monthlyBenefit, AgeData startAge, AgeData endAge, AgeData minAge, String startBalance, String endBalance, String penalty, int months) {
         this.id = id;
         this.monthlyBenefit = monthlyBenefit;
         this.startAge = startAge;
@@ -72,27 +78,27 @@ public class MilestoneSummaryEntity {
         this.monthlyBenefit = monthlyBenefit;
     }
 
-    public String getStartAge() {
+    public AgeData getStartAge() {
         return startAge;
     }
 
-    public void setStartAge(String startAge) {
+    public void setStartAge(AgeData startAge) {
         this.startAge = startAge;
     }
 
-    public String getEndAge() {
+    public AgeData getEndAge() {
         return endAge;
     }
 
-    public void setEndAge(String endAge) {
+    public void setEndAge(AgeData endAge) {
         this.endAge = endAge;
     }
 
-    public String getMinAge() {
+    public AgeData getMinAge() {
         return minAge;
     }
 
-    public void setMinAge(String minAge) {
+    public void setMinAge(AgeData minAge) {
         this.minAge = minAge;
     }
 

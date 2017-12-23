@@ -114,8 +114,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         String withDrawAmount = DEFAULT_WITHDRAW_AMOUNT;
         if(mROD != null) {
             mode = mROD.getWithdrawMode();
-            String endAge = mROD.getEndAge();
-            AgeData age = SystemUtils.parseAgeString(endAge);
+            AgeData age =  mROD.getEndAge();
             if(age != null) {
                 int year = age.getYear();
                 ageString = Integer.toString(year);
@@ -225,11 +224,10 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
             alertDialog.show();
             return;
         }
-        endAge = age.getUnformattedString();
 
         String percentIncrease = mPercentIncreaseTextView.getText().toString();
 
-        RetirementOptionsData rod = new RetirementOptionsData(endAge, withdrawMode, withdrawAmount, mROD.getBirthdate(), percentIncrease);
+        RetirementOptionsData rod = new RetirementOptionsData(age, withdrawMode, withdrawAmount, mROD.getBirthdate(), percentIncrease);
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
