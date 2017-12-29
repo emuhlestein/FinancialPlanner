@@ -62,24 +62,24 @@ public class MilestoneSummaryViewModel extends AndroidViewModel {
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
         AgeData endAge = roe.getEndAge();
-        for(SavingsIncomeEntity tdie : tdieList) {
-            AgeData startAge = tdie.getStartAge();
-            if(tdie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
+        for(SavingsIncomeEntity sie : tdieList) {
+            AgeData startAge = sie.getStartAge();
+            if(sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
                 SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, startAge,
-                        Double.parseDouble(tdie.getBalance()),
-                        Double.parseDouble(tdie.getInterest()),
-                        Double.parseDouble(tdie.getMonthlyAddition()),
-                        roe.getWithdrawMode(), Double.parseDouble(roe.getWithdrawAmount()));
-                tdie.setRules(sir);
-                allIncomeSources.add(tdie.getMonthlyAmountData());
+                        Double.parseDouble(sie.getBalance()),
+                        Double.parseDouble(sie.getInterest()),
+                        Double.parseDouble(sie.getMonthlyAddition()),
+                        sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
+                sie.setRules(sir);
+                allIncomeSources.add(sie.getMonthlyAmountData());
 
-            } else if(tdie.getType() == RetirementConstants.INCOME_TYPE_401K) {
+            } else if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
 
-                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(tdie.getBalance()),
-                        Double.parseDouble(tdie.getInterest()), Double.parseDouble(tdie.getMonthlyAddition()), roe.getWithdrawMode(),
-                        Double.parseDouble(roe.getWithdrawAmount()));
-                tdie.setRules(tdir);
-                allIncomeSources.add(tdie.getMonthlyAmountData());
+                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(sie.getBalance()),
+                        Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
+                        Double.parseDouble(sie.getWithdrawAmount()));
+                sie.setRules(tdir);
+                allIncomeSources.add(sie.getMonthlyAmountData());
             }
 
         }

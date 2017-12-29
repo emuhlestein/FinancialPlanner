@@ -46,11 +46,10 @@ public abstract class AppDatabase extends RoomDatabase {
                             // set default values
                             ContentValues values = new ContentValues();
                             values.put(RetirementOptionsEntity.END_AGE_FIELD, 90*12);
-                            values.put(RetirementOptionsEntity.WITHDRAW_MODE_FIELD, 0);
-                            values.put(RetirementOptionsEntity.WITHDRAW_AMOUNT_FIELD, "1000");
-                            values.put(RetirementOptionsEntity.WITHDRAW_PERCENT_FIELD, "4");
+                            values.put(RetirementOptionsEntity.CURRENT_OPTION_FIELD, 0);
+                            values.put(RetirementOptionsEntity.REACH_AMOUNT_FIELD, "1000000");
+                            values.put(RetirementOptionsEntity.REACH_PERCENT_FIELD, "80");
                             values.put(RetirementOptionsEntity.BIRTHDATE_FIELD, 0);
-                            values.put(RetirementOptionsEntity.PERCENT_INCREASE_FIELD, 0);
                             db.insert(RetirementOptionsEntity.TABLE_NAME, OnConflictStrategy.IGNORE, values);
                         }
                     };

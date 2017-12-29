@@ -26,9 +26,21 @@ public class RetirementConstants {
 
     public static final String DATE_FORMAT = "dd-MM-yyyy";
 
+    public static final String RETIREMENT_MODE = "retirement mode";
+    public static final String EXTRA_RETIREMENT_REACH_AMOUNT = "retirement reach mount";
+    public static final String EXTRA_RETIREMENT_REACH_INCOME_PERCENT = "retirement reach income percent";
+    public static final String EXTRA_RETIREMENT_INCOME_SUMMARY_AGE = "retirement income summary age";
+    public static final String EXTRA_RETIREMENT_ANNUAL_INCOME = "retirement annual income";
+
+    public static final int INCOME_SUMMARY_MODE = 0;
+    public static final int REACH_AMOUNT_MODE = 1;
+    public static final int REACH_IMCOME_PERCENT_MODE = 2;
+    public static final int UNKNOWN_MODE = 4;
+
     // principle reduction mode
-    public static final int WITHDRAW_MODE_AMOUNT = 1; // dollar amount
     public static final int WITHDRAW_MODE_PERCENT = 0; // percentage of principle
+    public static final int WITHDRAW_MODE_AMOUNT = 1; // dollar amount
+    public static final int WITHDRAW_MODE_UNKNOWN = 2;
 
     public static final String EXTRA_INCOME_SOURCE_ID = "income source id";
     public static final String EXTRA_INCOME_SOURCE_TYPE = "income source type";
@@ -39,6 +51,9 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_INTEREST = "income source interest";
     public static final String EXTRA_INCOME_SOURCE_INCREASE = "income source increase";
     public static final String EXTRA_INCOME_SAVINGS_TYPE = "income source savings type";
+    public static final String EXTRA_WITHDRAW_MODE = "withdraw mode";
+    public static final String EXTRA_WITHDRAW_MODE_AMOUNT = "withdraw mode amount";
+    public static final String EXTRA_ANNUAL_PERCENT_INCREASE = "annual percent increase";
 
     public static final String EXTRA_INCOME_INCLUDE_SPOUSE = "include spouse";
     public static final String EXTRA_INCOME_SPOUSE_BENEFIT = "spouse benefit";

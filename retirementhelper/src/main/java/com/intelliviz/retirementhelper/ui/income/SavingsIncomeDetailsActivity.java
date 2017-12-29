@@ -38,7 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_401K;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
 
 public class SavingsIncomeDetailsActivity extends AppCompatActivity
         implements SelectMilestoneDataListener {
@@ -181,23 +181,28 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if(resultCode != RESULT_OK) {
             return;
         }
 
         if(requestCode == RetirementConstants.ACTIVITY_RESULT) {
-            String name = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
-            AgeData startAge = data.getParcelableExtra(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
-            String balance = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
-            String interest = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
-            String monthlyAddition = data.getStringExtra(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE);
-            SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, INCOME_TYPE_401K, name,
-                    balance, interest, monthlyAddition, startAge);
+            Bundle bundle = intent.getExtras();
+            String name = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
+            AgeData startAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
+            String balance = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE);
+            String interest = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
+            String monthlyAddition = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE);
+            int withdrawMode = bundle.getInt(RetirementConstants.EXTRA_WITHDRAW_MODE);
+            String withdrawAmount = bundle.getString(RetirementConstants.EXTRA_WITHDRAW_MODE_AMOUNT);
+            String annualPercentIncrease = bundle.getString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE);
+
+            SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, INCOME_TYPE_SAVINGS, name,
+                    balance, interest, monthlyAddition, startAge, withdrawMode, withdrawAmount, annualPercentIncrease);
             mViewModel.setData(tdid);
 
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, intent);
     }
 
     private void updateUI() {

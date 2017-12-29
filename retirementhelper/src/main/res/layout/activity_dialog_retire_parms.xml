@@ -1,153 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout android:id="@+id/coordinatorLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:orientation="vertical">
 
-    <TextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:gravity="center_horizontal"
-        android:text="@string/retirement_options"
-        android:textSize="26sp" />
+        android:layout_height="match_parent"
+        tools:context="com.intelliviz.retirementhelper.ui.RetirementOptionsActivity"
+        android:orientation="vertical">
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@drawable/separator" />
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_end_age"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp">
-
-        <EditText
-            android:id="@+id/end_age_edit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:hint="@string/end_age"
-            android:inputType="numberDecimal"
-            style="@style/FiveDigitPositiveNumber"/>
-    </android.support.design.widget.TextInputLayout>
-
-    <RadioGroup
-        android:id="@+id/withdraw_mode_radio_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <RadioButton
-            android:id="@+id/withdraw_percent_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/withdraw_percentage"
-            android:textSize="22sp"
-            android:contentDescription="@string/withdraw_percentage"/>
-
-        <RadioButton
-            android:id="@+id/withdraw_amount_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/withdraw_amount"
-            android:textSize="22sp"
-            android:contentDescription="@string/withdraw_amount"/>
-
-    </RadioGroup>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_withdraw_percent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp">
-
-        <EditText
-            android:id="@+id/withdraw_percent_edit_text"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:ems="10"
-            android:hint="@string/percentage"
-            android:inputType="numberDecimal"
-            style="@style/ThreeDigitPositiveNumber"/>
-    </android.support.design.widget.TextInputLayout>
+            android:maxLines="1"
+            android:gravity="center_horizontal"
+            android:text="@string/retirement_options"
+            android:textSize="26sp" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_withdraw_amount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp">
+        <View
+            android:id="@+id/divider"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/separator" />
 
-        <EditText
-            android:id="@+id/withdraw_amount_edit_text"
+        <RadioGroup
+            android:id="@+id/retirement_options_radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/reach_amount_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reach_amount"
+                android:textSize="22sp"
+                android:contentDescription="@string/reach_amount" />
+
+            <RadioButton
+                android:id="@+id/reach_percent_income_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reach_percent_income"
+                android:textSize="22sp"
+                android:contentDescription="@string/reach_percent_income" />
+
+            <RadioButton
+                android:id="@+id/income_summary_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/retirement_options"
+                android:textSize="22sp"
+                android:contentDescription="@string/retirement_options" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/reach_amount_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:ems="10"
-            android:hint="@string/amount"
-            android:inputType="numberDecimal"
-            style="@style/ThreeDigitPositiveNumber"/>
-    </android.support.design.widget.TextInputLayout>
+            android:orientation="vertical">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_annual_percent_increase"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp">
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_reach_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp">
 
-        <EditText
-            android:id="@+id/annual_percent_increase_edit_text"
+                <EditText
+                    android:id="@+id/reach_amount_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:hint="@string/when_reach_amount"
+                    android:inputType="numberDecimal"
+                    style="@style/CurrencyStyle" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/reach_percent_income_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:ems="10"
-            android:hint="@string/annual_percent_increase"
-            android:inputType="numberDecimal"
-            style="@style/ThreeDigitPositiveNumber"/>
-    </android.support.design.widget.TextInputLayout>
+            android:orientation="vertical">
 
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@drawable/separator" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_reach_percent_income"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/reach_percent_income_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:hint="@string/when_reach_percentage"
+                    android:inputType="numberDecimal"
+                    style="@style/CurrencyStyle" />
+            </android.support.design.widget.TextInputLayout>
 
-        <Button
-            android:id="@+id/retirement_parms_cancel"
-            android:layout_width="wrap_content"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_annual_income"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp">
+
+                <EditText
+                    android:id="@+id/annual_income_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:hint="@string/annual_income"
+                    android:inputType="numberDecimal"
+                    style="@style/CurrencyStyle" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/income_summary_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/cancel"
-            android:contentDescription="@string/cancel"/>
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/retirement_parms_ok"
-            android:layout_width="wrap_content"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_end_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp">
+
+                <EditText
+                    android:id="@+id/end_age_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:hint="@string/end_age"
+                    android:inputType="numberDecimal"
+                    style="@style/CurrencyStyle" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/separator" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/ok"
-            android:contentDescription="@string/ok"/>
+            android:paddingTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/retirement_parms_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:contentDescription="@string/cancel"/>
+
+            <Button
+                android:id="@+id/retirement_parms_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ok"
+                android:contentDescription="@string/ok"/>
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

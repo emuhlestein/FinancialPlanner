@@ -9,45 +9,24 @@ import android.os.Parcelable;
  */
 public class RetirementOptionsData implements Parcelable {
     private AgeData mEndAge;
-    private int mWithdrawMode;
-    private String mWithdrawAmount;
     private String mBirthdate;
-    private String mPercentIncrease;
 
-    public RetirementOptionsData(AgeData endAge, int withdrawMode, String withdrawAmount, String birthdate, String percentIncrease) {
+    public RetirementOptionsData(AgeData endAge, String birthdate) {
         mEndAge = endAge;
-        mWithdrawMode = withdrawMode;
-        mWithdrawAmount = withdrawAmount;
         mBirthdate = birthdate;
-        mPercentIncrease = percentIncrease;
     }
 
     public AgeData getEndAge() {
         return mEndAge;
     }
 
-    public int getWithdrawMode() {
-        return mWithdrawMode;
-    }
-
-    public String getWithdrawAmount() {
-        return mWithdrawAmount;
-    }
-
     public String getBirthdate() {
         return mBirthdate;
     }
 
-    public String getPercentIncrease() {
-        return mPercentIncrease;
-    }
-
     protected RetirementOptionsData(Parcel in) {
         mEndAge = in.readParcelable(AgeData.class.getClassLoader());
-        mWithdrawMode = in.readInt();
-        mWithdrawAmount = in.readString();
         mBirthdate = in.readString();
-        mPercentIncrease = in.readString();
     }
 
     @Override
@@ -58,10 +37,7 @@ public class RetirementOptionsData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(mEndAge, 0);
-        dest.writeInt(mWithdrawMode);
-        dest.writeString(mWithdrawAmount);
         dest.writeString(mBirthdate);
-        dest.writeString(mPercentIncrease);
     }
 
     @SuppressWarnings("unused")

@@ -57,13 +57,13 @@ public class DataBaseUtils {
         }
         List<SavingsIncomeEntity> savingsEntities = mDB.savingsIncomeDao().get();
         if(!savingsEntities.isEmpty()) {
-            for(SavingsIncomeEntity se : savingsEntities) {
-                AgeData startAge = se.getStartAge();
-                SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge, startAge, Double.parseDouble(se.getBalance()),
-                        Double.parseDouble(se.getInterest()), Double.parseDouble(se.getMonthlyAddition()),
-                                roe.getWithdrawMode(), Double.parseDouble(roe.getWithdrawAmount()));
-                se.setRules(sir);
-                allEntities.add(se);
+            for(SavingsIncomeEntity sie : savingsEntities) {
+                AgeData startAge = sie.getStartAge();
+                SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge, startAge, Double.parseDouble(sie.getBalance()),
+                        Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()),
+                        sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
+                sie.setRules(sir);
+                allEntities.add(sie);
             }
         }
         return allEntities;
@@ -166,8 +166,8 @@ public class DataBaseUtils {
             for (int i = 0; i < ages.size(); i++) {
                 AgeData startAge = ages.get(i).getAge();
                 MilestoneData milestoneData = new MilestoneData(startAge, endAge, minimumAge, sumMonthlyAmount[i],
-                        sumStartBalance[i], sumEndBalance[i], 0, 0, numMonthsFundsWillLast, rod.getWithdrawMode(),
-                        Double.parseDouble(rod.getWithdrawAmount()));
+                        sumStartBalance[i], sumEndBalance[i], 0, 0, numMonthsFundsWillLast, 0,
+                        Double.parseDouble("0.0"));
                 sumMilestones.add(milestoneData);
             }
         }

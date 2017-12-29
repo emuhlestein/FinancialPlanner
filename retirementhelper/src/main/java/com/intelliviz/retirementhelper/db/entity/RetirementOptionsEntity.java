@@ -17,35 +17,36 @@ import static com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity.
 public class RetirementOptionsEntity {
     public static final String TABLE_NAME = "retirement_options";
     public static final String END_AGE_FIELD = "end_age";
-    public static final String WITHDRAW_MODE_FIELD = "withdraw_mode";
-    public static final String WITHDRAW_AMOUNT_FIELD = "withdraw_amount";
-    public static final String WITHDRAW_PERCENT_FIELD = "withdraw_percent";
+    public static final String CURRENT_OPTION_FIELD = "current_option";
+    public static final String REACH_AMOUNT_FIELD = "reach_amount";
+    public static final String REACH_PERCENT_FIELD = "reach_percent";
     public static final String BIRTHDATE_FIELD = "birthdate";
-    public static final String PERCENT_INCREASE_FIELD = "percent_increase";
+    public static final String ANNUAL_INCOME_FIELD = "annual_income";
 
     @PrimaryKey(autoGenerate = true)
     private int id;
     @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = END_AGE_FIELD)
     private AgeData endAge;
-    @ColumnInfo(name = WITHDRAW_MODE_FIELD)
-    private int withdrawMode;
-    @ColumnInfo(name = WITHDRAW_AMOUNT_FIELD)
-    private String withdrawAmount;
-    @ColumnInfo(name = WITHDRAW_PERCENT_FIELD)
-    private String withdrawPercent;
+    @ColumnInfo(name = CURRENT_OPTION_FIELD)
+    private int currentOption;
+    @ColumnInfo(name = REACH_AMOUNT_FIELD)
+    private String reachAmount;
+    @ColumnInfo(name = REACH_PERCENT_FIELD)
+    private String reachPercent;
     @ColumnInfo(name = BIRTHDATE_FIELD)
     private String birthdate;
-    @ColumnInfo(name = PERCENT_INCREASE_FIELD)
-    private String percentIncrease;
+    @ColumnInfo(name = ANNUAL_INCOME_FIELD)
+    private String annualIncome;
 
-    public RetirementOptionsEntity(int id, AgeData endAge, int withdrawMode, String withdrawAmount, String birthdate, String percentIncrease) {
+    public RetirementOptionsEntity(int id, AgeData endAge, int currentOption, String birthdate) {
         this.id = id;
         this.endAge = endAge;
-        this.withdrawMode = withdrawMode;
-        this.withdrawAmount = withdrawAmount;
+        this.currentOption = currentOption;
         this.birthdate = birthdate;
-        this.percentIncrease = percentIncrease;
+        this.reachAmount = "0";
+        this.reachPercent = "0";
+        this.annualIncome = "0";
     }
 
     public int getId() {
@@ -64,28 +65,12 @@ public class RetirementOptionsEntity {
         this.endAge = endAge;
     }
 
-    public int getWithdrawMode() {
-        return withdrawMode;
+    public int getCurrentOption() {
+        return currentOption;
     }
 
-    public void setWithdrawMode(int withdrawMode) {
-        this.withdrawMode = withdrawMode;
-    }
-
-    public String getWithdrawAmount() {
-        return withdrawAmount;
-    }
-
-    public String getWithdrawPercent() {
-        return withdrawPercent;
-    }
-
-    public void setWithdrawPercent(String withdrawPercent) {
-        this.withdrawPercent = withdrawPercent;
-    }
-
-    public void setWithdrawAmount(String withdrawAmount) {
-        this.withdrawAmount = withdrawAmount;
+    public void setCurrentOption(int currentOption) {
+        this.currentOption = currentOption;
     }
 
     public String getBirthdate() {
@@ -96,11 +81,27 @@ public class RetirementOptionsEntity {
         this.birthdate = birthdate;
     }
 
-    public String getPercentIncrease() {
-        return percentIncrease;
+    public String getReachAmount() {
+        return reachAmount;
     }
 
-    public void setPercentIncrease(String percentIncrease) {
-        this.percentIncrease = percentIncrease;
+    public void setReachAmount(String reachAmount) {
+        this.reachAmount = reachAmount;
+    }
+
+    public String getReachPercent() {
+        return reachPercent;
+    }
+
+    public void setReachPercent(String reachPercent) {
+        this.reachPercent = reachPercent;
+    }
+
+    public String getAnnualIncome() {
+        return annualIncome;
+    }
+
+    public void setAnnualIncome(String annualIncome) {
+        this.annualIncome = annualIncome;
     }
 }

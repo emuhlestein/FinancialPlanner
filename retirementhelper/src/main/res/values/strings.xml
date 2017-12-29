@@ -142,6 +142,7 @@
     <string name="edit_min_age">Edit minimum age</string>
     <string name="edit_age">Start Retirement Age</string>
     <string name="spouse_full_retirement_age">Spouse Full Retirement Age:</string>
-    <string name="reach_amount">When to reach amount</string>
-    <string name="reach_percent_income">When reach percent income</string>
+    <string name="reach_amount">When will savings reach this amount?</string>
+    <string name="reach_percent_income">When will savings reach this percent of  income?</string>
+    <string name="annual_income">Annual Income</string>
 </resources>

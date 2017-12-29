@@ -26,6 +26,9 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     public static final String INTEREST_FIELD = "interest";
     public static final String MONTHLY_ADDITION_FIELD = "monthly_addition";
     public static final String START_AGE_FIELD = "start_age";
+    public static final String WITHDRAW_AMOUNT_FIELD = "withdraw_amount";
+    public static final String WITHDRAW_MODE_FIELD = "withdraw_mode";
+    public static final String ANNUAL_PERCENT_INCREASE_FIELD = "annual_percent_increase";
 
     @ColumnInfo(name = BALANCE_FIELD)
     private String mBalance;
@@ -40,15 +43,29 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     @ColumnInfo(name = START_AGE_FIELD)
     private AgeData mStartAge;
 
+    @ColumnInfo(name = WITHDRAW_MODE_FIELD)
+    private int mWithdrawMode;
+
+    @ColumnInfo(name = WITHDRAW_AMOUNT_FIELD)
+    private String mWithdrawAmount; // percent or amount
+
+    @ColumnInfo(name = ANNUAL_PERCENT_INCREASE_FIELD)
+    private String mAnnualPercentIncrease;
+
     @Ignore
     private IncomeTypeRules mRules;
 
-    public SavingsIncomeEntity(long id, int type, String name, String balance, String interest, String monthlyAddition, AgeData startAge) {
+    public SavingsIncomeEntity(long id, int type, String name, String balance, String interest,
+                               String monthlyAddition, AgeData startAge, int withdrawMode,
+                               String withdrawAmount, String annualPercentIncrease) {
         super(id, type, name);
         mBalance = balance;
         mInterest = interest;
         mMonthlyAddition = monthlyAddition;
         mStartAge = startAge;
+        mWithdrawMode = withdrawMode;
+        mWithdrawAmount = withdrawAmount;
+        mAnnualPercentIncrease = annualPercentIncrease;
     }
 
     public String getBalance() {
@@ -87,6 +104,29 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mRules = rules;
     }
 
+    public int getWithdrawMode() {
+        return mWithdrawMode;
+    }
+
+    public void setWithdrawMode(int withdrawMode) {
+        mWithdrawMode = withdrawMode;
+    }
+
+    public String getWithdrawAmount() {
+        return mWithdrawAmount;
+    }
+
+    public void setWithdrawAmount(String withdrawAmount) {
+        mWithdrawAmount = withdrawAmount;
+    }
+
+    public String getAnnualPercentIncrease() {
+        return mAnnualPercentIncrease;
+    }
+
+    public void setAnnualPercentIncrease(String annualPercentIncrease) {
+        mAnnualPercentIncrease = annualPercentIncrease;
+    }
 
     @Override
     public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsEntity rod) {

@@ -117,20 +117,13 @@ public class NavigationActivity extends AppCompatActivity {
         RetirementOptionsData rod;
         switch (item.getItemId()) {
             case R.id.retirement_options_item:
-                intent = new Intent(this, RetirementOptionsActivity.class);
-                //intent = new Intent(this, RetirementOptionsDialog.class);
-                Bundle b = new Bundle();
-                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate(), mROM.getPercentIncrease());
-                AgeData age = new AgeData(2,3);
-                b.putParcelable(RetirementConstants.EXTRA_RETIREOPTIONS_DATA, rod);
-                b.putParcelable("test1", age);
-                intent.putExtras(b);
+                intent = new Intent(this, RetirementOptionsDialog.class);
                 startActivityForResult(intent, REQUEST_RETIRE_OPTIONS);
                 overridePendingTransition(R.anim.slide_right_in, 0);
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
-                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getWithdrawMode(), mROM.getWithdrawAmount(), mROM.getBirthdate(), mROM.getPercentIncrease());
+                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getBirthdate());
                 intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 overridePendingTransition(R.anim.slide_right_in, 0);
@@ -198,10 +191,19 @@ public class NavigationActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
             case REQUEST_RETIRE_OPTIONS:
+                String value;
                 if (resultCode == RESULT_OK) {
-                    RetirementOptionsData rod = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREOPTIONS_DATA);
-                    mROM = new RetirementOptionsEntity(mROM.getId(), rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate(), rod.getPercentIncrease());
-                    mViewModel.update(mROM.getId(), rod);
+                    int mode = intent.getIntExtra(RetirementConstants.RETIREMENT_MODE, -1);
+                    value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_REACH_AMOUNT);
+                    mROM.setReachAmount(value);
+                    value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_REACH_INCOME_PERCENT);
+                    mROM.setReachPercent(value);
+                    value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_ANNUAL_INCOME);
+                    mROM.setAnnualIncome(value);
+                    AgeData age = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREMENT_INCOME_SUMMARY_AGE);
+                    mROM.setEndAge(age);
+                    mROM.setCurrentOption(mode);
+                    mViewModel.update(mROM);
                 }
                 break;
             case REQUEST_PERSONAL_INFO:

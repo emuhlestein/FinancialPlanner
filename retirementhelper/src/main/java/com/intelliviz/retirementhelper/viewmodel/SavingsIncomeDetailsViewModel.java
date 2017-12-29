@@ -102,14 +102,14 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
                         Double.parseDouble(entity.getBalance()),
                         Double.parseDouble(entity.getInterest()),
                         Double.parseDouble(entity.getMonthlyAddition()),
-                        rod.getWithdrawMode(), Double.parseDouble(rod.getWithdrawAmount()));
+                        entity.getWithdrawMode(), Double.parseDouble(entity.getWithdrawAmount()));
                 entity.setRules(tdir);
             } else {
                 SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge, startAge,
                         Double.parseDouble(entity.getBalance()),
                         Double.parseDouble(entity.getInterest()),
                         Double.parseDouble(entity.getMonthlyAddition()),
-                        rod.getWithdrawMode(), Double.parseDouble(rod.getWithdrawAmount()));
+                        entity.getWithdrawMode(), Double.parseDouble(entity.getWithdrawAmount()));
                 entity.setRules(sir);
 
             }

@@ -4,9 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -29,17 +27,14 @@ public class NavigationModelView extends AndroidViewModel {
         return mROM;
     }
 
-    public void update(int id, RetirementOptionsData rod) {
-        RetirementOptionsEntity rom = new RetirementOptionsEntity(id, rod.getEndAge(), rod.getWithdrawMode(), rod.getWithdrawAmount(), rod.getBirthdate(), rod.getPercentIncrease());
+    public void update(RetirementOptionsEntity rom) {
         new UpdateRetirementOptionsAsyncTask().execute(rom);
-        RetirementOptionsEntity r =  mROM.getValue();
-        Log.d("edm", r.getBirthdate());
         mROM.setValue(rom);
     }
 
     public void updateBirthdate(String birthdate) {
         RetirementOptionsEntity rom = mROM.getValue();
-        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), rom.getWithdrawMode(), rom.getWithdrawAmount(), birthdate, rom.getPercentIncrease());
+        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), rom.getCurrentOption(), birthdate);
         mROM.setValue(newRom);
         new UpdateRetirementOptionsAsyncTask().execute(newRom);
     }
@@ -61,7 +56,8 @@ public class NavigationModelView extends AndroidViewModel {
 
         @Override
         protected Void doInBackground(RetirementOptionsEntity... params) {
-            mDB.retirementOptionsDao().update(params[0]);
+            RetirementOptionsEntity roe = params[0];
+            mDB.retirementOptionsDao().update(roe);
             // TODO when ROM is updated, everything should be updated.
             SystemUtils.updateAppWidget(getApplication());
             return null;

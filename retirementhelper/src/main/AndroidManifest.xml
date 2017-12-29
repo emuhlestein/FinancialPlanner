@@ -49,7 +49,6 @@
         <activity android:name=".ui.income.SavingsIncomeDetailsActivity" />
         <activity android:name=".ui.RetirementDetailsActivity" />
         <activity android:name=".ui.income.PensionIncomeDetailsActivity" />
-        <activity android:name=".ui.RetirementOptionsActivity"></activity>
     </application>
 
 </manifest>
