@@ -23,8 +23,10 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.AmountData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.util.UpdateRetirementOptions;
 import com.intelliviz.retirementhelper.viewmodel.MilestoneSummaryViewModel;
 
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ import butterknife.ButterKnife;
  */
 
 public abstract class BaseSummaryFragment extends Fragment implements
-        SummaryMilestoneAdapter.SelectionMilestoneListener{
+        SummaryMilestoneAdapter.SelectionMilestoneListener, UpdateRetirementOptions {
     private static final String DIALOG_INPUT_TEXT = "DialogInputText";
     private IncomeDetailsAdapter mIncomeDetailsAdapter;
     private List<IncomeDetails> mIncomeDetails;
@@ -129,5 +131,10 @@ public abstract class BaseSummaryFragment extends Fragment implements
         Intent intent = new Intent(getContext(), MilestoneDetailsDialog.class);
         intent.putExtra(RetirementConstants.EXTRA_MILESTONEDATA, milestone);
         startActivity(intent);
+    }
+
+    @Override
+    public void updateRetirementOptions(RetirementOptionsEntity roe) {
+        mViewModel.update();
     }
 }

@@ -29,6 +29,7 @@ import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.UpdateRetirementOptions;
 import com.intelliviz.retirementhelper.viewmodel.NavigationModelView;
 
 import butterknife.BindView;
@@ -52,7 +53,7 @@ public class NavigationActivity extends AppCompatActivity {
     private int mStartFragment;
     private int mPrevFragment;
     private NavigationModelView mViewModel;
-    private RetirementOptionsEntity mROM;
+    private RetirementOptionsEntity mROE;
 
     @BindView(R.id.summary_toolbar)
     Toolbar mToolbar;
@@ -85,15 +86,22 @@ public class NavigationActivity extends AppCompatActivity {
         if(fragment == null) {
             MenuItem selectedItem;
             selectedItem = mBottomNavigation.getMenu().getItem(0);
-            selectedNavFragment(selectedItem);
+            selectNavFragment(selectedItem);
         }
 
         mViewModel = ViewModelProviders.of(this).get(NavigationModelView.class);
 
-        mViewModel.getROM().observe(this, new Observer<RetirementOptionsEntity>() {
+        mViewModel.getROE().observe(this, new Observer<RetirementOptionsEntity>() {
             @Override
-            public void onChanged(@Nullable RetirementOptionsEntity rom) {
-                mROM = rom;
+            public void onChanged(@Nullable RetirementOptionsEntity roe) {
+                mROE = roe;
+
+                FragmentManager fm = getSupportFragmentManager();
+                Fragment fragment = fm.findFragmentById(R.id.content_frame);
+                if(fragment instanceof UpdateRetirementOptions) {
+                    ((UpdateRetirementOptions)fragment).updateRetirementOptions(roe);
+                    Log.d(TAG, "HERE");
+                }
             }
         });
     }
@@ -123,7 +131,7 @@ public class NavigationActivity extends AppCompatActivity {
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
-                rod = new RetirementOptionsData(mROM.getEndAge(), mROM.getBirthdate());
+                rod = new RetirementOptionsData(mROE.getEndAge(), mROE.getBirthdate());
                 intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 overridePendingTransition(R.anim.slide_right_in, 0);
@@ -195,15 +203,21 @@ public class NavigationActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     int mode = intent.getIntExtra(RetirementConstants.RETIREMENT_MODE, -1);
                     value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_REACH_AMOUNT);
-                    mROM.setReachAmount(value);
+                    mROE.setReachAmount(value);
                     value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_REACH_INCOME_PERCENT);
-                    mROM.setReachPercent(value);
+                    mROE.setReachPercent(value);
                     value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_ANNUAL_INCOME);
-                    mROM.setAnnualIncome(value);
+                    mROE.setAnnualIncome(value);
                     AgeData age = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREMENT_INCOME_SUMMARY_AGE);
-                    mROM.setEndAge(age);
-                    mROM.setCurrentOption(mode);
-                    mViewModel.update(mROM);
+                    mROE.setEndAge(age);
+                    mROE.setCurrentOption(mode);
+                    mViewModel.update(mROE);
+
+                    FragmentManager fm = getSupportFragmentManager();
+                    Fragment fragment = fm.findFragmentById(R.id.content_frame);
+                    if(fragment instanceof BaseSummaryFragment) {
+                        Log.d(TAG, "HERE");
+                    }
                 }
                 break;
             case REQUEST_PERSONAL_INFO:
@@ -212,22 +226,21 @@ public class NavigationActivity extends AppCompatActivity {
                     mViewModel.updateBirthdate(birthdate);
                 }
                 break;
-            default:
-                super.onActivityResult(requestCode, resultCode, intent);
         }
+        super.onActivityResult(requestCode, resultCode, intent);
     }
 
     private void initBottomNavigation() {
         mBottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                selectedNavFragment(item);
+                selectNavFragment(item);
                 return true;
             }
         });
     }
 
-    private void selectedNavFragment(MenuItem item) {
+    private void selectNavFragment(MenuItem item) {
         Fragment fragment;
         String fragmentTag;
         switch (item.getItemId()) {

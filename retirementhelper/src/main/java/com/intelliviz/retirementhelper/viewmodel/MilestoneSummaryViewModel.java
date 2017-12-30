@@ -62,45 +62,17 @@ public class MilestoneSummaryViewModel extends AndroidViewModel {
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
         AgeData endAge = roe.getEndAge();
-        for(SavingsIncomeEntity sie : tdieList) {
-            AgeData startAge = sie.getStartAge();
-            if(sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
-                SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, startAge,
-                        Double.parseDouble(sie.getBalance()),
-                        Double.parseDouble(sie.getInterest()),
-                        Double.parseDouble(sie.getMonthlyAddition()),
-                        sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
-                sie.setRules(sir);
-                allIncomeSources.add(sie.getMonthlyAmountData());
-
-            } else if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
-
-                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(sie.getBalance()),
-                        Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
-                        Double.parseDouble(sie.getWithdrawAmount()));
-                sie.setRules(tdir);
-                allIncomeSources.add(sie.getMonthlyAmountData());
-            }
+        switch(roe.getCurrentOption()) {
+            case RetirementConstants.INCOME_SUMMARY_MODE:
+                return getIncomeSummary(roe);
+            case RetirementConstants.REACH_AMOUNT_MODE:
+                return getReachAmount(roe);
+            case RetirementConstants.REACH_IMCOME_PERCENT_MODE:
+                return getIncomeSummary(roe);
+            default:
 
         }
-        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
-        for(GovPensionEntity gpie : gpeList) {
-
-            String birthdate = roe.getBirthdate();
-            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
-            gpie.setRules(ssr);
-            allIncomeSources.add(gpie.getMonthlyAmountData());
-
-        }
-        List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
-        for(PensionIncomeEntity pie : pieList) {
-            AgeData minAge = pie.getMinAge();
-            PensionRules pr = new PensionRules(minAge, endAge,  Double.parseDouble(pie.getMonthlyBenefit()));
-            pie.setRules(pr);
-            allIncomeSources.add(pie.getMonthlyAmountData());
-        }
-
-        return sumAmounts(endAge, allIncomeSources);
+        return getIncomeSummary(roe);
     }
 
     private List<AmountData> sumAmounts(AgeData endAge,  List<List<AmountData>> allIncomeSources) {
@@ -138,6 +110,83 @@ public class MilestoneSummaryViewModel extends AndroidViewModel {
         }
 
         return allAmounts;
+    }
+
+    private List<AmountData> getIncomeSummary(RetirementOptionsEntity roe) {
+        float desiredBalance = Float.parseFloat(roe.getReachAmount());
+        List<List<AmountData>> allIncomeSources = new ArrayList<>();
+        List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
+        AgeData endAge = roe.getEndAge();
+        for(SavingsIncomeEntity sie : tdieList) {
+            AgeData startAge = sie.getStartAge();
+            if(sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
+                SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, startAge,
+                        Double.parseDouble(sie.getBalance()),
+                        Double.parseDouble(sie.getInterest()),
+                        Double.parseDouble(sie.getMonthlyAddition()),
+                        sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
+                sie.setRules(sir);
+                sie.getBalance();
+                allIncomeSources.add(sie.getMonthlyAmountData());
+
+            } else if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
+
+                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(sie.getBalance()),
+                        Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
+                        Double.parseDouble(sie.getWithdrawAmount()));
+                sie.setRules(tdir);
+                allIncomeSources.add(sie.getMonthlyAmountData());
+            }
+
+        }
+        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        for(GovPensionEntity gpie : gpeList) {
+
+            String birthdate = roe.getBirthdate();
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
+            gpie.setRules(ssr);
+            allIncomeSources.add(gpie.getMonthlyAmountData());
+
+        }
+        List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
+        for(PensionIncomeEntity pie : pieList) {
+            AgeData minAge = pie.getMinAge();
+            PensionRules pr = new PensionRules(minAge, endAge,  Double.parseDouble(pie.getMonthlyBenefit()));
+            pie.setRules(pr);
+            allIncomeSources.add(pie.getMonthlyAmountData());
+        }
+
+        return sumAmounts(endAge, allIncomeSources);
+    }
+
+    private List<AmountData> getReachAmount(RetirementOptionsEntity roe) {
+        List<List<AmountData>> allIncomeSources = new ArrayList<>();
+        List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
+        AgeData endAge = roe.getEndAge();
+
+        int currentMonth = 0;
+        while(true) {
+        for(SavingsIncomeEntity sie : tdieList) {
+            AgeData startAge = sie.getStartAge();
+            if (sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
+                SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, startAge,
+                        Double.parseDouble(sie.getBalance()),
+                        Double.parseDouble(sie.getInterest()),
+                        Double.parseDouble(sie.getMonthlyAddition()),
+                        sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
+                sie.setRules(sir);
+                allIncomeSources.add(sie.getMonthlyAmountData());
+
+            } else if (sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
+
+                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(sie.getBalance()),
+                        Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
+                        Double.parseDouble(sie.getWithdrawAmount()));
+                sie.setRules(tdir);
+                allIncomeSources.add(sie.getMonthlyAmountData());
+            }
+        }
+        }
     }
 
     private static class IndexAmount {

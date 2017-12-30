@@ -15,7 +15,7 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 
 public class NavigationModelView extends AndroidViewModel {
     private AppDatabase mDB;
-    private MutableLiveData<RetirementOptionsEntity> mROM = new MutableLiveData<>();
+    private MutableLiveData<RetirementOptionsEntity> mROE = new MutableLiveData<>();
 
     public NavigationModelView(Application application) {
         super(application);
@@ -23,19 +23,19 @@ public class NavigationModelView extends AndroidViewModel {
         new GetRetirementOptionsAsyncTask().execute();
     }
 
-    public LiveData<RetirementOptionsEntity> getROM() {
-        return mROM;
+    public LiveData<RetirementOptionsEntity> getROE() {
+        return mROE;
     }
 
-    public void update(RetirementOptionsEntity rom) {
-        new UpdateRetirementOptionsAsyncTask().execute(rom);
-        mROM.setValue(rom);
+    public void update(RetirementOptionsEntity roe) {
+        new UpdateRetirementOptionsAsyncTask().execute(roe);
+        mROE.setValue(roe);
     }
 
     public void updateBirthdate(String birthdate) {
-        RetirementOptionsEntity rom = mROM.getValue();
+        RetirementOptionsEntity rom = mROE.getValue();
         RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), rom.getCurrentOption(), birthdate);
-        mROM.setValue(newRom);
+        mROE.setValue(newRom);
         new UpdateRetirementOptionsAsyncTask().execute(newRom);
     }
 
@@ -48,7 +48,7 @@ public class NavigationModelView extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(RetirementOptionsEntity rom) {
-            mROM.setValue(rom);
+            mROE.setValue(rom);
         }
     }
 
