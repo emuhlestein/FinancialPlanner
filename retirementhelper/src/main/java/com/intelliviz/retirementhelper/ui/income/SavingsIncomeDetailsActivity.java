@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.ui.income;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -182,7 +183,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if(resultCode != RESULT_OK) {
+        if(resultCode != Activity.RESULT_OK) {
             return;
         }
 

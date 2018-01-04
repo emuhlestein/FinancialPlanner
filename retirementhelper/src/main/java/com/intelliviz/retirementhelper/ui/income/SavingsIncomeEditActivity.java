@@ -91,7 +91,6 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
-        finish();
     }
 
     @OnClick(R.id.edit_start_age_button) void editStartAge() {
@@ -234,6 +233,9 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         age = mSIE.getStartAge();
         mStartAgeTextView.setText(age.toString());
 
+        String increase = mSIE.getAnnualPercentIncrease()+"%";
+        mAnnualPercentIncrease.setText(increase);
+
         setLayoutVisibilty(mSIE.getWithdrawMode());
     }
 
@@ -281,7 +283,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         value = withdrawAmount;
         withdrawAmount = getFloatValue(withdrawAmount);
         if(withdrawAmount == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.monthly_increase_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
@@ -289,7 +291,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         value = mAnnualPercentIncrease.getText().toString();
         String annualPercentIncrease = getFloatValue(value);
         if(annualPercentIncrease == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.annual_withdraw_increase_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
@@ -306,6 +308,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         } else {
             mViewModel.setData(tdid);
         }
+
+        finish();
     }
 
     @Override
@@ -317,7 +321,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
     private void sendData(long id, String name, String interest, String monthlyAddition, String balance, AgeData startAge,
                           int withdrawMode, String withdrawAmount, String annualPercentIncrease) {
         Intent returnIntent = new Intent();
-        Bundle bundle = returnIntent.getExtras();
+        Bundle bundle = new Bundle();
+
         bundle.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, id);
         bundle.putInt(RetirementConstants.EXTRA_INCOME_SAVINGS_TYPE, mIncomeType);
         bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
@@ -328,6 +333,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         bundle.putInt(RetirementConstants.EXTRA_WITHDRAW_MODE, withdrawMode);
         bundle.putString(RetirementConstants.EXTRA_WITHDRAW_MODE_AMOUNT, withdrawAmount);
         bundle.putString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE, annualPercentIncrease);
+        returnIntent.putExtras(bundle);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
