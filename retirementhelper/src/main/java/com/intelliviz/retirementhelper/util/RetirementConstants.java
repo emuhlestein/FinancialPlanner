@@ -37,6 +37,10 @@ public class RetirementConstants {
     public static final int REACH_IMCOME_PERCENT_MODE = 2;
     public static final int UNKNOWN_MODE = 4;
 
+    public static final int BALANCE_STATE_GOOD = 0;
+    public static final int BALANCE_STATE_LOW = 1; // less than a year left
+    public static final int BALANCE_STATE_EXHAUSTED = 2;
+
     // principle reduction mode
     public static final int WITHDRAW_MODE_PERCENT = 0; // percentage of principle
     public static final int WITHDRAW_MODE_AMOUNT = 1; // dollar amount

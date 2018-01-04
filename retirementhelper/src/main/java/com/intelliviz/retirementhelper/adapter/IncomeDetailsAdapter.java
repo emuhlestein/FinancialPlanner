@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.ui.income.IncomeDetailsSelectListener;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import java.util.List;
 
@@ -97,20 +98,20 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
 
             final int sdk = android.os.Build.VERSION.SDK_INT;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                if(incomeDetails.getBenefitInfo() == 0) {
+                if(incomeDetails.getBenefitInfo() == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
                     mCardView.setCardBackgroundColor( mContext.getResources().getColor(R.color.card_red) );
                 } else {
-                    if(incomeDetails.getBenefitInfo() == 1) {
+                    if(incomeDetails.getBenefitInfo() == RetirementConstants.BALANCE_STATE_LOW) {
                         mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_yellow));
                     } else {
                         mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_green));
                     }
                 }
             } else {
-                if(incomeDetails.getBenefitInfo() == 0) {
+                if(incomeDetails.getBenefitInfo() == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
                     mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_red));
                 } else {
-                    if(incomeDetails.getBenefitInfo() == 1) {
+                    if(incomeDetails.getBenefitInfo() == RetirementConstants.BALANCE_STATE_LOW) {
                         mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_yellow));
                     } else {
                         mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_green));

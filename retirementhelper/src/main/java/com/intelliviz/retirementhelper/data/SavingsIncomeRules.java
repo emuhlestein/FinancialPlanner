@@ -13,7 +13,7 @@ public class SavingsIncomeRules extends BaseSavingsIncomeRules implements Income
 
     public SavingsIncomeRules(String birthDate, AgeData endAge, AgeData startAge,
                               double balance, double interest, double monthlyAddition,  int withdrawMode, double withdrawAmount) {
-        super(birthDate, startAge, endAge, balance, interest, monthlyAddition, withdrawMode, withdrawAmount);
+        super(birthDate, endAge, startAge, balance, interest, monthlyAddition, withdrawMode, withdrawAmount);
     }
 
     @Override

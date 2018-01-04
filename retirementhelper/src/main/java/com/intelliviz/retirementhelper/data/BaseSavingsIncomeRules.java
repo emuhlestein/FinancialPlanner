@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.data;
 
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
@@ -53,6 +54,9 @@ public abstract class BaseSavingsIncomeRules {
             age = new AgeData(age.getYear()+1, 0);
         }
 
+        AmountData amountData = getInitAmountData(age);
+
+        /*
         int numMonths = mStartAge.diff(mCurrentAge);
         double balance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
 
@@ -61,9 +65,10 @@ public abstract class BaseSavingsIncomeRules {
         monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
         boolean penalty = isPenalty(age);
 
-        List<AmountData> listAmountDate = new ArrayList<>();
         int balanceState = 2;
         AmountData amountData = new AmountData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
+        */
+        List<AmountData> listAmountDate = new ArrayList<>();
         listAmountDate.add(amountData);
 
         while(true) {
@@ -72,7 +77,14 @@ public abstract class BaseSavingsIncomeRules {
             if(nextAge.isAfter(mEndAge)) {
                 break;
             }
-            numMonths = nextAge.diff(age);
+
+            double mWithdrawPercentIncrease = 0;
+            amountData = getNewAmountData(amountData, nextAge, mWithdrawPercentIncrease);
+
+            age = new AgeData(nextAge.getYear(), 0);
+
+            /*
+            int numMonths = nextAge.diff(age);
 
             age = new AgeData(nextAge.getYear(), 0);
 
@@ -87,17 +99,62 @@ public abstract class BaseSavingsIncomeRules {
             }
 
             // increase month withdraw amount
-            double mWithdrawPercentIncrease = 0;
+
             double withdrawAmountIncrease = monthlyWithdrawAmount * mWithdrawPercentIncrease / 1200;
             monthlyWithdrawAmount += withdrawAmountIncrease;
 
             monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
             penalty = isPenalty(age);
             amountData = new AmountData(nextAge, monthlyWithdrawAmount, balance, balanceState, penalty);
+            */
             listAmountDate.add(amountData);
         }
 
         return listAmountDate;
+    }
+
+    AmountData getInitAmountData(AgeData age) {
+        int numMonths = mStartAge.diff(mCurrentAge);
+        double balance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
+
+        double monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
+
+        monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
+        boolean penalty = isPenalty(age);
+
+        int balanceState = getBalanceStatus(balance, monthlyWithdrawAmount);
+        if(balanceState == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
+            balance = 0;
+        }
+        return new AmountData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
+    }
+
+    AmountData getNewAmountData(AmountData amount, AgeData age, double withdrawAmountIncrease) {
+        AgeData newAge = new AgeData(age.getYear()+1, 0);
+        int numMonths = newAge.diff(age);
+        double balance = amount.getBalance();
+        double monthlyWithdrawAmount = amount.getMonthlyAmount();
+        balance = getNewBalance(numMonths, balance, monthlyWithdrawAmount, mInterest);
+
+        int balanceState = getBalanceStatus(balance, monthlyWithdrawAmount);
+        if(balanceState == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
+            balance = 0;
+        }
+
+        monthlyWithdrawAmount += withdrawAmountIncrease;
+        monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
+        return new AmountData(newAge, monthlyWithdrawAmount, balance, balanceState, isPenalty(age));
+    }
+
+    int getBalanceStatus(double balance, double monthlyWithdrawAmount) {
+        if(balance < 0) {
+            return RetirementConstants.BALANCE_STATE_EXHAUSTED;
+        } else {
+            if(balance < monthlyWithdrawAmount*12) {
+                return RetirementConstants.BALANCE_STATE_LOW;
+            }
+        }
+        return RetirementConstants.BALANCE_STATE_GOOD;
     }
 
     double getInitMonthlyWithdrawAmount(double balance) {

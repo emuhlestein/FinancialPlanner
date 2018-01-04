@@ -27,7 +27,7 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
     private AppDatabase mDB;
     private MutableLiveData<SavingsIncomeEntity> mSIE =
             new MutableLiveData<>();
-    private MutableLiveData<List<AmountData>> mListTaxDeferredData = new MutableLiveData<List<AmountData>>();
+    private MutableLiveData<List<AmountData>> mAmountDataList = new MutableLiveData<List<AmountData>>();
     private long mIncomeId;
 
     public SavingsIncomeDetailsViewModel(Application application, long incomeId) {
@@ -35,11 +35,11 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         mIncomeId = incomeId;
         mDB = AppDatabase.getInstance(application);
         new GetAsyncTask().execute(incomeId);
-        new GetTaxDeferredDataAsyncTask().execute(incomeId);
+        new GetAmountDataListByIdAsyncTask().execute(incomeId);
     }
 
     public MutableLiveData<List<AmountData>> getList() {
-        return mListTaxDeferredData;
+        return mAmountDataList;
     }
 
     public MutableLiveData<SavingsIncomeEntity> get() {
@@ -47,12 +47,13 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
     }
 
     public void update() {
-        new GetTaxDeferredDataAsyncTask().execute(mIncomeId);
+        new GetAmountDataListByIdAsyncTask().execute(mIncomeId);
     }
 
-    public void setData(SavingsIncomeEntity tdid) {
-        mSIE.setValue(tdid);
-        new SavingsIncomeDetailsViewModel.UpdateAsyncTask().execute(tdid);
+    public void setData(SavingsIncomeEntity sie) {
+        new GetAmountDataListAsyncTask().execute(sie);
+        mSIE.setValue(sie);
+        new UpdateAsyncTask().execute(sie);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -87,39 +88,38 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetTaxDeferredDataAsyncTask extends AsyncTask<Long, Void, List<AmountData>> {
+    private class GetAmountDataListByIdAsyncTask extends AsyncTask<Long, Void, List<AmountData>> {
 
         @Override
         protected List<AmountData> doInBackground(Long... params) {
-            SavingsIncomeEntity sie = mDB.savingsIncomeDao().get(params[0]);
-            RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
-            SavingsIncomeEntity entity = mDB.savingsIncomeDao().get(params[0]);
-            String birthdate = rod.getBirthdate();
-            AgeData endAge = rod.getEndAge();
-            AgeData startAge = sie.getStartAge();
-            if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
-                Savings401kIncomeRules tdir = new Savings401kIncomeRules(birthdate, endAge, startAge,
-                        Double.parseDouble(entity.getBalance()),
-                        Double.parseDouble(entity.getInterest()),
-                        Double.parseDouble(entity.getMonthlyAddition()),
-                        entity.getWithdrawMode(), Double.parseDouble(entity.getWithdrawAmount()));
-                entity.setRules(tdir);
-            } else {
-                SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge, startAge,
-                        Double.parseDouble(entity.getBalance()),
-                        Double.parseDouble(entity.getInterest()),
-                        Double.parseDouble(entity.getMonthlyAddition()),
-                        entity.getWithdrawMode(), Double.parseDouble(entity.getWithdrawAmount()));
-                entity.setRules(sir);
-
-            }
-
-            return entity.getMonthlyAmountData();
+            long id = params[0];
+            return getAmountData(id);
         }
 
         @Override
-        protected void onPostExecute(List<AmountData> milestones) {
-            mListTaxDeferredData.setValue(milestones);
+        protected void onPostExecute(List<AmountData> amountDataList) {
+            mAmountDataList.setValue(amountDataList);
+        }
+    }
+
+    private class GetAmountDataListAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<AmountData>> {
+
+        @Override
+        protected List<AmountData> doInBackground(SavingsIncomeEntity... params) {
+            SavingsIncomeEntity sie = params[0];
+            long id = sie.getId();
+            if(id > 0) {
+                return getAmountData(id);
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<AmountData> amountData) {
+            if(amountData != null) {
+                mAmountDataList.setValue(amountData);
+            }
         }
     }
 
@@ -127,11 +127,40 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
 
         @Override
         protected Integer doInBackground(SavingsIncomeEntity... params) {
-            return mDB.savingsIncomeDao().update(params[0]);
+            SavingsIncomeEntity sie = params[0];
+
+            return mDB.savingsIncomeDao().update(sie);
         }
 
         @Override
         protected void onPostExecute(Integer numRowsUpdated) {
         }
+    }
+
+    private List<AmountData> getAmountData(long id) {
+        SavingsIncomeEntity sie = mDB.savingsIncomeDao().get(id);
+        RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
+        SavingsIncomeEntity entity = mDB.savingsIncomeDao().get(id);
+        String birthdate = rod.getBirthdate();
+        AgeData endAge = rod.getEndAge();
+        AgeData startAge = sie.getStartAge();
+        if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
+            Savings401kIncomeRules tdir = new Savings401kIncomeRules(birthdate, endAge, startAge,
+                    Double.parseDouble(entity.getBalance()),
+                    Double.parseDouble(entity.getInterest()),
+                    Double.parseDouble(entity.getMonthlyAddition()),
+                    entity.getWithdrawMode(), Double.parseDouble(entity.getWithdrawAmount()));
+            entity.setRules(tdir);
+        } else {
+            SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge, startAge,
+                    Double.parseDouble(entity.getBalance()),
+                    Double.parseDouble(entity.getInterest()),
+                    Double.parseDouble(entity.getMonthlyAddition()),
+                    entity.getWithdrawMode(), Double.parseDouble(entity.getWithdrawAmount()));
+            entity.setRules(sir);
+
+        }
+
+        return entity.getMonthlyAmountData();
     }
 }
