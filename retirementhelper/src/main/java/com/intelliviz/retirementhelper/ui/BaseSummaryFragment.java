@@ -27,7 +27,7 @@ import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.UpdateRetirementOptions;
-import com.intelliviz.retirementhelper.viewmodel.MilestoneSummaryViewModel;
+import com.intelliviz.retirementhelper.viewmodel.IncomeSummaryViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public abstract class BaseSummaryFragment extends Fragment implements
     private static final String DIALOG_INPUT_TEXT = "DialogInputText";
     private IncomeDetailsAdapter mIncomeDetailsAdapter;
     private List<IncomeDetails> mIncomeDetails;
-    private MilestoneSummaryViewModel mViewModel;
+    private IncomeSummaryViewModel mViewModel;
 
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -86,7 +86,7 @@ public abstract class BaseSummaryFragment extends Fragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(MilestoneSummaryViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(IncomeSummaryViewModel.class);
 
         mViewModel.getList().observe(this, new Observer<List<AmountData>>() {
             @Override
@@ -97,7 +97,7 @@ public abstract class BaseSummaryFragment extends Fragment implements
                     AgeData age = amountData.getAge();
                     String amount = SystemUtils.getFormattedCurrency(amountData.getMonthlyAmount());
                     String line1 = age.toString() + "   " + amount;
-                    IncomeDetails incomeDetail = new IncomeDetails(line1, 2, "");
+                    IncomeDetails incomeDetail = new IncomeDetails(line1, RetirementConstants.BALANCE_STATE_GOOD, "");
                     incomeDetails.add(incomeDetail);
                 }
                 mIncomeDetailsAdapter.update(incomeDetails);

@@ -26,11 +26,11 @@ import java.util.List;
  * Created by edm on 9/30/2017.
  */
 
-public class MilestoneSummaryViewModel extends AndroidViewModel {
+public class IncomeSummaryViewModel extends AndroidViewModel {
     private MutableLiveData<List<AmountData>> mAmountData = new MutableLiveData<>();
     private AppDatabase mDB;
 
-    public MilestoneSummaryViewModel(Application application) {
+    public IncomeSummaryViewModel(Application application) {
         super(application);
         mDB = AppDatabase.getInstance(application);
         new GetAmountDataAsyncTask().execute();
@@ -104,7 +104,7 @@ public class MilestoneSummaryViewModel extends AndroidViewModel {
             if(sumMonthlyAmount > 0) {
                 //AgeData age, double monthlyAmount, double balance, int balanceState, boolean penalty)
                 AgeData age = new AgeData(currentMonth);
-                AmountData sumAmount = new AmountData(age, sumMonthlyAmount, 0, 0, false);
+                AmountData sumAmount = new AmountData(age, sumMonthlyAmount, 0, RetirementConstants.BALANCE_STATE_GOOD, false);
                 allAmounts.add(sumAmount);
             }
         }
