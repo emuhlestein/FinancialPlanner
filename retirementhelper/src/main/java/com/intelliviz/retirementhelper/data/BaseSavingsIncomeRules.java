@@ -48,16 +48,16 @@ public abstract class BaseSavingsIncomeRules {
     protected abstract double adjustMonthlyAmount(AgeData age, double amount);
     protected abstract boolean isPenalty(AgeData age);
 
-    public List<AmountData> getMonthlyAmountData() {
+    public List<BenefitData> getMonthlyAmountData() {
         AgeData age = mStartAge;
         if(age.getMonth() > 0) {
             age = new AgeData(age.getYear()+1, 0);
         }
 
-        AmountData amountData = getInitAmountData(age);
+        BenefitData benefitData = getInitAmountData(age);
 
-        List<AmountData> listAmountDate = new ArrayList<>();
-        listAmountDate.add(amountData);
+        List<BenefitData> listAmountDate = new ArrayList<>();
+        listAmountDate.add(benefitData);
 
         while(true) {
             // get next age
@@ -67,17 +67,17 @@ public abstract class BaseSavingsIncomeRules {
             }
 
             double mWithdrawPercentIncrease = 0;
-            amountData = getNewAmountData(amountData, nextAge, mWithdrawPercentIncrease);
+            benefitData = getNewAmountData(benefitData, nextAge, mWithdrawPercentIncrease);
 
             age = new AgeData(nextAge.getYear(), 0);
 
-            listAmountDate.add(amountData);
+            listAmountDate.add(benefitData);
         }
 
         return listAmountDate;
     }
 
-    AmountData getInitAmountData(AgeData age) {
+    BenefitData getInitAmountData(AgeData age) {
         int numMonths = mStartAge.diff(mCurrentAge);
         double balance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
 
@@ -90,10 +90,10 @@ public abstract class BaseSavingsIncomeRules {
         if(balanceState == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
             balance = 0;
         }
-        return new AmountData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
+        return new BenefitData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
     }
 
-    AmountData getNewAmountData(AmountData amount, AgeData age, double withdrawAmountIncrease) {
+    BenefitData getNewAmountData(BenefitData amount, AgeData age, double withdrawAmountIncrease) {
         AgeData newAge = new AgeData(amount.getAge().getNumberOfMonths());
         int numMonths = newAge.diff(age);
         double balance = amount.getBalance();
@@ -107,7 +107,7 @@ public abstract class BaseSavingsIncomeRules {
 
         monthlyWithdrawAmount += withdrawAmountIncrease;
         monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
-        return new AmountData(age, monthlyWithdrawAmount, balance, balanceState, isPenalty(age));
+        return new BenefitData(age, monthlyWithdrawAmount, balance, balanceState, isPenalty(age));
     }
 
     int getBalanceStatus(double balance, double monthlyWithdrawAmount) {
