@@ -49,22 +49,6 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
     }
 
     public MilestoneData getMilestone(AgeData age) {
-        /*
-        if(age.isBefore(mCurrentAge)) {
-            return null;
-        }
-        int numMonths =  age.diff(mCurrentAge);
-        double futureBalance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
-
-        double monthlyAmount = BalanceUtils.getMonthlyAmount(futureBalance, mWithdrawMode, mWithdrawAmount);
-        MilestoneData milestoneData =
-                BalanceUtils.getMilestoneData(age, mEndAge, mInterest, futureBalance, monthlyAmount, mWithdrawMode, mWithdrawAmount);
-
-        if(age.isBefore(mMinAge)) {
-
-        }
-        */
-
         return null;
     }
 

@@ -56,18 +56,6 @@ public abstract class BaseSavingsIncomeRules {
 
         AmountData amountData = getInitAmountData(age);
 
-        /*
-        int numMonths = mStartAge.diff(mCurrentAge);
-        double balance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
-
-        double monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
-
-        monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
-        boolean penalty = isPenalty(age);
-
-        int balanceState = 2;
-        AmountData amountData = new AmountData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
-        */
         List<AmountData> listAmountDate = new ArrayList<>();
         listAmountDate.add(amountData);
 
@@ -83,30 +71,6 @@ public abstract class BaseSavingsIncomeRules {
 
             age = new AgeData(nextAge.getYear(), 0);
 
-            /*
-            int numMonths = nextAge.diff(age);
-
-            age = new AgeData(nextAge.getYear(), 0);
-
-            balance = getNewBalance(numMonths, balance, monthlyWithdrawAmount, mInterest);
-            if(balance < 0) {
-                balance = 0;
-                balanceState = 0;
-            } else {
-                if(monthlyWithdrawAmount*12 > balance) {
-                    balanceState = 1;
-                }
-            }
-
-            // increase month withdraw amount
-
-            double withdrawAmountIncrease = monthlyWithdrawAmount * mWithdrawPercentIncrease / 1200;
-            monthlyWithdrawAmount += withdrawAmountIncrease;
-
-            monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
-            penalty = isPenalty(age);
-            amountData = new AmountData(nextAge, monthlyWithdrawAmount, balance, balanceState, penalty);
-            */
             listAmountDate.add(amountData);
         }
 

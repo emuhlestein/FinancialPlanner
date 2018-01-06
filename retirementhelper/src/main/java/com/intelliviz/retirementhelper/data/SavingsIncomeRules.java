@@ -33,14 +33,6 @@ public class SavingsIncomeRules extends BaseSavingsIncomeRules implements Income
     @Override
     @Deprecated
     public MilestoneData getMilestone(AgeData age) {
-        /*
-        int numMonths = age.diff(mCurrentAge);
-        double futureBalance = BalanceUtils.getFutureBalance(mBalance, numMonths, mInterest, mMonthlyIncrease);
-
-        double monthlyAmount = BalanceUtils.getMonthlyAmount(mBalance, mWithdrawMode, mWithdrawAmount);
-        MilestoneData milestoneData =
-                BalanceUtils.getMilestoneData(age, mEndAge, mInterest, futureBalance, monthlyAmount, mWithdrawMode, mWithdrawAmount);
-*/
         return null;
     }
 
