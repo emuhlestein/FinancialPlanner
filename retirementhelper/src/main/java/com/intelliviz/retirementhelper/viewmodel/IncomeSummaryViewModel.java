@@ -18,6 +18,7 @@ import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         return getIncomeSummary(roe);
     }
 
-    private List<BenefitData> sumAmounts(AgeData endAge, List<List<BenefitData>> allIncomeSources) {
+    private List<BenefitData> sumAmounts(AgeData currentAge, AgeData endAge, List<List<BenefitData>> allIncomeSources) {
         List<BenefitData> allAmounts = new ArrayList<>();
         int numIncomeSources = allIncomeSources.size();
         List<IndexAmount> indeces = new ArrayList<>();
@@ -87,8 +88,13 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             indeces.add(indexAmount);
         }
 
-        int lastMonth = endAge.getNumberOfMonths();
-        for(int currentMonth = 0; currentMonth < lastMonth; currentMonth++) {
+        int lastYear = endAge.getYear();
+        AgeData age = currentAge;
+        if(age.getMonth() > 0) {
+            age = new AgeData(age.getYear()+1, 0);
+        }
+
+        for(int year = age.getYear(); year < lastYear; year++) {
             double sumMonthlyAmount = 0;
             double sumBalance = 0;
             for (int incomeSource = 0; incomeSource < numIncomeSources; incomeSource++) {
@@ -96,7 +102,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                 double balance;
                 List<BenefitData> benefitData = indeces.get(incomeSource).mBenefitData;
                 int index = indeces.get(incomeSource).currentIndex;
-                if(benefitData.get(index).getAge().getNumberOfMonths() == currentMonth) {
+                if(benefitData.get(index).getAge().getYear() == year) {
                     monthlyAmount = benefitData.get(index).getMonthlyAmount();
                     sumMonthlyAmount += monthlyAmount;
 
@@ -106,12 +112,10 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                 }
             }
 
-            if(sumMonthlyAmount > 0) {
-                //AgeData age, double monthlyAmount, double balance, int balanceState, boolean penalty)
-                AgeData age = new AgeData(currentMonth);
-                BenefitData sumAmount = new BenefitData(age, sumMonthlyAmount, sumBalance, RetirementConstants.BALANCE_STATE_GOOD, false);
-                allAmounts.add(sumAmount);
-            }
+            age = new AgeData(year, 0);
+            BenefitData sumAmount = new BenefitData(age, sumMonthlyAmount, sumBalance, RetirementConstants.BALANCE_STATE_GOOD, false);
+            allAmounts.add(sumAmount);
+
         }
 
         return allAmounts;
@@ -122,27 +126,25 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         List<List<BenefitData>> allIncomeSources = new ArrayList<>();
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         AgeData endAge = roe.getEndAge();
+        AgeData currentAge = SystemUtils.getAge(roe.getBirthdate());
         for(SavingsIncomeEntity sie : tdieList) {
-            AgeData startAge = sie.getStartAge();
             if(sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
-                SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, startAge,
+                SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, sie.getStartAge(),
                         Double.parseDouble(sie.getBalance()),
                         Double.parseDouble(sie.getInterest()),
                         Double.parseDouble(sie.getMonthlyAddition()),
                         sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
                 sie.setRules(sir);
-                sie.getBalance();
                 allIncomeSources.add(sie.getBenefitData());
 
             } else if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
 
-                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(sie.getBalance()),
+                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, sie.getStartAge(), Double.parseDouble(sie.getBalance()),
                         Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
                         Double.parseDouble(sie.getWithdrawAmount()));
                 sie.setRules(tdir);
                 allIncomeSources.add(sie.getBenefitData());
             }
-
         }
         List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
         for(GovPensionEntity gpie : gpeList) {
@@ -161,7 +163,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             allIncomeSources.add(pie.getBenefitData());
         }
 
-        return sumAmounts(endAge, allIncomeSources);
+        return sumAmounts(currentAge, endAge, allIncomeSources);
     }
 
     private List<BenefitData> getReachAmount(RetirementOptionsEntity roe) {
