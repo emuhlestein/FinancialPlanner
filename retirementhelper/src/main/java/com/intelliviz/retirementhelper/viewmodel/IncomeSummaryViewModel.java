@@ -90,13 +90,18 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         int lastMonth = endAge.getNumberOfMonths();
         for(int currentMonth = 0; currentMonth < lastMonth; currentMonth++) {
             double sumMonthlyAmount = 0;
+            double sumBalance = 0;
             for (int incomeSource = 0; incomeSource < numIncomeSources; incomeSource++) {
                 double monthlyAmount;
+                double balance;
                 List<AmountData> amountData = indeces.get(incomeSource).amountData;
                 int index = indeces.get(incomeSource).currentIndex;
                 if(amountData.get(index).getAge().getNumberOfMonths() == currentMonth) {
                     monthlyAmount = amountData.get(index).getMonthlyAmount();
                     sumMonthlyAmount += monthlyAmount;
+
+                    balance = amountData.get(index).getBalance();
+                    sumBalance += balance;
                     indeces.get(incomeSource).currentIndex++;
                 }
             }
@@ -104,7 +109,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             if(sumMonthlyAmount > 0) {
                 //AgeData age, double monthlyAmount, double balance, int balanceState, boolean penalty)
                 AgeData age = new AgeData(currentMonth);
-                AmountData sumAmount = new AmountData(age, sumMonthlyAmount, 0, RetirementConstants.BALANCE_STATE_GOOD, false);
+                AmountData sumAmount = new AmountData(age, sumMonthlyAmount, sumBalance, RetirementConstants.BALANCE_STATE_GOOD, false);
                 allAmounts.add(sumAmount);
             }
         }

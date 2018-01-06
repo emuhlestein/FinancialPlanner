@@ -96,7 +96,8 @@ public abstract class BaseSummaryFragment extends Fragment implements
                 for(AmountData amountData : amountDataList) {
                     AgeData age = amountData.getAge();
                     String amount = SystemUtils.getFormattedCurrency(amountData.getMonthlyAmount());
-                    String line1 = age.toString() + "   " + amount;
+                    String balance = SystemUtils.getFormattedCurrency(amountData.getBalance());
+                    String line1 = age.toString() + "   " + amount + "  " + balance;
                     IncomeDetails incomeDetail = new IncomeDetails(line1, RetirementConstants.BALANCE_STATE_GOOD, "");
                     incomeDetails.add(incomeDetail);
                 }
