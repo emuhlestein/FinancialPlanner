@@ -111,7 +111,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:hint="@string/annual_interest" />
+                    android:hint="@string/annual_interest"
+                    android:inputType="numberDecimal"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
