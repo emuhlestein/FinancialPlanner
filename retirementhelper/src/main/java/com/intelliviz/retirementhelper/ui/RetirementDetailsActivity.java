@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.RetirementDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.AmountData;
+import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.util.BalanceUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
 public class RetirementDetailsActivity extends AppCompatActivity implements SelectAmountListener {
 
     private RetirementDetailsAdapter mRetirementDetailsAdapter;
-    private List<AmountData> mAmountData;
+    private List<BenefitData> mBenefitData;
     private MilestoneData mMSD;
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -54,8 +54,8 @@ public class RetirementDetailsActivity extends AppCompatActivity implements Sele
         Intent intent = getIntent();
         mMSD = intent.getParcelableExtra("milestone");
 
-        mAmountData = new ArrayList<>();
-        mRetirementDetailsAdapter = new RetirementDetailsAdapter(this, mAmountData);
+        mBenefitData = new ArrayList<>();
+        mRetirementDetailsAdapter = new RetirementDetailsAdapter(this, mBenefitData);
         mRetirementDetailsAdapter.setOnSelectAmountListener(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -76,23 +76,23 @@ public class RetirementDetailsActivity extends AppCompatActivity implements Sele
 
         mCurrentBalanceTextView.setText(SystemUtils.getFormattedCurrency(balance));
 
-        List<AmountData> amountDatas = new ArrayList<>();
+        List<BenefitData> benefitData = new ArrayList<>();
         AgeData stopAge = new AgeData(startAge.getYear(), startAge.getMonth());
         stopAge.addMonths(12);
         for(AgeData age = startAge; age.isBefore(endAge); age.addMonths(12)) {
-            AmountData amountData = BalanceUtils.getAmountData(age, stopAge, interest, balance, withdrawMode, withdrawAmount);
-            balance = amountData.getBalance();
-            amountDatas.add(amountData);
+            BenefitData benefitData = BalanceUtils.getAmountData(age, stopAge, interest, balance, withdrawMode, withdrawAmount);
+            balance = benefitData.getBalance();
+            benefitData.add(benefitData);
             stopAge.addMonths(12);
         }
 
-        mRetirementDetailsAdapter.update(amountDatas);
+        mRetirementDetailsAdapter.update(benefitData);
     }
 
     @Override
-    public void onSelectAmount(AmountData amountData) {
-        String balance = SystemUtils.getFormattedCurrency(amountData.getBalance());
-        String message = "Balance: " + balance + "\nAge: " + amountData.getAge().toString();
+    public void onSelectAmount(BenefitData benefitData) {
+        String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
+        String message = "Balance: " + balance + "\nAge: " + benefitData.getAge().toString();
         final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
             @Override

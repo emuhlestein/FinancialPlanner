@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.AmountData;
+import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.ui.SelectAmountListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -23,12 +23,12 @@ import java.util.List;
 public class RetirementDetailsAdapter extends
         RecyclerView.Adapter<RetirementDetailsAdapter.AmountDataHolder>{
     private Context mContext;
-    private List<AmountData> mAmountData;
+    private List<BenefitData> mBenefitData;
     private SelectAmountListener mListener;
 
-    public RetirementDetailsAdapter(Context context, List<AmountData> amountData) {
+    public RetirementDetailsAdapter(Context context, List<BenefitData> benefitData) {
         mContext = context;
-        mAmountData = amountData;
+        mBenefitData = benefitData;
     }
 
     @Override
@@ -40,13 +40,13 @@ public class RetirementDetailsAdapter extends
 
     @Override
     public void onBindViewHolder(AmountDataHolder holder, int position) {
-        holder.bindAmount(mAmountData.get(position));
+        holder.bindAmount(mBenefitData.get(position));
     }
 
     @Override
     public int getItemCount() {
-        if(mAmountData != null) {
-            return mAmountData.size();
+        if(mBenefitData != null) {
+            return mBenefitData.size();
         } else {
             return 0;
         }
@@ -56,9 +56,9 @@ public class RetirementDetailsAdapter extends
         mListener = listener;
     }
 
-    public void update(List<AmountData> amountData) {
-        mAmountData.clear();
-        mAmountData.addAll(amountData);
+    public void update(List<BenefitData> benefitData) {
+        mBenefitData.clear();
+        mBenefitData.addAll(benefitData);
         notifyDataSetChanged();
     }
 
@@ -66,7 +66,7 @@ public class RetirementDetailsAdapter extends
         private TextView mMilestoneTextView;
         private TextView mMonthlyAmountTextView;
         private LinearLayout mLinearLayout;
-        private AmountData mAmount;
+        private BenefitData mAmount;
 
         private AmountDataHolder(View itemView) {
             super(itemView);
@@ -76,8 +76,8 @@ public class RetirementDetailsAdapter extends
             itemView.setOnClickListener(this);
         }
 
-        private void bindAmount(AmountData amountData) {
-            mAmount = amountData;
+        private void bindAmount(BenefitData benefitData) {
+            mAmount = benefitData;
             double amount = mAmount.getMonthlyAmount();
             AgeData age = mAmount.getAge();
 

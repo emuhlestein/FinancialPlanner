@@ -20,7 +20,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.AmountData;
+import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
@@ -88,21 +88,21 @@ public abstract class BaseSummaryFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(IncomeSummaryViewModel.class);
 
-        mViewModel.getList().observe(this, new Observer<List<AmountData>>() {
+        mViewModel.getList().observe(this, new Observer<List<BenefitData>>() {
             @Override
-            public void onChanged(@Nullable List<AmountData> amountDataList) {
+            public void onChanged(@Nullable List<BenefitData> benefitDataList) {
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
 
-                for(AmountData amountData : amountDataList) {
-                    AgeData age = amountData.getAge();
-                    String amount = SystemUtils.getFormattedCurrency(amountData.getMonthlyAmount());
-                    String balance = SystemUtils.getFormattedCurrency(amountData.getBalance());
+                for(BenefitData benefitData : benefitDataList) {
+                    AgeData age = benefitData.getAge();
+                    String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
+                    String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
                     String line1 = age.toString() + "   " + amount + "  " + balance;
                     IncomeDetails incomeDetail = new IncomeDetails(line1, RetirementConstants.BALANCE_STATE_GOOD, "");
                     incomeDetails.add(incomeDetail);
                 }
                 mIncomeDetailsAdapter.update(incomeDetails);
-                if (amountDataList.isEmpty()) {
+                if (benefitDataList.isEmpty()) {
 
                     final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.add_income_source_message, Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction(R.string.dismiss, new View.OnClickListener() {

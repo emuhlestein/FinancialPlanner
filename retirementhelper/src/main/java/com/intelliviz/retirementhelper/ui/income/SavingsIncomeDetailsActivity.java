@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.AmountData;
+import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
@@ -145,18 +145,18 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
         mViewModel = ViewModelProviders.of(this, factory).
                 get(SavingsIncomeDetailsViewModel.class);
 
-        mViewModel.getList().observe(this, new Observer<List<AmountData>>() {
+        mViewModel.getList().observe(this, new Observer<List<BenefitData>>() {
             @Override
-            public void onChanged(@Nullable List<AmountData> amountDataList) {
+            public void onChanged(@Nullable List<BenefitData> benefitDataList) {
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
-                for(AmountData amountData : amountDataList) {
-                    AgeData age = amountData.getAge();
-                    String balance = SystemUtils.getFormattedCurrency(amountData.getBalance());
-                    String amount = SystemUtils.getFormattedCurrency(amountData.getMonthlyAmount());
+                for(BenefitData benefitData : benefitDataList) {
+                    AgeData age = benefitData.getAge();
+                    String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
+                    String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
                     String line1 = age.toString() + "   " + amount + "  " + balance;
 
-                    int status = amountData.getBalanceState();
-                    if(amountData.isPenalty()) {
+                    int status = benefitData.getBalanceState();
+                    if(benefitData.isPenalty()) {
                         status = 0;
                     }
                     IncomeDetails incomeDetail = new IncomeDetails(line1, status, "");

@@ -7,7 +7,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.AmountData;
+import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.PensionRules;
 import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
 import com.intelliviz.retirementhelper.data.SavingsIncomeRules;
@@ -27,7 +27,7 @@ import java.util.List;
  */
 
 public class IncomeSummaryViewModel extends AndroidViewModel {
-    private MutableLiveData<List<AmountData>> mAmountData = new MutableLiveData<>();
+    private MutableLiveData<List<BenefitData>> mAmountData = new MutableLiveData<>();
     private AppDatabase mDB;
 
     public IncomeSummaryViewModel(Application application) {
@@ -36,7 +36,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         new GetAmountDataAsyncTask().execute();
     }
 
-    public LiveData<List<AmountData>> getList() {
+    public LiveData<List<BenefitData>> getList() {
         return mAmountData;
     }
 
@@ -44,21 +44,21 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         new GetAmountDataAsyncTask().execute();
     }
 
-    private class GetAmountDataAsyncTask extends AsyncTask<Void, Void, List<AmountData>> {
+    private class GetAmountDataAsyncTask extends AsyncTask<Void, Void, List<BenefitData>> {
 
         @Override
-        protected List<AmountData> doInBackground(Void... voids) {
+        protected List<BenefitData> doInBackground(Void... voids) {
             return  getAllIncomeSources();
         }
 
         @Override
-        protected void onPostExecute(List<AmountData> amountData) {
-            mAmountData.setValue(amountData);
+        protected void onPostExecute(List<BenefitData> benefitData) {
+            mAmountData.setValue(benefitData);
         }
     }
 
-    private List<AmountData> getAllIncomeSources() {
-        List<List<AmountData>> allIncomeSources = new ArrayList<>();
+    private List<BenefitData> getAllIncomeSources() {
+        List<List<BenefitData>> allIncomeSources = new ArrayList<>();
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
         AgeData endAge = roe.getEndAge();
@@ -75,14 +75,14 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         return getIncomeSummary(roe);
     }
 
-    private List<AmountData> sumAmounts(AgeData endAge,  List<List<AmountData>> allIncomeSources) {
-        List<AmountData> allAmounts = new ArrayList<>();
+    private List<BenefitData> sumAmounts(AgeData endAge, List<List<BenefitData>> allIncomeSources) {
+        List<BenefitData> allAmounts = new ArrayList<>();
         int numIncomeSources = allIncomeSources.size();
         List<IndexAmount> indeces = new ArrayList<>();
 
         for(int incomeSource = 0; incomeSource < numIncomeSources; incomeSource++) {
             IndexAmount indexAmount = new IndexAmount();
-            indexAmount.amountData = allIncomeSources.get(incomeSource);
+            indexAmount.mBenefitData = allIncomeSources.get(incomeSource);
             indexAmount.currentIndex = 0;
             indeces.add(indexAmount);
         }
@@ -94,13 +94,13 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             for (int incomeSource = 0; incomeSource < numIncomeSources; incomeSource++) {
                 double monthlyAmount;
                 double balance;
-                List<AmountData> amountData = indeces.get(incomeSource).amountData;
+                List<BenefitData> benefitData = indeces.get(incomeSource).mBenefitData;
                 int index = indeces.get(incomeSource).currentIndex;
-                if(amountData.get(index).getAge().getNumberOfMonths() == currentMonth) {
-                    monthlyAmount = amountData.get(index).getMonthlyAmount();
+                if(benefitData.get(index).getAge().getNumberOfMonths() == currentMonth) {
+                    monthlyAmount = benefitData.get(index).getMonthlyAmount();
                     sumMonthlyAmount += monthlyAmount;
 
-                    balance = amountData.get(index).getBalance();
+                    balance = benefitData.get(index).getBalance();
                     sumBalance += balance;
                     indeces.get(incomeSource).currentIndex++;
                 }
@@ -109,7 +109,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             if(sumMonthlyAmount > 0) {
                 //AgeData age, double monthlyAmount, double balance, int balanceState, boolean penalty)
                 AgeData age = new AgeData(currentMonth);
-                AmountData sumAmount = new AmountData(age, sumMonthlyAmount, sumBalance, RetirementConstants.BALANCE_STATE_GOOD, false);
+                BenefitData sumAmount = new BenefitData(age, sumMonthlyAmount, sumBalance, RetirementConstants.BALANCE_STATE_GOOD, false);
                 allAmounts.add(sumAmount);
             }
         }
@@ -117,9 +117,9 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         return allAmounts;
     }
 
-    private List<AmountData> getIncomeSummary(RetirementOptionsEntity roe) {
+    private List<BenefitData> getIncomeSummary(RetirementOptionsEntity roe) {
         float desiredBalance = Float.parseFloat(roe.getReachAmount());
-        List<List<AmountData>> allIncomeSources = new ArrayList<>();
+        List<List<BenefitData>> allIncomeSources = new ArrayList<>();
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         AgeData endAge = roe.getEndAge();
         for(SavingsIncomeEntity sie : tdieList) {
@@ -164,8 +164,8 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         return sumAmounts(endAge, allIncomeSources);
     }
 
-    private List<AmountData> getReachAmount(RetirementOptionsEntity roe) {
-        List<List<AmountData>> allIncomeSources = new ArrayList<>();
+    private List<BenefitData> getReachAmount(RetirementOptionsEntity roe) {
+        List<List<BenefitData>> allIncomeSources = new ArrayList<>();
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         AgeData endAge = roe.getEndAge();
 
@@ -195,7 +195,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
     }
 
     private static class IndexAmount {
-        public List<AmountData> amountData;
+        public List<BenefitData> mBenefitData;
         public int currentIndex;
     }
 }
