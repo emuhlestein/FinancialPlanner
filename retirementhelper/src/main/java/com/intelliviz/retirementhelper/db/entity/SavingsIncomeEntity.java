@@ -154,9 +154,9 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     }
 
     @Override
-    public List<BenefitData> getMonthlyAmountData() {
+    public List<BenefitData> getBenefitData() {
         if(mRules != null) {
-            return mRules.getMonthlyAmountData();
+            return mRules.getBenefitData();
         } else {
             return null;
         }

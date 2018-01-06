@@ -48,13 +48,13 @@ public abstract class BaseSavingsIncomeRules {
     protected abstract double adjustMonthlyAmount(AgeData age, double amount);
     protected abstract boolean isPenalty(AgeData age);
 
-    public List<BenefitData> getMonthlyAmountData() {
-        AgeData age = mStartAge;
+    public List<BenefitData> getBenefitData() {
+        AgeData age = mCurrentAge;
         if(age.getMonth() > 0) {
             age = new AgeData(age.getYear()+1, 0);
         }
 
-        BenefitData benefitData = getInitAmountData(age);
+        BenefitData benefitData = getInitBenefitData(age);
 
         List<BenefitData> listAmountDate = new ArrayList<>();
         listAmountDate.add(benefitData);
@@ -67,7 +67,7 @@ public abstract class BaseSavingsIncomeRules {
             }
 
             double mWithdrawPercentIncrease = 0;
-            benefitData = getNewAmountData(benefitData, nextAge, mWithdrawPercentIncrease);
+            benefitData = getNewBenefitData(benefitData, nextAge, mWithdrawPercentIncrease);
 
             age = new AgeData(nextAge.getYear(), 0);
 
@@ -77,37 +77,61 @@ public abstract class BaseSavingsIncomeRules {
         return listAmountDate;
     }
 
-    BenefitData getInitAmountData(AgeData age) {
-        int numMonths = mStartAge.diff(mCurrentAge);
+    BenefitData getInitBenefitData(AgeData age) {
+        int numMonths = age.diff(mCurrentAge);
         double balance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
 
-        double monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
-
-        monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
-        boolean penalty = isPenalty(age);
-
-        int balanceState = getBalanceStatus(balance, monthlyWithdrawAmount);
-        if(balanceState == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
-            balance = 0;
+        double monthlyWithdrawAmount;
+        boolean penalty;
+        int balanceState;
+        if(age.isBefore(mStartAge)) {
+            monthlyWithdrawAmount = 0; // no withdraws before start date
+            penalty = false;
+            balanceState = RetirementConstants.BALANCE_STATE_GOOD;
+        } else {
+            monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
+            monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
+            penalty = isPenalty(age);
+            balanceState = getBalanceStatus(balance, monthlyWithdrawAmount);
+            if(balanceState == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
+                balance = 0;
+            }
         }
+
         return new BenefitData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
     }
 
-    BenefitData getNewAmountData(BenefitData amount, AgeData age, double withdrawAmountIncrease) {
+    BenefitData getNewBenefitData(BenefitData amount, AgeData age, double withdrawAmountIncrease) {
         AgeData newAge = new AgeData(amount.getAge().getNumberOfMonths());
         int numMonths = newAge.diff(age);
         double balance = amount.getBalance();
-        double monthlyWithdrawAmount = amount.getMonthlyAmount();
-        balance = getNewBalance(numMonths, balance, monthlyWithdrawAmount, mInterest);
+        double monthlyWithdrawAmount;
+        int balanceState;
+        boolean penalty;
 
-        int balanceState = getBalanceStatus(balance, monthlyWithdrawAmount);
-        if(balanceState == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
-            balance = 0;
+        if(age.isBefore(mStartAge)) {
+            monthlyWithdrawAmount = 0;
+            balance =  getFutureBalance(balance, numMonths, mInterest, mMonthlyAddition);
+            balanceState = getBalanceStatus(balance, monthlyWithdrawAmount);
+            penalty = false;
+        } else {
+            monthlyWithdrawAmount = amount.getMonthlyAmount();
+            if(monthlyWithdrawAmount == 0) {
+                monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
+            } else {
+                monthlyWithdrawAmount = amount.getMonthlyAmount();
+            }
+            balance = getNewBalance(numMonths, balance, monthlyWithdrawAmount, mInterest);
+            balanceState = getBalanceStatus(balance, monthlyWithdrawAmount);
+            if(balanceState == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
+                balance = 0;
+            }
+            monthlyWithdrawAmount += withdrawAmountIncrease;
+            monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
+            penalty = isPenalty(age);
         }
 
-        monthlyWithdrawAmount += withdrawAmountIncrease;
-        monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
-        return new BenefitData(age, monthlyWithdrawAmount, balance, balanceState, isPenalty(age));
+        return new BenefitData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
     }
 
     int getBalanceStatus(double balance, double monthlyWithdrawAmount) {

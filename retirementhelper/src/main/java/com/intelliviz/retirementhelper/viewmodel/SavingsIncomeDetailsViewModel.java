@@ -161,6 +161,6 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
 
         }
 
-        return entity.getMonthlyAmountData();
+        return entity.getBenefitData();
     }
 }

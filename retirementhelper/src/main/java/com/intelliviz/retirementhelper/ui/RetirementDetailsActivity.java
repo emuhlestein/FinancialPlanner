@@ -76,17 +76,17 @@ public class RetirementDetailsActivity extends AppCompatActivity implements Sele
 
         mCurrentBalanceTextView.setText(SystemUtils.getFormattedCurrency(balance));
 
-        List<BenefitData> benefitData = new ArrayList<>();
+        List<BenefitData> benefitDataList = new ArrayList<>();
         AgeData stopAge = new AgeData(startAge.getYear(), startAge.getMonth());
         stopAge.addMonths(12);
         for(AgeData age = startAge; age.isBefore(endAge); age.addMonths(12)) {
-            BenefitData benefitData = BalanceUtils.getAmountData(age, stopAge, interest, balance, withdrawMode, withdrawAmount);
+            BenefitData benefitData = BalanceUtils.getBenefitData(age, stopAge, interest, balance, withdrawMode, withdrawAmount);
             balance = benefitData.getBalance();
-            benefitData.add(benefitData);
+            benefitDataList.add(benefitData);
             stopAge.addMonths(12);
         }
 
-        mRetirementDetailsAdapter.update(benefitData);
+        mRetirementDetailsAdapter.update(benefitDataList);
     }
 
     @Override

@@ -132,7 +132,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                         sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
                 sie.setRules(sir);
                 sie.getBalance();
-                allIncomeSources.add(sie.getMonthlyAmountData());
+                allIncomeSources.add(sie.getBenefitData());
 
             } else if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
 
@@ -140,7 +140,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                         Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
                         Double.parseDouble(sie.getWithdrawAmount()));
                 sie.setRules(tdir);
-                allIncomeSources.add(sie.getMonthlyAmountData());
+                allIncomeSources.add(sie.getBenefitData());
             }
 
         }
@@ -150,7 +150,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             String birthdate = roe.getBirthdate();
             SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
             gpie.setRules(ssr);
-            allIncomeSources.add(gpie.getMonthlyAmountData());
+            allIncomeSources.add(gpie.getBenefitData());
 
         }
         List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
@@ -158,7 +158,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             AgeData minAge = pie.getMinAge();
             PensionRules pr = new PensionRules(minAge, endAge,  Double.parseDouble(pie.getMonthlyBenefit()));
             pie.setRules(pr);
-            allIncomeSources.add(pie.getMonthlyAmountData());
+            allIncomeSources.add(pie.getBenefitData());
         }
 
         return sumAmounts(endAge, allIncomeSources);
@@ -180,7 +180,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                         Double.parseDouble(sie.getMonthlyAddition()),
                         sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
                 sie.setRules(sir);
-                allIncomeSources.add(sie.getMonthlyAmountData());
+                allIncomeSources.add(sie.getBenefitData());
 
             } else if (sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
 
@@ -188,7 +188,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                         Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
                         Double.parseDouble(sie.getWithdrawAmount()));
                 sie.setRules(tdir);
-                allIncomeSources.add(sie.getMonthlyAmountData());
+                allIncomeSources.add(sie.getBenefitData());
             }
         }
         }

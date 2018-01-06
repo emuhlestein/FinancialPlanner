@@ -203,7 +203,7 @@ public class SystemUtils {
         int months = nowMonth - birthMonth;
         if(months < 0) {
             years--;
-            months =+ 12;
+            months += 12;
         } else if(months == 0) {
             int dayDiff = nowDay - birthDay;
             if(dayDiff < 0) {

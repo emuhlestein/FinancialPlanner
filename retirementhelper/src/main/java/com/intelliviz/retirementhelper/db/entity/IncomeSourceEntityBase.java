@@ -63,7 +63,7 @@ public abstract class IncomeSourceEntityBase implements IncomeSourceType {
 
     public abstract List<AgeData> getAges();
 
-    public abstract List<BenefitData> getMonthlyAmountData();
+    public abstract List<BenefitData> getBenefitData();
 
 
     /**

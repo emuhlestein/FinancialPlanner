@@ -67,7 +67,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     @Override
-    public List<BenefitData> getMonthlyAmountData() {
+    public List<BenefitData> getBenefitData() {
         AgeData age = mMinAge;
         List<BenefitData> listAmountDate = new ArrayList<>();
 

@@ -73,7 +73,7 @@ public class BalanceUtils {
         return new MilestoneData(startAge, endAge, null, monthlyAmount, startBalance, lastBalance, interest, 0, numMonths, withdrawMode, withdrawAmount);
     }
 
-    public static BenefitData getAmountData(AgeData startAge, AgeData endAge, double interest, double startBalance, int withdrawMode, double withdrawAmount) {
+    public static BenefitData getBenefitData(AgeData startAge, AgeData endAge, double interest, double startBalance, int withdrawMode, double withdrawAmount) {
         int numMonths = endAge.diff(startAge);
         AgeData age = new AgeData(startAge.getYear(), startAge.getMonth());
         if(numMonths == 0) {

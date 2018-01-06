@@ -12,5 +12,5 @@ public interface IncomeTypeRules {
     void setValues(Bundle bundle);
     List<AgeData> getAges();
     MilestoneData getMilestone(AgeData age);
-    List<BenefitData> getMonthlyAmountData();
+    List<BenefitData> getBenefitData();
 }
