@@ -77,6 +77,7 @@ public abstract class BaseSavingsIncomeRules {
         return listAmountDate;
     }
 
+
     BenefitData getInitBenefitData(AgeData age) {
         int numMonths = age.diff(mCurrentAge);
         double balance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
@@ -145,13 +146,6 @@ public abstract class BaseSavingsIncomeRules {
         return RetirementConstants.BALANCE_STATE_GOOD;
     }
 
-    double getInitMonthlyWithdrawAmount(double balance) {
-        if(mWithdrawMode == WITHDRAW_MODE_PERCENT) {
-            return balance * mWithdrawAmount / 1200;
-        } else {
-            return mWithdrawAmount;
-        }
-    }
 
     double getNewBalance(int numMonths, double balance, double monthlyWithdrawAmount, double annualInterest) {
         double monthlyInterest = annualInterest / 1200;
@@ -165,21 +159,39 @@ public abstract class BaseSavingsIncomeRules {
         return newBalance;
     }
 
-    private double getFutureBalance(double currentBalance, int numMonths, double annualInterest, double monthlyAddition) {
+    public BenefitData getBenefitForAge(AgeData age) {
+        if(age.isBefore(mCurrentAge)) {
+            return null;
+        }
+
+        int numMonths = mCurrentAge.diff(age);
+        double balance =  getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
+        return new BenefitData(age, 0, balance, RetirementConstants.BALANCE_STATE_GOOD, false);
+    }
+
+    public double getInitMonthlyWithdrawAmount(double balance) {
+        if(mWithdrawMode == WITHDRAW_MODE_PERCENT) {
+            return getInitMonthlyWithdrawAmount(balance, mWithdrawAmount);
+        } else {
+            return mWithdrawAmount;
+        }
+    }
+
+    public double getInitMonthlyWithdrawAmount(double balance, double percent) {
+        return balance * percent / 1200;
+    }
+
+    public double getFutureBalance(double currentBalance, int numMonths, double annualInterest, double monthlyAddition) {
+        double monthlyInterest = annualInterest / 1200.0;
         double cumulativeBalance = currentBalance;
         for(int i = 0; i < numMonths; i++) {
-            cumulativeBalance = getBalance(cumulativeBalance, annualInterest, monthlyAddition);
+            cumulativeBalance = getBalance(cumulativeBalance, monthlyAddition, monthlyInterest);
         }
         return cumulativeBalance;
     }
 
-    private static double getBalance(double balance, double interest, double monthlyIncrease) {
-        double interestEarned = getMonthlyAmountFromBalance(balance, interest);
-        return monthlyIncrease + interestEarned + balance;
-    }
-
-    private static double getMonthlyAmountFromBalance(double balance, double interest) {
-        double monthlyInterest = interest / 1200.0;
-        return balance * monthlyInterest;
+    private static double getBalance(double balance, double monthlyAddition, double monthlyInterest) {
+        double interestEarned = balance * monthlyInterest;
+        return monthlyAddition + interestEarned + balance;
     }
 }

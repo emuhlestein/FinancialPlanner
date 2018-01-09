@@ -147,4 +147,5 @@
     <string name="reach_amount">When will savings reach this amount?</string>
     <string name="reach_percent_income">When will savings reach this percent of  income?</string>
     <string name="annual_income">Annual Income</string>
+    <string name="monthly_pretire_income">Monthly Pre-Retirement Income</string>
 </resources>

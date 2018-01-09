@@ -21,6 +21,7 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -69,7 +70,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             case RetirementConstants.REACH_AMOUNT_MODE:
                 return getReachAmount(roe);
             case RetirementConstants.REACH_IMCOME_PERCENT_MODE:
-                return getIncomeSummary(roe);
+                return getReachPercentIncome(roe);
             default:
 
         }
@@ -122,11 +123,17 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
     }
 
     private List<BenefitData> getIncomeSummary(RetirementOptionsEntity roe) {
-        float desiredBalance = Float.parseFloat(roe.getReachAmount());
+        List<List<BenefitData>> allIncomeSources = getBenefitDataList(roe);
+        AgeData currentAge = SystemUtils.getAge(roe.getBirthdate());
+        AgeData endAge = roe.getEndAge();
+        return sumAmounts(currentAge, endAge, allIncomeSources);
+    }
+
+    private List<List<BenefitData>> getBenefitDataList(RetirementOptionsEntity roe) {
         List<List<BenefitData>> allIncomeSources = new ArrayList<>();
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         AgeData endAge = roe.getEndAge();
-        AgeData currentAge = SystemUtils.getAge(roe.getBirthdate());
+
         for(SavingsIncomeEntity sie : tdieList) {
             if(sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
                 SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, sie.getStartAge(),
@@ -163,7 +170,76 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             allIncomeSources.add(pie.getBenefitData());
         }
 
-        return sumAmounts(currentAge, endAge, allIncomeSources);
+        return allIncomeSources;
+    }
+
+    private List<BenefitData> getReachPercentIncome(RetirementOptionsEntity roe) {
+        List<BenefitData> benefitDataList = new ArrayList<>();
+        List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
+        BenefitData savingsBenefitData = null;
+        BenefitData savings401kBenefitData = null;
+        AgeData age = SystemUtils.getAge(roe.getBirthdate());
+        AgeData endAge = roe.getEndAge();
+        double sumBalance = 0;
+
+        String percentString = SystemUtils.getFloatValue(roe.getReachPercent());
+        double percent = Double.parseDouble(percentString) / 100;
+        String monthlySalaryString = SystemUtils.getFloatValue(roe.getAnnualIncome());
+        double monthlySalary = Double.parseDouble(monthlySalaryString);
+        double targetAmount = monthlySalary * percent;
+
+        while(true) {
+            double balance = 0;
+            for (SavingsIncomeEntity sie : tdieList) {
+                if (sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
+                    SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, sie.getStartAge(),
+                            Double.parseDouble(sie.getBalance()),
+                            Double.parseDouble(sie.getInterest()),
+                            Double.parseDouble(sie.getMonthlyAddition()),
+                            sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
+                    sie.setRules(sir);
+                    savingsBenefitData = sie.getBenefitForAge(age);
+                    if(savingsBenefitData != null) {
+                        balance += savingsBenefitData.getBalance();
+                    }
+
+                } else if (sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
+
+                    Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, sie.getStartAge(), Double.parseDouble(sie.getBalance()),
+                            Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
+                            Double.parseDouble(sie.getWithdrawAmount()));
+                    sie.setRules(tdir);
+                    savings401kBenefitData = sie.getBenefitForAge(age);
+
+                    if(savings401kBenefitData != null) {
+                        balance += savings401kBenefitData.getBalance();
+                    }
+                }
+            }
+
+            double montlySavingsBenefit = 0;
+            if(balance > sumBalance) {
+                sumBalance = balance;
+                montlySavingsBenefit = sumBalance * .04 / 12;
+
+            } else {
+                return Collections.emptyList();
+            }
+
+            double sumMonthlyBenefit = montlySavingsBenefit;
+
+            BenefitData benefitData = new BenefitData(age, sumMonthlyBenefit, sumBalance, RetirementConstants.BALANCE_STATE_GOOD, false);
+            benefitDataList.add(benefitData);
+
+            if(sumMonthlyBenefit > targetAmount) {
+                return benefitDataList;
+            }
+
+            age = new AgeData(age.getYear()+1, 0);
+            if(age.getYear() >= 100) {
+                return benefitDataList;
+            }
+        }
     }
 
     private List<BenefitData> getReachAmount(RetirementOptionsEntity roe) {

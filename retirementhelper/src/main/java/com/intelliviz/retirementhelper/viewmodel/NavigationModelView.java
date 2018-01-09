@@ -7,7 +7,6 @@ import android.arch.lifecycle.MutableLiveData;
 
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 /**
  * Created by edm on 10/7/2017.
@@ -59,7 +58,7 @@ public class NavigationModelView extends AndroidViewModel {
             RetirementOptionsEntity roe = params[0];
             mDB.retirementOptionsDao().update(roe);
             // TODO when ROM is updated, everything should be updated.
-            SystemUtils.updateAppWidget(getApplication());
+            // SystemUtils.updateAppWidget(getApplication());
             return null;
         }
     }

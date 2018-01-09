@@ -128,6 +128,14 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mAnnualPercentIncrease = annualPercentIncrease;
     }
 
+    public BenefitData getBenefitForAge(AgeData age) {
+        if(mRules != null) {
+            return mRules.getBenefitForAge(age);
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsEntity rod) {
         List<MilestoneData> milestones = new ArrayList<>();

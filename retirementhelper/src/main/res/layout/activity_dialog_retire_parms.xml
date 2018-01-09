@@ -122,7 +122,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:hint="@string/annual_income"
+                    android:hint="@string/monthly_pretire_income"
                     android:inputType="numberDecimal"
                     style="@style/CurrencyStyle" />
             </android.support.design.widget.TextInputLayout>

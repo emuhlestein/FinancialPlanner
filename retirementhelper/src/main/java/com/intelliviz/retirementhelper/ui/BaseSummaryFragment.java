@@ -91,6 +91,10 @@ public abstract class BaseSummaryFragment extends Fragment implements
         mViewModel.getList().observe(this, new Observer<List<BenefitData>>() {
             @Override
             public void onChanged(@Nullable List<BenefitData> benefitDataList) {
+                if(benefitDataList == null) {
+                    return;
+                }
+
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
 
                 for(BenefitData benefitData : benefitDataList) {
