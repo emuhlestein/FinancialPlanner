@@ -324,7 +324,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         Bundle bundle = new Bundle();
 
         bundle.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, id);
-        bundle.putInt(RetirementConstants.EXTRA_INCOME_SAVINGS_TYPE, mIncomeType);
+        bundle.putInt(RetirementConstants.EXTRA_INCOME_TYPE, mIncomeType);
         bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
         bundle.putParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE, startAge);
         bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
