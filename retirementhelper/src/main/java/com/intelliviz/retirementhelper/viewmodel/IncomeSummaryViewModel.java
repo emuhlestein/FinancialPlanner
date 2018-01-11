@@ -181,16 +181,17 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         BenefitData savingsPensionBenefitData;
         BenefitData savingsGovPensionBenefitData;
         AgeData endAge = roe.getEndAge();
-        double sumBalance = 0;
-        double sumMonthlyBenefit = 0;
 
         AgeData currentAge = SystemUtils.getAge(roe.getBirthdate());
         for (int year = currentAge.getYear()+1; year < endAge.getYear(); year++) {
             AgeData age = new AgeData(year, 0);
 
+            double sumBalance = 0;
+            double sumMonthlyBenefit = 0;
+
             for (SavingsIncomeEntity sie : tdieList) {
                 if (sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
-                    SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, sie.getStartAge(),
+                    SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(),  sie.getStartAge(), endAge,
                             Double.parseDouble(sie.getBalance()),
                             Double.parseDouble(sie.getInterest()),
                             Double.parseDouble(sie.getMonthlyAddition()),
@@ -199,10 +200,11 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                     savingsBenefitData = sie.getBenefitForAge(age);
                     if (savingsBenefitData != null) {
                         sumBalance += savingsBenefitData.getBalance();
+                        sumMonthlyBenefit += savingsBenefitData.getMonthlyAmount();
                     }
                 } else if (sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
 
-                    Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, sie.getStartAge(), Double.parseDouble(sie.getBalance()),
+                    Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), sie.getStartAge(), endAge, Double.parseDouble(sie.getBalance()),
                             Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
                             Double.parseDouble(sie.getWithdrawAmount()));
                     sie.setRules(tdir);
@@ -210,6 +212,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
 
                     if (savings401kBenefitData != null) {
                         sumBalance += savings401kBenefitData.getBalance();
+                        sumMonthlyBenefit += savings401kBenefitData.getMonthlyAmount();
                     }
                 }
             }
@@ -223,6 +226,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                 savingsGovPensionBenefitData = gpie.getBenefitForAge(age);
                 if (savingsGovPensionBenefitData != null) {
                     sumBalance += savingsGovPensionBenefitData.getBalance();
+                    sumMonthlyBenefit += savingsGovPensionBenefitData.getMonthlyAmount();
                 }
             }
             List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
@@ -233,6 +237,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                 savingsPensionBenefitData = pie.getBenefitForAge(age);
                 if (savingsPensionBenefitData != null) {
                     sumBalance += savingsPensionBenefitData.getBalance();
+                    sumMonthlyBenefit += savingsPensionBenefitData.getMonthlyAmount();
                 }
             }
 
@@ -264,7 +269,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             double balance = 0;
             for (SavingsIncomeEntity sie : tdieList) {
                 if (sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
-                    SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, sie.getStartAge(),
+                    SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(),  sie.getStartAge(), endAge,
                             Double.parseDouble(sie.getBalance()),
                             Double.parseDouble(sie.getInterest()),
                             Double.parseDouble(sie.getMonthlyAddition()),
@@ -277,7 +282,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
 
                 } else if (sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
 
-                    Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, sie.getStartAge(), Double.parseDouble(sie.getBalance()),
+                    Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), sie.getStartAge(), endAge, Double.parseDouble(sie.getBalance()),
                             Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
                             Double.parseDouble(sie.getWithdrawAmount()));
                     sie.setRules(tdir);
@@ -346,7 +351,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         for(SavingsIncomeEntity sie : tdieList) {
             AgeData startAge = sie.getStartAge();
             if (sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
-                SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), endAge, startAge,
+                SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), startAge, endAge,
                         Double.parseDouble(sie.getBalance()),
                         Double.parseDouble(sie.getInterest()),
                         Double.parseDouble(sie.getMonthlyAddition()),
@@ -356,7 +361,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
 
             } else if (sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
 
-                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(sie.getBalance()),
+                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), startAge, endAge, Double.parseDouble(sie.getBalance()),
                         Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
                         Double.parseDouble(sie.getWithdrawAmount()));
                 sie.setRules(tdir);

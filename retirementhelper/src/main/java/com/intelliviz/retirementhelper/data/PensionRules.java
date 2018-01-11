@@ -75,7 +75,11 @@ public class PensionRules implements IncomeTypeRules {
 
     @Override
     public BenefitData getBenefitForAge(AgeData age) {
-        return null;
+        if(age.isBefore(mMinAge)) {
+            return new BenefitData(age, 0, 0, 0, false);
+        } else {
+            return new BenefitData(age, mMonthlyAmount, 0, 0, false);
+        }
     }
 
     public PensionData getMonthlyBenefitForAge(AgeData startAge) {

@@ -101,7 +101,9 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
     @Override
     public BenefitData getBenefitForAge(AgeData age) {
-        return null;
+        int birthYear = SystemUtils.getBirthYear(mBirthdate);
+        double amount = getMonthlyBenefit(age, birthYear, mFullMonthlyBenefit);
+        return new BenefitData(age, amount, 0, 0, false);
     }
 
     @Override
