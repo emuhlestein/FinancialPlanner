@@ -69,6 +69,11 @@ public class PensionRules implements IncomeTypeRules {
     }
 
     @Override
+    public double getBalanceForAge(AgeData age) {
+        return 0;
+    }
+
+    @Override
     public BenefitData getBenefitForAge(AgeData age) {
         return null;
     }

@@ -66,6 +66,14 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
         }
     }
 
+    public BenefitData getBenefitForAge(AgeData age) {
+        if(mRules != null) {
+            return mRules.getBenefitForAge(age);
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public List<BenefitData> getBenefitData() {
         if(mRules != null) {

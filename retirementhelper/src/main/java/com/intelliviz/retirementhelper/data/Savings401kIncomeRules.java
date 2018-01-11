@@ -18,7 +18,7 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
     private AgeData mMinAge;
     private double mPenalty;
 
-    public Savings401kIncomeRules(String birthDate, AgeData endAge, AgeData startAge, double balance,
+    public Savings401kIncomeRules(String birthDate, AgeData startAge, AgeData endAge, double balance,
                                   double interest, double monthlyAddition, int withdrawMode, double withdrawAmount) {
         super(birthDate, startAge, endAge, balance, interest, monthlyAddition, withdrawMode, withdrawAmount);
         mMinAge = PENALTY_AGE;
@@ -31,7 +31,7 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
         if(isPenalty(age)) {
             return amount * penaltyPercent;
         } else {
-            return penaltyPercent;
+            return amount;
         }
     }
 

@@ -215,7 +215,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         AgeData endAge = roe.getEndAge();
         for(SavingsIncomeEntity tdie : tdieList) {
             AgeData startAge = tdie.getStartAge();
-            Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge, startAge, Double.parseDouble(tdie.getBalance()),
+            Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), startAge, endAge, Double.parseDouble(tdie.getBalance()),
                     Double.parseDouble(tdie.getInterest()), Double.parseDouble(tdie.getMonthlyAddition()), 0,
                     Double.parseDouble("0"));
             tdie.setRules(tdir);

@@ -59,7 +59,7 @@ public class DataBaseUtils {
         if(!savingsEntities.isEmpty()) {
             for(SavingsIncomeEntity sie : savingsEntities) {
                 AgeData startAge = sie.getStartAge();
-                SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge, startAge, Double.parseDouble(sie.getBalance()),
+                SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, startAge, endAge, Double.parseDouble(sie.getBalance()),
                         Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()),
                         sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
                 sie.setRules(sir);

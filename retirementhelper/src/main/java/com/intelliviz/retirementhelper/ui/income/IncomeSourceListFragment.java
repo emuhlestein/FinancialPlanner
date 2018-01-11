@@ -286,7 +286,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     private void onHandleYesNo() {
         if (mIncomeAction == INCOME_ACTION_DELETE && mSelectedIncome.getId() != 0) {
             mViewModel.delete(mSelectedIncome);
-            mViewModel.updateAppWidget();
+            //mViewModel.updateAppWidget();
         }
     }
 

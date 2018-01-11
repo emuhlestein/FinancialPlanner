@@ -14,4 +14,5 @@ public interface IncomeTypeRules {
     MilestoneData getMilestone(AgeData age);
     List<BenefitData> getBenefitData();
     BenefitData getBenefitForAge(AgeData age);
+    double getBalanceForAge(AgeData age);
 }

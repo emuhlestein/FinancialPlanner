@@ -33,7 +33,7 @@ public abstract class BaseSavingsIncomeRules {
      * @param withdrawMode The withdraw mode: withdraw amount is either percent or dollar amount.
      * @param withdrawAmount The initial withdraw amount.
      */
-    public BaseSavingsIncomeRules(String birthDate, AgeData endAge, AgeData startAge,
+    public BaseSavingsIncomeRules(String birthDate, AgeData startAge, AgeData endAge,
                                   double balance, double interest, double monthlyAddition,  int withdrawMode, double withdrawAmount) {
         mCurrentAge = SystemUtils.getAge(birthDate);
         mStartAge = startAge;
@@ -54,24 +54,13 @@ public abstract class BaseSavingsIncomeRules {
             age = new AgeData(age.getYear()+1, 0);
         }
 
-        BenefitData benefitData = getInitBenefitData(age);
-
         List<BenefitData> listAmountDate = new ArrayList<>();
-        listAmountDate.add(benefitData);
-
-        while(true) {
-            // get next age
-            AgeData nextAge = new AgeData(age.getYear()+1, 0);
-            if(nextAge.isAfter(mEndAge)) {
-                break;
+        for(int year = age.getYear(); year < mEndAge.getYear(); year++) {
+            age = new AgeData(year, 0);
+            BenefitData benefitData = getBenefitForAge(age);
+            if(benefitData != null) {
+                listAmountDate.add(benefitData);
             }
-
-            double mWithdrawPercentIncrease = 0;
-            benefitData = getNewBenefitData(benefitData, nextAge, mWithdrawPercentIncrease);
-
-            age = new AgeData(nextAge.getYear(), 0);
-
-            listAmountDate.add(benefitData);
         }
 
         return listAmountDate;
@@ -159,14 +148,53 @@ public abstract class BaseSavingsIncomeRules {
         return newBalance;
     }
 
-    public BenefitData getBenefitForAge(AgeData age) {
+    public double getBalanceForAge(AgeData age) {
         if(age.isBefore(mCurrentAge)) {
+            return 0;
+        }
+
+        int numMonths = mCurrentAge.diff(age);
+        return getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
+    }
+
+    public BenefitData getBenefitForAge(AgeData age) {
+        if (age.isBefore(mCurrentAge)) {
             return null;
         }
 
         int numMonths = mCurrentAge.diff(age);
-        double balance =  getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
-        return new BenefitData(age, 0, balance, RetirementConstants.BALANCE_STATE_GOOD, false);
+        double balance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
+
+        double monthlyWithdrawAmount;
+        boolean penalty;
+        int balanceState = RetirementConstants.BALANCE_STATE_GOOD;
+
+        if (age.isBefore(mStartAge)) {
+            monthlyWithdrawAmount = 0; // no withdraws before start date
+            penalty = false;
+            balanceState = RetirementConstants.BALANCE_STATE_GOOD;
+        } else {
+            monthlyWithdrawAmount = getMonthlyWithdrawAmount(age);
+            monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
+            penalty = isPenalty(age);
+        }
+
+        return new BenefitData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
+    }
+
+    private double getMonthlyWithdrawAmount(AgeData age) {
+        // get balance at start date
+        double mWithdrawPercentIncrease = 0; // make class variable
+        int numMonths = mCurrentAge.diff(mStartAge);
+        double balanceAtStartAge = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
+        double monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balanceAtStartAge);
+        int numYears = age.getYear() - mStartAge.getYear();
+        for(int i = 0; i < numYears; i++) {
+            double annualWithdrawIncrease = monthlyWithdrawAmount * mWithdrawPercentIncrease;
+            monthlyWithdrawAmount += annualWithdrawIncrease;
+        }
+
+        return monthlyWithdrawAmount;
     }
 
     public double getInitMonthlyWithdrawAmount(double balance) {
