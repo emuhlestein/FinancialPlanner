@@ -2,6 +2,8 @@ package com.intelliviz.retirementhelper.data;
 
 import android.os.Bundle;
 
+import com.intelliviz.retirementhelper.util.SystemUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,11 +14,13 @@ import java.util.List;
 
 public class PensionRules implements IncomeTypeRules {
     public static final AgeData DEFAULT_MIN_AGE = new AgeData(65, 0);
+    private AgeData mCurrentAge;
     private AgeData mMinAge;
     private AgeData mEndAge;
     private double mMonthlyAmount;
 
-    public PensionRules(AgeData minAge, AgeData endAge, double monthlyAmount) {
+    public PensionRules(String birthDate, AgeData minAge, AgeData endAge, double monthlyAmount) {
+        mCurrentAge = SystemUtils.getAge(birthDate);
         mMinAge = minAge;
         mEndAge = endAge;
         mMonthlyAmount = monthlyAmount;
@@ -46,23 +50,27 @@ public class PensionRules implements IncomeTypeRules {
 
     @Override
     public List<BenefitData> getBenefitData() {
-        AgeData age = mMinAge;
+        AgeData age = mCurrentAge;
         List<BenefitData> listAmountDate = new ArrayList<>();
 
-        BenefitData benefitData = new BenefitData(age, mMonthlyAmount, 0, 0, false);
-        listAmountDate.add(benefitData);
+        BenefitData benefitData;
 
         while(true) {
+
+            age = new AgeData(age.getYear(), 0);
+
+            if(age.isBefore(mMinAge)) {
+                benefitData = new BenefitData(age, 0, 0, 0, false);
+            } else {
+                benefitData = new BenefitData(age, mMonthlyAmount, 0, 0, false);
+            }
+            listAmountDate.add(benefitData);
+
             // get next age
-            AgeData nextAge = new AgeData(age.getYear()+1, 0);
-            if(nextAge.isAfter(mEndAge)) {
+            age = new AgeData(age.getYear()+1, 0);
+            if(age.isAfter(mEndAge)) {
                 break;
             }
-
-            age = new AgeData(nextAge.getYear(), 0);
-
-            benefitData = new BenefitData(nextAge, mMonthlyAmount, 0, 0, false);
-            listAmountDate.add(benefitData);
         }
 
         return listAmountDate;

@@ -12,8 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
-import com.intelliviz.retirementhelper.data.PensionData;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.PensionIncomeDetailsViewModel;
 
@@ -61,17 +61,17 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeDetailsViewModel.class);
 
-        mViewModel.get().observe(this, new Observer<List<PensionData>>() {
+        mViewModel.get().observe(this, new Observer<List<BenefitData>>() {
             @Override
-            public void onChanged(@Nullable List<PensionData> listPensionData) {
+            public void onChanged(@Nullable List<BenefitData> listBenefitData) {
 
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
-                for(PensionData pensionData : listPensionData) {
-                    AgeData age = pensionData.getAge();
-                    String amount = SystemUtils.getFormattedCurrency(pensionData.getBenefit());
+                for(BenefitData benefitData : listBenefitData) {
+                    AgeData age = benefitData.getAge();
+                    String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
                     String line1 = age.toString() + "   " + amount;
                     IncomeDetails incomeDetail;
-                    incomeDetail = new IncomeDetails(line1, pensionData.getBenefitInfo(), "");
+                    incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), "");
                     incomeDetails.add(incomeDetail);
                 }
                 mAdapter.update(incomeDetails);

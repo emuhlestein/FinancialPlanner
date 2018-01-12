@@ -165,7 +165,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
         for (PensionIncomeEntity pie : pieList) {
             AgeData minAge = pie.getMinAge();
-            PensionRules pr = new PensionRules(minAge, endAge, Double.parseDouble(pie.getMonthlyBenefit()));
+            PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, endAge, Double.parseDouble(pie.getMonthlyBenefit()));
             pie.setRules(pr);
             allIncomeSources.add(pie.getBenefitData());
         }
@@ -232,7 +232,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
             for (PensionIncomeEntity pie : pieList) {
                 AgeData minAge = pie.getMinAge();
-                PensionRules pr = new PensionRules(minAge, endAge, Double.parseDouble(pie.getMonthlyBenefit()));
+                PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, endAge, Double.parseDouble(pie.getMonthlyBenefit()));
                 pie.setRules(pr);
                 savingsPensionBenefitData = pie.getBenefitForAge(age);
                 if (savingsPensionBenefitData != null) {
@@ -305,7 +305,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
             for(PensionIncomeEntity pie : pieList) {
                 AgeData minAge = pie.getMinAge();
-                PensionRules pr = new PensionRules(minAge, endAge,  Double.parseDouble(pie.getMonthlyBenefit()));
+                PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, endAge,  Double.parseDouble(pie.getMonthlyBenefit()));
                 pie.setRules(pr);
                 savingsGovPensionBenefitData = pie.getBenefitForAge(age);
             }

@@ -50,7 +50,7 @@ public class DataBaseUtils {
         if(!pensionEntities.isEmpty()) {
             for(PensionIncomeEntity pie : pensionEntities) {
                 AgeData minAge = pie.getMinAge();
-                PensionRules pr = new PensionRules(minAge, endAge, Double.parseDouble(pie.getMonthlyBenefit()));
+                PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, endAge, Double.parseDouble(pie.getMonthlyBenefit()));
                 pie.setRules(pr);
                 allEntities.add(pie);
             }
