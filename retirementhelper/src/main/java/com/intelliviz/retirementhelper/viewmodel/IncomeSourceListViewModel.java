@@ -124,7 +124,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         @Override
         protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
             mDB.savingsIncomeDao().delete(params[0]);
-            updateAppWidgetSummaryData();
+            //updateAppWidgetSummaryData();
             return getAllIncomeSources();
         }
 

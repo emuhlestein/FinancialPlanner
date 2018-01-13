@@ -55,17 +55,11 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     @BindView(R.id.name_text_view)
     TextView mNameTextView;
 
-    @BindView(R.id.start_age_text_view)
+    @BindView(R.id.min_age_text_view)
     TextView mStartAgeTextView;
 
-    @BindView(R.id.annual_interest_text_view)
-    TextView mAnnualInterestTextView;
-
-    @BindView(R.id.monthly_interest_text_view)
-    TextView mMonthlyIncreaseTextView;
-
-    @BindView(R.id.balance_text_view)
-    TextView mBalanceTextView;
+    @BindView(R.id.monthly_benefit_text_view)
+    TextView mMonthlyBenefitTextView;
 
     @BindView(R.id.expanded_text_layout)
     LinearLayout mExpandedTextLayout;
@@ -192,7 +186,6 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
     }
 
-
     private void updateUI() {
         if(mPIE == null) {
             return;
@@ -204,6 +197,9 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
 
         AgeData age = mPIE.getMinAge();
         mStartAgeTextView.setText(age.toString());
+
+        String formattedValue = SystemUtils.getFormattedCurrency(mPIE.getMonthlyBenefit());
+        mMonthlyBenefitTextView.setText(formattedValue);
     }
 
     public String getApplicationName(Context context) {
