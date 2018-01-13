@@ -37,7 +37,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gov_pension_details);
+        setContentView(R.layout.activity_gov_pension_income_details);
         ButterKnife.bind(this);
 
         Intent intent = getIntent();

@@ -78,8 +78,8 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
 
-    @BindView(R.id.editTaxDeferredFAB)
-    FloatingActionButton mEditTaxDeferredFAB;
+    @BindView(R.id.editSavingsFAB)
+    FloatingActionButton mEditSavingsFAB;
 
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
@@ -87,7 +87,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tax_deferred_details);
+        setContentView(R.layout.activity_savings_income_details);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -129,8 +129,8 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        // The FAB will pop up an activity to allow a new income source to be created.
-        mEditTaxDeferredFAB.setOnClickListener(new View.OnClickListener() {
+        // The FAB will pop up an activity to allow a new income source to be edited
+        mEditSavingsFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SavingsIncomeDetailsActivity.this, SavingsIncomeEditActivity.class);

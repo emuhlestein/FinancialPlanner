@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.ui.income;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.PensionIncomeEditViewModel;
 
@@ -34,6 +36,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
     private PensionIncomeEntity mPIE;
     private long mId;
+    private boolean mActivityResult;
     private PensionIncomeEditViewModel mViewModel;
 
     @BindView(R.id.coordinatorLayout)
@@ -60,8 +63,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
 
     @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
         updateIncomeSourceData();
-        finish();
-        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
+        //finish();
+        //overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
     }
 
     @Override
@@ -77,6 +80,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
         mId = 0;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
+            int rc = intent.getIntExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, 0);
+            mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
         }
 
         mPIE = null;
@@ -145,13 +150,30 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             return;
         }
 
-        PensionIncomeEntity pid = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name, minAge, benefit);
-        mViewModel.setData(pid);
+        PensionIncomeEntity pie = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name, minAge, benefit);
+        if(mActivityResult) {
+            sendData(mId, name, benefit, minAge);
+        } else {
+            mViewModel.setData(pie);
+        }
     }
 
     @Override
     public void onEditAge(String year, String month) {
         AgeData age = parseAgeString(year, month);
         mMinAge.setText(age.toString());
+    }
+
+    private void sendData(long id, String name, String monthlyBenefit, AgeData minAge) {
+        Intent returnIntent = new Intent();
+        Bundle bundle = new Bundle();
+
+        bundle.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, id);
+        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
+        bundle.putParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE, minAge);
+        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_BENEFIT, monthlyBenefit);
+        returnIntent.putExtras(bundle);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 }

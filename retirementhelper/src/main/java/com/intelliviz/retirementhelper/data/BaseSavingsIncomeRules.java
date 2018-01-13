@@ -183,7 +183,7 @@ public abstract class BaseSavingsIncomeRules {
     }
 
     private double getMonthlyWithdrawAmount(AgeData age) {
-        // get balance at start date
+        // getList balance at start date
         double mWithdrawPercentIncrease = 0; // make class variable
         int numMonths = mCurrentAge.diff(mStartAge);
         double balanceAtStartAge = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);

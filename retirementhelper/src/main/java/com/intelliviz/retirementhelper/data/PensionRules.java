@@ -66,7 +66,7 @@ public class PensionRules implements IncomeTypeRules {
             }
             listAmountDate.add(benefitData);
 
-            // get next age
+            // getList next age
             age = new AgeData(age.getYear()+1, 0);
             if(age.isAfter(mEndAge)) {
                 break;

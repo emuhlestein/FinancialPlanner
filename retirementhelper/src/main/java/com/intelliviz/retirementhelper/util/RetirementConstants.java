@@ -54,7 +54,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_BALANCE = "income source balance";
     public static final String EXTRA_INCOME_SOURCE_INTEREST = "income source interest";
     public static final String EXTRA_INCOME_SOURCE_INCREASE = "income source increase";
-    public static final String EXTRA_INCOME_SAVINGS_TYPE = "income source savings type";
+    public static final String EXTRA_INCOME_SOURCE_BENEFIT = "income source benefit";
     public static final String EXTRA_WITHDRAW_MODE = "withdraw mode";
     public static final String EXTRA_WITHDRAW_MODE_AMOUNT = "withdraw mode amount";
     public static final String EXTRA_ANNUAL_PERCENT_INCREASE = "annual percent increase";

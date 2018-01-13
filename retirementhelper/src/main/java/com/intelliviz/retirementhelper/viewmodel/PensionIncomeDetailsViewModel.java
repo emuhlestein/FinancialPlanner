@@ -10,13 +10,10 @@ import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
-import com.intelliviz.retirementhelper.data.PensionData;
 import com.intelliviz.retirementhelper.data.PensionRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 
 import java.util.List;
 
@@ -25,19 +22,36 @@ import java.util.List;
  */
 
 public class PensionIncomeDetailsViewModel extends AndroidViewModel {
-    private MutableLiveData<PensionData> mPID =
+    private MutableLiveData<PensionIncomeEntity> mPIE =
             new MutableLiveData<>();
     private AppDatabase mDB;
-    private MutableLiveData<List<BenefitData>> mPensionData = new MutableLiveData<List<BenefitData>>();
+    private long mIncomeId;
+    private MutableLiveData<List<BenefitData>> mBenefitDataList = new MutableLiveData<List<BenefitData>>();
 
     public PensionIncomeDetailsViewModel(Application application, long incomeId) {
         super(application);
+        mIncomeId = incomeId;
         mDB = AppDatabase.getInstance(application);
-        new PensionIncomeDetailsViewModel.GetAsyncTask().execute(incomeId);
+        new GetAsyncTask().execute(incomeId);
+        new GetBenefitDataListByIdAsyncTask().execute(incomeId);
     }
 
-    public MutableLiveData<List<BenefitData>> get() {
-        return mPensionData;
+    public MutableLiveData<List<BenefitData>> getList() {
+        return mBenefitDataList;
+    }
+
+    public MutableLiveData<PensionIncomeEntity> get() {
+        return mPIE;
+    }
+
+    public void setData(PensionIncomeEntity pie) {
+        new GetBenefitDataListAsyncTask().execute(pie);
+        mPIE.setValue(pie);
+        new UpdateAsyncTask().execute(pie);
+    }
+
+    public void update() {
+        new GetBenefitDataListByIdAsyncTask().execute(mIncomeId);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -55,35 +69,82 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
             return (T) new PensionIncomeDetailsViewModel(mApplication, mIncomeId);
         }
     }
+    private class GetAsyncTask extends AsyncTask<Long, Void, PensionIncomeEntity> {
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, List<BenefitData>> {
+        public GetAsyncTask() {
+        }
+
+        @Override
+        protected PensionIncomeEntity doInBackground(Long... params) {
+            return mDB.pensionIncomeDao().get(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(PensionIncomeEntity tdid) {
+            mPIE.setValue(tdid);
+        }
+    }
+
+    private class GetBenefitDataListByIdAsyncTask extends AsyncTask<Long, Void, List<BenefitData>> {
 
         @Override
         protected List<BenefitData> doInBackground(Long... params) {
-            List<MilestoneAgeEntity> ages = DataBaseUtils.getMilestoneAges(mDB);
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-            PensionIncomeEntity entity = mDB.pensionIncomeDao().get(params[0]);
-
-            AgeData minAge = entity.getMinAge();
-            AgeData endAge = roe.getEndAge();
-
-            PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, endAge,  Double.parseDouble(entity.getMonthlyBenefit()));
-            entity.setRules(pr);
-/*
-            List<BenefitData> listBenefitData = new ArrayList<>();
-            for(MilestoneAgeEntity age : ages) {
-                BenefitData data = entity.getBenefitForAge(age.getAge());
-                if(data != null) {
-                    listBenefitData.add(data);
-                }
-            }
-*/
-            return entity.getBenefitData();
+            long id = params[0];
+            return getBenefitData(id);
         }
 
         @Override
-        protected void onPostExecute(List<BenefitData> entities) {
-            mPensionData.setValue(entities);
+        protected void onPostExecute(List<BenefitData> benefitDataList) {
+            mBenefitDataList.setValue(benefitDataList);
         }
+    }
+
+    private class GetBenefitDataListAsyncTask extends AsyncTask<PensionIncomeEntity, Void, List<BenefitData>> {
+
+        @Override
+        protected List<BenefitData> doInBackground(PensionIncomeEntity... params) {
+            PensionIncomeEntity pie = params[0];
+            long id = pie.getId();
+            if(id > 0) {
+                return getBenefitData(id);
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<BenefitData> benefitData) {
+            if(benefitData != null) {
+                mBenefitDataList.setValue(benefitData);
+            }
+        }
+    }
+
+    private class UpdateAsyncTask extends AsyncTask<PensionIncomeEntity, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(PensionIncomeEntity... params) {
+            PensionIncomeEntity entity = params[0];
+
+            return mDB.pensionIncomeDao().update(entity);
+        }
+
+        @Override
+        protected void onPostExecute(Integer numRowsUpdated) {
+        }
+    }
+
+    private List<BenefitData> getBenefitData(long id) {
+        PensionIncomeEntity entity = mDB.pensionIncomeDao().get(id);
+        RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
+        String birthdate = rod.getBirthdate();
+        AgeData endAge = rod.getEndAge();
+        AgeData minAge = entity.getMinAge();
+        String monthlyBenefit = entity.getMonthlyBenefit();
+
+        PensionRules rules = new PensionRules(birthdate, minAge, endAge, Double.parseDouble(monthlyBenefit));
+        entity.setRules(rules);
+
+        return entity.getBenefitData();
     }
 }

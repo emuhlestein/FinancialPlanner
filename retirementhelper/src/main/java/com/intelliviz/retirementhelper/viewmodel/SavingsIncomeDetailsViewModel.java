@@ -27,7 +27,7 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
     private AppDatabase mDB;
     private MutableLiveData<SavingsIncomeEntity> mSIE =
             new MutableLiveData<>();
-    private MutableLiveData<List<BenefitData>> mAmountDataList = new MutableLiveData<List<BenefitData>>();
+    private MutableLiveData<List<BenefitData>> mBenefitDataList = new MutableLiveData<List<BenefitData>>();
     private long mIncomeId;
 
     public SavingsIncomeDetailsViewModel(Application application, long incomeId) {
@@ -35,11 +35,11 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         mIncomeId = incomeId;
         mDB = AppDatabase.getInstance(application);
         new GetAsyncTask().execute(incomeId);
-        new GetAmountDataListByIdAsyncTask().execute(incomeId);
+        new GetBenefitDataListByIdAsyncTask().execute(incomeId);
     }
 
     public MutableLiveData<List<BenefitData>> getList() {
-        return mAmountDataList;
+        return mBenefitDataList;
     }
 
     public MutableLiveData<SavingsIncomeEntity> get() {
@@ -47,11 +47,11 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
     }
 
     public void update() {
-        new GetAmountDataListByIdAsyncTask().execute(mIncomeId);
+        new GetBenefitDataListByIdAsyncTask().execute(mIncomeId);
     }
 
     public void setData(SavingsIncomeEntity sie) {
-        new GetAmountDataListAsyncTask().execute(sie);
+        new GetBenefitDataListAsyncTask().execute(sie);
         mSIE.setValue(sie);
         new UpdateAsyncTask().execute(sie);
     }
@@ -88,28 +88,28 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetAmountDataListByIdAsyncTask extends AsyncTask<Long, Void, List<BenefitData>> {
+    private class GetBenefitDataListByIdAsyncTask extends AsyncTask<Long, Void, List<BenefitData>> {
 
         @Override
         protected List<BenefitData> doInBackground(Long... params) {
             long id = params[0];
-            return getAmountData(id);
+            return getBenefitData(id);
         }
 
         @Override
         protected void onPostExecute(List<BenefitData> benefitDataList) {
-            mAmountDataList.setValue(benefitDataList);
+            mBenefitDataList.setValue(benefitDataList);
         }
     }
 
-    private class GetAmountDataListAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<BenefitData>> {
+    private class GetBenefitDataListAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<BenefitData>> {
 
         @Override
         protected List<BenefitData> doInBackground(SavingsIncomeEntity... params) {
             SavingsIncomeEntity sie = params[0];
             long id = sie.getId();
             if(id > 0) {
-                return getAmountData(id);
+                return getBenefitData(id);
             } else {
                 return null;
             }
@@ -118,7 +118,7 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(List<BenefitData> benefitData) {
             if(benefitData != null) {
-                mAmountDataList.setValue(benefitData);
+                mBenefitDataList.setValue(benefitData);
             }
         }
     }
@@ -137,14 +137,13 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private List<BenefitData> getAmountData(long id) {
-        SavingsIncomeEntity sie = mDB.savingsIncomeDao().get(id);
+    private List<BenefitData> getBenefitData(long id) {
         RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
         SavingsIncomeEntity entity = mDB.savingsIncomeDao().get(id);
         String birthdate = rod.getBirthdate();
         AgeData endAge = rod.getEndAge();
-        AgeData startAge = sie.getStartAge();
-        if(sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
+        AgeData startAge = entity.getStartAge();
+        if(entity.getType() == RetirementConstants.INCOME_TYPE_401K) {
             Savings401kIncomeRules tdir = new Savings401kIncomeRules(birthdate, startAge, endAge,
                     Double.parseDouble(entity.getBalance()),
                     Double.parseDouble(entity.getInterest()),
