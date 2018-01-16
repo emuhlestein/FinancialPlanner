@@ -80,8 +80,8 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
         }
 
         @Override
-        protected void onPostExecute(PensionIncomeEntity tdid) {
-            mPIE.setValue(tdid);
+        protected void onPostExecute(PensionIncomeEntity pie) {
+            mPIE.setValue(pie);
         }
     }
 

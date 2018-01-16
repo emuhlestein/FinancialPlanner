@@ -150,12 +150,14 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             return;
         }
 
-        PensionIncomeEntity pie = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name, minAge, benefit);
         if(mActivityResult) {
             sendData(mId, name, benefit, minAge);
         } else {
+            PensionIncomeEntity pie = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name, minAge, benefit);
             mViewModel.setData(pie);
         }
+
+        finish();
     }
 
     @Override

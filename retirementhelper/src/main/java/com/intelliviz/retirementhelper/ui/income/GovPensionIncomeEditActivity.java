@@ -1,5 +1,6 @@
 package com.intelliviz.retirementhelper.ui.income;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.ui.BirthdateActivity;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel;
 
@@ -37,8 +39,9 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
 public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
 
-    private GovPensionEntity mGPID;
+    private GovPensionEntity mGPE;
     private long mId;
+    private boolean mActivityResult;
     private GovPensionIncomeEditViewModel mViewModel;
 
     @BindView(R.id.coordinatorLayout)
@@ -54,7 +57,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     EditText mMonthlyBenefit;
 
     @OnClick(R.id.edit_start_age_button) void editAge() {
-        AgeData startAge = mGPID.getStartAge();
+        AgeData startAge = mGPE.getStartAge();
         FragmentManager fm = getSupportFragmentManager();
         AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
         dialog.show(fm, "");
@@ -77,7 +80,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
     @OnClick(R.id.edit_birthdate_button) void editBirthdate() {
         Intent newIntent = new Intent(this, BirthdateActivity.class);
-        String birthdate = mGPID.getSpouseBirhtdate();
+        String birthdate = mGPE.getSpouseBirhtdate();
         newIntent.putExtra(EXTRA_BIRTHDATE, birthdate);
         startActivityForResult(newIntent, REQUEST_BIRTHDATE);
     }
@@ -129,6 +132,8 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         mId = 0;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
+            int rc = intent.getIntExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, 0);
+            mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
         }
 
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -154,7 +159,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         mViewModel.getData().observe(this, new Observer<GovPensionEntity>() {
             @Override
             public void onChanged(@Nullable GovPensionEntity govPensionIncomeData) {
-                mGPID = govPensionIncomeData;
+                mGPE = govPensionIncomeData;
                 updateUI();
             }
         });
@@ -170,38 +175,38 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     }
 
     private void updateUI() {
-        if(mGPID == null) {
+        if(mGPE == null) {
             return;
         }
 
-        AgeData age = mGPID.getFullRetirementAge();
+        AgeData age = mGPE.getFullRetirementAge();
         mFullRetirementAge.setText(age.toString());
 
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPID.getFullMonthlyBenefit());
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPE.getFullMonthlyBenefit());
         mMonthlyBenefit.setText(monthlyBenefit);
 
-        age = mGPID.getStartAge();
+        age = mGPE.getStartAge();
         mStartRetirementAge.setText(age.toString());
 
-        boolean includeSpouse = mGPID.getSpouse() == 1;
+        boolean includeSpouse = mGPE.getSpouse() == 1;
         if(includeSpouse) {
-            String spouseBenefit = SystemUtils.getFormattedCurrency(mGPID.getSpouseBenefit());
+            String spouseBenefit = SystemUtils.getFormattedCurrency(mGPE.getSpouseBenefit());
             mSpouseMonthlyBenefit.setText(spouseBenefit);
-            mSpouseBirthdate.setText(mGPID.getSpouseBirhtdate());
-            AgeData spouseFullRetirementAge = mGPID.getFullRetirementAge(mGPID.getSpouseBirhtdate());
+            mSpouseBirthdate.setText(mGPE.getSpouseBirhtdate());
+            AgeData spouseFullRetirementAge = mGPE.getFullRetirementAge(mGPE.getSpouseBirhtdate());
             mSpouseFullRetirementAge.setText(spouseFullRetirementAge.toString());
         }
         mIncludeSpouse.setChecked(includeSpouse);
 
-        int type = mGPID.getType();
+        int type = mGPE.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);
         SystemUtils.setToolbarSubtitle(this, incomeSourceTypeString);
     }
 
     private void updateIncomeSourceData() {
         String value = mMonthlyBenefit.getText().toString();
-        String benefit = getFloatValue(value);
-        if (benefit == null) {
+        String fullBenefit = getFloatValue(value);
+        if (fullBenefit == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.monthly_benefit_not_valid) + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
@@ -234,9 +239,13 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         AgeData startAge = SystemUtils.parseAgeString(age2);
 
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, INCOME_TYPE_GOV_PENSION);
-        GovPensionEntity gpid = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, incomeSourceTypeString ,
-                benefit, includeSpouse, spouseBenefit, spouseBirthdate, startAge);
-        mViewModel.setData(gpid);
+        GovPensionEntity gpe = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, incomeSourceTypeString,
+                fullBenefit, includeSpouse, spouseBenefit, spouseBirthdate, startAge);
+        if(mActivityResult) {
+            sendData(mId, incomeSourceTypeString, fullBenefit, startAge, includeSpouse, spouseBenefit, spouseBirthdate);
+        } else {
+            mViewModel.setData(gpe);
+        }
 
         finish();
     }
@@ -245,5 +254,23 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     public void onEditAge(String year, String month) {
         AgeData age = parseAgeString(year, month);
         mStartRetirementAge.setText(age.toString());
+    }
+
+    private void sendData(long id, String name, String fullMonthlyBenefit, AgeData startAge, int includeSpouse,
+                          String spouseBenefit, String spouseBirhtdate) {
+        Intent returnIntent = new Intent();
+        Bundle bundle = new Bundle();
+
+        bundle.putLong(RetirementConstants.EXTRA_INCOME_SOURCE_ID, id);
+        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
+        bundle.putParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE, startAge);
+        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_BENEFIT, fullMonthlyBenefit);
+        bundle.putInt(RetirementConstants.EXTRA_INCOME_SOURCE_INCLUDE_SPOUSE, includeSpouse);
+        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_SPOUSE_BENEFIT, spouseBenefit);
+        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_SPOUSE_BIRTHDAY, spouseBirhtdate);
+
+        returnIntent.putExtras(bundle);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 }

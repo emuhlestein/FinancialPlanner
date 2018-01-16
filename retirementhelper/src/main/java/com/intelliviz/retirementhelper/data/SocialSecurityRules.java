@@ -2,6 +2,7 @@ package com.intelliviz.retirementhelper.data;
 
 import android.os.Bundle;
 
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
@@ -62,28 +63,27 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
     @Override
     public MilestoneData getMilestone(AgeData age) {
-        double monthlyBenefit = getMonthlyBenefitForAge(age).getBenefit();
-        return new MilestoneData(age, mEndAge, mMinAge, monthlyBenefit, 0, 0, 0, 0, 0, 0, 0);
+        //double monthlyBenefit = getMonthlyBenefitForAge(age).getBenefit();
+        return new MilestoneData(age, mEndAge, mMinAge, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     @Override
     public List<BenefitData> getBenefitData() {
-        AgeData age = mMinAge;
+        AgeData age = SystemUtils.getAge(mBirthdate);
+        age = new AgeData(age.getYear(), 0);
         List<BenefitData> listAmountDate = new ArrayList<>();
 
-        int birthYear = SystemUtils.getBirthYear(mBirthdate);
-        double amount = getMonthlyBenefit(age, birthYear, mFullMonthlyBenefit);
+        BenefitData benefitDataForStartAge = getMonthlyBenefitForAge(mStartAge);
 
-        if(mStartAge.isBefore(mEndAge)) {
-            age = mMinAge;
-        } else {
-            age = mStartAge;
-        }
-
-        BenefitData benefitData = new BenefitData(age, amount, 0, 0, false);
-        listAmountDate.add(benefitData);
 
         while(true) {
+            if(age.isBefore(mStartAge)) {
+                AgeData spouseAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, age);
+                BenefitData benefitData = new SocialSecurityBenefitData(age, 0, 0, RetirementConstants.BALANCE_STATE_EXHAUSTED, false, mIncludeSpouse, 0, spouseAge);
+                listAmountDate.add(benefitData);
+            } else {
+                listAmountDate.add(benefitDataForStartAge);
+            }
             // get next age
             AgeData nextAge = new AgeData(age.getYear()+1, 0);
             if(nextAge.isAfter(mEndAge)) {
@@ -91,9 +91,6 @@ public class SocialSecurityRules implements IncomeTypeRules {
             }
 
             age = new AgeData(nextAge.getYear(), 0);
-
-            benefitData = new BenefitData(nextAge, amount, 0, 0, false);
-            listAmountDate.add(benefitData);
         }
 
         return listAmountDate;
@@ -101,15 +98,23 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
     @Override
     public BenefitData getBenefitForAge(AgeData age) {
-        int birthYear = SystemUtils.getBirthYear(mBirthdate);
-        double amount = getMonthlyBenefit(age, birthYear, mFullMonthlyBenefit);
-        return new BenefitData(age, amount, 0, 0, false);
+        return getMonthlyBenefitForAge(age);
     }
 
     @Override
     public double getBalanceForAge(AgeData age) {
         return 0;
     }
+
+    /*
+    public void setValues(double fullMonthlyBenefit, AgeData startAge, int ) {
+        mFullMonthlyBenefit = fullMonthlyBenefit;
+        mStartAge = startAge;
+        mIncludeSpouse = bundle.getBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, false);
+        mSpouseFullBenefit = bundle.getDouble(EXTRA_INCOME_SPOUSE_BENEFIT);
+        mSpouseBirthdate = bundle.getString(EXTRA_INCOME_SPOUSE_BIRTHDATE);
+    }
+    */
 
     public AgeData getFullRetirementAge() {
         int birthyear = SystemUtils.getBirthYear(mBirthdate);
@@ -121,55 +126,64 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return getFullRetirementAgeFromYear(birthyear);
     }
 
-    public GovPensionData getMonthlyBenefitForAge(AgeData startAge) {
+    public BenefitData getMonthlyBenefitForAge(AgeData age) {
 
         if(mIncludeSpouse) {
             if(includeSpousalBenefits()) {
-                return calculateSpousalBenefits(startAge);
-            }
-
-            int birthYear = SystemUtils.getBirthYear(mBirthdate);
-            AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
-
-            AgeData spouseStartAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, startAge);
-            int spouseBirthyear = SystemUtils.getBirthYear(mSpouseBirthdate);
-
-            double monthlySpouseBenefit;
-            double monthlyBenefit;
-            int benefitInfo;
-            if(startAge.isBefore(retireAge)) {
-                benefitInfo = 1;
+                return calculateSpousalBenefits(age);
             } else {
-                benefitInfo = 2;
+
+                int birthYear = SystemUtils.getBirthYear(mBirthdate);
+                AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
+
+                int spouseBirthYear = SystemUtils.getBirthYear(mSpouseBirthdate);
+                AgeData spouseAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, age);
+                AgeData spouseRetireAge = getFullRetirementAgeFromYear(spouseBirthYear);
+
+                double monthlySpouseBenefit;
+                double monthlyBenefit;
+                int benefitInfo;
+                if (age.isBefore(retireAge)) {
+                    benefitInfo = RetirementConstants.BALANCE_STATE_EXHAUSTED;
+                } else {
+                    benefitInfo = RetirementConstants.BALANCE_STATE_GOOD;
+                }
+
+                if(mMaxAge.isBefore(spouseAge)) {
+                    spouseAge = new AgeData(mMaxAge.getYear(), mMaxAge.getMonth());
+                }
+                monthlySpouseBenefit = getMonthlyBenefit(spouseAge, spouseBirthYear, mSpouseFullBenefit);
+
+                if(mMaxAge.isBefore(age)) {
+                    age = new AgeData(mMaxAge.getYear(), mMaxAge.getMonth());
+                }
+                monthlyBenefit = getMonthlyBenefit(age, birthYear, mFullMonthlyBenefit);
+
+                return new SocialSecurityBenefitData(age, monthlyBenefit, RetirementConstants.BALANCE_STATE_GOOD, benefitInfo, false, mIncludeSpouse, monthlySpouseBenefit, spouseAge);
             }
-
-            monthlySpouseBenefit = getMonthlyBenefit(spouseStartAge, spouseBirthyear, mSpouseFullBenefit);
-            monthlyBenefit = getMonthlyBenefit(startAge, birthYear, mFullMonthlyBenefit);
-
-            return new GovPensionData(startAge, monthlyBenefit, benefitInfo, true, spouseStartAge, monthlySpouseBenefit);
         } else {
-            if(startAge.isBefore(mMinAge)) {
-                return new GovPensionData(startAge, 0d, 0);
+            if(age.isBefore(mMinAge)) {
+                return new SocialSecurityBenefitData(age, 0, 0, RetirementConstants.BALANCE_STATE_GOOD, false, mIncludeSpouse, 0, null);
             } else {
-                if(mMaxAge.isBefore(startAge)) {
-                    startAge = mMaxAge;
+                if(mMaxAge.isBefore(age)) {
+                    age = new AgeData(mMaxAge.getYear(), mMaxAge.getMonth());
                 }
                 int birthYear = SystemUtils.getBirthYear(mBirthdate);
                 AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
-                double monthlyBenefit = getMonthlyBenefit(startAge, birthYear, mFullMonthlyBenefit);
+                double monthlyBenefit = getMonthlyBenefit(age, birthYear, mFullMonthlyBenefit);
                 int benefitInfo;
-                if(startAge.isBefore(retireAge)) {
-                    benefitInfo = 1;
+                if(age.isBefore(retireAge)) {
+                    benefitInfo = RetirementConstants.BALANCE_STATE_EXHAUSTED;
                 } else {
-                    benefitInfo = 2;
+                    benefitInfo = RetirementConstants.BALANCE_STATE_GOOD;
                 }
-                return new GovPensionData(startAge, monthlyBenefit, benefitInfo);
+                return new SocialSecurityBenefitData(age, monthlyBenefit, 0, benefitInfo, false, mIncludeSpouse, 0, null);
             }
         }
     }
 
     /**
-     * Calculate spousal benefits. If either spouse makes less than one half the benefit of the other
+     * Calculate spousal benefits. If either spouse gets less than one half the benefit of the other
      * spouse, there are spousal benefits. There are no spousal benefits if both spouses make more than
      * one half the benefit of the other spouse.
      *
@@ -178,19 +192,21 @@ public class SocialSecurityRules implements IncomeTypeRules {
      * 1) If divorced can still get spousal benefits.
      * 2) Claiming spousal benefits early (before spouse full retirement age) reduces the benefit amount.
      * 3) Waiting past full retirement age will not increase benefit amount.
-     * 4) You can get spousal benefits if you've never worked; if your benefit amount is 0;
+     * 4) You can get spousal benefits if spouse has never worked; if spouse benefit amount is 0;
      *
-     * @return The government pension data. null if there are no spousal benefits.
+     * @param age Age of the primary spouse.
+     *
+     * @return The socilial data. null if there are no spousal benefits.
      */
-    private GovPensionData calculateSpousalBenefits(AgeData startAge) {
-        AgeData spouseStartAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, startAge);
+    private SocialSecurityBenefitData calculateSpousalBenefits(AgeData age) {
+        AgeData spouseAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, age);
 
-        if(startAge.isBefore(mMinAge)) {
-            return new GovPensionData(startAge, 0, 0, true, spouseStartAge, 0);
+        // if primary spouse cannot receive benefits, neither can the spouse.
+        if(age.isBefore(mMinAge)) {
+            return new SocialSecurityBenefitData(age, 0, 0, RetirementConstants.BALANCE_STATE_EXHAUSTED, false, mIncludeSpouse, 0, spouseAge);
         }
         int birthYear = SystemUtils.getBirthYear(mBirthdate);
         AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
-
 
         int spouseBirthyear = SystemUtils.getBirthYear(mSpouseBirthdate);
         AgeData spouseRetireAge = getFullRetirementAgeFromYear(spouseBirthyear);
@@ -200,35 +216,37 @@ public class SocialSecurityRules implements IncomeTypeRules {
         int benefitInfo;
 
         if(mSpouseFullBenefit < mFullMonthlyBenefit / 2) {
+            // Spousal benefits for the spouse
             double spouseMaxBenefit = mFullMonthlyBenefit / 2;
 
-            if(spouseStartAge.isBefore(spouseRetireAge)) {
-                monthlySpouseBenefit = getMonthlyBenefit(startAge, spouseBirthyear, spouseMaxBenefit);
+            if(spouseAge.isBefore(spouseRetireAge)) {
+                monthlySpouseBenefit = getMonthlyBenefit(age, spouseBirthyear, spouseMaxBenefit);
             } else {
                 monthlySpouseBenefit = spouseMaxBenefit;
             }
-            if(startAge.isBefore(retireAge)) {
-                benefitInfo = 1;
+            if(age.isBefore(retireAge)) {
+                benefitInfo = RetirementConstants.BALANCE_STATE_EXHAUSTED;
             } else {
-                benefitInfo = 2;
+                benefitInfo = RetirementConstants.BALANCE_STATE_GOOD;
             }
-            monthlyBenefit = getMonthlyBenefit(startAge, birthYear, mFullMonthlyBenefit);
-            return new GovPensionData(startAge, monthlyBenefit, benefitInfo, true, spouseStartAge, monthlySpouseBenefit);
+            monthlyBenefit = getMonthlyBenefit(age, birthYear, mFullMonthlyBenefit);
+            return new SocialSecurityBenefitData(age, monthlyBenefit, 0, benefitInfo, false, mIncludeSpouse, monthlySpouseBenefit, spouseAge);
         } else if (mFullMonthlyBenefit < mSpouseFullBenefit / 2){
+            // Spousal benefits for the primary spouse
             double maxBenefit = mSpouseFullBenefit / 2;
-            if(spouseStartAge.isBefore(spouseRetireAge)) {
-                monthlySpouseBenefit = getMonthlyBenefit(startAge, spouseBirthyear, mSpouseFullBenefit);
-                benefitInfo = 1;
+            if(spouseAge.isBefore(spouseRetireAge)) {
+                monthlySpouseBenefit = getMonthlyBenefit(age, spouseBirthyear, mSpouseFullBenefit);
+                benefitInfo = RetirementConstants.BALANCE_STATE_EXHAUSTED;
             } else {
                 monthlySpouseBenefit = mSpouseFullBenefit;
-                benefitInfo = 2;
+                benefitInfo = RetirementConstants.BALANCE_STATE_GOOD;
             }
-            if(startAge.isBefore(retireAge)) {
-                monthlyBenefit = getMonthlyBenefit(startAge, birthYear, maxBenefit);
+            if(age.isBefore(retireAge)) {
+                monthlyBenefit = getMonthlyBenefit(age, birthYear, maxBenefit);
             } else {
                 monthlyBenefit = mSpouseFullBenefit / 2;
             }
-            return new GovPensionData(startAge, monthlyBenefit, benefitInfo, true, spouseStartAge, monthlySpouseBenefit);
+            return new SocialSecurityBenefitData(age, monthlyBenefit, 0, benefitInfo, true, mIncludeSpouse, monthlySpouseBenefit, spouseAge);
         } else {
             return null; // no spousal benefits
         }

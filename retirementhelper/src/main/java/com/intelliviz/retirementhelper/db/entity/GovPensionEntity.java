@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
-import com.intelliviz.retirementhelper.data.GovPensionData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
@@ -117,9 +116,21 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
             mRules = (SocialSecurityRules)rules;
 
             Bundle bundle = new Bundle();
+            if(fullMonthlyBenefit == null) {
+                fullMonthlyBenefit = new String("0");
+            }
+
+            boolean includeSpouse;
+            if(mSpouse == 1) {
+                includeSpouse = true;
+            } else {
+                includeSpouse = false;
+            }
+            double fullBenefit = Double.parseDouble(fullMonthlyBenefit);
+
             bundle.putDouble(EXTRA_INCOME_FULL_BENEFIT, Double.parseDouble(fullMonthlyBenefit));
             bundle.putParcelable(EXTRA_INCOME_START_AGE, mStartAge);
-            bundle.putBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, mSpouse == 1);
+            bundle.putBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, includeSpouse);
             bundle.putDouble(EXTRA_INCOME_SPOUSE_BENEFIT, Double.parseDouble(mSpouseBenefit));
             bundle.putString(EXTRA_INCOME_SPOUSE_BIRTHDATE, mSpouseBirhtdate);
             mRules.setValues(bundle);
@@ -166,13 +177,5 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     @Override
     public List<AgeData> getAges() {
         return mRules.getAges();
-    }
-
-    public GovPensionData getMonthlyBenefitForAge(AgeData startAge) {
-        if(mRules != null) {
-            return mRules.getMonthlyBenefitForAge(startAge);
-        } else {
-            return null;
-        }
     }
 }
