@@ -74,6 +74,8 @@
     <string name="empty_list">LIST IS EMPTY</string>
     <string name="add_income_source">Add Income Source</string>
 
+    <string name="only_two_gov_pension">Only two Social Security income source is allowed\nOne for you and one for your spouse.</string>
+
     <string name="income_source_subtitle">Income Source Summary</string>
     <string name="summary_screen_subtitle">Monthly Benefit Summary</string>
     <string name="milestone_age_subtitle">Retirement Milestone Ages</string>
@@ -148,4 +150,5 @@
     <string name="reach_percent_income">When will savings reach this percent of  income?</string>
     <string name="annual_income">Annual Income</string>
     <string name="monthly_pretire_income">Monthly Pre-Retirement Income</string>
+    <string name="spousal_benefits">Spousal Benefits?</string>
 </resources>

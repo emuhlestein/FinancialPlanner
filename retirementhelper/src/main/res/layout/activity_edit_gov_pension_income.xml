@@ -38,7 +38,6 @@
                 android:id="@+id/full_retirement_age_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/edit_birthdate_desc"
                 android:layout_gravity="end"
                 android:layout_marginEnd="16sp"
                 android:padding="8sp"
@@ -61,7 +60,7 @@
                 android:paddingTop="24dp">
 
                 <EditText
-                    android:id="@+id/monthly_benefit_text"
+                    android:id="@+id/full_monthly_benefit_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -105,12 +104,30 @@
                 android:layout_marginLeft="16dp"
                 android:background="@drawable/separator" />
 
-            <CheckBox
-                android:id="@+id/spouse_check_box"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@string/include_spouse" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/spousal_benefit_label"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="16dp"
+                    android:padding="8sp"
+                    android:textSize="18sp"
+                    android:text="@string/spousal_benefits"/>
+
+                <TextView
+                    android:id="@+id/spousal_benefit_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="16sp"
+                    android:padding="8sp"
+                    android:textSize="18sp"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -118,7 +135,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/edit_birthdate_button"
+                    android:id="@+id/edit_spouse_birthdate_button"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -137,52 +154,6 @@
                     android:textSize="18sp"/>
 
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/spouse_full_retirement_age_label"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="16dp"
-                    android:padding="8sp"
-                    android:textSize="18sp"
-                    android:text="@string/spouse_full_retirement_age"/>
-
-                <TextView
-                    android:id="@+id/spouse_full_retirement_age_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/edit_birthdate_desc"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="16sp"
-                    android:padding="8sp"
-                    android:textSize="18sp"/>
-            </LinearLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_spouse_monthly_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:paddingTop="24dp">
-
-                <EditText
-                    android:id="@+id/spouse_monthly_benefit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:ems="10"
-                    android:hint="@string/monthly_benefit"
-                    android:inputType="number" />
-            </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:id="@+id/add_income_source_button"

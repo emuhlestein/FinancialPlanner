@@ -5,44 +5,37 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
 /**
+ * NOTE: Since the view model last for the entire duration of the app, the async tasks
+ * don't need to be static nested classes, they can be inner classes.
+ *
  * Created by edm on 9/26/2017.
  */
 
 public class GovPensionIncomeEditViewModel extends AndroidViewModel {
-    private MutableLiveData<GovPensionEntity> mGPID =
+    private MutableLiveData<List<GovPensionEntity>> mListGPE =
             new MutableLiveData<>();
     private RetirementOptionsEntity mROE;
-    private MutableLiveData<String> mBirthdate = new MutableLiveData<>();
     private AppDatabase mDB;
 
-    public GovPensionIncomeEditViewModel(Application application, long incomeId) {
+    public GovPensionIncomeEditViewModel(Application application) {
         super(application);
         mDB = AppDatabase.getInstance(application);
-        new GetAsyncTask().execute(incomeId);
-    }
-
-    public LiveData<GovPensionEntity> getData() {
-        return mGPID;
+        buildList();
     }
 
     public LiveData<List<GovPensionEntity>> getList() {
-        return null;
+        return mListGPE;
     }
 
     public void setData(GovPensionEntity gpe) {
@@ -50,7 +43,6 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         AgeData endAge = mROE.getEndAge();
         SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
         gpe.setRules(ssr);
-        mGPID.setValue(gpe);
         if(gpe.getId() == 0) {
             new InsertAsyncTask().execute(gpe);
         } else {
@@ -62,58 +54,6 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         new DeleteAsyncTask().execute(gpid);
     }
 
-    public static class Factory extends ViewModelProvider.NewInstanceFactory {
-        @NonNull
-        private final Application mApplication;
-        private long mIncomeId;
-
-        public Factory(@NonNull Application application, long incomeId) {
-            mApplication = application;
-            mIncomeId = incomeId;
-        }
-
-        @Override
-        public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new GovPensionIncomeEditViewModel(mApplication, mIncomeId);
-        }
-    }
-
-    private class GetAsyncTask extends AsyncTask<Long, Void, GovPensionEntity> {
-
-        @Override
-        protected GovPensionEntity doInBackground(Long... params) {
-            long id = params[0];
-            GovPensionEntity entity;
-            mROE = mDB.retirementOptionsDao().get();
-            String birthdate = mROE.getBirthdate();
-            AgeData startAge = SystemUtils.getAge(birthdate);
-            AgeData endAge = mROE.getEndAge();
-            if(id == 0) {
-                // create default entity
-                entity = new GovPensionEntity(id, RetirementConstants.INCOME_TYPE_GOV_PENSION,
-                        "Social Security", "0", 0, "0",
-                        "0", startAge );
-            } else {
-                entity = mDB.govPensionDao().get(params[0]);
-            }
-
-            if(entity != null) {
-                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
-                entity.setRules(ssr);
-                return entity;
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(GovPensionEntity gpid) {
-            if(gpid != null) {
-                mGPID.setValue(gpid);
-            }
-        }
-    }
-
     private class UpdateAsyncTask extends AsyncTask<GovPensionEntity, Void, Integer> {
 
         @Override
@@ -123,6 +63,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(Integer numRowsUpdated) {
+            buildList();
         }
     }
 
@@ -135,6 +76,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(Long numRowsInserted) {
+            buildList();
         }
     }
 
@@ -148,7 +90,39 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+            buildList();
         }
+    }
+
+    private void buildList() {
+        new AsyncTask<Void, Void, List<GovPensionEntity>>() {
+
+            @Override
+            protected List<GovPensionEntity> doInBackground(Void... voids) {
+                mROE = mDB.retirementOptionsDao().get();
+                AgeData endAge = mROE.getEndAge();
+                SocialSecurityRules ssr;
+                List<GovPensionEntity> govPensionList = mDB.govPensionDao().get();
+                for(GovPensionEntity gpe : govPensionList) {
+                    if(gpe.getSpouse() == 0) {
+                        ssr = new SocialSecurityRules(mROE.getBirthdate(), endAge);
+                        gpe.setRules(ssr);
+                    } else {
+                        // spouse social security
+                        ssr = new SocialSecurityRules(gpe.getSpouseBirhtdate(), endAge);
+                        gpe.setRules(ssr);
+                    }
+                }
+
+                return govPensionList;
+            }
+
+            @Override
+            protected void onPostExecute(List<GovPensionEntity> govPensionEntities) {
+                if(govPensionEntities != null) {
+                    mListGPE.setValue(govPensionEntities);
+                }
+            }
+        }.execute();
     }
 }

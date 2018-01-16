@@ -192,11 +192,10 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
             AgeData startAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
             String fullMonthlyBenefit = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_BENEFIT);
             int includeSpouse = bundle.getInt(RetirementConstants.EXTRA_INCOME_SOURCE_INCLUDE_SPOUSE);
-            String spouseBenefit = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_SPOUSE_BENEFIT);
             String spouseBirhtdate = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_SPOUSE_BIRTHDAY);
 
             GovPensionEntity pie = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, name, fullMonthlyBenefit,
-                    includeSpouse, spouseBenefit, spouseBirhtdate, startAge);
+                    startAge, includeSpouse, spouseBirhtdate);
             mViewModel.setData(pie);
         }
         super.onActivityResult(requestCode, resultCode, intent);

@@ -21,7 +21,7 @@ public class RetirementOptionsEntity {
     public static final String REACH_AMOUNT_FIELD = "reach_amount";
     public static final String REACH_PERCENT_FIELD = "reach_percent";
     public static final String BIRTHDATE_FIELD = "birthdate";
-    public static final String ANNUAL_INCOME_FIELD = "annual_income";
+    public static final String MONTHLY_INCOME_FIELD = "monthly_income";
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -36,8 +36,8 @@ public class RetirementOptionsEntity {
     private String reachPercent;
     @ColumnInfo(name = BIRTHDATE_FIELD)
     private String birthdate;
-    @ColumnInfo(name = ANNUAL_INCOME_FIELD)
-    private String annualIncome;
+    @ColumnInfo(name = MONTHLY_INCOME_FIELD)
+    private String monthlyIncome;
 
     public RetirementOptionsEntity(int id, AgeData endAge, int currentOption, String birthdate) {
         this.id = id;
@@ -46,7 +46,7 @@ public class RetirementOptionsEntity {
         this.birthdate = birthdate;
         this.reachAmount = "0";
         this.reachPercent = "0";
-        this.annualIncome = "0";
+        this.monthlyIncome = "0";
     }
 
     public int getId() {
@@ -97,11 +97,11 @@ public class RetirementOptionsEntity {
         this.reachPercent = reachPercent;
     }
 
-    public String getAnnualIncome() {
-        return annualIncome;
+    public String getMonthlyIncome() {
+        return monthlyIncome;
     }
 
-    public void setAnnualIncome(String annualIncome) {
-        this.annualIncome = annualIncome;
+    public void setMonthlyIncome(String monthlyIncome) {
+        this.monthlyIncome = monthlyIncome;
     }
 }

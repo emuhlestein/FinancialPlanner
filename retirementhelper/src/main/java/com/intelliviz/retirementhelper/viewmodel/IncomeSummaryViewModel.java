@@ -261,7 +261,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
 
         String percentString = SystemUtils.getFloatValue(roe.getReachPercent());
         double percent = Double.parseDouble(percentString) / 100;
-        String monthlySalaryString = SystemUtils.getFloatValue(roe.getAnnualIncome());
+        String monthlySalaryString = SystemUtils.getFloatValue(roe.getMonthlyIncome());
         double monthlySalary = Double.parseDouble(monthlySalaryString);
         double targetAmount = monthlySalary * percent;
 

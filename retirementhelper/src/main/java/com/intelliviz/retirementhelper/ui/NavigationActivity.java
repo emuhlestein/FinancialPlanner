@@ -207,7 +207,7 @@ public class NavigationActivity extends AppCompatActivity {
                     value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_REACH_INCOME_PERCENT);
                     mROE.setReachPercent(value);
                     value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_ANNUAL_INCOME);
-                    mROE.setAnnualIncome(value);
+                    mROE.setMonthlyIncome(value);
                     AgeData age = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREMENT_INCOME_SUMMARY_AGE);
                     mROE.setEndAge(age);
                     mROE.setCurrentOption(mode);

@@ -136,7 +136,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         mReachAmountEditText.setText(SystemUtils.getFormattedCurrency(roe.getReachAmount()));
         mReachPercentIncomeEditText.setText(roe.getReachPercent() + "%");
         mEndAgeEditText.setText(roe.getEndAge().toString());
-        mAnnualIncomeEditText.setText(SystemUtils.getFormattedCurrency(roe.getAnnualIncome()));
+        mAnnualIncomeEditText.setText(SystemUtils.getFormattedCurrency(roe.getMonthlyIncome()));
 
         setLayoutVisibilty(mode);
     }

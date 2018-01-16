@@ -18,7 +18,6 @@ import java.util.List;
 import static com.intelliviz.retirementhelper.db.entity.GovPensionEntity.TABLE_NAME;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_FULL_BENEFIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_INCLUDE_SPOUSE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BENEFIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
 
@@ -30,7 +29,6 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     public static final String TABLE_NAME = "gov_pension_income";
     private static final String MONTHLY_BENEFIT_FIELD = "full_monthly_benefit";
     private static final String SPOUSE_FIELD = "spouse";
-    private static final String SPOUSE_BENEFIT_FIELD = "spouse_benefit";
     private static final String SPOUSE_BIRTHDATE_FIELD = "spouse_birthdate";
     private static final String START_AGE_FIELD = "start_age";
 
@@ -39,9 +37,6 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
     @ColumnInfo(name = SPOUSE_FIELD)
     private int mSpouse;
-
-    @ColumnInfo(name = SPOUSE_BENEFIT_FIELD)
-    private String mSpouseBenefit;
 
     @ColumnInfo(name = SPOUSE_BIRTHDATE_FIELD)
     private String mSpouseBirhtdate;
@@ -53,12 +48,11 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     @Ignore
     private SocialSecurityRules mRules;
 
-    public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit,
-                            int spouse, String spouseBenefit, String spouseBirhtdate, AgeData startAge) {
+    public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit, AgeData startAge,
+                            int spouse, String spouseBirhtdate) {
         super(id, type, name);
         this.fullMonthlyBenefit = fullMonthlyBenefit;
         mSpouse = spouse;
-        mSpouseBenefit = spouseBenefit;
         mSpouseBirhtdate = spouseBirhtdate;
         mStartAge = startAge;
     }
@@ -77,14 +71,6 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
     public void setSpouse(int spouse) {
         mSpouse = spouse;
-    }
-
-    public String getSpouseBenefit() {
-        return mSpouseBenefit;
-    }
-
-    public void setSpouseBenefit(String spouseBenefit) {
-        mSpouseBenefit = spouseBenefit;
     }
 
     public String getSpouseBirhtdate() {
@@ -116,9 +102,6 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
             mRules = (SocialSecurityRules)rules;
 
             Bundle bundle = new Bundle();
-            if(fullMonthlyBenefit == null) {
-                fullMonthlyBenefit = new String("0");
-            }
 
             boolean includeSpouse;
             if(mSpouse == 1) {
@@ -126,12 +109,10 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
             } else {
                 includeSpouse = false;
             }
-            double fullBenefit = Double.parseDouble(fullMonthlyBenefit);
 
             bundle.putDouble(EXTRA_INCOME_FULL_BENEFIT, Double.parseDouble(fullMonthlyBenefit));
             bundle.putParcelable(EXTRA_INCOME_START_AGE, mStartAge);
             bundle.putBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, includeSpouse);
-            bundle.putDouble(EXTRA_INCOME_SPOUSE_BENEFIT, Double.parseDouble(mSpouseBenefit));
             bundle.putString(EXTRA_INCOME_SPOUSE_BIRTHDATE, mSpouseBirhtdate);
             mRules.setValues(bundle);
         } else {
