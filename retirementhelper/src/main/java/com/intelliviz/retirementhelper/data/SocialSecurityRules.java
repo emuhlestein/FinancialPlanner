@@ -75,15 +75,16 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
         BenefitData benefitDataForStartAge = getMonthlyBenefitForAge(mStartAge);
 
-
         while(true) {
+            AgeData spouseAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, age);
+            BenefitData benefitData;
             if(age.isBefore(mStartAge)) {
-                AgeData spouseAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, age);
-                BenefitData benefitData = new SocialSecurityBenefitData(age, 0, 0, RetirementConstants.BALANCE_STATE_EXHAUSTED, false, mIncludeSpouse, 0, spouseAge);
-                listAmountDate.add(benefitData);
+                benefitData = new SocialSecurityBenefitData(age, 0, 0, RetirementConstants.BALANCE_STATE_EXHAUSTED, false, mIncludeSpouse, 0, spouseAge);
             } else {
-                listAmountDate.add(benefitDataForStartAge);
+                benefitData = new SocialSecurityBenefitData(age, benefitDataForStartAge.getMonthlyAmount(), 0, RetirementConstants.BALANCE_STATE_GOOD, false, mIncludeSpouse, 0, spouseAge);
             }
+            listAmountDate.add(benefitData);
+
             // get next age
             AgeData nextAge = new AgeData(age.getYear()+1, 0);
             if(nextAge.isAfter(mEndAge)) {
