@@ -98,23 +98,18 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
     @Override
     public BenefitData getBenefitForAge(AgeData age) {
-        return getMonthlyBenefitForAge(age);
+        if(age.isBefore(mStartAge)) {
+            AgeData spouseAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, age);
+            return new SocialSecurityBenefitData(age, 0, 0, RetirementConstants.BALANCE_STATE_EXHAUSTED, false, mIncludeSpouse, 0, spouseAge);
+        } else {
+            return getMonthlyBenefitForAge(age);
+        }
     }
 
     @Override
     public double getBalanceForAge(AgeData age) {
         return 0;
     }
-
-    /*
-    public void setValues(double fullMonthlyBenefit, AgeData startAge, int ) {
-        mFullMonthlyBenefit = fullMonthlyBenefit;
-        mStartAge = startAge;
-        mIncludeSpouse = bundle.getBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, false);
-        mSpouseFullBenefit = bundle.getDouble(EXTRA_INCOME_SPOUSE_BENEFIT);
-        mSpouseBirthdate = bundle.getString(EXTRA_INCOME_SPOUSE_BIRTHDATE);
-    }
-    */
 
     public AgeData getFullRetirementAge() {
         int birthyear = SystemUtils.getBirthYear(mBirthdate);
@@ -196,7 +191,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
      *
      * @param age Age of the primary spouse.
      *
-     * @return The socilial data. null if there are no spousal benefits.
+     * @return The social security data. null if there are no spousal benefits.
      */
     private SocialSecurityBenefitData calculateSpousalBenefits(AgeData age) {
         AgeData spouseAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, age);
