@@ -55,11 +55,14 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
     @BindView(R.id.name_text_view)
     TextView mNameTextView;
 
-    @BindView(R.id.min_age_text_view)
-    TextView mMinAgeTextView;
+    @BindView(R.id.start_age_text_view)
+    TextView mStartAgeTextView;
 
-    @BindView(R.id.monthly_benefit_text_view)
-    TextView mMonthlyBenefitTextView;
+    @BindView(R.id.full_monthly_benefit_text_view)
+    TextView mFullMonthlyBenefitTextView;
+
+    @BindView(R.id.full_retirement_age_text_view)
+    TextView mFullRetirementAgeTextView;
 
     @BindView(R.id.expanded_text_layout)
     LinearLayout mExpandedTextLayout;
@@ -149,15 +152,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
                     String amount = SystemUtils.getFormattedCurrency(ssbd.getMonthlyAmount());
                     String line1 = age.toString() + "   " + amount;
                     IncomeDetails incomeDetail;
-                    if(ssbd.isIncludeSpouse()) {
-                        amount = SystemUtils.getFormattedCurrency(ssbd.getSpouseBenefit());
-                        String line2 = "Spouse: " + ssbd.getSpouseAge().toString() + " " + amount;
-                        amount = SystemUtils.getFormattedCurrency(ssbd.getMonthlyAmount() + ssbd.getSpouseBenefit());
-                        String line3 = "Combined: " + amount;
-                        incomeDetail = new IncomeDetails(line1, line2, line3, ssbd.getBalanceState(), "");
-                    } else {
-                        incomeDetail = new IncomeDetails(line1, ssbd.getBalanceState(), "");
-                    }
+                    incomeDetail = new IncomeDetails(line1, ssbd.getBalanceState(), "");
 
                     incomeDetails.add(incomeDetail);
                 }
@@ -211,10 +206,13 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         mNameTextView.setText(mGPE.getName());
 
         AgeData age = mGPE.getStartAge();
-        mMinAgeTextView.setText(age.toString());
+        mStartAgeTextView.setText(age.toString());
+
+        age = mGPE.getFullRetirementAge();
+        mFullRetirementAgeTextView.setText(age.toString());
 
         String formattedValue = SystemUtils.getFormattedCurrency(mGPE.getFullMonthlyBenefit());
-        mMonthlyBenefitTextView.setText(formattedValue);
+        mFullMonthlyBenefitTextView.setText(formattedValue);
     }
 
     public String getApplicationName(Context context) {

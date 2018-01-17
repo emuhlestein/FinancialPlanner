@@ -73,7 +73,17 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
 
         @Override
         protected GovPensionEntity doInBackground(Long... params) {
-            return mDB.govPensionDao().get(params[0]);
+            GovPensionEntity gpe = mDB.govPensionDao().get(params[0]);
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            String birthdate;
+            if(gpe.getSpouse() == 1) {
+                birthdate = gpe.getSpouseBirhtdate();
+            } else {
+                birthdate = roe.getBirthdate();
+            }
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, roe.getEndAge(), 0, null);
+            gpe.setRules(ssr);
+            return gpe;
         }
 
         @Override

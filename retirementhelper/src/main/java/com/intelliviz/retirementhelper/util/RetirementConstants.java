@@ -67,6 +67,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SPOUSE_BIRTHDATE = "spouse birthdate";
     public static final String EXTRA_INCOME_FULL_BENEFIT = "full benefit";
     public static final String EXTRA_INCOME_START_AGE = "start age";
+    public static final String EXTRA_INCOME_SPOUSE_START_AGE = "spouse start age";
 
 
 

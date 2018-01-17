@@ -56,10 +56,10 @@
                         android:layout_gravity="bottom"
                         android:layout_marginStart="16dp"
                         android:textSize="22sp"
-                        android:text="@string/minimum_age" />
+                        android:text="@string/start_age" />
 
                     <TextView
-                        android:id="@+id/min_age_text_view"
+                        android:id="@+id/start_age_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -77,10 +77,31 @@
                         android:layout_gravity="bottom"
                         android:layout_marginStart="16dp"
                         android:textSize="22sp"
-                        android:text="@string/monthly_benefit" />
+                        android:text="@string/full_retirement_age" />
 
                     <TextView
-                        android:id="@+id/monthly_benefit_text_view"
+                        android:id="@+id/full_retirement_age_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="16dp"
+                        android:textSize="22sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="16dp"
+                        android:textSize="22sp"
+                        android:text="@string/full_monthly_benefit" />
+
+                    <TextView
+                        android:id="@+id/full_monthly_benefit_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
