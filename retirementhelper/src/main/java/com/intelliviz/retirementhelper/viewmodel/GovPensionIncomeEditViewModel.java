@@ -39,10 +39,6 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
     }
 
     public void setData(GovPensionEntity gpe) {
-        String birthdate = mROE.getBirthdate();
-        AgeData endAge = mROE.getEndAge();
-        SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
-        gpe.setRules(ssr);
         if(gpe.getId() == 0) {
             new InsertAsyncTask().execute(gpe);
         } else {
@@ -103,16 +99,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
                 AgeData endAge = mROE.getEndAge();
                 SocialSecurityRules ssr;
                 List<GovPensionEntity> govPensionList = mDB.govPensionDao().get();
-                for(GovPensionEntity gpe : govPensionList) {
-                    if(gpe.getSpouse() == 0) {
-                        ssr = new SocialSecurityRules(mROE.getBirthdate(), endAge);
-                        gpe.setRules(ssr);
-                    } else {
-                        // spouse social security
-                        ssr = new SocialSecurityRules(gpe.getSpouseBirhtdate(), endAge);
-                        gpe.setRules(ssr);
-                    }
-                }
+                SocialSecurityRules.setRulesOnGovPensionEntities(govPensionList, mROE);
 
                 return govPensionList;
             }

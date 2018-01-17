@@ -8,13 +8,13 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -132,14 +132,18 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
     }
 
     private List<BenefitData> getBenefitData(long id) {
-        GovPensionEntity gpe = mDB.govPensionDao().get(id);
-        RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
-        String birthdate = rod.getBirthdate();
-        AgeData endAge = rod.getEndAge();
-
-        SocialSecurityRules rules = new SocialSecurityRules(birthdate, endAge);
-        gpe.setRules(rules);
-
-        return gpe.getBenefitData();
+        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+        SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
+        GovPensionEntity gpe;
+        if(gpeList.get(0).getId() == id) {
+            gpe = gpeList.get(0);
+            return gpe.getBenefitData();
+        } else if(gpeList.get(1).getId() == id) {
+            gpe = gpeList.get(1);
+            return gpe.getBenefitData();
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

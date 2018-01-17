@@ -11,8 +11,8 @@ import android.os.AsyncTask;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
+import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
@@ -222,13 +222,9 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
             incomeSourceList.add(tdie);
         }
         List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
         for(GovPensionEntity gpie : gpeList) {
-
-            String birthdate = roe.getBirthdate();
-            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
-            gpie.setRules(ssr);
             incomeSourceList.add(gpie);
-
         }
         List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
         for(PensionIncomeEntity pie : pieList) {

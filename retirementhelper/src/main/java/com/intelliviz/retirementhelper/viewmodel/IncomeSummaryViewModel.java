@@ -21,7 +21,6 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -154,13 +153,9 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             }
         }
         List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
         for (GovPensionEntity gpie : gpeList) {
-
-            String birthdate = roe.getBirthdate();
-            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
-            gpie.setRules(ssr);
             allIncomeSources.add(gpie.getBenefitData());
-
         }
         List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
         for (PensionIncomeEntity pie : pieList) {
@@ -218,16 +213,10 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             }
 
             List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+            SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
             for (GovPensionEntity gpie : gpeList) {
-
-                String birthdate = roe.getBirthdate();
-                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
-                gpie.setRules(ssr);
-                savingsGovPensionBenefitData = gpie.getBenefitForAge(age);
-                if (savingsGovPensionBenefitData != null) {
-                    sumBalance += savingsGovPensionBenefitData.getBalance();
-                    sumMonthlyBenefit += savingsGovPensionBenefitData.getMonthlyAmount();
-                }
+                BenefitData benefitData = gpie.getBenefitForAge(age);
+                sumMonthlyBenefit += benefitData.getMonthlyAmount();
             }
             List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
             for (PensionIncomeEntity pie : pieList) {
@@ -294,37 +283,29 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
                 }
             }
 
-            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
-            for(GovPensionEntity gpie : gpeList) {
-
-                String birthdate = roe.getBirthdate();
-                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge);
-                gpie.setRules(ssr);
-                savingsPensionBenefitData = gpie.getBenefitForAge(age);
+            double montlySavingsBenefit = 0;
+            if(balance > sumBalance) {
+                sumBalance = balance;
+                // TODO make these finals: .04 is initial annual withdraw
+                montlySavingsBenefit = sumBalance * .04 / 12;
             }
+
+            double sumMonthlyBenefit = montlySavingsBenefit;
+
+            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+            SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
+            for(GovPensionEntity gpe : gpeList) {
+                BenefitData benefitData = gpe.getBenefitForAge(age);
+                sumMonthlyBenefit += benefitData.getMonthlyAmount();
+            }
+
             List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
             for(PensionIncomeEntity pie : pieList) {
                 AgeData minAge = pie.getMinAge();
                 PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, endAge,  Double.parseDouble(pie.getMonthlyBenefit()));
                 pie.setRules(pr);
-                savingsGovPensionBenefitData = pie.getBenefitForAge(age);
-            }
-
-            double montlySavingsBenefit = 0;
-            if(balance > sumBalance) {
-                sumBalance = balance;
-                montlySavingsBenefit = sumBalance * .04 / 12;
-            } else {
-                return Collections.emptyList();
-            }
-
-            double sumMonthlyBenefit = montlySavingsBenefit;
-            if(savingsPensionBenefitData != null) {
-                sumMonthlyBenefit += savingsPensionBenefitData.getMonthlyAmount();
-            }
-
-            if(savingsGovPensionBenefitData != null) {
-                sumMonthlyBenefit += savingsGovPensionBenefitData.getMonthlyAmount();
+                BenefitData benefitData = pie.getBenefitForAge(age);
+                sumMonthlyBenefit += benefitData.getMonthlyAmount();
             }
 
             BenefitData benefitData = new BenefitData(age, sumMonthlyBenefit, sumBalance, RetirementConstants.BALANCE_STATE_GOOD, false);

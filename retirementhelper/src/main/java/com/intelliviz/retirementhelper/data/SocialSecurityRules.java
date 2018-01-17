@@ -2,6 +2,8 @@ package com.intelliviz.retirementhelper.data;
 
 import android.os.Bundle;
 
+import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
+import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -11,7 +13,6 @@ import java.util.List;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_FULL_BENEFIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_INCLUDE_SPOUSE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BENEFIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
 
@@ -31,11 +32,12 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private double mSpouseFullBenefit;
     private String mSpouseBirthdate;
 
-    public SocialSecurityRules(String birthDate, AgeData endAge) {
+    public SocialSecurityRules(String birthDate, AgeData endAge, double spouseFullBenefit) {
         mBirthdate = birthDate;
         mMinAge = new AgeData(62, 0);
         mMaxAge = new AgeData(70, 0);
         mEndAge = endAge;
+        mSpouseFullBenefit = spouseFullBenefit;
     }
 
     @Override
@@ -43,7 +45,6 @@ public class SocialSecurityRules implements IncomeTypeRules {
         mFullMonthlyBenefit = bundle.getDouble(EXTRA_INCOME_FULL_BENEFIT);
         mStartAge = bundle.getParcelable(EXTRA_INCOME_START_AGE);
         mIncludeSpouse = bundle.getBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, false);
-        mSpouseFullBenefit = bundle.getDouble(EXTRA_INCOME_SPOUSE_BENEFIT);
         mSpouseBirthdate = bundle.getString(EXTRA_INCOME_SPOUSE_BIRTHDATE);
     }
 
@@ -175,6 +176,28 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 }
                 return new SocialSecurityBenefitData(age, monthlyBenefit, 0, benefitInfo, false, mIncludeSpouse, 0, null);
             }
+        }
+    }
+
+    public static void setRulesOnGovPensionEntities(List<GovPensionEntity> gpeList, RetirementOptionsEntity roe) {
+        if(gpeList == null || gpeList.isEmpty()) {
+            return;
+        }
+        String birthdate = roe.getBirthdate();
+        AgeData endAge = roe.getEndAge();
+        if(gpeList.size() == 1) {
+            GovPensionEntity spouse1 = gpeList.get(0);
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge, 0);
+            spouse1.setRules(ssr);
+        } else if(gpeList.size() == 2) {
+            GovPensionEntity spouse1 = gpeList.get(0);
+            GovPensionEntity spouse2 = gpeList.get(1);
+            SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge,
+                    Double.parseDouble(spouse2.getFullMonthlyBenefit()));
+            spouse1.setRules(ssr);
+            ssr = new SocialSecurityRules(birthdate, endAge,
+                    Double.parseDouble(spouse1.getFullMonthlyBenefit()));
+            spouse2.setRules(ssr);
         }
     }
 
