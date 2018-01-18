@@ -54,13 +54,42 @@ public abstract class BaseSavingsIncomeRules {
             age = new AgeData(age.getYear()+1, 0);
         }
 
+
+        // get the balance at the start age.
+        int numMonths = mStartAge.diff(mCurrentAge);
+        //double balance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
+        double initWithdrawAmount;
+
+        double monthlyWithdrawAmount = 0;
+        boolean penalty = false;
+        int balanceState = RetirementConstants.BALANCE_STATE_GOOD;
         List<BenefitData> listAmountDate = new ArrayList<>();
+        double monthlyInterest = mInterest / 1200;
+        double balance = mBalance;
+        boolean initWithdraw = true;
+        double annualWithdrawIncrease = 0;
         for(int year = age.getYear(); year < mEndAge.getYear(); year++) {
             age = new AgeData(year, 0);
-            BenefitData benefitData = getBenefitForAge(age);
-            if(benefitData != null) {
-                listAmountDate.add(benefitData);
+
+            if(age.isAfter(mStartAge)) {
+                // start doing withdraws
+                if(initWithdraw) {
+                    initWithdraw = false;
+                    monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
+                } else {
+                    monthlyWithdrawAmount += annualWithdrawIncrease;
+                }
             }
+
+            for(int i = 0; i < 12; i++) {
+                double monthlyIncrease = balance * monthlyInterest;
+                balance += monthlyIncrease;
+                if(age.isAfter(mStartAge)) {
+                    balance -= monthlyWithdrawAmount;
+                }
+            }
+
+            listAmountDate.add(new BenefitData(age, monthlyWithdrawAmount, balance, balanceState, penalty));
         }
 
         return listAmountDate;

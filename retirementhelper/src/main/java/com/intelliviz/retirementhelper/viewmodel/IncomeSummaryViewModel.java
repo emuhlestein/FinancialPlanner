@@ -21,6 +21,7 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -120,13 +121,14 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
 
         return allAmounts;
     }
-
+/*
     private List<BenefitData> getIncomeSummaryOld(RetirementOptionsEntity roe) {
         List<List<BenefitData>> allIncomeSources = getBenefitDataList(roe);
         AgeData currentAge = SystemUtils.getAge(roe.getBirthdate());
         AgeData endAge = roe.getEndAge();
         return sumAmounts(currentAge, endAge, allIncomeSources);
     }
+    */
 
     private List<List<BenefitData>> getBenefitDataList(RetirementOptionsEntity roe) {
         List<List<BenefitData>> allIncomeSources = new ArrayList<>();
@@ -169,6 +171,68 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
     }
 
     private List<BenefitData> getIncomeSummary(RetirementOptionsEntity roe) {
+        List<BenefitData> benefitDataList = new ArrayList<>();
+
+        List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
+        List<List<BenefitData>> incomeSourceEntityList = new ArrayList<>();
+        for (SavingsIncomeEntity sie : tdieList) {
+            if (sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
+                SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), sie.getStartAge(), roe.getEndAge(),
+                        Double.parseDouble(sie.getBalance()),
+                        Double.parseDouble(sie.getInterest()),
+                        Double.parseDouble(sie.getMonthlyAddition()),
+                        sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
+                sie.setRules(sir);
+                incomeSourceEntityList.add(sie.getBenefitData());
+            } else if (sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
+                Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), sie.getStartAge(), roe.getEndAge(), Double.parseDouble(sie.getBalance()),
+                        Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()), sie.getWithdrawMode(),
+                        Double.parseDouble(sie.getWithdrawAmount()));
+                sie.setRules(tdir);
+                incomeSourceEntityList.add(sie.getBenefitData());
+            }
+        }
+
+        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
+        for (GovPensionEntity gpe : gpeList) {
+            incomeSourceEntityList.add(gpe.getBenefitData());
+        }
+
+        List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
+        for (PensionIncomeEntity pie : pieList) {
+            AgeData minAge = pie.getMinAge();
+            PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, roe.getEndAge(), Double.parseDouble(pie.getMonthlyBenefit()));
+            pie.setRules(pr);
+            incomeSourceEntityList.add(pie.getBenefitData());
+        }
+
+        if(incomeSourceEntityList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        int numYears = incomeSourceEntityList.get(0).size();
+
+        BenefitData benefitData;
+        for(int year = 0; year < numYears; year++) {
+            double sumBalance = 0;
+            double sumMonthlyWithdraw = 0;
+            AgeData age = incomeSourceEntityList.get(0).get(0).getAge();
+
+            for (List<BenefitData> bdList : incomeSourceEntityList) {
+                benefitData = bdList.get(year);
+                age = new AgeData(benefitData.getAge().getNumberOfMonths());
+                sumBalance += benefitData.getBalance();
+                sumMonthlyWithdraw += benefitData.getMonthlyAmount();
+            }
+
+            benefitDataList.add(new BenefitData(new AgeData(age.getNumberOfMonths()), sumMonthlyWithdraw, sumBalance, 0, false));
+        }
+
+        return benefitDataList;
+    }
+
+    private List<BenefitData> getIncomeSummaryOld(RetirementOptionsEntity roe) {
         List<BenefitData> benefitDataList = new ArrayList<>();
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
         BenefitData savingsBenefitData;
