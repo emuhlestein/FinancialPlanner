@@ -170,6 +170,14 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         }
     }
 
+    public BenefitData getBenefitData(BenefitData benefitData) {
+        if(mRules != null) {
+            return mRules.getBenefitData(benefitData);
+        } else {
+            return null;
+        }
+    }
+
     public TaxDeferredData getMonthlyBenefitForAge(AgeData startAge) {
         if(mRules != null) {
             return null;

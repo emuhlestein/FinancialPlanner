@@ -146,11 +146,12 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         Intent returnIntent = new Intent();
         String value;
         String floatValue;
+        AgeData defaultEndAge = new AgeData(90*12);
 
         value = mReachAmountEditText.getText().toString();
         floatValue = getFloatValue(value);
-        if(floatValue == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
+        if (floatValue == null) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.reach_amount_value_is_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
@@ -158,34 +159,24 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
 
         value = mReachPercentIncomeEditText.getText().toString();
         floatValue = getFloatValue(value);
-        if(floatValue == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
+        if (floatValue == null) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.reach_percent_value_is_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
 
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIREMENT_REACH_INCOME_PERCENT, floatValue);
 
-        value = mAnnualIncomeEditText.getText().toString();
-        floatValue = getFloatValue(value);
-        if(floatValue == null) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
-            snackbar.show();
-            return;
-        }
-
-        returnIntent.putExtra(RetirementConstants.EXTRA_RETIREMENT_ANNUAL_INCOME, floatValue);
-
         value = mEndAgeEditText.getText().toString();
         value = SystemUtils.trimAge(value);
         AgeData endAge = SystemUtils.parseAgeString(value);
-        if(endAge == null) {
+        if (endAge == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
-        returnIntent.putExtra(RetirementConstants.EXTRA_RETIREMENT_INCOME_SUMMARY_AGE, endAge);
 
+        returnIntent.putExtra(RetirementConstants.EXTRA_RETIREMENT_INCOME_SUMMARY_AGE, endAge);
         returnIntent.putExtra(RetirementConstants.RETIREMENT_MODE, getCurrentMode());
         setResult(Activity.RESULT_OK, returnIntent);
         finish();

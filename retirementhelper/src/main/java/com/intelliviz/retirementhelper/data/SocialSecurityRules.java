@@ -115,6 +115,11 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return 0;
     }
 
+    @Override
+    public BenefitData getBenefitData(BenefitData benefitData) {
+        return null;
+    }
+
     public AgeData getFullRetirementAge() {
         int birthyear = SystemUtils.getBirthYear(mBirthdate);
         return getFullRetirementAgeFromYear(birthyear);

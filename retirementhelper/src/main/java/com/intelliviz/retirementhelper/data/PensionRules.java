@@ -82,6 +82,11 @@ public class PensionRules implements IncomeTypeRules {
     }
 
     @Override
+    public BenefitData getBenefitData(BenefitData benefitData) {
+        return null;
+    }
+
+    @Override
     public BenefitData getBenefitForAge(AgeData age) {
         if(age.isBefore(mMinAge)) {
             return new BenefitData(age, 0, 0, 0, false);

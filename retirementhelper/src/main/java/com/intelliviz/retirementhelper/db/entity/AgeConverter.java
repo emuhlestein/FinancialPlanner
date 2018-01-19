@@ -10,8 +10,8 @@ import com.intelliviz.retirementhelper.data.AgeData;
 
 public class AgeConverter {
     @TypeConverter
-    public static AgeData fromInteger(int age) {
-        return new AgeData(age);
+    public static AgeData fromInteger(int numMonths) {
+        return new AgeData(numMonths);
     }
 
     @TypeConverter

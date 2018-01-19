@@ -15,4 +15,5 @@ public interface IncomeTypeRules {
     List<BenefitData> getBenefitData();
     BenefitData getBenefitForAge(AgeData age);
     double getBalanceForAge(AgeData age);
+    BenefitData getBenefitData(BenefitData benefitData);
 }

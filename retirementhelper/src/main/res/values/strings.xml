@@ -68,6 +68,8 @@
     <string name="balance_not_valid">Balance value is not valid</string>
     <string name="interest_not_valid">Interest value is not valid</string>
     <string name="value_not_valid">Monthly increase value is not valid</string>
+    <string name="reach_percent_value_is_not_valid">Reach percent value is not valid</string>
+    <string name="reach_amount_value_is_not_valid">Reach amount value is not valid</string>
     <string name="monthly_increase_not_valid">Monthly increase value is not valid</string>
     <string name="annual_withdraw_increase_not_valid">Annual withdraw increase value is not valid</string>
 
