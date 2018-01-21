@@ -17,7 +17,7 @@ import java.util.List;
 
 import static com.intelliviz.retirementhelper.db.entity.GovPensionEntity.TABLE_NAME;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_FULL_BENEFIT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_INCLUDE_SPOUSE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_IS_SPOUSE_ENTITY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
 
@@ -53,6 +53,9 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         super(id, type, name);
         this.fullMonthlyBenefit = fullMonthlyBenefit;
         mSpouse = spouse;
+        if(spouseBirhtdate == null || spouseBirhtdate.equals("0")) {
+            spouseBirhtdate = "13-03-1957";
+        }
         mSpouseBirhtdate = spouseBirhtdate;
         mStartAge = startAge;
     }
@@ -103,16 +106,16 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
             Bundle bundle = new Bundle();
 
-            boolean includeSpouse;
+            boolean isSpouseEntity;
             if(mSpouse == 1) {
-                includeSpouse = true;
+                isSpouseEntity = true;
             } else {
-                includeSpouse = false;
+                isSpouseEntity = false;
             }
 
             bundle.putDouble(EXTRA_INCOME_FULL_BENEFIT, Double.parseDouble(fullMonthlyBenefit));
             bundle.putParcelable(EXTRA_INCOME_START_AGE, mStartAge);
-            bundle.putBoolean(EXTRA_INCOME_INCLUDE_SPOUSE, includeSpouse);
+            bundle.putBoolean(EXTRA_INCOME_IS_SPOUSE_ENTITY, isSpouseEntity);
             bundle.putString(EXTRA_INCOME_SPOUSE_BIRTHDATE, mSpouseBirhtdate);
             mRules.setValues(bundle);
         } else {

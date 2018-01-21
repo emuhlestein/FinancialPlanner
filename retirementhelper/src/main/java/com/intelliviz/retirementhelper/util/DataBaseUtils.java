@@ -40,9 +40,8 @@ public class DataBaseUtils {
         String birthdate = roe.getBirthdate();
         AgeData endAge = roe.getEndAge();
         if(!govEntities.isEmpty()) {
+            SocialSecurityRules.setRulesOnGovPensionEntities(govEntities, roe);
             for(GovPensionEntity gpe : govEntities) {
-                SocialSecurityRules ssr = new SocialSecurityRules(birthdate, endAge, 0, null);
-                gpe.setRules(ssr);
                 allEntities.add(gpe);
             }
         }
