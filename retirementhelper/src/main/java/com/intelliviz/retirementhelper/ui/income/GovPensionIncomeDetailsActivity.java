@@ -24,7 +24,6 @@ import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
-import com.intelliviz.retirementhelper.data.SocialSecurityBenefitData;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -143,16 +142,11 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
 
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
                 for(BenefitData benefitData : listBenefitData) {
-                    if(!(benefitData instanceof SocialSecurityBenefitData)) {
-                        continue;
-                    }
-
-                    SocialSecurityBenefitData ssbd = (SocialSecurityBenefitData) benefitData;
-                    AgeData age = ssbd.getAge();
-                    String amount = SystemUtils.getFormattedCurrency(ssbd.getMonthlyAmount());
+                    AgeData age = benefitData.getAge();
+                    String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
                     String line1 = age.toString() + "   " + amount;
                     IncomeDetails incomeDetail;
-                    incomeDetail = new IncomeDetails(line1, ssbd.getBalanceState(), "");
+                    incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), "");
 
                     incomeDetails.add(incomeDetail);
                 }
