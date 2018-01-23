@@ -86,6 +86,8 @@ public abstract class BaseSavingsIncomeRules {
                 balance += monthlyIncrease;
                 if(age.isAfter(mStartAge)) {
                     balance -= monthlyWithdrawAmount;
+                } else {
+                    balance += mMonthlyAddition;
                 }
             }
 
