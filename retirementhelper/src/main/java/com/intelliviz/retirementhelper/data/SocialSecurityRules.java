@@ -144,16 +144,23 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return getFullRetirementAgeFromYear(birthyear);
     }
 
+    /**
+     * Get the monthly benefit for the specified age.
+     * @param age The primary spouse age.
+     * @return The benefit data.
+     */
     public BenefitData getMonthlyBenefitForAge(AgeData age) {
         int birthYear;
         AgeData startAge;
         AgeData fullRetireAge;
+        AgeData spouseAge = age;
         double fullMonthlyBenefit;
 
         if(mIsSpouseEntity) {
             startAge = mSpouseStartAge;
             birthYear = SystemUtils.getBirthYear(mSpouseBirthdate);
             fullMonthlyBenefit = mSpouseFullBenefit;
+            spouseAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, age);
         } else {
             startAge = mStartAge;
             birthYear = SystemUtils.getBirthYear(mBirthdate);
@@ -200,11 +207,23 @@ public class SocialSecurityRules implements IncomeTypeRules {
                     if(mSpouseStartAge.isBefore(mStartAge)) {
                         startAge = mStartAge;
                     }
-                    double monthlyBenefit = getMonthlyBenefit(startAge, birthYear, fullMonthlyBenefit);
-                    return new BenefitData(startAge, monthlyBenefit, 0, 0, false);
+
+                    if(spouseAge.isBefore(startAge)) {
+                        return new BenefitData(spouseAge, 0, 0, 0, false);
+                    } else {
+                        double monthlyBenefit = getMonthlyBenefit(startAge, birthYear, fullMonthlyBenefit);
+                        if (monthlyBenefit > fullMonthlyBenefit) {
+                            monthlyBenefit = fullMonthlyBenefit;
+                        }
+                        return new BenefitData(age, monthlyBenefit, 0, 0, false);
+                    }
                 } else {
-                    double monthlyBenefit = getMonthlyBenefit(startAge, birthYear, fullMonthlyBenefit);
-                    return new BenefitData(startAge, monthlyBenefit, 0, 0, false);
+                    if(age.isBefore(startAge)) {
+                        return new BenefitData(age, 0, 0, 0, false);
+                    } else {
+                        double monthlyBenefit = getMonthlyBenefit(startAge, birthYear, fullMonthlyBenefit);
+                        return new BenefitData(age, monthlyBenefit, 0, 0, false);
+                    }
                 }
             } else {
                 double monthlyBenefit = getMonthlyBenefit(startAge, birthYear, fullMonthlyBenefit);
