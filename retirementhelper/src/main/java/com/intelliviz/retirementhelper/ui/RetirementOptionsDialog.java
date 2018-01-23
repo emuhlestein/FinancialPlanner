@@ -57,8 +57,8 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
     @BindView(R.id.reach_percent_income_edit_text)
     EditText mReachPercentIncomeEditText;
 
-    @BindView(R.id.annual_income_edit_text)
-    EditText mAnnualIncomeEditText;
+    @BindView(R.id.monthly_income_edit_text)
+    EditText mMonthlyIncomeEditText;
 
     @BindView(R.id.reach_amount_button)
     Button mReachAmountButton;
@@ -136,7 +136,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
         mReachAmountEditText.setText(SystemUtils.getFormattedCurrency(roe.getReachAmount()));
         mReachPercentIncomeEditText.setText(roe.getReachPercent() + "%");
         mEndAgeEditText.setText(roe.getEndAge().toString());
-        mAnnualIncomeEditText.setText(SystemUtils.getFormattedCurrency(roe.getMonthlyIncome()));
+        mMonthlyIncomeEditText.setText(SystemUtils.getFormattedCurrency(roe.getMonthlyIncome()));
 
         setLayoutVisibilty(mode);
     }
@@ -156,6 +156,15 @@ public class RetirementOptionsDialog extends AppCompatActivity implements View.O
             return;
         }
         returnIntent.putExtra(RetirementConstants.EXTRA_RETIREMENT_REACH_AMOUNT, floatValue);
+
+        value = mMonthlyIncomeEditText.getText().toString();
+        floatValue = getFloatValue(value);
+        if (floatValue == null) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.reach_amount_value_is_not_valid) + " " + value, Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return;
+        }
+        returnIntent.putExtra(RetirementConstants.EXTRA_RETIREMENT_MONTHLY_INCOME, floatValue);
 
         value = mReachPercentIncomeEditText.getText().toString();
         floatValue = getFloatValue(value);

@@ -30,7 +30,7 @@ public class RetirementConstants {
     public static final String EXTRA_RETIREMENT_REACH_AMOUNT = "retirement reach mount";
     public static final String EXTRA_RETIREMENT_REACH_INCOME_PERCENT = "retirement reach income percent";
     public static final String EXTRA_RETIREMENT_INCOME_SUMMARY_AGE = "retirement income summary age";
-    public static final String EXTRA_RETIREMENT_ANNUAL_INCOME = "retirement annual income";
+    public static final String EXTRA_RETIREMENT_MONTHLY_INCOME = "retirement monthly income";
 
     public static final int INCOME_SUMMARY_MODE = 0;
     public static final int REACH_AMOUNT_MODE = 1;
