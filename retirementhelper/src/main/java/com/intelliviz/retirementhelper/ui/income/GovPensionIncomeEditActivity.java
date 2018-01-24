@@ -48,6 +48,9 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
+    @BindView( R.id.name_edit_text)
+    EditText mName;
+
     @BindView(R.id.full_retirement_age_text_view)
     TextView mFullRetirementAge;
 
@@ -209,6 +212,8 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             return;
         }
 
+        mName.setText(mGPE.getName());
+
         AgeData age = mGPE.getFullRetirementAge();
         mFullRetirementAge.setText(age.toString());
 
@@ -231,6 +236,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     }
 
     private void updateIncomeSourceData() {
+        String name = mName.getText().toString();
         String value = mFullMonthlyBenefit.getText().toString();
         String fullBenefit = getFloatValue(value);
         if (fullBenefit == null) {
@@ -259,7 +265,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         GovPensionEntity gpe = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, incomeSourceTypeString,
                 fullBenefit, startAge, mIsSpousalBenefits ? 1 : 0, spouseBirthdate);
         if(mActivityResult) {
-            sendData(mId, incomeSourceTypeString, fullBenefit, startAge,  mIsSpousalBenefits ? 1 : 0, spouseBirthdate);
+            sendData(mId, name, fullBenefit, startAge,  mIsSpousalBenefits ? 1 : 0, spouseBirthdate);
         } else {
             mViewModel.setData(gpe);
         }
