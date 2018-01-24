@@ -189,7 +189,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 benefitInfo = RetirementConstants.BALANCE_STATE_GOOD;
             }
             double monthlyBenefit = getMonthlyBenefit(startAge, birthYear, fullMonthlyBenefit);
-            return new BenefitData(startAge, monthlyBenefit, benefitInfo, benefitInfo, false);
+            return new BenefitData(age, monthlyBenefit, benefitInfo, benefitInfo, false);
         } else {
             // yes there are spouse social security benefits; need to determine if there are
             // spousal benefits for either spouse.
