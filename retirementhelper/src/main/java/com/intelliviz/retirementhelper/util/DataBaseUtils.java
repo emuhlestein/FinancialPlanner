@@ -60,7 +60,7 @@ public class DataBaseUtils {
                 AgeData startAge = sie.getStartAge();
                 SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, startAge, endAge, Double.parseDouble(sie.getBalance()),
                         Double.parseDouble(sie.getInterest()), Double.parseDouble(sie.getMonthlyAddition()),
-                        sie.getWithdrawMode(), Double.parseDouble(sie.getWithdrawAmount()));
+                        Double.parseDouble(sie.getWithdrawPercent()));
                 sie.setRules(sir);
                 allEntities.add(sie);
             }

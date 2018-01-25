@@ -12,8 +12,8 @@ import java.util.List;
 public class SavingsIncomeRules extends BaseSavingsIncomeRules implements IncomeTypeRules {
 
     public SavingsIncomeRules(String birthDate,  AgeData startAge, AgeData endAge,
-                              double balance, double interest, double monthlyAddition,  int withdrawMode, double withdrawAmount) {
-        super(birthDate, startAge, endAge, balance, interest, monthlyAddition, withdrawMode, withdrawAmount);
+                              double balance, double interest, double monthlyAddition, double withdrawPercent) {
+        super(birthDate, startAge, endAge, balance, interest, monthlyAddition, withdrawPercent);
     }
 
     @Override

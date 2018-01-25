@@ -6,8 +6,6 @@ import com.intelliviz.retirementhelper.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
-
 /**
  * Created by edm on 12/30/2017.
  */
@@ -19,8 +17,7 @@ public abstract class BaseSavingsIncomeRules {
     private double mBalance;
     private double mInterest;
     private double mMonthlyAddition;
-    private int mWithdrawMode;
-    private double mWithdrawAmount;
+    private double mWithdrawPercent;
 
     /**
      * Constructor
@@ -30,19 +27,17 @@ public abstract class BaseSavingsIncomeRules {
      * @param balance The savings balance.
      * @param interest The annual interest.
      * @param monthlyAddition The monthly amount added to balance.
-     * @param withdrawMode The withdraw mode: withdraw amount is either percent or dollar amount.
-     * @param withdrawAmount The initial withdraw amount.
+     * @param withdrawPercent The initial withdraw percent.
      */
     public BaseSavingsIncomeRules(String birthDate, AgeData startAge, AgeData endAge,
-                                  double balance, double interest, double monthlyAddition,  int withdrawMode, double withdrawAmount) {
+                                  double balance, double interest, double monthlyAddition, double withdrawPercent) {
         mCurrentAge = SystemUtils.getAge(birthDate);
         mStartAge = startAge;
         mEndAge = endAge;
         mBalance = balance;
         mInterest = interest;
         mMonthlyAddition = monthlyAddition;
-        mWithdrawMode = withdrawMode;
-        mWithdrawAmount = withdrawAmount;
+        mWithdrawPercent = withdrawPercent;
     }
 
     protected abstract double adjustMonthlyAmount(AgeData age, double amount);
@@ -54,11 +49,6 @@ public abstract class BaseSavingsIncomeRules {
             age = new AgeData(age.getYear()+1, 0);
         }
 
-
-        // get the balance at the start age.
-        int numMonths = mStartAge.diff(mCurrentAge);
-        //double balance = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
-        double initWithdrawAmount;
 
         double monthlyWithdrawAmount = 0;
         boolean penalty = false;
@@ -174,11 +164,7 @@ public abstract class BaseSavingsIncomeRules {
     }
 
     private double getInitMonthlyWithdrawAmount(double balance) {
-        if(mWithdrawMode == WITHDRAW_MODE_PERCENT) {
-            return getInitMonthlyWithdrawAmount(balance, mWithdrawAmount);
-        } else {
-            return mWithdrawAmount;
-        }
+        return getInitMonthlyWithdrawAmount(balance, mWithdrawPercent);
     }
 
     private double getInitMonthlyWithdrawAmount(double balance, double percent) {

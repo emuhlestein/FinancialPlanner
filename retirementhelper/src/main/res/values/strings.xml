@@ -153,4 +153,5 @@
     <string name="annual_income">Annual Income</string>
     <string name="monthly_pretire_income">Monthly Pre-Retirement Income</string>
     <string name="spousal_benefits">Spousal Benefits?</string>
+    <string name="monthly_addition">Monthly Addition</string>
 </resources>
