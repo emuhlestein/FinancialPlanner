@@ -154,4 +154,7 @@
     <string name="monthly_pretire_income">Monthly Pre-Retirement Income</string>
     <string name="spousal_benefits">Spousal Benefits?</string>
     <string name="monthly_addition">Monthly Addition</string>
+    <string name="init_percentage_withdraw">Initial % Withdraw</string>
+    <string name="save">Save</string>
+    <string name="stop_addition_age">Stop Addition Age</string>
 </resources>

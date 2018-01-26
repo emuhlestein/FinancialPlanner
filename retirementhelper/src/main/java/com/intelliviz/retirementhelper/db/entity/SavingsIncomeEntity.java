@@ -26,8 +26,13 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     public static final String INTEREST_FIELD = "interest";
     public static final String MONTHLY_ADDITION_FIELD = "monthly_addition";
     public static final String START_AGE_FIELD = "start_age";
-    public static final String WITHDRAW_PERCENT_FIELD = "withdraw_percent";;
+    public static final String STOP_MONTHLY_ADDITION_AGE_FIELD = "stop_monthly_addition_age";
+    public static final String WITHDRAW_PERCENT_FIELD = "withdraw_percent";
     public static final String ANNUAL_PERCENT_INCREASE_FIELD = "annual_percent_increase";
+
+    @TypeConverters({AgeConverter.class})
+    @ColumnInfo(name = START_AGE_FIELD)
+    private AgeData mStartAge;
 
     @ColumnInfo(name = BALANCE_FIELD)
     private String mBalance;
@@ -39,8 +44,8 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     private String mMonthlyAddition;
 
     @TypeConverters({AgeConverter.class})
-    @ColumnInfo(name = START_AGE_FIELD)
-    private AgeData mStartAge;
+    @ColumnInfo(name = STOP_MONTHLY_ADDITION_AGE_FIELD)
+    private AgeData mStopMonthlyAdditionAge;
 
     @ColumnInfo(name = WITHDRAW_PERCENT_FIELD)
     private String mWithdrawPercent;
@@ -51,16 +56,25 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     @Ignore
     private IncomeTypeRules mRules;
 
-    public SavingsIncomeEntity(long id, int type, String name, String balance, String interest,
-                               String monthlyAddition, AgeData startAge,
+    public SavingsIncomeEntity(long id, int type, String name, AgeData startAge, String balance, String interest,
+                               String monthlyAddition, AgeData stopMonthlyAdditionAge,
                                String withdrawPercent, String annualPercentIncrease) {
         super(id, type, name);
+        mStartAge = startAge;
         mBalance = balance;
         mInterest = interest;
         mMonthlyAddition = monthlyAddition;
-        mStartAge = startAge;
+        mStopMonthlyAdditionAge = stopMonthlyAdditionAge;
         mWithdrawPercent = withdrawPercent;
         mAnnualPercentIncrease = annualPercentIncrease;
+    }
+
+    public AgeData getStartAge() {
+        return mStartAge;
+    }
+
+    public void setStartAge(AgeData startAge) {
+        mStartAge = startAge;
     }
 
     public String getBalance() {
@@ -87,16 +101,12 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mMonthlyAddition = monthlyAddition;
     }
 
-    public AgeData getStartAge() {
-        return mStartAge;
+    public AgeData getStopMonthlyAdditionAge() {
+        return mStopMonthlyAdditionAge;
     }
 
-    public void setStartAge(AgeData startAge) {
-        mStartAge = startAge;
-    }
-
-    public void setRules(IncomeTypeRules rules) {
-        mRules = rules;
+    public void setStopMonthlyAdditionAge(AgeData stopMonthlyAdditionAgeAge) {
+        mStopMonthlyAdditionAge = stopMonthlyAdditionAgeAge;
     }
 
     public String getWithdrawPercent() {
@@ -113,6 +123,10 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
 
     public void setAnnualPercentIncrease(String annualPercentIncrease) {
         mAnnualPercentIncrease = annualPercentIncrease;
+    }
+
+    public void setRules(IncomeTypeRules rules) {
+        mRules = rules;
     }
 
     public BenefitData getBenefitForAge(AgeData age) {

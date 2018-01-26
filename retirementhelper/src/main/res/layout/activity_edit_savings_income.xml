@@ -52,25 +52,6 @@
                     android:inputType="textPersonName" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_balance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:paddingTop="24dp">
-
-                <EditText
-                    android:id="@+id/balance_text"
-                    style="@style/CurrencyStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:hint="@string/balance" />
-            </android.support.design.widget.TextInputLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,6 +75,34 @@
                     android:textSize="22sp" />
             </LinearLayout>
 
+            <View
+                android:id="@+id/divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/separator" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_balance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:paddingTop="24dp">
+
+                <EditText
+                    android:id="@+id/balance_text"
+                    style="@style/CurrencyStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:hint="@string/balance" />
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_layout_interest"
@@ -107,7 +116,7 @@
 
                 <EditText
                     android:id="@+id/annual_interest_text"
-                    style="@style/ThreeDigitPositiveNumber"
+                    style="@style/FiveDigitPositiveNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -133,6 +142,39 @@
                     android:hint="@string/monthly_addition" />
             </android.support.design.widget.TextInputLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16sp"
+                android:layout_marginRight="16sp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/edit_stop_age_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stop_addition_age"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/stop_age_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textSize="22sp" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/separator" />
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_withdraw_percent"
                 android:layout_width="match_parent"
@@ -148,9 +190,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:ems="10"
-                    android:hint="@string/percentage"
+                    android:hint="@string/init_percentage_withdraw"
                     android:inputType="numberDecimal"
-                    style="@style/ThreeDigitPositiveNumber"/>
+                    style="@style/FiveDigitPositiveNumber"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -170,7 +212,7 @@
                     android:ems="10"
                     android:hint="@string/annual_percent_increase"
                     android:inputType="numberDecimal"
-                    style="@style/ThreeDigitPositiveNumber"/>
+                    style="@style/FiveDigitPositiveNumber"/>
             </android.support.design.widget.TextInputLayout>
 
             <Button
@@ -183,7 +225,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:contentDescription="@string/save_income_source"
-                android:text="@string/save_income_source" />
+                android:text="@string/save" />
         </LinearLayout>
         </ScrollView>
     </LinearLayout>

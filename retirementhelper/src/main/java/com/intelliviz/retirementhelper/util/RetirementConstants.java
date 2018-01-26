@@ -58,6 +58,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SOURCE_INCLUDE_SPOUSE = "income source include spouse";
     public static final String EXTRA_INCOME_SOURCE_SPOUSE_BENEFIT = "income source spouse benefit";
     public static final String EXTRA_INCOME_SOURCE_SPOUSE_BIRTHDAY = "income source spouse birthday";
+    public static final String EXTRA_INCOME_STOP_MONTHLY_ADDITION_AGE = "stop monthly addtion age";
     public static final String EXTRA_WITHDRAW_PERCENT = "withdraw percent";
     public static final String EXTRA_ANNUAL_PERCENT_INCREASE = "annual percent increase";
 
