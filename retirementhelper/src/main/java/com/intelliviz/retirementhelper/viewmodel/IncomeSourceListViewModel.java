@@ -16,19 +16,15 @@ import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
-import com.intelliviz.retirementhelper.db.entity.MilestoneSummaryEntity;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getAllMilestones;
 
 /**
  * Created by edm on 10/7/2017.
@@ -182,30 +178,13 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
 
     private void updateSummaryData(AppDatabase db) {
         db.summaryDao().deleteAll();
-        List<MilestoneData> milestones = getAllMilestones(db);
+        List<MilestoneData> milestones = null;
         for(MilestoneData msd : milestones) {
             db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
         }
     }
 
     private void updateMilestoneSummary() {
-
-        mDB.milestoneSummaryDao().deleteAll();
-
-        List<MilestoneData> milestoneDataList = DataBaseUtils.getAllMilestones(mDB);
-
-        for (MilestoneData milestoneData : milestoneDataList) {
-            String monthlyBenefit = Double.toString(milestoneData.getMonthlyBenefit());
-            AgeData startAge = milestoneData.getStartAge();
-            AgeData endAge = milestoneData.getEndAge();
-            AgeData minAge = milestoneData.getMinimumAge();
-            String startBalance = Double.toString(milestoneData.getStartBalance());
-            String endBalance = Double.toString(milestoneData.getEndBalance());
-            String penaltyAmount = Double.toString(milestoneData.getPenaltyAmount());
-            int numMonths = milestoneData.getMonthsFundsFillLast();
-            MilestoneSummaryEntity ent = new MilestoneSummaryEntity(0, monthlyBenefit, startAge, endAge, minAge, startBalance, endBalance, penaltyAmount, numMonths);
-            mDB.milestoneSummaryDao().insert(ent);
-        }
     }
 
     private List<IncomeSourceEntityBase> getAllIncomeSources() {
@@ -215,9 +194,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         AgeData endAge = roe.getEndAge();
         for(SavingsIncomeEntity tdie : tdieList) {
             AgeData startAge = tdie.getStartAge();
-            Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), startAge, endAge, Double.parseDouble(tdie.getBalance()),
-                    Double.parseDouble(tdie.getInterest()), Double.parseDouble(tdie.getMonthlyAddition()),
-                    Double.parseDouble("0"));
+            Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge);
             tdie.setRules(tdir);
             incomeSourceList.add(tdie);
         }

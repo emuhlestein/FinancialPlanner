@@ -5,7 +5,6 @@ import android.os.Bundle;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,24 +27,6 @@ public class PensionRules implements IncomeTypeRules {
 
     @Override
     public void setValues(Bundle bundle) {
-    }
-
-    @Override
-    public List<AgeData> getAges() {
-        return new ArrayList<>(Arrays.asList(mMinAge));
-    }
-
-    @Override
-    public MilestoneData getMilestone(AgeData age) {
-        MilestoneData milestone;
-        if(age.isBefore(mMinAge)) {
-            milestone = new MilestoneData(age, mEndAge, mMinAge, 0, 0, 0, 0, 0, 0, 0, 0);
-        } else {
-            int numMonths =  mEndAge.diff(age);
-
-            milestone = new MilestoneData(age, mEndAge, mMinAge, mMonthlyAmount, 0, 0, 0, numMonths, 0, 0, 0);
-        }
-        return milestone;
     }
 
     @Override
@@ -77,22 +58,8 @@ public class PensionRules implements IncomeTypeRules {
     }
 
     @Override
-    public double getBalanceForAge(AgeData age) {
-        return 0;
-    }
-
-    @Override
     public BenefitData getBenefitData(BenefitData benefitData) {
         return null;
-    }
-
-    @Override
-    public BenefitData getBenefitForAge(AgeData age) {
-        if(age.isBefore(mMinAge)) {
-            return new BenefitData(age, 0, 0, 0, false);
-        } else {
-            return new BenefitData(age, mMonthlyAmount, 0, 0, false);
-        }
     }
 
     public PensionData getMonthlyBenefitForAge(AgeData startAge) {

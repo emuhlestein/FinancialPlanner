@@ -8,7 +8,6 @@ import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_FULL_BENEFIT;
@@ -68,33 +67,12 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     @Override
-    public List<AgeData> getAges() {
-        int birthyear = SystemUtils.getBirthYear(mBirthdate);
-        AgeData retireAge = getFullRetirementAgeFromYear(birthyear);
-        if(mIsSpouseEntity) {
-            birthyear = SystemUtils.getBirthYear(mSpouseBirthdate);
-            AgeData spouseRetireAge = getFullRetirementAgeFromYear(birthyear);
-            AgeData age1 = SystemUtils.getAge(mBirthdate, mSpouseBirthdate, spouseRetireAge);
-            return new ArrayList<>(Arrays.asList(mMinAge, retireAge, age1, mMaxAge));
-        } else {
-            return new ArrayList<>(Arrays.asList(mMinAge, retireAge, mMaxAge));
-        }
-    }
-
-    @Override
-    public MilestoneData getMilestone(AgeData age) {
-        //double monthlyBenefit = getMonthlyBenefitForAge(age).getBenefit();
-        return new MilestoneData(age, mEndAge, mMinAge, 0, 0, 0, 0, 0, 0, 0, 0);
-    }
-
-    @Override
     public List<BenefitData> getBenefitData() {
         AgeData age = SystemUtils.getAge(mBirthdate);
         age = new AgeData(age.getYear(), 0);
         List<BenefitData> listAmountDate = new ArrayList<>();
 
-        BenefitData benefitData = null;
-        BenefitData monthlyBenefitData = null;
+        BenefitData benefitData;
         while(true) {
             benefitData = getMonthlyBenefitForAge(age);
             listAmountDate.add(benefitData);
@@ -109,24 +87,6 @@ public class SocialSecurityRules implements IncomeTypeRules {
         }
 
         return listAmountDate;
-    }
-
-    @Override
-    public BenefitData getBenefitForAge(AgeData age) {
-        return getMonthlyBenefitForAge(age);
-        /*
-        if(age.isBefore(mStartAge)) {
-            AgeData spouseAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, age);
-            return new SocialSecurityBenefitData(age, 0, 0, RetirementConstants.BALANCE_STATE_EXHAUSTED, false, mIsSpouseEntity, 0, spouseAge);
-        } else {
-            return getMonthlyBenefitForAge(age);
-        }
-        */
-    }
-
-    @Override
-    public double getBalanceForAge(AgeData age) {
-        return 0;
     }
 
     @Override

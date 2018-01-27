@@ -10,12 +10,10 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.util.DataBaseUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.DataBaseUtils.getMilestoneAges;
 
 /**
  * Created by edm on 10/4/2017.
@@ -76,7 +74,7 @@ public class MilestoneAgeViewModel extends AndroidViewModel {
 
         @Override
         protected  List<MilestoneAgeEntity> doInBackground(Void... params) {
-            return getMilestoneAges(mDB);
+            return null;
         }
 
         @Override
@@ -129,12 +127,12 @@ public class MilestoneAgeViewModel extends AndroidViewModel {
         MilestoneAgeEntity milestoneAgeEntity = new MilestoneAgeEntity(0, ageData);
         mDB.milestoneAgeDao().insert(milestoneAgeEntity);
         SystemUtils.updateAppWidget(getApplication());
-        return DataBaseUtils.getMilestoneAges(mDB);
+        return null;
     }
 
     private List<MilestoneAgeEntity> deleteTheAge(MilestoneAgeEntity age) {
         mDB.milestoneAgeDao().delete(age);
         SystemUtils.updateAppWidget(getApplication());
-        return DataBaseUtils.getMilestoneAges(mDB);
+        return null;
     }
 }

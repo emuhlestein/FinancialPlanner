@@ -10,10 +10,6 @@ import java.util.List;
 
 public interface IncomeTypeRules {
     void setValues(Bundle bundle);
-    List<AgeData> getAges();
-    MilestoneData getMilestone(AgeData age);
     List<BenefitData> getBenefitData();
-    BenefitData getBenefitForAge(AgeData age);
-    double getBalanceForAge(AgeData age);
     BenefitData getBenefitData(BenefitData benefitData);
 }

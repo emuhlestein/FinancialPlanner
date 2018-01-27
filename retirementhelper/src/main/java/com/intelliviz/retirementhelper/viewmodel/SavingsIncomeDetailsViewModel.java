@@ -142,20 +142,11 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         SavingsIncomeEntity entity = mDB.savingsIncomeDao().get(id);
         String birthdate = rod.getBirthdate();
         AgeData endAge = rod.getEndAge();
-        AgeData startAge = entity.getStartAge();
         if(entity.getType() == RetirementConstants.INCOME_TYPE_401K) {
-            Savings401kIncomeRules tdir = new Savings401kIncomeRules(birthdate, startAge, endAge,
-                    Double.parseDouble(entity.getBalance()),
-                    Double.parseDouble(entity.getInterest()),
-                    Double.parseDouble(entity.getMonthlyAddition()),
-                    Double.parseDouble(entity.getWithdrawPercent()));
-            entity.setRules(tdir);
+            Savings401kIncomeRules s4ir = new Savings401kIncomeRules(birthdate, endAge);
+            entity.setRules(s4ir);
         } else {
-            SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, startAge, endAge,
-                    Double.parseDouble(entity.getBalance()),
-                    Double.parseDouble(entity.getInterest()),
-                    Double.parseDouble(entity.getMonthlyAddition()),
-                    Double.parseDouble(entity.getWithdrawPercent()));
+            SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge);
             entity.setRules(sir);
 
         }

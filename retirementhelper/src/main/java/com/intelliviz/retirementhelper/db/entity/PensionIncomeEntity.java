@@ -8,11 +8,8 @@ import android.arch.persistence.room.TypeConverters;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
-import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.PensionData;
 import com.intelliviz.retirementhelper.data.PensionRules;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity.TABLE_NAME;
@@ -66,58 +63,10 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
         }
     }
 
-    public BenefitData getBenefitForAge(AgeData age) {
-        if(mRules != null) {
-            return mRules.getBenefitForAge(age);
-        } else {
-            return null;
-        }
-    }
-
     @Override
     public List<BenefitData> getBenefitData() {
         if(mRules != null) {
             return mRules.getBenefitData();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsEntity rod) {
-        List<MilestoneData> milestones = new ArrayList<>();
-        if(ages.isEmpty()) {
-            return milestones;
-        }
-
-        AgeData endAge = rod.getEndAge();
-        double monthlyBenefit = Double.parseDouble(this.monthlyBenefit);
-
-        MilestoneData milestone;
-        for(MilestoneAgeEntity msad : ages) {
-            AgeData age = msad.getAge();
-            if(age.isBefore(minAge)) {
-                milestone = new MilestoneData(age, endAge, minAge, 0, 0, 0, 0, 0, 0, 0, 0);
-            } else {
-                int numMonths = endAge.diff(age);
-
-                milestone = new MilestoneData(age, endAge, minAge, monthlyBenefit, 0, 0, 0, numMonths, 0, 0, 0);
-            }
-            milestones.add(milestone);
-        }
-        return milestones;
-    }
-
-    @Override
-    public List<AgeData> getAges() {
-        List<AgeData> ages = new ArrayList<>();
-        ages.add(minAge);
-        return ages;
-    }
-
-    public PensionData getMonthlyBenefitForAge(AgeData startAge) {
-        if(mRules != null) {
-            return mRules.getMonthlyBenefitForAge(startAge);
         } else {
             return null;
         }

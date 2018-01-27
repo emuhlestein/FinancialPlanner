@@ -33,7 +33,7 @@ public class NavigationModelView extends AndroidViewModel {
 
     public void updateBirthdate(String birthdate) {
         RetirementOptionsEntity rom = mROE.getValue();
-        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), rom.getCurrentOption(), birthdate);
+        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), birthdate);
         mROE.setValue(newRom);
         new UpdateRetirementOptionsAsyncTask().execute(newRom);
     }

@@ -49,7 +49,6 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
     private SavingsIncomeDetailsViewModel mViewModel;
     private SavingsIncomeEntity mSIE;
     private long mId;
-    private int mSavingsType;
 
     @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -195,7 +194,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
             String interest = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST);
             String monthlyAddition = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE);
             AgeData stopMonthlyAddtionAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_STOP_MONTHLY_ADDITION_AGE);
-            String withdrawAmount = bundle.getString(RetirementConstants.EXTRA_WITHDRAW_PERCENT);
+            String withdrawAmount = bundle.getString(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT);
             String annualPercentIncrease = bundle.getString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE);
 
             SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, INCOME_TYPE_SAVINGS, name, startAge,

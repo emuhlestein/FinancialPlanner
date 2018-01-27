@@ -199,20 +199,10 @@ public class NavigationActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
             case REQUEST_RETIRE_OPTIONS:
-                String value;
                 if (resultCode == RESULT_OK) {
-                    int mode = intent.getIntExtra(RetirementConstants.RETIREMENT_MODE, -1);
-                    value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_REACH_AMOUNT);
-                    mROE.setReachAmount(value);
-                    value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_REACH_INCOME_PERCENT);
-                    mROE.setReachPercent(value);
-                    value = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_MONTHLY_INCOME);
-                    mROE.setMonthlyIncome(value);
                     AgeData age = intent.getParcelableExtra(RetirementConstants.EXTRA_RETIREMENT_INCOME_SUMMARY_AGE);
                     mROE.setEndAge(age);
-                    mROE.setCurrentOption(mode);
                     mViewModel.update(mROE);
-
                     FragmentManager fm = getSupportFragmentManager();
                     Fragment fragment = fm.findFragmentById(R.id.content_frame);
                     if(fragment instanceof BaseSummaryFragment) {

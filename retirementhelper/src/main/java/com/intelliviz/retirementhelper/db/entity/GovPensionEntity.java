@@ -9,10 +9,8 @@ import android.os.Bundle;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
-import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.db.entity.GovPensionEntity.TABLE_NAME;
@@ -123,14 +121,6 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         }
     }
 
-    public BenefitData getBenefitForAge(AgeData age) {
-        if(mRules != null) {
-            return mRules.getBenefitForAge(age);
-        } else {
-            return null;
-        }
-    }
-
     @Override
     public List<BenefitData> getBenefitData() {
         if(mRules != null) {
@@ -138,28 +128,5 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         } else {
             return null;
         }
-    }
-
-    @Override
-    public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsEntity rod) {
-        List<MilestoneData> milestones = new ArrayList<>();
-        if(ages.isEmpty()) {
-            return milestones;
-        }
-
-        MilestoneData milestone;
-        for(MilestoneAgeEntity msad : ages) {
-            AgeData age = msad.getAge();
-            if(mRules != null) {
-                milestone = mRules.getMilestone(age);
-                milestones.add(milestone);
-            }
-        }
-        return milestones;
-    }
-
-    @Override
-    public List<AgeData> getAges() {
-        return mRules.getAges();
     }
 }

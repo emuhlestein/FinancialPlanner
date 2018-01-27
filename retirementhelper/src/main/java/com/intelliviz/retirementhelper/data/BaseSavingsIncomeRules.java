@@ -1,10 +1,20 @@
 package com.intelliviz.retirementhelper.data;
 
+import android.os.Bundle;
+
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_STOP_AGE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT;
 
 /**
  * Created by edm on 12/30/2017.
@@ -14,41 +24,41 @@ public abstract class BaseSavingsIncomeRules {
     private AgeData mCurrentAge;
     private AgeData mStartAge;
     private AgeData mEndAge;
+    private AgeData mStopAge;
     private double mBalance;
     private double mInterest;
     private double mMonthlyAddition;
     private double mWithdrawPercent;
+    private double mAnnualPercentIncrease;
 
     /**
      * Constructor
      * @param birthDate The birthdate.
      * @param endAge The end retirement age.
-     * @param startAge The start retirement age.
-     * @param balance The savings balance.
-     * @param interest The annual interest.
-     * @param monthlyAddition The monthly amount added to balance.
-     * @param withdrawPercent The initial withdraw percent.
      */
-    public BaseSavingsIncomeRules(String birthDate, AgeData startAge, AgeData endAge,
-                                  double balance, double interest, double monthlyAddition, double withdrawPercent) {
+    public BaseSavingsIncomeRules(String birthDate, AgeData endAge) {
         mCurrentAge = SystemUtils.getAge(birthDate);
-        mStartAge = startAge;
         mEndAge = endAge;
-        mBalance = balance;
-        mInterest = interest;
-        mMonthlyAddition = monthlyAddition;
-        mWithdrawPercent = withdrawPercent;
     }
 
     protected abstract double adjustMonthlyAmount(AgeData age, double amount);
     protected abstract boolean isPenalty(AgeData age);
+
+    public void setValues(Bundle bundle) {
+        mBalance = bundle.getDouble(EXTRA_INCOME_SOURCE_BALANCE);
+        mInterest = bundle.getDouble(EXTRA_INCOME_SOURCE_INTEREST);
+        mMonthlyAddition = bundle.getDouble(EXTRA_INCOME_MONTHLY_ADDITION);
+        mWithdrawPercent = bundle.getDouble(EXTRA_INCOME_WITHDRAW_PERCENT);
+        mAnnualPercentIncrease = bundle.getDouble(EXTRA_ANNUAL_PERCENT_INCREASE);
+        mStartAge = bundle.getParcelable(EXTRA_INCOME_START_AGE);
+        mStopAge = bundle.getParcelable(EXTRA_INCOME_STOP_AGE);
+    }
 
     public List<BenefitData> getBenefitData() {
         AgeData age = mCurrentAge;
         if(age.getMonth() > 0) {
             age = new AgeData(age.getYear()+1, 0);
         }
-
 
         double monthlyWithdrawAmount = 0;
         boolean penalty = false;
@@ -58,7 +68,7 @@ public abstract class BaseSavingsIncomeRules {
         double balance = mBalance;
         boolean initWithdraw = true;
         double annualWithdrawIncrease = 0;
-        for(int year = age.getYear(); year < mEndAge.getYear(); year++) {
+        for(int year = age.getYear(); year <= mEndAge.getYear(); year++) {
             age = new AgeData(year, 0);
 
             if(age.isAfter(mStartAge)) {
@@ -87,47 +97,6 @@ public abstract class BaseSavingsIncomeRules {
         return listAmountDate;
     }
 
-    public double getBalanceForAge(AgeData age) {
-        if(age.isBefore(mCurrentAge)) {
-            return 0;
-        }
-
-        int numMonths = mCurrentAge.diff(age);
-        return getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
-    }
-
-    public BenefitData getBenefitForAge(AgeData age) {
-        if (age.isBefore(mCurrentAge)) {
-            return null;
-        }
-
-        // assume that after the start date, there are no more monthly additions.
-        double monthlyAddition;
-        if(age.isAfter(mStartAge)) {
-            monthlyAddition = 0;
-        } else {
-            monthlyAddition = mMonthlyAddition;
-        }
-        int numMonths = mCurrentAge.diff(age);
-        double balance = getFutureBalance(mBalance, numMonths, mInterest, monthlyAddition);
-
-        double monthlyWithdrawAmount;
-        boolean penalty;
-        int balanceState = RetirementConstants.BALANCE_STATE_GOOD;
-
-        if (age.isBefore(mStartAge)) {
-            monthlyWithdrawAmount = 0; // no withdraws before start date
-            penalty = false;
-            balanceState = RetirementConstants.BALANCE_STATE_GOOD;
-        } else {
-            monthlyWithdrawAmount = getMonthlyWithdrawAmount(age);
-            monthlyWithdrawAmount = adjustMonthlyAmount(age, monthlyWithdrawAmount);
-            penalty = isPenalty(age);
-        }
-
-        return new BenefitData(age, monthlyWithdrawAmount, balance, balanceState, penalty);
-    }
-
     public BenefitData getBenefitData(BenefitData benefitData) {
         int numMonths = 12;
         double monthlyWithdrawAmount;
@@ -148,27 +117,8 @@ public abstract class BaseSavingsIncomeRules {
         }
     }
 
-    private double getMonthlyWithdrawAmount(AgeData age) {
-        // getList balance at start date
-        double mWithdrawPercentIncrease = 0; // make class variable
-        int numMonths = mCurrentAge.diff(mStartAge);
-        double balanceAtStartAge = getFutureBalance(mBalance, numMonths, mInterest, mMonthlyAddition);
-        double monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balanceAtStartAge);
-        int numYears = age.getYear() - mStartAge.getYear();
-        for(int i = 0; i < numYears; i++) {
-            double annualWithdrawIncrease = monthlyWithdrawAmount * mWithdrawPercentIncrease;
-            monthlyWithdrawAmount += annualWithdrawIncrease;
-        }
-
-        return monthlyWithdrawAmount;
-    }
-
     private double getInitMonthlyWithdrawAmount(double balance) {
-        return getInitMonthlyWithdrawAmount(balance, mWithdrawPercent);
-    }
-
-    private double getInitMonthlyWithdrawAmount(double balance, double percent) {
-        return balance * percent / 1200;
+        return balance * mWithdrawPercent / 1200;
     }
 
     private double getFutureBalance(double currentBalance, int numMonths, double annualInterest, double monthlyAddition) {

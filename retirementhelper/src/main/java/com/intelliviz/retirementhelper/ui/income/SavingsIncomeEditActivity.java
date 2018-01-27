@@ -339,7 +339,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, interest);
         bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE, monthlyAddition);
         bundle.putParcelable(RetirementConstants.EXTRA_INCOME_STOP_MONTHLY_ADDITION_AGE, stopMonthlyAdditionAge);
-        bundle.putString(RetirementConstants.EXTRA_WITHDRAW_PERCENT, withdrawPercent);
+        bundle.putString(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT, withdrawPercent);
         bundle.putString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE, annualPercentIncrease);
         returnIntent.putExtras(bundle);
         setResult(Activity.RESULT_OK, returnIntent);

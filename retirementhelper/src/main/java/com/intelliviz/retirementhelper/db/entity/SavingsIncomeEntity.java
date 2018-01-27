@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.TypeConverters;
+import android.os.Bundle;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
@@ -15,6 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity.TABLE_NAME;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_STOP_AGE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT;
 
 /**
  * Created by edm on 10/2/2017.
@@ -127,39 +135,16 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
 
     public void setRules(IncomeTypeRules rules) {
         mRules = rules;
-    }
 
-    public BenefitData getBenefitForAge(AgeData age) {
-        if(mRules != null) {
-            return mRules.getBenefitForAge(age);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public List<MilestoneData> getMilestones(List<MilestoneAgeEntity> ages, RetirementOptionsEntity rod) {
-        List<MilestoneData> milestones = new ArrayList<>();
-        if(ages.isEmpty()) {
-            return milestones;
-        }
-
-        MilestoneData milestone;
-        for(MilestoneAgeEntity msad : ages) {
-            AgeData age = msad.getAge();
-            if(mRules != null) {
-                milestone = mRules.getMilestone(age);
-                milestones.add(milestone);
-            }
-        }
-        return milestones;
-    }
-
-    @Override
-    public List<AgeData> getAges() {
-        List<AgeData> ages = new ArrayList<>();
-        //ages.add(SystemUtils.parseAgeString(minAge));
-        return ages;
+        Bundle bundle = new Bundle();
+        bundle.putDouble(EXTRA_INCOME_SOURCE_BALANCE, Double.parseDouble(mBalance));
+        bundle.putDouble(EXTRA_INCOME_SOURCE_INTEREST, Double.parseDouble(mInterest));
+        bundle.putDouble(EXTRA_INCOME_MONTHLY_ADDITION, Double.parseDouble(mMonthlyAddition));
+        bundle.putDouble(EXTRA_INCOME_WITHDRAW_PERCENT, Double.parseDouble(mWithdrawPercent));
+        bundle.putDouble(EXTRA_ANNUAL_PERCENT_INCREASE, Double.parseDouble(mAnnualPercentIncrease));
+        bundle.putParcelable(EXTRA_INCOME_START_AGE, mStartAge);
+        bundle.putParcelable(EXTRA_INCOME_STOP_AGE, mStopMonthlyAdditionAge);
+        mRules.setValues(bundle);
     }
 
     @Override
@@ -174,14 +159,6 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     public BenefitData getBenefitData(BenefitData benefitData) {
         if(mRules != null) {
             return mRules.getBenefitData(benefitData);
-        } else {
-            return null;
-        }
-    }
-
-    public TaxDeferredData getMonthlyBenefitForAge(AgeData startAge) {
-        if(mRules != null) {
-            return null;
         } else {
             return null;
         }
