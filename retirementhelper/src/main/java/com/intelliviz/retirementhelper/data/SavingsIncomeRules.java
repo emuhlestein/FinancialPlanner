@@ -11,8 +11,8 @@ public class SavingsIncomeRules extends BaseSavingsIncomeRules implements Income
     }
 
     @Override
-    protected double adjustMonthlyAmount(AgeData age, double amount) {
-        return amount;
+    protected double getPenaltyAmount(AgeData age, double amount) {
+        return 0;
     }
 
     @Override

@@ -39,7 +39,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
 
 public class SavingsIncomeDetailsActivity extends AppCompatActivity
         implements SelectMilestoneDataListener {
@@ -197,7 +196,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
             String withdrawAmount = bundle.getString(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT);
             String annualPercentIncrease = bundle.getString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE);
 
-            SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, INCOME_TYPE_SAVINGS, name, startAge,
+            SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, mSIE.getType(), name, startAge,
                     balance, interest, monthlyAddition, stopMonthlyAddtionAge, withdrawAmount, annualPercentIncrease);
             mViewModel.setData(tdid);
 

@@ -17,12 +17,11 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
     }
 
     @Override
-    protected double adjustMonthlyAmount(AgeData age, double amount) {
-        double penaltyPercent = (100 - PENALTY_PERCENT)/1200;
-        if(isPenalty(age)) {
-            return amount * penaltyPercent;
+    protected double getPenaltyAmount(AgeData age, double amount) {
+        if(age.isBefore(PENALTY_AGE)) {
+            return amount * PENALTY_PERCENT / 1200;
         } else {
-            return amount;
+            return 0;
         }
     }
 
