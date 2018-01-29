@@ -92,6 +92,7 @@ public abstract class BaseSavingsIncomeRules {
                 bd =  getBenefitDataForNextMonth(bd.getAge(),
                         bd.getBalance(), bd.getMonthlyAmountNoPenalty());
             }
+            bd.setMonthlyAmount(bd.getMonthlyAmount() * (1 + mAnnualPercentIncrease/100));
             return bd;
         }
     }

@@ -33,6 +33,10 @@ public class BenefitData {
         return mMonthlyAmount - mPenaltyAmount;
     }
 
+    public void setMonthlyAmount(double monthlyAmount) {
+        mMonthlyAmount = monthlyAmount;
+    }
+
     public double getMonthlyAmountNoPenalty() {
         return mMonthlyAmount;
     }
