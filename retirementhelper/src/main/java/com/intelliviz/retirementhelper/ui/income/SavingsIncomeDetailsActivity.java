@@ -155,7 +155,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
 
                     int status = benefitData.getBalanceState();
                     if(benefitData.isPenalty()) {
-                        status = 0;
+                        //status = 0;
                     }
                     IncomeDetails incomeDetail = new IncomeDetails(line1, status, "");
                     incomeDetails.add(incomeDetail);
