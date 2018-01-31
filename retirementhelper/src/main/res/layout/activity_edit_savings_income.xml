@@ -215,6 +215,12 @@
                     style="@style/FiveDigitPositiveNumber"/>
             </android.support.design.widget.TextInputLayout>
 
+            <CheckBox
+                android:id="@+id/show_months_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_months"
+                android:checked="true"/>
             <Button
                 android:id="@+id/add_income_source_button"
                 android:layout_width="match_parent"

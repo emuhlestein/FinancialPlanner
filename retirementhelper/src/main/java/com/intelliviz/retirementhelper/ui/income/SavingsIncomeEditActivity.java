@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -75,6 +76,9 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
 
     @BindView(R.id.stop_age_text_view)
     TextView mStopMonthlyAdditionAgeTextView;
+
+    @BindView(R.id.show_months_check_box)
+    CheckBox mShowMonths;
 
     @OnClick(R.id.edit_stop_age_button) void editStopMonthlyAdditionAge() {
         AgeData stopAge = mSIE.getStopMonthlyAdditionAge();
@@ -251,6 +255,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
 
         String increase = mSIE.getAnnualPercentIncrease()+"%";
         mAnnualPercentIncrease.setText(increase);
+
+        mShowMonths.setChecked(mSIE.getShowMonths() == 1);
     }
 
     private void updateIncomeSourceData() {
@@ -305,10 +311,13 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         AgeData stopAge = SystemUtils.parseAgeString(age2);
 
         String name = mIncomeSourceName.getText().toString();
+
+        int showMonths = mShowMonths.isChecked() ? 1 : 0;
         SavingsIncomeEntity sie = new SavingsIncomeEntity(mId, mIncomeType, name, startAge, balance, interest, monthlyAddition,
-                stopAge, withdrawPercent, annualPercentIncrease);
+                stopAge, withdrawPercent, annualPercentIncrease, showMonths);
         if(mActivityResult) {
-            sendData(mId, name, startAge, balance, interest, monthlyAddition, stopAge, withdrawPercent, annualPercentIncrease);
+            sendData(mId, name, startAge, balance, interest, monthlyAddition, stopAge,
+                    withdrawPercent, annualPercentIncrease, showMonths);
         } else {
             mViewModel.setData(sie);
         }
@@ -327,7 +336,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
     }
 
     private void sendData(long id, String name, AgeData startAge, String balance, String interest, String monthlyAddition,
-                          AgeData stopMonthlyAdditionAge, String withdrawPercent, String annualPercentIncrease) {
+                          AgeData stopMonthlyAdditionAge, String withdrawPercent, String annualPercentIncrease,
+                          int showMonths) {
         Intent returnIntent = new Intent();
         Bundle bundle = new Bundle();
 
@@ -341,6 +351,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         bundle.putParcelable(RetirementConstants.EXTRA_INCOME_STOP_MONTHLY_ADDITION_AGE, stopMonthlyAdditionAge);
         bundle.putString(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT, withdrawPercent);
         bundle.putString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE, annualPercentIncrease);
+        bundle.putInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS, showMonths);
         returnIntent.putExtras(bundle);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();

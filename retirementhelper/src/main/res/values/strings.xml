@@ -157,4 +157,5 @@
     <string name="init_percentage_withdraw">Initial % Withdraw</string>
     <string name="save">Save</string>
     <string name="stop_addition_age">Stop Addition Age</string>
+    <string name="show_months">Show Months</string>
 </resources>

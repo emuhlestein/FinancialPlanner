@@ -195,9 +195,11 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity
             AgeData stopMonthlyAddtionAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_STOP_MONTHLY_ADDITION_AGE);
             String withdrawAmount = bundle.getString(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT);
             String annualPercentIncrease = bundle.getString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE);
+            int showMonths = bundle.getInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS);
 
             SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, mSIE.getType(), name, startAge,
-                    balance, interest, monthlyAddition, stopMonthlyAddtionAge, withdrawAmount, annualPercentIncrease);
+                    balance, interest, monthlyAddition, stopMonthlyAddtionAge,
+                    withdrawAmount, annualPercentIncrease, showMonths);
             mViewModel.setData(tdid);
 
         }

@@ -9,15 +9,13 @@ import android.os.Bundle;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
-import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.data.TaxDeferredData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity.TABLE_NAME;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SHOW_MONTHS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
@@ -37,6 +35,7 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     public static final String STOP_MONTHLY_ADDITION_AGE_FIELD = "stop_monthly_addition_age";
     public static final String WITHDRAW_PERCENT_FIELD = "withdraw_percent";
     public static final String ANNUAL_PERCENT_INCREASE_FIELD = "annual_percent_increase";
+    public static final String SHOW_MONTHLY_AMOUNTS = "show_monthly_amounts";
 
     @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = START_AGE_FIELD)
@@ -61,12 +60,15 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     @ColumnInfo(name = ANNUAL_PERCENT_INCREASE_FIELD)
     private String mAnnualPercentIncrease;
 
+    @ColumnInfo(name = SHOW_MONTHLY_AMOUNTS)
+    private int mShowMonths;
+
     @Ignore
     private IncomeTypeRules mRules;
 
     public SavingsIncomeEntity(long id, int type, String name, AgeData startAge, String balance, String interest,
                                String monthlyAddition, AgeData stopMonthlyAdditionAge,
-                               String withdrawPercent, String annualPercentIncrease) {
+                               String withdrawPercent, String annualPercentIncrease, int showMonths) {
         super(id, type, name);
         mStartAge = startAge;
         mBalance = balance;
@@ -75,6 +77,7 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mStopMonthlyAdditionAge = stopMonthlyAdditionAge;
         mWithdrawPercent = withdrawPercent;
         mAnnualPercentIncrease = annualPercentIncrease;
+        mShowMonths = showMonths;
     }
 
     public AgeData getStartAge() {
@@ -133,6 +136,14 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mAnnualPercentIncrease = annualPercentIncrease;
     }
 
+    public int getShowMonths() {
+        return mShowMonths;
+    }
+
+    public void setShowMonths(int showMonths) {
+        mShowMonths = showMonths;
+    }
+
     public void setRules(IncomeTypeRules rules) {
         mRules = rules;
 
@@ -144,6 +155,7 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         bundle.putDouble(EXTRA_ANNUAL_PERCENT_INCREASE, Double.parseDouble(mAnnualPercentIncrease));
         bundle.putParcelable(EXTRA_INCOME_START_AGE, mStartAge);
         bundle.putParcelable(EXTRA_INCOME_STOP_AGE, mStopMonthlyAdditionAge);
+        bundle.putInt(EXTRA_INCOME_SHOW_MONTHS, mShowMonths);
         mRules.setValues(bundle);
     }
 

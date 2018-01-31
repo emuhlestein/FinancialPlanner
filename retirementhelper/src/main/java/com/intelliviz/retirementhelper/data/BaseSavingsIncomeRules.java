@@ -10,6 +10,7 @@ import java.util.List;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SHOW_MONTHS;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
@@ -30,6 +31,7 @@ public abstract class BaseSavingsIncomeRules {
     private double mMonthlyDeposit; // amount that is deposited each month
     private double mWithdrawPercent; // The percentage of balance for initial withdraw.
     private double mAnnualPercentIncrease; // percent to increase withdraw
+    private boolean mShowMonths;
 
     /**
      * Constructor
@@ -52,6 +54,7 @@ public abstract class BaseSavingsIncomeRules {
         mAnnualPercentIncrease = bundle.getDouble(EXTRA_ANNUAL_PERCENT_INCREASE);
         mStartAge = bundle.getParcelable(EXTRA_INCOME_START_AGE);
         mStopAge = bundle.getParcelable(EXTRA_INCOME_STOP_AGE);
+        mShowMonths = bundle.getInt(EXTRA_INCOME_SHOW_MONTHS) == 1;
 
         // no age can be before current age.
         if(mStartAge.isBefore(mCurrentAge)) {
@@ -82,14 +85,18 @@ public abstract class BaseSavingsIncomeRules {
                         done = true;
                         break;
                     }
-                    //listAmountDate.add(bd);
+                    if(mShowMonths) {
+                        listAmountDate.add(bd);
+                    }
                 }
                 if(done) {
                     break;
                 }
                 bd.setMonthlyAmount(bd.getMonthlyAmount() * (1 + mAnnualPercentIncrease/100));
                 benefitData = bd;
-                listAmountDate.add(bd);
+                if(!mShowMonths) {
+                    listAmountDate.add(bd);
+                }
             }
         }
 
