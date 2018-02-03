@@ -1,6 +1,5 @@
 package com.intelliviz.retirementhelper.ui.income;
 
-import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -36,11 +35,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
 
 public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
     private IncomeDetailsAdapter mAdapter;
-    private List<IncomeDetails> mIncomeDetails;
     private GovPensionIncomeDetailsViewModel mViewModel;
     private GovPensionEntity mGPE;
     private long mId;
@@ -113,8 +110,8 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
             }
         });
 
-        mIncomeDetails = new ArrayList<>();
-        mAdapter = new IncomeDetailsAdapter(this, mIncomeDetails);
+        List<IncomeDetails> incomeDetails = new ArrayList<>();
+        mAdapter = new IncomeDetailsAdapter(this, incomeDetails);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
@@ -126,7 +123,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
                 Intent intent = new Intent(GovPensionIncomeDetailsActivity.this, GovPensionIncomeEditActivity.class);
                 intent.putExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, mId);
                 intent.putExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, RetirementConstants.ACTIVITY_RESULT);
-                startActivityForResult(intent, RetirementConstants.ACTIVITY_RESULT);
+                startActivity(intent);
             }
         });
 
@@ -142,6 +139,10 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         mViewModel.getList().observe(this, new Observer<List<BenefitData>>() {
             @Override
             public void onChanged(@Nullable List<BenefitData> listBenefitData) {
+
+                if(listBenefitData == null) {
+                    return;
+                }
 
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
                 for(BenefitData benefitData : listBenefitData) {
@@ -171,7 +172,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         super.onResume();
         mViewModel.update();
     }
-
+/*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if(resultCode != Activity.RESULT_OK) {
@@ -192,6 +193,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, intent);
     }
+*/
 
     private void updateUI() {
         if(mGPE == null) {

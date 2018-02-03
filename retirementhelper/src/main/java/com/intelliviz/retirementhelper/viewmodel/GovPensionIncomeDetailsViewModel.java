@@ -14,7 +14,6 @@ import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -94,10 +93,10 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetBenefitDataListByIdAsyncTask extends AsyncTask<Long, Void, List<BenefitData>> {
+    private class GetBenefitDataListByIdAsyncTask extends AsyncTask<Long, Void, GovPensionEntity> {
 
         @Override
-        protected List<BenefitData> doInBackground(Long... params) {
+        protected GovPensionEntity doInBackground(Long... params) {
             List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
             if(gpeList == null) {
                 return null;
@@ -105,40 +104,20 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
             RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
             SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
             if(gpeList.size() == 1) {
-                return gpeList.get(0).getBenefitData();
+                return gpeList.get(0);
             } else {
                 if(gpeList.get(0).getId() == params[0]) {
-                    return gpeList.get(0).getBenefitData();
+                    return gpeList.get(0);
                 } else {
-                    return gpeList.get(1).getBenefitData();
+                    return gpeList.get(1);
                 }
             }
         }
 
         @Override
-        protected void onPostExecute(List<BenefitData> benefitDataList) {
-            mBenefitDataList.setValue(benefitDataList);
-        }
-    }
-
-    private class GetBenefitDataListAsyncTask extends AsyncTask<GovPensionEntity, Void, List<BenefitData>> {
-
-        @Override
-        protected List<BenefitData> doInBackground(GovPensionEntity... params) {
-            GovPensionEntity pie = params[0];
-            long id = pie.getId();
-            if(id > 0) {
-                return getBenefitData(id);
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<BenefitData> benefitData) {
-            if(benefitData != null) {
-                mBenefitDataList.setValue(benefitData);
-            }
+        protected void onPostExecute(GovPensionEntity gpe) {
+            mGPE.setValue(gpe);
+            mBenefitDataList.setValue(gpe.getBenefitData());
         }
     }
 
@@ -178,32 +157,6 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
                         mBenefitDataList.setValue(gpeList.get(1).getBenefitData());
                     }
                 }
-            }
-        }
-    }
-
-    private List<BenefitData> getBenefitData(long id) {
-        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
-        if(gpeList == null || gpeList.isEmpty()) {
-            return Collections.emptyList();
-        }
-        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-        SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
-        return getBenefitData(gpeList, id);
-    }
-
-    private List<BenefitData> getBenefitData(List<GovPensionEntity> gpeList, long id) {
-        GovPensionEntity gpe;
-        if(gpeList.size() == 1) {
-            gpe = gpeList.get(0);
-            return gpe.getBenefitData();
-        } else {
-            gpe = gpeList.get(0);
-            if(gpe.getId() == id) {
-                return gpe.getBenefitData();
-            } else {
-                gpe = gpeList.get(1);
-                return gpe.getBenefitData();
             }
         }
     }

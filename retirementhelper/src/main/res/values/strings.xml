@@ -46,12 +46,12 @@
     <string name="savings_account">Savings Account</string>
     <string name="tax_deferred_account">Tax Deferred Account</string>
     <string name="savings_401k_account">401(k)</string>
-    <string name="private_pension">Private Pension</string>
+    <string name="pension">Pension</string>
     <string name="social_security">Social Security</string>
     <string-array name="income_types">
         <item>@string/savings_account</item>
         <item>@string/savings_401k_account</item>
-        <item>@string/private_pension</item>
+        <item>@string/pension</item>
         <item>@string/social_security</item>
     </string-array>
 
