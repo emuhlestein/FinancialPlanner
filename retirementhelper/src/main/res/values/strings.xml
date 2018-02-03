@@ -24,7 +24,7 @@
     <string name="name">Name: </string>
     <string name="minimum_age">Minimum Age:</string>
 
-    <string name="full_monthly_benefit">Full Monthly Benefit</string>
+    <string name="full_monthly_benefit">Full Monthly Benefit:</string>
     <string name="monthly_benefit">Monthly Benefit:</string>
     <string name="save_income_source">Save Income Source</string>
     <string name="name_of_institution">Name of Institution:</string>
@@ -40,7 +40,7 @@
     <string name="monthly_benefit_noc">Monthly Benefit</string>
     <string name="retirement_age">Retirement Age</string>
     <string name="current_balance">Current Balance:</string>
-    <string name="full_retirement_age">Full Retirement Age</string>
+    <string name="full_retirement_age">Full Retirement Age:</string>
     <string name="penalty_amount">Penalty Amount:</string>
 
     <string name="savings_account">Savings Account</string>
@@ -76,7 +76,7 @@
     <string name="empty_list">LIST IS EMPTY</string>
     <string name="add_income_source">Add Income Source</string>
 
-    <string name="only_two_gov_pension">Only two Social Security income source is allowed\nOne for you and one for your spouse.</string>
+    <string name="only_two_gov_pension">Only two Social Security income sources are allowed\nOne for you and one for your spouse.</string>
 
     <string name="income_source_subtitle">Income Source Summary</string>
     <string name="summary_screen_subtitle">Monthly Benefit Summary</string>

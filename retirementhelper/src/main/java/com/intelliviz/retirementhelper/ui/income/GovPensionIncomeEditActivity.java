@@ -261,8 +261,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         String age2 = SystemUtils.trimAge(age);
         AgeData startAge = SystemUtils.parseAgeString(age2);
 
-        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, INCOME_TYPE_GOV_PENSION);
-        GovPensionEntity gpe = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, incomeSourceTypeString,
+        GovPensionEntity gpe = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, name,
                 fullBenefit, startAge, mIsSpousalBenefits ? 1 : 0, spouseBirthdate);
         if(mActivityResult) {
             sendData(mId, name, fullBenefit, startAge,  mIsSpousalBenefits ? 1 : 0, spouseBirthdate);
@@ -293,6 +292,5 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
         returnIntent.putExtras(bundle);
         setResult(Activity.RESULT_OK, returnIntent);
-        finish();
     }
 }

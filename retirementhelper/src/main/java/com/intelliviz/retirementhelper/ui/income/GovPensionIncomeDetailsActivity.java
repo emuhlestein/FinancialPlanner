@@ -60,6 +60,9 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
     @BindView(R.id.full_monthly_benefit_text_view)
     TextView mFullMonthlyBenefitTextView;
 
+    @BindView(R.id.monthly_benefit_text_view)
+    TextView mMonthlyBenefitTextView;
+
     @BindView(R.id.full_retirement_age_text_view)
     TextView mFullRetirementAgeTextView;
 
@@ -207,6 +210,9 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
 
         String formattedValue = SystemUtils.getFormattedCurrency(mGPE.getFullMonthlyBenefit());
         mFullMonthlyBenefitTextView.setText(formattedValue);
+
+        formattedValue = SystemUtils.getFormattedCurrency(mGPE.getFullMonthlyBenefit());
+        mMonthlyBenefitTextView.setText(formattedValue);
     }
 
     public String getApplicationName(Context context) {

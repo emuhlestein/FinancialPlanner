@@ -7,7 +7,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
@@ -44,6 +43,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         } else {
             new UpdateAsyncTask().execute(gpe);
         }
+
     }
 
     public void delete(GovPensionEntity gpid) {
@@ -96,8 +96,6 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
             @Override
             protected List<GovPensionEntity> doInBackground(Void... voids) {
                 mROE = mDB.retirementOptionsDao().get();
-                AgeData endAge = mROE.getEndAge();
-                SocialSecurityRules ssr;
                 List<GovPensionEntity> govPensionList = mDB.govPensionDao().get();
                 SocialSecurityRules.setRulesOnGovPensionEntities(govPensionList, mROE);
 

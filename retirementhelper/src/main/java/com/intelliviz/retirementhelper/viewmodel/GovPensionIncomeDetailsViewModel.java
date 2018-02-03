@@ -44,8 +44,6 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
     }
 
     public void setData(GovPensionEntity gpe) {
-        new GetBenefitDataListAsyncTask().execute(gpe);
-        mGPE.setValue(gpe);
         new UpdateAsyncTask().execute(gpe);
     }
 
@@ -144,33 +142,69 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class UpdateAsyncTask extends AsyncTask<GovPensionEntity, Void, Integer> {
+    private class UpdateAsyncTask extends AsyncTask<GovPensionEntity, Void, List<GovPensionEntity>> {
 
         @Override
-        protected Integer doInBackground(GovPensionEntity... params) {
+        protected List<GovPensionEntity> doInBackground(GovPensionEntity... params) {
             GovPensionEntity entity = params[0];
+            mDB.govPensionDao().update(entity);
 
-            return mDB.govPensionDao().update(entity);
+            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
+            return gpeList;
         }
 
         @Override
-        protected void onPostExecute(Integer numRowsUpdated) {
+        protected void onPostExecute(List<GovPensionEntity> gpeList) {
+
+            if(gpeList.size() == 1) {
+                mGPE.setValue(gpeList.get(0));
+                List<BenefitData> benefitDataList = gpeList.get(0).getBenefitData();
+                if(benefitDataList != null) {
+                    mBenefitDataList.setValue(gpeList.get(0).getBenefitData());
+                }
+            } else if(gpeList.size() == 2) {
+                if(gpeList.get(0).getId() == mIncomeId) {
+                    mGPE.setValue(gpeList.get(0));
+                    List<BenefitData> benefitDataList = gpeList.get(0).getBenefitData();
+                    if(benefitDataList != null) {
+                        mBenefitDataList.setValue(gpeList.get(0).getBenefitData());
+                    }
+                } else {
+                    mGPE.setValue(gpeList.get(1));
+                    List<BenefitData> benefitDataList = gpeList.get(1).getBenefitData();
+                    if(benefitDataList != null) {
+                        mBenefitDataList.setValue(gpeList.get(1).getBenefitData());
+                    }
+                }
+            }
         }
     }
 
     private List<BenefitData> getBenefitData(long id) {
         List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        if(gpeList == null || gpeList.isEmpty()) {
+            return Collections.emptyList();
+        }
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
         SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
+        return getBenefitData(gpeList, id);
+    }
+
+    private List<BenefitData> getBenefitData(List<GovPensionEntity> gpeList, long id) {
         GovPensionEntity gpe;
-        if(gpeList.get(0).getId() == id) {
+        if(gpeList.size() == 1) {
             gpe = gpeList.get(0);
             return gpe.getBenefitData();
-        } else if(gpeList.get(1).getId() == id) {
-            gpe = gpeList.get(1);
-            return gpe.getBenefitData();
         } else {
-            return Collections.emptyList();
+            gpe = gpeList.get(0);
+            if(gpe.getId() == id) {
+                return gpe.getBenefitData();
+            } else {
+                gpe = gpeList.get(1);
+                return gpe.getBenefitData();
+            }
         }
     }
 }
