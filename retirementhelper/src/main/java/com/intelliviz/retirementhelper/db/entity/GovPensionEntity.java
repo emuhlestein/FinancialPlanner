@@ -98,6 +98,22 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         return mRules.getFullRetirementAge(birthdate);
     }
 
+    public double getSpousalMonthlyBnnefit() {
+        if(mRules != null) {
+            return mRules.getSpousalMonthlyBenefit();
+        } else {
+            return 0;
+        }
+    }
+
+    public double getMonthlyBenfit() {
+        if(mRules != null) {
+            return mRules.getMonthlyBenefit();
+        }else {
+            return 0;
+        }
+    }
+
     public void setRules(IncomeTypeRules rules) {
         if(rules instanceof SocialSecurityRules) {
             mRules = (SocialSecurityRules)rules;
