@@ -35,7 +35,9 @@ import com.intelliviz.retirementhelper.viewmodel.NavigationModelView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_RETIREOPTIONS_DATA;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
@@ -51,7 +53,6 @@ public class NavigationActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
     private boolean mNeedToStartSummaryFragment;
     private int mStartFragment;
-    private int mPrevFragment;
     private NavigationModelView mViewModel;
     private RetirementOptionsEntity mROE;
 
@@ -131,8 +132,9 @@ public class NavigationActivity extends AppCompatActivity {
                 break;
             case R.id.personal_info_item:
                 intent = new Intent(this, PersonalInfoDialog.class);
-                rod = new RetirementOptionsData(mROE.getEndAge(), mROE.getBirthdate());
-                intent.putExtra(EXTRA_RETIREOPTIONS_DATA, rod);
+                intent.putExtra(EXTRA_BIRTHDATE, mROE.getBirthdate());
+                intent.putExtra(EXTRA_SPOUSE_BIRTHDATE, mROE.getSpouseBirthdate());
+                intent.putExtra(EXTRA_INCLUDE_SPOUSE, mROE.getIncludeSpouse());
                 startActivityForResult(intent, REQUEST_PERSONAL_INFO);
                 overridePendingTransition(R.anim.slide_right_in, 0);
                 break;
@@ -212,8 +214,10 @@ public class NavigationActivity extends AppCompatActivity {
                 break;
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
-                    String birthdate = intent.getStringExtra(RetirementConstants.EXTRA_BIRTHDATE);
-                    mViewModel.updateBirthdate(birthdate);
+                    String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+                    int includeSpouse = intent.getIntExtra(EXTRA_INCLUDE_SPOUSE, 0);
+                    String spouseBirthdate = intent.getStringExtra(EXTRA_SPOUSE_BIRTHDATE);
+                    mViewModel.updateBirthdate(birthdate, includeSpouse, spouseBirthdate);
                 }
                 break;
         }

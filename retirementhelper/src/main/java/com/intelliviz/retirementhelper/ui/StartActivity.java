@@ -17,6 +17,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.StartUpViewModel;
 
@@ -28,7 +29,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SIGN_IN;
 
 /**
  * The start activity
@@ -39,13 +44,13 @@ public class StartActivity extends AppCompatActivity implements
     private static final String TAG = StartActivity.class.getSimpleName();
     private static final String FIREBASE_TOS_URL = "https://firebase.google.com/terms/";
     private static final String FIREBASE_PRIVACY_POLICY_URL = "https://firebase.google.com/terms/analytics/#7_privacy";
-    private static final int REQUEST_SIGN_IN = 1;
-    private static final int REQUEST_BIRTHDATE = 2;
+    //private static final int REQUEST_SIGN_IN = 1;
+    //private static final int REQUEST_BIRTHDATE = 2;
     private IdpResponse mResponse;
     private GoogleApiClient mGoogleApiClient;
     private StartUpViewModel mViewModel;
     private boolean mValidBirthdate = false;
-    StartUpViewModel.BirthdateInfo mBirthdateInfo;
+    private RetirementOptionsEntity mROE;
 
     @BindView(R.id.login_button)
     Button mLoginButton;
@@ -88,10 +93,10 @@ public class StartActivity extends AppCompatActivity implements
 
         mViewModel = ViewModelProviders.of(this).get(StartUpViewModel.class);
 
-        mViewModel.getBirthdate().observe(this, new Observer<StartUpViewModel.BirthdateInfo>() {
+        mViewModel.get().observe(this, new Observer<RetirementOptionsEntity>() {
             @Override
-            public void onChanged(@Nullable StartUpViewModel.BirthdateInfo birthdateInfo) {
-                mBirthdateInfo = birthdateInfo;
+            public void onChanged(@Nullable RetirementOptionsEntity roe) {
+                mROE = roe;
             }
         });
     }
@@ -109,8 +114,10 @@ public class StartActivity extends AppCompatActivity implements
                     break;
                 case REQUEST_BIRTHDATE:
                     String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+                    String spouseBirthdate = intent.getStringExtra(EXTRA_SPOUSE_BIRTHDATE);
+                    int includeSpouse = intent.getIntExtra(EXTRA_INCLUDE_SPOUSE, 0);
                     if(SystemUtils.validateBirthday(birthdate)) {
-                        mViewModel.updateBirthdate(birthdate);
+                        mViewModel.updateBirthdate(birthdate, includeSpouse, spouseBirthdate);
                         /*
                         BirthdateQueryHandler queryHandler = new BirthdateQueryHandler(getContentResolver(), this);
                         ContentValues values = new ContentValues();
@@ -156,10 +163,15 @@ public class StartActivity extends AppCompatActivity implements
     private void prepareToStartNavigateActivity(IdpResponse response) {
         mResponse = response;
 
-        if(mBirthdateInfo.getStatus() == StartUpViewModel.BIRTHDATE_VALID) {
+        boolean isBirthdateValid = false;
+        if(SystemUtils.validateBirthday(mROE.getBirthdate())) {
+            isBirthdateValid = true;
+        }
+
+        if(isBirthdateValid) {
             onStartNavigationActivity();
         } else {
-            onStartBirthdateActivity(mBirthdateInfo.getBirthdate());
+            onStartBirthdateActivity(mROE.getBirthdate());
         }
     }
 

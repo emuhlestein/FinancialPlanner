@@ -76,6 +76,8 @@ public class RetirementConstants {
 
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
     public static final String EXTRA_BIRTHDATE = "birthdate";
+    public static final String EXTRA_INCLUDE_SPOUSE = "include_spouse";
+    public static final String EXTRA_SPOUSE_BIRTHDATE = "spouse_birthdate";
 
     public static final String EXTRA_INCOME_DATA = "extra income data";
     public static final String EXTRA_RETIREOPTIONS_DATA = "extra retire options data";
@@ -97,4 +99,6 @@ public class RetirementConstants {
     public static final int REQUEST_ADD_AGE = 9;
     public static final int REQUEST_ACTION_MENU = 10;
     public static final int REQUEST_TAX_DEF_INCOME = 11;
+    public static final int REQUEST_SPOUSE_BIRTHDATE = 12;
+    public static final int REQUEST_SIGN_IN = 13;
 }

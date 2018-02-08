@@ -47,6 +47,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             ContentValues values = new ContentValues();
                             values.put(RetirementOptionsEntity.END_AGE_FIELD, 90*12);
                             values.put(RetirementOptionsEntity.BIRTHDATE_FIELD, 0);
+                            values.put(RetirementOptionsEntity.INCLUDE_SPOUSE_FIELD, 0);
+                            values.put(RetirementOptionsEntity.SPOUSE_BIRTHDATE_FIELD, 0);
                             db.insert(RetirementOptionsEntity.TABLE_NAME, OnConflictStrategy.IGNORE, values);
                         }
                     };

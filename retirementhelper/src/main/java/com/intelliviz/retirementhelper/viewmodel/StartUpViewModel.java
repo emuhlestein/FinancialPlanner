@@ -2,14 +2,12 @@ package com.intelliviz.retirementhelper.viewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 /**
  * Created by edm on 10/7/2017.
@@ -19,10 +17,9 @@ public class StartUpViewModel extends AndroidViewModel {
     public static final int BIRTHDATE_NOTSET  = 0;
     public static final int BIRTHDATE_INVALID = 1;
     public static final int BIRTHDATE_VALID   = 2;
-    private MutableLiveData<BirthdateInfo> mBirthdateInfo = new MutableLiveData<>();
     private MutableLiveData<AgeData> mCurrentAge = new MutableLiveData<>();
     private MutableLiveData<Integer> mValidBirthdate = new MutableLiveData<>();
-    private RetirementOptionsEntity mROM;
+    private MutableLiveData<RetirementOptionsEntity> mROE = new MutableLiveData<>();
     private AppDatabase mDB;
 
     public StartUpViewModel(Application application) {
@@ -31,12 +28,15 @@ public class StartUpViewModel extends AndroidViewModel {
         new GetRetirementOptionsAsyncTask().execute();
     }
 
-    public LiveData<BirthdateInfo> getBirthdate() {
-        return mBirthdateInfo;
+    public MutableLiveData<RetirementOptionsEntity> get() {
+        return mROE;
     }
 
-    public void updateBirthdate(String birthdate) {
-        new UpdateBirthdateAsyncTask().execute(birthdate);
+    public void updateBirthdate(String birthdate, int includeSpouse, String spouseBirthdate) {
+        RetirementOptionsEntity rom = mROE.getValue();
+        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), birthdate, includeSpouse, spouseBirthdate);
+        mROE.setValue(newRom);
+        new UpdateRetirementOptionsAsyncTask().execute(newRom);
     }
 
     private class GetRetirementOptionsAsyncTask extends AsyncTask<Void, Void, RetirementOptionsEntity> {
@@ -49,35 +49,19 @@ public class StartUpViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(RetirementOptionsEntity rom) {
             // TODO if rom is null, one needs to be added
-            mROM = rom;
-            mCurrentAge.setValue(SystemUtils.getAge(mROM.getBirthdate()));
-            if(SystemUtils.validateBirthday(mROM.getBirthdate())) {
-                mBirthdateInfo.setValue(new BirthdateInfo(mROM.getBirthdate(), BIRTHDATE_VALID));
-            } else {
-                mBirthdateInfo.setValue(new BirthdateInfo(mROM.getBirthdate(), BIRTHDATE_INVALID));
-            }
+            mROE.setValue(rom);
         }
     }
 
-    private class UpdateBirthdateAsyncTask extends AsyncTask<String, Void, RetirementOptionsEntity> {
+    private class UpdateRetirementOptionsAsyncTask extends android.os.AsyncTask<RetirementOptionsEntity, Void, Void> {
 
         @Override
-        protected  RetirementOptionsEntity doInBackground(String... params) {
-            RetirementOptionsEntity rom = mDB.retirementOptionsDao().get();
-            rom.setBirthdate(params[0]);
-            mDB.retirementOptionsDao().update(rom);
-            return mDB.retirementOptionsDao().get();
-        }
-
-        @Override
-        protected void onPostExecute(RetirementOptionsEntity rom) {
-            mROM = rom;
-            mCurrentAge.setValue(SystemUtils.getAge(mROM.getBirthdate()));
-            if(SystemUtils.validateBirthday(mROM.getBirthdate())) {
-                mBirthdateInfo.setValue(new BirthdateInfo(mROM.getBirthdate(), BIRTHDATE_VALID));
-            } else {
-                mBirthdateInfo.setValue(new BirthdateInfo(mROM.getBirthdate(), BIRTHDATE_INVALID));
-            }
+        protected Void doInBackground(RetirementOptionsEntity... params) {
+            RetirementOptionsEntity roe = params[0];
+            mDB.retirementOptionsDao().update(roe);
+            // TODO when ROM is updated, everything should be updated.
+            // SystemUtils.updateAppWidget(getApplication());
+            return null;
         }
     }
 

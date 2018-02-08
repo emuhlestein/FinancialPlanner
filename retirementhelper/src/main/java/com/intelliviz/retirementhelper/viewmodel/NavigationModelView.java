@@ -31,9 +31,9 @@ public class NavigationModelView extends AndroidViewModel {
         mROE.setValue(roe);
     }
 
-    public void updateBirthdate(String birthdate) {
+    public void updateBirthdate(String birthdate, int includeSpouse, String spouseBirthdate) {
         RetirementOptionsEntity rom = mROE.getValue();
-        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), birthdate);
+        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), birthdate, includeSpouse, spouseBirthdate);
         mROE.setValue(newRom);
         new UpdateRetirementOptionsAsyncTask().execute(newRom);
     }
@@ -51,15 +51,24 @@ public class NavigationModelView extends AndroidViewModel {
         }
     }
 
-    private class UpdateRetirementOptionsAsyncTask extends android.os.AsyncTask<RetirementOptionsEntity, Void, Void> {
+    private class UpdateRetirementOptionsAsyncTask extends android.os.AsyncTask<RetirementOptionsEntity, Void, RetirementOptionsEntity> {
 
         @Override
-        protected Void doInBackground(RetirementOptionsEntity... params) {
+        protected RetirementOptionsEntity doInBackground(RetirementOptionsEntity... params) {
+            RetirementOptionsEntity roe1 = mDB.retirementOptionsDao().get();
             RetirementOptionsEntity roe = params[0];
-            mDB.retirementOptionsDao().update(roe);
+            roe1.setBirthdate(roe.getBirthdate());
+            roe1.setSpouseBirthdate(roe.getSpouseBirthdate());
+            roe1.setIncludeSpouse(roe.getIncludeSpouse());
+            mDB.retirementOptionsDao().update(roe1);
             // TODO when ROM is updated, everything should be updated.
             // SystemUtils.updateAppWidget(getApplication());
-            return null;
+            return roe1;
+        }
+
+        @Override
+        protected void onPostExecute(RetirementOptionsEntity roe) {
+            mROE.setValue(roe);
         }
     }
 }

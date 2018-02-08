@@ -161,7 +161,7 @@
                     android:contentDescription="@string/edit_birthdate_desc"
                     android:layout_gravity="end"
                     android:layout_marginStart="16dp"
-                    android:text="@string/edit_birthdate" />
+                    android:text="@string/edit_spouse_birthdate" />
 
                 <TextView
                     android:id="@+id/spouse_birthdate_text_view"

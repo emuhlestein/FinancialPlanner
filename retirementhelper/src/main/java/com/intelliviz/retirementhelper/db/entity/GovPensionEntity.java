@@ -98,7 +98,7 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         return mRules.getFullRetirementAge(birthdate);
     }
 
-    public double getSpousalMonthlyBnnefit() {
+    public double getSpousalMonthlyBenefit() {
         if(mRules != null) {
             return mRules.getSpousalMonthlyBenefit();
         } else {
@@ -106,7 +106,7 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         }
     }
 
-    public double getMonthlyBenfit() {
+    public double getMonthlyBenefit() {
         if(mRules != null) {
             return mRules.getMonthlyBenefit();
         }else {
@@ -130,7 +130,9 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
             bundle.putDouble(EXTRA_INCOME_FULL_BENEFIT, Double.parseDouble(fullMonthlyBenefit));
             bundle.putParcelable(EXTRA_INCOME_START_AGE, mStartAge);
             bundle.putBoolean(EXTRA_INCOME_IS_SPOUSE_ENTITY, isSpouseEntity);
-            bundle.putString(EXTRA_INCOME_SPOUSE_BIRTHDATE, mSpouseBirhtdate);
+            if(isSpouseEntity) {
+                bundle.putString(EXTRA_INCOME_SPOUSE_BIRTHDATE, mSpouseBirhtdate);
+            }
             mRules.setValues(bundle);
         } else {
             mRules = null;

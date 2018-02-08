@@ -124,7 +124,8 @@
     <string name="sign_out">Sign Out</string>
     <string name="revoke">Revoke</string>
     <string name="edit">Edit</string>
-    <string name="edit_birthdate">Spouse Birthdate</string>
+    <string name="edit_spouse_birthdate">Spouse Birthdate</string>
+    <string name="edit_birthdate">Birthdate</string>
     <string name="add_balance">Add Balance</string>
     <string name="alert">Alert</string>
     <string name="withdraw_requires_value">Withdraw amount requires a value.</string>

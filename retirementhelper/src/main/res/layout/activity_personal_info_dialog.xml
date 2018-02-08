@@ -56,38 +56,78 @@
                     android:id="@+id/email_edit_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
                     android:paddingEnd="8dp"
                     android:paddingStart="8dp"
                     android:textSize="22sp"/>
             </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_birthdate"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:paddingTop="24dp">
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/birthdate_edit_text"
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/birthdate_button"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:ems="10"
-                    android:hint="@string/birthday_year_format"
-                    android:inputType="date" />
-            </android.support.design.widget.TextInputLayout>
+                    android:contentDescription="@string/edit_birthdate_desc"
+                    android:layout_gravity="end"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/edit_birthdate" />
+
+                <TextView
+                    android:id="@+id/birthdate_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:padding="8dp"
+                    android:minEms="7"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/include_spouse_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/include_spouse"
+                android:layout_marginStart="16dp"
+                android:checked="true"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/spouse_birthdate_button"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/edit_birthdate_desc"
+                    android:layout_gravity="end"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/edit_spouse_birthdate" />
+
+                <TextView
+                    android:id="@+id/spouse_birthdate_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:padding="8dp"
+                    android:minEms="7"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
 
             <View
                 android:id="@+id/divider2"
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:background="@drawable/separator"
+                android:layout_marginTop="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginRight="16dp"

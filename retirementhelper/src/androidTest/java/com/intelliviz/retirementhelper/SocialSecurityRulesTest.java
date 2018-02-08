@@ -32,27 +32,48 @@ public class SocialSecurityRulesTest {
         String fullMonthlyBenefit = "1000";
         AgeData startAge = new AgeData(66, 8);
         AgeData endAge = new AgeData(90, 0);
-        String spouseBirhtdate = "03-13-1957";
+        String spouseBirthdate = "03-13-1957";
         String spouseFullBenefits = "0";
         AgeData spouseStartAge = new AgeData(66, 6);
-        String birhtdate = "11-05-1958";
+        String birthdate = "11-05-1958";
         GovPensionEntity ss1 = new GovPensionEntity(0, 0, "SS1", fullMonthlyBenefit, startAge,
-        0, spouseBirhtdate);
+        0, spouseBirthdate);
 
-        GovPensionEntity ss2 = new GovPensionEntity(0, 0, "SS2", "0", spouseStartAge,
-                1, birhtdate);
+        GovPensionEntity ss2 = new GovPensionEntity(0, 0, "SS2", spouseFullBenefits, spouseStartAge,
+                1, birthdate);
 
-        SocialSecurityRules ssr1 = new SocialSecurityRules(birhtdate, endAge,
+        SocialSecurityRules ssr1 = new SocialSecurityRules(birthdate, endAge,
                 Double.parseDouble(spouseFullBenefits), spouseStartAge, true);
-        SocialSecurityRules ssr2 = new SocialSecurityRules(birhtdate, endAge,
+        SocialSecurityRules ssr2 = new SocialSecurityRules(birthdate, endAge,
                 Double.parseDouble(fullMonthlyBenefit), startAge, true);
         ss1.setRules(ssr1);
         ss2.setRules(ssr2);
 
-        double monthlyBenefit = ss1.getMonthlyBenfit();
+        double monthlyBenefit = ss1.getMonthlyBenefit();
         assertEquals(monthlyBenefit, 1000, 1);
 
-        monthlyBenefit = ss2.getMonthlyBenfit();
+        monthlyBenefit = ss2.getMonthlyBenefit();
+        assertEquals(monthlyBenefit, 500, 1);
+
+        fullMonthlyBenefit = "900";
+        ss1 = new GovPensionEntity(0, 0, "SS1", fullMonthlyBenefit, startAge,
+                0, spouseBirthdate);
+
+        spouseFullBenefits = "500";
+        ss2 = new GovPensionEntity(0, 0, "SS2", spouseFullBenefits, spouseStartAge,
+                1, birthdate);
+
+        ssr1 = new SocialSecurityRules(birthdate, endAge,
+                Double.parseDouble(spouseFullBenefits), spouseStartAge, true);
+        ssr2 = new SocialSecurityRules(birthdate, endAge,
+                Double.parseDouble(fullMonthlyBenefit), startAge, true);
+        ss1.setRules(ssr1);
+        ss2.setRules(ssr2);
+
+        monthlyBenefit = ss1.getMonthlyBenefit();
+        assertEquals(monthlyBenefit, 900, 1);
+
+        monthlyBenefit = ss2.getMonthlyBenefit();
         assertEquals(monthlyBenefit, 500, 1);
     }
 }

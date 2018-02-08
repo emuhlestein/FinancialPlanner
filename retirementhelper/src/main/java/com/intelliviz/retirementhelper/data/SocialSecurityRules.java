@@ -57,20 +57,30 @@ public class SocialSecurityRules implements IncomeTypeRules {
         mIsSpouseEntity = bundle.getBoolean(EXTRA_INCOME_IS_SPOUSE_ENTITY, false);
         mSpouseBirthdate = bundle.getString(EXTRA_INCOME_SPOUSE_BIRTHDATE);
 
-        int birthYear = SystemUtils.getBirthYear(mBirthdate);
+        int birthYear;
+        AgeData startAge;
+        if(mIsSpouseEntity) {
+            birthYear = SystemUtils.getBirthYear(mSpouseBirthdate);
+            startAge = SystemUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, mStartAge);
+        } else {
+            birthYear = SystemUtils.getBirthYear(mBirthdate);
+            startAge = mStartAge;
+        }
+
         mBenefitInfo = getBenefitInfo(birthYear);
         if(mAreThereSpouseBenefits) {
             if (mFullMonthlyBenefit < mSpouseFullBenefit / 2) {
+
                 mMonthlyBenefit = mSpouseFullBenefit / 2;
-                if(mStartAge.isBefore(mSpouseStartAge)) {
-                    mStartAge = new AgeData(mSpouseStartAge.getNumberOfMonths());
+                if(startAge.isBefore(mSpouseStartAge)) {
+                    startAge = new AgeData(mSpouseStartAge.getNumberOfMonths());
                 }
-                mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mMonthlyBenefit);
+                mMonthlyBenefit = getMonthlyBenefit(startAge, birthYear, mMonthlyBenefit);
             } else {
-                mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mFullMonthlyBenefit);
+                mMonthlyBenefit = getMonthlyBenefit(startAge, birthYear, mFullMonthlyBenefit);
             }
         } else {
-            mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mFullMonthlyBenefit);
+            mMonthlyBenefit = getMonthlyBenefit(startAge, birthYear, mFullMonthlyBenefit);
         }
     }
 
