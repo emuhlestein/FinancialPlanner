@@ -15,71 +15,44 @@ import java.util.List;
 
 import static com.intelliviz.retirementhelper.db.entity.GovPensionEntity.TABLE_NAME;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_FULL_BENEFIT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_IS_SPOUSE_ENTITY;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
 
 /**
- * Created by edm on 10/2/2017.
+ * Created by Ed Muhlestein on 10/2/2017.
  */
 @Entity(tableName = TABLE_NAME)
 public class GovPensionEntity extends IncomeSourceEntityBase {
     public static final String TABLE_NAME = "gov_pension_income";
     private static final String MONTHLY_BENEFIT_FIELD = "full_monthly_benefit";
-    private static final String SPOUSE_FIELD = "spouse";
-    private static final String SPOUSE_BIRTHDATE_FIELD = "spouse_birthdate";
     private static final String START_AGE_FIELD = "start_age";
+    private static final String SPOUSE_FIELD = "spouse";
 
     @ColumnInfo(name = MONTHLY_BENEFIT_FIELD)
-    private String fullMonthlyBenefit;
-
-    @ColumnInfo(name = SPOUSE_FIELD)
-    private int mSpouse;
-
-    @ColumnInfo(name = SPOUSE_BIRTHDATE_FIELD)
-    private String mSpouseBirhtdate;
+    private String mFullMonthlyBenefit;
 
     @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = START_AGE_FIELD)
     private AgeData mStartAge;
 
+    @ColumnInfo(name = SPOUSE_FIELD)
+    private int mSpouse;
+
     @Ignore
     private SocialSecurityRules mRules;
 
-    public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit, AgeData startAge,
-                            int spouse, String spouseBirhtdate) {
+    public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit, AgeData startAge, int spouse) {
         super(id, type, name);
-        this.fullMonthlyBenefit = fullMonthlyBenefit;
-        mSpouse = spouse;
-        if(spouseBirhtdate == null || spouseBirhtdate.equals("0")) {
-            spouseBirhtdate = "13-03-1957";
-        }
-        mSpouseBirhtdate = spouseBirhtdate;
+        mFullMonthlyBenefit = fullMonthlyBenefit;
         mStartAge = startAge;
+        mSpouse = spouse;
     }
 
     public String getFullMonthlyBenefit() {
-        return fullMonthlyBenefit;
+        return mFullMonthlyBenefit;
     }
 
     public void setFullMonthlyBenefit(String fullMonthlyBenefit) {
-        this.fullMonthlyBenefit = fullMonthlyBenefit;
-    }
-
-    public int getSpouse() {
-        return mSpouse;
-    }
-
-    public void setSpouse(int spouse) {
-        mSpouse = spouse;
-    }
-
-    public String getSpouseBirhtdate() {
-        return mSpouseBirhtdate;
-    }
-
-    public void setSpouseBirhtdate(String spouseBirhtdate) {
-        mSpouseBirhtdate = spouseBirhtdate;
+        mFullMonthlyBenefit = fullMonthlyBenefit;
     }
 
     public AgeData getStartAge() {
@@ -88,6 +61,14 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
     public void setStartAge(AgeData startAge) {
         mStartAge = startAge;
+    }
+
+    public int getSpouse() {
+        return mSpouse;
+    }
+
+    public void setSpouse(int spouse) {
+        mSpouse = spouse;
     }
 
     public AgeData getFullRetirementAge() {
@@ -117,22 +98,9 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     public void setRules(IncomeTypeRules rules) {
         if(rules instanceof SocialSecurityRules) {
             mRules = (SocialSecurityRules)rules;
-
             Bundle bundle = new Bundle();
-
-            boolean isSpouseEntity;
-            if(mSpouse == 1) {
-                isSpouseEntity = true;
-            } else {
-                isSpouseEntity = false;
-            }
-
-            bundle.putDouble(EXTRA_INCOME_FULL_BENEFIT, Double.parseDouble(fullMonthlyBenefit));
+            bundle.putDouble(EXTRA_INCOME_FULL_BENEFIT, Double.parseDouble(mFullMonthlyBenefit));
             bundle.putParcelable(EXTRA_INCOME_START_AGE, mStartAge);
-            bundle.putBoolean(EXTRA_INCOME_IS_SPOUSE_ENTITY, isSpouseEntity);
-            if(isSpouseEntity) {
-                bundle.putString(EXTRA_INCOME_SPOUSE_BIRTHDATE, mSpouseBirhtdate);
-            }
             mRules.setValues(bundle);
         } else {
             mRules = null;

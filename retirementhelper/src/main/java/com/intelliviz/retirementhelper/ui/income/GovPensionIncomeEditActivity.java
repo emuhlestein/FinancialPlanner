@@ -21,17 +21,14 @@ import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.ui.BirthdateActivity;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel;
-
-import java.util.List;
+import com.intelliviz.retirementhelper.viewmodel.LiveDataWrapper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
@@ -39,7 +36,6 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
     private GovPensionEntity mGPE;
     private long mId;
-    private boolean mIsSpousalBenefits;
     private GovPensionIncomeEditViewModel mViewModel;
 
     @BindView(R.id.coordinatorLayout)
@@ -70,31 +66,6 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
         dialog.show(fm, "");
     }
-
-    @BindView(R.id.spousal_benefit_text_view)
-    TextView mSpousalBenefits;
-
-    @BindView(R.id.spousal_benefit_label)
-    TextView mSpousalBenefitsLabel;
-
-    @BindView(R.id.spouse_birthdate_text_view)
-    TextView mSpouseBirthdate;
-
-    @OnClick(R.id.edit_spouse_birthdate_button) void editBirthdate() {
-        // TODO clean this up, maybe need default entity
-        String birthdate;
-        if(mGPE != null) {
-            birthdate = mGPE.getSpouseBirhtdate();
-        } else {
-            birthdate = "01-01-1900";
-        }
-        Intent newIntent = new Intent(this, BirthdateActivity.class);
-        newIntent.putExtra(EXTRA_BIRTHDATE, birthdate);
-        startActivityForResult(newIntent, REQUEST_BIRTHDATE);
-    }
-
-    @BindView(R.id.edit_spouse_birthdate_button)
-    TextView mSpouseBirthdateButton;
 
     @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -133,15 +104,16 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             }
         });
 
-        mViewModel = ViewModelProviders.of(this).
+        GovPensionIncomeEditViewModel.Factory factory = new
+                GovPensionIncomeEditViewModel.Factory(getApplication(), mId);
+        mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeEditViewModel.class);
 
-        mViewModel.getList().observe(this, new Observer<List<GovPensionEntity>>() {
+        mViewModel.get().observe(this, new Observer<LiveDataWrapper>() {
             @Override
-            public void onChanged(@Nullable List<GovPensionEntity> govPensionIncomeList) {
-                List<GovPensionEntity> list = govPensionIncomeList;
-                if (list != null && list.size() > 1 && mId == 0) {
-                    final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.only_two_gov_pension, Snackbar.LENGTH_INDEFINITE);
+            public void onChanged(@Nullable LiveDataWrapper gpe) {
+                if(gpe.getState() == 1) {
+                    final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -150,59 +122,39 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         }
                     });
                     snackbar.show();
-                } else {
-                    mIsSpousalBenefits = false;
-                    if(list.size() == 1) {
-                        if(mId > 0) {
-                            // non-spousal
-                            mGPE = list.get(0);
-                        } else if(mId == 0) {
-                            // new spousal benefit
-                            mIsSpousalBenefits = true;
+                } else if(gpe.getState() == 2) {
+                    final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent newIntent = new Intent(GovPensionIncomeEditActivity.this, BirthdateActivity.class);
+                            startActivityForResult(newIntent, REQUEST_SPOUSE_BIRTHDATE);
+                            snackbar.dismiss();
                         }
-                    } else if(list.size() == 2){
-                        if(list.get(0).getId() == mId) {
-                            mGPE = list.get(0);
-                        } else {
-                            mGPE = list.get(1);
-                            mIsSpousalBenefits = true;
-                        }
-                    }
-
-                    updateUI();
-
-                    if(mIsSpousalBenefits) {
-                        mSpousalBenefits.setEnabled(true);
-                        mSpousalBenefitsLabel.setEnabled(true);
-                        mSpouseBirthdate.setEnabled(true);
-                        mSpouseBirthdateButton.setEnabled(true);
-                    } else {
-                        mSpousalBenefits.setEnabled(false);
-                        mSpousalBenefitsLabel.setEnabled(false);
-                        mSpouseBirthdate.setEnabled(false);
-                        mSpouseBirthdateButton.setEnabled(false);
-                    }
+                    });
+                    snackbar.show();
                 }
+                mGPE = (GovPensionEntity) gpe.getObj();
+                updateUI();
             }
         });
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if(resultCode == RESULT_OK && requestCode == REQUEST_BIRTHDATE) {
-            String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
-            mSpouseBirthdate.setText(birthdate);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_SPOUSE_BIRTHDATE:
+                    break;
+                default:
+                    super.onActivityResult(requestCode, resultCode, intent);
+            }
         }
+
     }
 
     private void updateUI() {
         if(mGPE == null) {
-            if(mIsSpousalBenefits) {
-                mSpousalBenefits.setText("Yes");
-            } else {
-                mSpousalBenefits.setText("No");
-            }
             return;
         }
 
@@ -216,13 +168,6 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
         age = mGPE.getStartAge();
         mStartRetirementAge.setText(age.toString());
-
-        mSpousalBenefits.setText("No");
-        boolean includeSpouse = mGPE.getSpouse() == 1;
-        if(includeSpouse) {
-            mSpouseBirthdate.setText(mGPE.getSpouseBirhtdate());
-            mSpousalBenefits.setText("Yes");
-        }
 
         int type = mGPE.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);
@@ -239,24 +184,12 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             return;
         }
 
-        String spouseBirthdate = "0";
-
-        if (mIsSpousalBenefits) {
-            spouseBirthdate = mSpouseBirthdate.getText().toString();
-
-            if (!SystemUtils.validateBirthday(spouseBirthdate)) {
-                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.enter_birthdate), Snackbar.LENGTH_LONG);
-                snackbar.show();
-                return;
-            }
-        }
-
         String age = mStartRetirementAge.getText().toString();
         String age2 = SystemUtils.trimAge(age);
         AgeData startAge = SystemUtils.parseAgeString(age2);
 
-        GovPensionEntity gpe = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, name,
-                fullBenefit, startAge, mIsSpousalBenefits ? 1 : 0, spouseBirthdate);
+        GovPensionEntity gpe = new GovPensionEntity(mGPE.getId(), mGPE.getType(), name,
+                fullBenefit, startAge, mGPE.getSpouse());
         mViewModel.setData(gpe);
 
         finish();

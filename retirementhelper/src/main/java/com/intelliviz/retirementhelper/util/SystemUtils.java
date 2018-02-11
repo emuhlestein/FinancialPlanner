@@ -315,10 +315,10 @@ public class SystemUtils {
     }
 
     /**
-     * Get the age for the spouse, given the other spouse's age.
-     * @param birthdate The birthdate.
+     * Get the age for the spouse, given the principle spouse's age.
+     * @param birthdate The birthdate of the principle spouse.
      * @param spouseBirthdate The spouse's birthdate.
-     * @param age The age.
+     * @param age The age of tghe principle spouse.
      * @return The spouse start age.
      */
     public static AgeData getSpouseAge(String birthdate, String spouseBirthdate, AgeData age) {

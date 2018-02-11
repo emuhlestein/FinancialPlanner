@@ -5,12 +5,18 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
@@ -22,19 +28,37 @@ import java.util.List;
  */
 
 public class GovPensionIncomeEditViewModel extends AndroidViewModel {
-    private MutableLiveData<List<GovPensionEntity>> mListGPE =
+    private MutableLiveData<LiveDataWrapper> mGPE =
             new MutableLiveData<>();
     private RetirementOptionsEntity mROE;
     private AppDatabase mDB;
+    private long mIncomeId;
 
-    public GovPensionIncomeEditViewModel(Application application) {
+    public GovPensionIncomeEditViewModel(Application application, long incomeId) {
         super(application);
         mDB = AppDatabase.getInstance(application);
-        buildList();
+        mIncomeId = incomeId;
+       new GetAsyncTask().execute(mIncomeId);
     }
 
-    public LiveData<List<GovPensionEntity>> getList() {
-        return mListGPE;
+    public static class Factory extends ViewModelProvider.NewInstanceFactory {
+        @NonNull
+        private final Application mApplication;
+        private long mIncomeId;
+
+        public Factory(@NonNull Application application, long incomeId) {
+            mApplication = application;
+            mIncomeId = incomeId;
+        }
+
+        @Override
+        public <T extends ViewModel> T create(Class<T> modelClass) {
+            return (T) new GovPensionIncomeEditViewModel(mApplication, mIncomeId);
+        }
+    }
+
+    public LiveData<LiveDataWrapper> get() {
+        return mGPE;
     }
 
     public void setData(GovPensionEntity gpe) {
@@ -50,7 +74,32 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         new DeleteAsyncTask().execute(gpid);
     }
 
-    private class UpdateAsyncTask extends AsyncTask<GovPensionEntity, Void, Integer> {
+    private class GetAsyncTask extends AsyncTask<Long, Void, LiveDataWrapper> {
+
+        @Override
+        protected LiveDataWrapper doInBackground(Long... params) {
+            long id = params[0];
+            if(id == 0) {
+                // a new entity is requested. see if one can be created
+                return createDefault();
+            } else {
+                GovPensionEntity gpe = mDB.govPensionDao().get(params[0]);
+                if(gpe != null) {
+                    return new LiveDataWrapper(gpe, 0, "");
+                } else {
+                    // should never happen
+                    return createDefault();
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(LiveDataWrapper gpe) {
+            mGPE.setValue(gpe);
+        }
+    }
+
+    private class UpdateAsyncTask extends android.os.AsyncTask<GovPensionEntity, Void, Integer> {
 
         @Override
         protected Integer doInBackground(GovPensionEntity... params) {
@@ -59,7 +108,6 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(Integer numRowsUpdated) {
-            buildList();
         }
     }
 
@@ -72,7 +120,6 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(Long numRowsInserted) {
-            buildList();
         }
     }
 
@@ -86,28 +133,48 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            buildList();
         }
     }
 
-    private void buildList() {
-        new AsyncTask<Void, Void, List<GovPensionEntity>>() {
-
-            @Override
-            protected List<GovPensionEntity> doInBackground(Void... voids) {
-                mROE = mDB.retirementOptionsDao().get();
-                List<GovPensionEntity> govPensionList = mDB.govPensionDao().get();
-                SocialSecurityRules.setRulesOnGovPensionEntities(govPensionList, mROE);
-
-                return govPensionList;
-            }
-
-            @Override
-            protected void onPostExecute(List<GovPensionEntity> govPensionEntities) {
-                if(govPensionEntities != null) {
-                    mListGPE.setValue(govPensionEntities);
+    private LiveDataWrapper createDefault() {
+        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        if(gpeList.size() == 2) {
+            // TODO move string to strings.xml
+            return new LiveDataWrapper(null, 1, "Can only have two Social Security income sources");
+        } else {
+            if(gpeList.size() == 0) {
+                return createNew(false);
+            } else {
+                if(gpeList.get(0).getSpouse() == 0) {
+                    return createNew(true);
+                } else {
+                    return createNew(false);
                 }
             }
-        }.execute();
+        }
+    }
+
+    private LiveDataWrapper createNew(boolean spouse) {
+        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+
+        int year;
+        AgeData age;
+        if(spouse) {
+            if(!SystemUtils.validateBirthday(roe.getSpouseBirthdate())) {
+                // TODO move string to strings.xml
+                return new LiveDataWrapper(null, 2, "Need to add birthday for spouse before adding social security income source");
+            } else {
+                year = SystemUtils.getBirthYear(roe.getSpouseBirthdate());
+                age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
+            }
+        } else {
+            year = SystemUtils.getBirthYear(roe.getBirthdate());
+            age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
+        }
+
+        GovPensionEntity gpe = new GovPensionEntity(0, RetirementConstants.INCOME_TYPE_GOV_PENSION,
+                "", "0", age, 0);
+        gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate()));
+        return new LiveDataWrapper(gpe, 0, "");
     }
 }

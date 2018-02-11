@@ -13,7 +13,6 @@ public class RetirementConstants {
     public static final int INCOME_TYPE_401K = 1; // 401(k)
     public static final int INCOME_TYPE_PENSION = 2;
     public static final int INCOME_TYPE_GOV_PENSION = 3; //eg social security
-    public static final int TRANS_TYPE_MILESTONE_SUMMARY = 4;
 
     public static final String EXTRA_INCOME_SOURCE_ACTION = "income source action";
     public static final int INCOME_ACTION_ADD = 0;
