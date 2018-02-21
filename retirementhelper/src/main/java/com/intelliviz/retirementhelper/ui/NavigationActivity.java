@@ -28,16 +28,13 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.ui.income.IncomeSourceListFragment;
+import com.intelliviz.retirementhelper.util.PersonalInfoDialogAction;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.UpdateRetirementOptions;
 import com.intelliviz.retirementhelper.viewmodel.NavigationModelView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_PERSONAL_INFO;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
@@ -96,13 +93,6 @@ public class NavigationActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable RetirementOptionsEntity roe) {
                 mROE = roe;
-
-                FragmentManager fm = getSupportFragmentManager();
-                Fragment fragment = fm.findFragmentById(R.id.content_frame);
-                if(fragment instanceof UpdateRetirementOptions) {
-                    ((UpdateRetirementOptions)fragment).updateRetirementOptions(roe);
-                    Log.d(TAG, "HERE");
-                }
             }
         });
     }
@@ -131,12 +121,18 @@ public class NavigationActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_right_in, 0);
                 break;
             case R.id.personal_info_item:
-                intent = new Intent(this, PersonalInfoDialog.class);
-                intent.putExtra(EXTRA_BIRTHDATE, mROE.getBirthdate());
-                intent.putExtra(EXTRA_SPOUSE_BIRTHDATE, mROE.getSpouseBirthdate());
-                intent.putExtra(EXTRA_INCLUDE_SPOUSE, mROE.getIncludeSpouse());
-                startActivityForResult(intent, REQUEST_PERSONAL_INFO);
-                overridePendingTransition(R.anim.slide_right_in, 0);
+                showDialog(mROE.getBirthdate(), mROE.getIncludeSpouse(), mROE.getSpouseBirthdate(), new PersonalInfoDialogAction() {
+                    @Override
+                    public void onGetPersonalInfo(String birthdate, int includeSpouse, String spouseBirthdate) {
+                        mViewModel.updateBirthdate(birthdate, includeSpouse, spouseBirthdate);
+                    }
+                });
+                //intent = new Intent(this, PersonalInfoDialog.class);
+                //intent.putExtra(EXTRA_BIRTHDATE, mROE.getBirthdate());
+                //intent.putExtra(EXTRA_SPOUSE_BIRTHDATE, mROE.getSpouseBirthdate());
+                //intent.putExtra(EXTRA_INCLUDE_SPOUSE, mROE.getIncludeSpouse());
+                //startActivity(intent); //, REQUEST_PERSONAL_INFO);
+                //overridePendingTransition(R.anim.slide_right_in, 0);
                 break;
             case R.id.sign_out_item:
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
@@ -176,8 +172,9 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
+        mViewModel.update();
     }
 
     @Override
@@ -214,10 +211,10 @@ public class NavigationActivity extends AppCompatActivity {
                 break;
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
-                    String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
-                    int includeSpouse = intent.getIntExtra(EXTRA_INCLUDE_SPOUSE, 0);
-                    String spouseBirthdate = intent.getStringExtra(EXTRA_SPOUSE_BIRTHDATE);
-                    mViewModel.updateBirthdate(birthdate, includeSpouse, spouseBirthdate);
+                    //String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+                    //int includeSpouse = intent.getIntExtra(EXTRA_INCLUDE_SPOUSE, 0);
+                    //String spouseBirthdate = intent.getStringExtra(EXTRA_SPOUSE_BIRTHDATE);
+                    //mViewModel.updateBirthdate(birthdate, includeSpouse, spouseBirthdate);
                 }
                 break;
         }
@@ -287,6 +284,20 @@ public class NavigationActivity extends AppCompatActivity {
                 ft.setCustomAnimations(R.anim.slide_right_in, 0);
             }
         }
+    }
+
+    private void showDialog(String birthdate, int includeSpouse, String spouseBirthdate, PersonalInfoDialogAction personalInfoDialogAction) {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentByTag("birhtdate");
+        if(fragment != null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.remove(fragment);
+            ft.commit();
+        }
+
+        PersonalInfoDialog personalInfoDialog = PersonalInfoDialog.getInstance(birthdate,
+                includeSpouse, spouseBirthdate, personalInfoDialogAction);
+        personalInfoDialog.show(fm, "birhtdate");
     }
 }
 

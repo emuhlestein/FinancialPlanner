@@ -97,7 +97,8 @@
     <string name="invalid_age">Invalid age. Age cannot be less than your current age:</string>
     <string name="duplicate_age">Duplicate age. Age already exists:</string>
     <string name="dismiss">Dismiss</string>
-    <string name="birthday_not_valid">Birthday is not valid</string>
+    <string name="birthdate_not_valid">Birthdate is not valid</string>
+    <string name="spouse_birthdate_not_valid">Spouse birthdate is not valid</string>
     <string-array name="age_actions">
         <item>@string/income_source_delete_action</item>
     </string-array>

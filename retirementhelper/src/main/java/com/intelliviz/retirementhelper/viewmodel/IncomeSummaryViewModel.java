@@ -6,21 +6,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
-import com.intelliviz.retirementhelper.data.PensionRules;
-import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
-import com.intelliviz.retirementhelper.data.SavingsIncomeRules;
-import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
-import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,6 +53,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
     }
 
     private List<BenefitData> getIncomeSummary(RetirementOptionsEntity roe) {
+        /*
         List<BenefitData> benefitDataList = new ArrayList<>();
 
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
@@ -117,5 +107,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         }
 
         return benefitDataList;
+        */
+        return IncomeSummaryHelper.getIncomeSummary(mDB, roe);
     }
 }

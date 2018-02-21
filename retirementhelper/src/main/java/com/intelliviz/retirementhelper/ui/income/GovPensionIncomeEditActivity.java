@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -19,6 +20,8 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.ui.BirthdateActivity;
+import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
+import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel;
 import com.intelliviz.retirementhelper.viewmodel.LiveDataWrapper;
@@ -31,6 +34,8 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
+import static com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel.ERROR_NO_SPOUSE_BIRTHDATE;
+import static com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel.ERROR_ONLY_TWO_SOCIAL_SECURITY;
 
 public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
 
@@ -112,7 +117,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         mViewModel.get().observe(this, new Observer<LiveDataWrapper>() {
             @Override
             public void onChanged(@Nullable LiveDataWrapper gpe) {
-                if(gpe.getState() == 1) {
+                if(gpe.getState() == ERROR_ONLY_TWO_SOCIAL_SECURITY) {
                     final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                         @Override
@@ -122,7 +127,16 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         }
                     });
                     snackbar.show();
-                } else if(gpe.getState() == 2) {
+                } else if(gpe.getState() == ERROR_NO_SPOUSE_BIRTHDATE) {
+                    showDialog("01-01-1900", new BirthdateDialogAction() {
+                        @Override
+                        public void onGetBirthdate(String birthdate) {
+                            mViewModel.updateSpouseBIrthdate(birthdate);
+                        }
+                    });
+                    //Intent newIntent = new Intent(GovPensionIncomeEditActivity.this, PersonalInfoDialog.class);
+                    //startActivity(newIntent);
+                    /*
                     final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                         @Override
@@ -133,6 +147,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         }
                     });
                     snackbar.show();
+                    */
                 }
                 mGPE = (GovPensionEntity) gpe.getObj();
                 updateUI();
@@ -145,6 +160,8 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_SPOUSE_BIRTHDATE:
+                    String birthdate = intent.getStringExtra(RetirementConstants.EXTRA_BIRTHDATE);
+                    mViewModel.updateSpouseBIrthdate(birthdate);
                     break;
                 default:
                     super.onActivityResult(requestCode, resultCode, intent);
@@ -199,5 +216,12 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     public void onEditAge(String year, String month) {
         AgeData age = parseAgeString(year, month);
         mStartRetirementAge.setText(age.toString());
+    }
+
+    private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
+        birthdateDialog.show(fm, "birhtdate");
     }
 }

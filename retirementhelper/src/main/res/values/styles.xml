@@ -35,6 +35,7 @@
     </style>
 
     <style name="FourDigitPositiveNumber" parent="ThreeDigitPositiveNumber">
+        <item name="android:minEms">3</item>
         <item name="android:maxLength">4</item>
     </style>
 

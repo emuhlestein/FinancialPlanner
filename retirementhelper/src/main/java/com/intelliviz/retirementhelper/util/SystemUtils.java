@@ -76,20 +76,33 @@ public class SystemUtils {
         }
 
         // Validate day
-        if(tokens[0].length() != 2) {
-            return false;
-        }
-
-        if(!tokens[0].matches("[0-9]{2}")) {
-            return false;
+        if(tokens[0].length() == 1) {
+            if(tokens[0].matches("[1-9]")) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if(tokens[0].length() == 2) {
+            if (tokens[0].matches("[0-9]{2}")) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         // Validate month
-        if(tokens[1].length() != 2) {
-            return false;
-        }
-        if(!tokens[1].matches("[0-9]{2}")) {
-            return false;
+        if(tokens[1].length() == 1) {
+            if(tokens[1].matches("[1-9]")) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if(tokens[1].length() == 2) {
+            if(tokens[1].matches("[0-9]{2}")) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         // Validate year

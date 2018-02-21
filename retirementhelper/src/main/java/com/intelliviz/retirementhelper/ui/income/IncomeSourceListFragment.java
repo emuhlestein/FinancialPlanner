@@ -241,12 +241,12 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
 
     private void onHandleIncomeMenuSourceAction(Intent resultIntent) {
         int action = resultIntent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
-        if(mSelectedIncome.getId() == 0) {
+        if (mSelectedIncome.getId() == 0) {
             mSelectedIncome = null;
             return;
         }
 
-        if(action == INCOME_ACTION_DELETE) {
+        if (action == INCOME_ACTION_DELETE) {
             mIncomeAction = INCOME_ACTION_DELETE;
             FragmentManager fm = getFragmentManager();
             YesNoDialog dialog = YesNoDialog.newInstance(getString(R.string.delete_income_source));
@@ -255,31 +255,25 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
             return;
         }
 
-        switch(mSelectedIncome.getType()) {
-            case INCOME_TYPE_SAVINGS:
-                if(action == INCOME_ACTION_EDIT) {
+        if (action == INCOME_ACTION_EDIT) {
+            switch (mSelectedIncome.getType()) {
+                case INCOME_TYPE_SAVINGS:
                     startSavingsIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT, RetirementConstants.INCOME_TYPE_SAVINGS);
                     getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                }
-                break;
-            case INCOME_TYPE_401K:
-                if(action == INCOME_ACTION_EDIT) {
+                    break;
+                case INCOME_TYPE_401K:
                     startSavingsIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT, RetirementConstants.INCOME_TYPE_401K);
                     getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                }
-                break;
-            case INCOME_TYPE_PENSION:
-                if(action == INCOME_ACTION_EDIT) {
+                    break;
+                case INCOME_TYPE_PENSION:
                     startPensionIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT);
                     getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                }
-                break;
-            case INCOME_TYPE_GOV_PENSION:
-                if(action == INCOME_ACTION_EDIT) {
+                    break;
+                case INCOME_TYPE_GOV_PENSION:
                     startGovPensionIncomeSourceActivity(mSelectedIncome.getId(), RetirementConstants.INCOME_ACTION_EDIT);
                     getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                }
-                break;
+                    break;
+            }
         }
     }
 

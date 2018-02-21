@@ -28,6 +28,8 @@ import java.util.List;
  */
 
 public class GovPensionIncomeEditViewModel extends AndroidViewModel {
+    public static int ERROR_ONLY_TWO_SOCIAL_SECURITY = 1;
+    public static int ERROR_NO_SPOUSE_BIRTHDATE = 2;
     private MutableLiveData<LiveDataWrapper> mGPE =
             new MutableLiveData<>();
     private RetirementOptionsEntity mROE;
@@ -67,7 +69,10 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         } else {
             new UpdateAsyncTask().execute(gpe);
         }
+    }
 
+    public void updateSpouseBIrthdate(String birhtdate) {
+        new UpdateBirthdateAsyncTask().execute(birhtdate);
     }
 
     public void delete(GovPensionEntity gpid) {
@@ -96,6 +101,21 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(LiveDataWrapper gpe) {
             mGPE.setValue(gpe);
+        }
+    }
+    private class UpdateBirthdateAsyncTask extends android.os.AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            roe.setIncludeSpouse(1);
+            roe.setSpouseBirthdate(params[0]);
+            mDB.retirementOptionsDao().update(roe);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
         }
     }
 
@@ -136,11 +156,28 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         }
     }
 
+    private LiveDataWrapper getEntity(long id) {
+        if(id == 0) {
+            // a new entity is requested. see if one can be created
+            return createDefault();
+        } else {
+            GovPensionEntity gpe = mDB.govPensionDao().get(id);
+            if(gpe != null) {
+                RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+                gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate()));
+                return new LiveDataWrapper(gpe, 0, "");
+            } else {
+                // should never happen
+                return createDefault();
+            }
+        }
+    }
+
     private LiveDataWrapper createDefault() {
         List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
         if(gpeList.size() == 2) {
             // TODO move string to strings.xml
-            return new LiveDataWrapper(null, 1, "Can only have two Social Security income sources");
+            return new LiveDataWrapper(null, ERROR_ONLY_TWO_SOCIAL_SECURITY, "Can only have two Social Security income sources");
         } else {
             if(gpeList.size() == 0) {
                 return createNew(false);
@@ -162,7 +199,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         if(spouse) {
             if(!SystemUtils.validateBirthday(roe.getSpouseBirthdate())) {
                 // TODO move string to strings.xml
-                return new LiveDataWrapper(null, 2, "Need to add birthday for spouse before adding social security income source");
+                return new LiveDataWrapper(null, ERROR_NO_SPOUSE_BIRTHDATE, "Need to add birthday for spouse before adding social security income source");
             } else {
                 year = SystemUtils.getBirthYear(roe.getSpouseBirthdate());
                 age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
@@ -176,5 +213,10 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
                 "", "0", age, 0);
         gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate()));
         return new LiveDataWrapper(gpe, 0, "");
+    }
+
+    private void prepare(GovPensionEntity gpe) {
+        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+
     }
 }
