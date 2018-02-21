@@ -71,8 +71,8 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         }
     }
 
-    public void updateSpouseBIrthdate(String birhtdate) {
-        new UpdateBirthdateAsyncTask().execute(birhtdate);
+    public void updateSpouseBirthdate(String birthdate) {
+        new UpdateBirthdateAsyncTask().execute(birthdate);
     }
 
     public void delete(GovPensionEntity gpid) {
@@ -84,18 +84,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         @Override
         protected LiveDataWrapper doInBackground(Long... params) {
             long id = params[0];
-            if(id == 0) {
-                // a new entity is requested. see if one can be created
-                return createDefault();
-            } else {
-                GovPensionEntity gpe = mDB.govPensionDao().get(params[0]);
-                if(gpe != null) {
-                    return new LiveDataWrapper(gpe, 0, "");
-                } else {
-                    // should never happen
-                    return createDefault();
-                }
-            }
+            return getEntity(id);
         }
 
         @Override
@@ -164,7 +153,11 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
             GovPensionEntity gpe = mDB.govPensionDao().get(id);
             if(gpe != null) {
                 RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-                gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate()));
+                if(gpe.getSpouse() == 1) {
+                    gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getSpouseBirthdate()));
+                } else {
+                    gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate()));
+                }
                 return new LiveDataWrapper(gpe, 0, "");
             } else {
                 // should never happen
@@ -210,7 +203,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         }
 
         GovPensionEntity gpe = new GovPensionEntity(0, RetirementConstants.INCOME_TYPE_GOV_PENSION,
-                "", "0", age, 0);
+                "", "0", age, spouse ? 1 : 0);
         gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate()));
         return new LiveDataWrapper(gpe, 0, "");
     }

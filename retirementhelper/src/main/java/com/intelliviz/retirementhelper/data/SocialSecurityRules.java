@@ -83,7 +83,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
             // need to convert age to be in terms of principle spouse age.
             age = SystemUtils.getSpouseAge(mSpouseBirthdate, mBirthdate, mSpouseStartAge);
         } else {
-            age = mSpouseStartAge;
+            age = mStartAge;
         }
         age = new AgeData(age.getYear(), 0);
         List<BenefitData> listAmountDate = new ArrayList<>();

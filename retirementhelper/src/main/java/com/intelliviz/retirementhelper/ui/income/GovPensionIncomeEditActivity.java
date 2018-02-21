@@ -131,7 +131,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                     showDialog("01-01-1900", new BirthdateDialogAction() {
                         @Override
                         public void onGetBirthdate(String birthdate) {
-                            mViewModel.updateSpouseBIrthdate(birthdate);
+                            mViewModel.updateSpouseBirthdate(birthdate);
                         }
                     });
                     //Intent newIntent = new Intent(GovPensionIncomeEditActivity.this, PersonalInfoDialog.class);
@@ -161,7 +161,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             switch (requestCode) {
                 case REQUEST_SPOUSE_BIRTHDATE:
                     String birthdate = intent.getStringExtra(RetirementConstants.EXTRA_BIRTHDATE);
-                    mViewModel.updateSpouseBIrthdate(birthdate);
+                    mViewModel.updateSpouseBirthdate(birthdate);
                     break;
                 default:
                     super.onActivityResult(requestCode, resultCode, intent);

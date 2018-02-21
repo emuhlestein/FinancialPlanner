@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
@@ -19,8 +18,6 @@ import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
-import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import java.util.ArrayList;
@@ -178,10 +175,10 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
 
     private void updateSummaryData(AppDatabase db) {
         db.summaryDao().deleteAll();
-        List<MilestoneData> milestones = null;
-        for(MilestoneData msd : milestones) {
-            db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
-        }
+        //List<MilestoneData> milestones = null;
+        //for(MilestoneData msd : milestones) {
+        //    db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
+        //}
     }
 
     private void updateMilestoneSummary() {
