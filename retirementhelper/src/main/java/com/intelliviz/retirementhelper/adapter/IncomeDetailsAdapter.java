@@ -18,7 +18,7 @@ import java.util.List;
  * Created by edm on 11/16/2017.
  */
 
-public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdapter.GovPensionHolder>{
+public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdapter.IncomeDetailsHolder>{
     private List<IncomeDetails> mIncomeDetails;
     private Context mContext;
     private int mNumLines;
@@ -30,7 +30,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
     }
 
     @Override
-    public IncomeDetailsAdapter.GovPensionHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public IncomeDetailsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view;
         if(mNumLines == 1) {
@@ -38,11 +38,11 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         } else {
             view = inflater.inflate(R.layout.card_layout_3line, parent, false);
         }
-        return new IncomeDetailsAdapter.GovPensionHolder(view);
+        return new IncomeDetailsHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(IncomeDetailsAdapter.GovPensionHolder holder, int position) {
+    public void onBindViewHolder(IncomeDetailsHolder holder, int position) {
         IncomeDetails incomeDetails = mIncomeDetails.get(position);
         holder.bindIncomeDetails(incomeDetails);
     }
@@ -69,7 +69,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         mListener = listener;
     }
 
-    class GovPensionHolder extends RecyclerView.ViewHolder
+    class IncomeDetailsHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
         private IncomeDetails mIncomeDetails;
@@ -78,7 +78,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         private TextView mLine3TextView;
         private android.support.v7.widget.CardView mCardView;
 
-        public GovPensionHolder(View itemView) {
+        public IncomeDetailsHolder(View itemView) {
             super(itemView);
             mCardView = itemView.findViewById(R.id.card_view);
             if(mNumLines == 1) {
@@ -132,7 +132,9 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         @Override
         public void onClick(View v) {
             if(mListener != null) {
-                mListener.onIncomeDetailsSelect(mIncomeDetails);
+                if(mIncomeDetails.isAcceptClick()) {
+                    mListener.onIncomeDetailsSelect(mIncomeDetails);
+                }
             }
         }
     }

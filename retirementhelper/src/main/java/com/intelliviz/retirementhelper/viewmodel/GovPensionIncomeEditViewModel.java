@@ -28,8 +28,9 @@ import java.util.List;
  */
 
 public class GovPensionIncomeEditViewModel extends AndroidViewModel {
-    public static int ERROR_ONLY_TWO_SOCIAL_SECURITY = 1;
-    public static int ERROR_NO_SPOUSE_BIRTHDATE = 2;
+    public static final int ERROR_ONLY_TWO_SOCIAL_SECURITY = 1;
+    public static final int ERROR_NO_SPOUSE_BIRTHDATE = 2;
+    public static final int PRINCIPLE_SPOUSE = 3;
     private MutableLiveData<LiveDataWrapper> mGPE =
             new MutableLiveData<>();
     private RetirementOptionsEntity mROE;
@@ -150,18 +151,36 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
             // a new entity is requested. see if one can be created
             return createDefault();
         } else {
-            GovPensionEntity gpe = mDB.govPensionDao().get(id);
-            if(gpe != null) {
+            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+            if(gpeList.size() == 2) {
+                GovPensionEntity gpe;
+                if(gpeList.get(0).getId() == id) {
+                    gpe = gpeList.get(0);
+                } else {
+                    gpe = gpeList.get(1);
+                }
                 RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+                int state = 0;
                 if(gpe.getSpouse() == 1) {
                     gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getSpouseBirthdate()));
                 } else {
                     gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate()));
+                    state = PRINCIPLE_SPOUSE;
                 }
-                return new LiveDataWrapper(gpe, 0, "");
+                return new LiveDataWrapper(gpe, state, "");
             } else {
-                // should never happen
-                return createDefault();
+                GovPensionEntity gpe = mDB.govPensionDao().get(id);
+                if(gpe != null) {
+                    RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+                    if (gpe.getSpouse() == 1) {
+                        gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getSpouseBirthdate()));
+                    } else {
+                        gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate()));
+                    }
+                    return new LiveDataWrapper(gpe, 0, "");
+                } else {
+                    return null;
+                }
             }
         }
     }

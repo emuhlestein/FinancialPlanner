@@ -11,6 +11,7 @@ public class IncomeDetails {
     private String mMessage;
     private int mNumLines;
     private int mBenefitInfo;
+    private boolean mAcceptClick;
 
     public IncomeDetails(String line1, int benefitInfo, String message) {
        this(line1, "", "", benefitInfo, message);
@@ -24,6 +25,7 @@ public class IncomeDetails {
         mBenefitInfo = benefitInfo;
         mNumLines = 3;
         mMessage = message;
+        mAcceptClick = false;
     }
 
     public String getLine1() {
@@ -48,5 +50,13 @@ public class IncomeDetails {
 
     public String getMessage() {
         return mMessage;
+    }
+
+    public boolean isAcceptClick() {
+        return mAcceptClick;
+    }
+
+    public void setAcceptClick(boolean acceptClick) {
+        mAcceptClick = acceptClick;
     }
 }

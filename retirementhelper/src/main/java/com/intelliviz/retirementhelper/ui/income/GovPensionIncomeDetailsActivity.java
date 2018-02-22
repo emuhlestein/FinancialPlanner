@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +23,6 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -36,7 +37,7 @@ import butterknife.ButterKnife;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
-public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
+public class GovPensionIncomeDetailsActivity extends AppCompatActivity implements IncomeDetailsSelectListener{
     private IncomeDetailsAdapter mAdapter;
     private GovPensionIncomeDetailsViewModel mViewModel;
     private GovPensionEntity mGPE;
@@ -74,6 +75,9 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
 
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
+
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +120,8 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+        mAdapter.setIncomeDetailsSelectListener(this);
+
         // The FAB will pop up an activity to allow a new income source to be edited
         mEditPensionFAB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,25 +142,14 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeDetailsViewModel.class);
 
-        mViewModel.getList().observe(this, new Observer<List<BenefitData>>() {
+        mViewModel.getList().observe(this, new Observer<List<IncomeDetails>>() {
             @Override
-            public void onChanged(@Nullable List<BenefitData> listBenefitData) {
+            public void onChanged(@Nullable List<IncomeDetails> listIncomeDetails) {
 
-                if(listBenefitData == null) {
+                if(listIncomeDetails == null) {
                     return;
                 }
-
-                List<IncomeDetails> incomeDetails = new ArrayList<>();
-                for(BenefitData benefitData : listBenefitData) {
-                    AgeData age = benefitData.getAge();
-                    String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
-                    String line1 = age.toString() + "   " + amount;
-                    IncomeDetails incomeDetail;
-                    incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), "");
-
-                    incomeDetails.add(incomeDetail);
-                }
-                mAdapter.update(incomeDetails);
+                mAdapter.update(listIncomeDetails);
             }
         });
 
@@ -172,28 +167,6 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         super.onResume();
         mViewModel.update();
     }
-/*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if(resultCode != Activity.RESULT_OK) {
-            return;
-        }
-
-        if(requestCode == RetirementConstants.ACTIVITY_RESULT) {
-            Bundle bundle = intent.getExtras();
-            String name = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_NAME);
-            AgeData startAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
-            String fullMonthlyBenefit = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_BENEFIT);
-            int includeSpouse = bundle.getInt(RetirementConstants.EXTRA_INCOME_SOURCE_INCLUDE_SPOUSE);
-            String spouseBirhtdate = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_SPOUSE_BIRTHDAY);
-
-            GovPensionEntity pie = new GovPensionEntity(mId, INCOME_TYPE_GOV_PENSION, name, fullMonthlyBenefit,
-                    startAge, includeSpouse, spouseBirhtdate);
-            mViewModel.setData(pie);
-        }
-        super.onActivityResult(requestCode, resultCode, intent);
-    }
-*/
 
     private void updateUI() {
         if(mGPE == null) {
@@ -213,7 +186,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         String formattedValue = SystemUtils.getFormattedCurrency(mGPE.getFullMonthlyBenefit());
         mFullMonthlyBenefitTextView.setText(formattedValue);
 
-        formattedValue = SystemUtils.getFormattedCurrency(mGPE.getFullMonthlyBenefit());
+        formattedValue = SystemUtils.getFormattedCurrency(mGPE.getMonthlyBenefit());
         mMonthlyBenefitTextView.setText(formattedValue);
     }
 
@@ -221,5 +194,11 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity {
         ApplicationInfo applicationInfo = context.getApplicationInfo();
         int stringId = applicationInfo.labelRes;
         return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
+    }
+
+    @Override
+    public void onIncomeDetailsSelect(IncomeDetails incomeDetails) {
+        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, incomeDetails.getMessage(), Snackbar.LENGTH_LONG);
+        snackbar.show();
     }
 }

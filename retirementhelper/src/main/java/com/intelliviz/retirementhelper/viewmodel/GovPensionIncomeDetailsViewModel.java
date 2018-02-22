@@ -8,12 +8,16 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.SystemUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +29,7 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
             new MutableLiveData<>();
     private AppDatabase mDB;
     private long mIncomeId;
-    private MutableLiveData<List<BenefitData>> mBenefitDataList = new MutableLiveData<List<BenefitData>>();
+    private MutableLiveData<List<IncomeDetails>> mBenefitDataList = new MutableLiveData<List<IncomeDetails>>();
 
     public GovPensionIncomeDetailsViewModel(Application application, long incomeId) {
         super(application);
@@ -34,7 +38,7 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
         mIncomeId = incomeId;
     }
 
-    public MutableLiveData<List<BenefitData>> getList() {
+    public MutableLiveData<List<IncomeDetails>> getList() {
         return mBenefitDataList;
     }
 
@@ -117,7 +121,7 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(GovPensionEntity gpe) {
             mGPE.setValue(gpe);
-            mBenefitDataList.setValue(gpe.getBenefitData());
+            mBenefitDataList.setValue(getIncomeDetails(gpe));
         }
     }
 
@@ -141,23 +145,57 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
                 mGPE.setValue(gpeList.get(0));
                 List<BenefitData> benefitDataList = gpeList.get(0).getBenefitData();
                 if(benefitDataList != null) {
-                    mBenefitDataList.setValue(gpeList.get(0).getBenefitData());
+                    mBenefitDataList.setValue(getIncomeDetails(gpeList.get(0)));
                 }
             } else if(gpeList.size() == 2) {
+                GovPensionEntity gpe;
                 if(gpeList.get(0).getId() == mIncomeId) {
-                    mGPE.setValue(gpeList.get(0));
-                    List<BenefitData> benefitDataList = gpeList.get(0).getBenefitData();
-                    if(benefitDataList != null) {
-                        mBenefitDataList.setValue(gpeList.get(0).getBenefitData());
-                    }
+                    gpe = gpeList.get(0);
                 } else {
-                    mGPE.setValue(gpeList.get(1));
-                    List<BenefitData> benefitDataList = gpeList.get(1).getBenefitData();
-                    if(benefitDataList != null) {
-                        mBenefitDataList.setValue(gpeList.get(1).getBenefitData());
-                    }
+                    gpe = gpeList.get(1);
                 }
+
+
+                List<BenefitData> benefitDataList = gpe.getBenefitData();
+                if(benefitDataList != null) {
+                    mBenefitDataList.setValue(getIncomeDetails(gpe));
+                }
+                mGPE.setValue(gpe);
             }
         }
+    }
+
+    private List<IncomeDetails> getIncomeDetails(GovPensionEntity gpe) {
+
+        double monthlyBenefit = gpe.getMonthlyBenefit();
+        double fullMonthlyBenefit = Double.parseDouble(gpe.getFullMonthlyBenefit());
+
+        String message = "";
+        boolean addMessage = false;
+        if(monthlyBenefit > fullMonthlyBenefit) {
+            addMessage = true;
+            message = "spousal benefits apply";
+        }
+
+        List<BenefitData> listBenefitData = gpe.getBenefitData();
+        List<IncomeDetails> incomeDetails = new ArrayList<>();
+        for(BenefitData benefitData : listBenefitData) {
+            AgeData age = benefitData.getAge();
+            String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
+            String line1 = age.toString() + "   " + amount;
+            IncomeDetails incomeDetail;
+
+            if(addMessage) {
+                incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), message);
+                incomeDetail.setAcceptClick(true);
+                addMessage = false;
+            } else {
+                incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), "");
+            }
+
+            incomeDetails.add(incomeDetail);
+        }
+
+        return incomeDetails;
     }
 }

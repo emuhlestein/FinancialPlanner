@@ -36,18 +36,23 @@ import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 import static com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel.ERROR_NO_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel.ERROR_ONLY_TWO_SOCIAL_SECURITY;
+import static com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel.PRINCIPLE_SPOUSE;
 
 public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
 
     private GovPensionEntity mGPE;
     private long mId;
     private GovPensionIncomeEditViewModel mViewModel;
+    private boolean mIsPrincipleSpouse;
 
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
     @BindView( R.id.name_edit_text)
     EditText mName;
+
+    @BindView(R.id.principle_spouse_label)
+    TextView mPrincipleSpouseLabel;
 
     @BindView(R.id.full_retirement_age_text_view)
     TextView mFullRetirementAge;
@@ -117,38 +122,32 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         mViewModel.get().observe(this, new Observer<LiveDataWrapper>() {
             @Override
             public void onChanged(@Nullable LiveDataWrapper gpe) {
-                if(gpe.getState() == ERROR_ONLY_TWO_SOCIAL_SECURITY) {
-                    final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
-                    snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            snackbar.dismiss();
-                            finish();
-                        }
-                    });
-                    snackbar.show();
-                } else if(gpe.getState() == ERROR_NO_SPOUSE_BIRTHDATE) {
-                    showDialog("01-01-1900", new BirthdateDialogAction() {
-                        @Override
-                        public void onGetBirthdate(String birthdate) {
-                            mViewModel.updateSpouseBirthdate(birthdate);
-                        }
-                    });
-                    //Intent newIntent = new Intent(GovPensionIncomeEditActivity.this, PersonalInfoDialog.class);
-                    //startActivity(newIntent);
-                    /*
-                    final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
-                    snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent newIntent = new Intent(GovPensionIncomeEditActivity.this, BirthdateActivity.class);
-                            startActivityForResult(newIntent, REQUEST_SPOUSE_BIRTHDATE);
-                            snackbar.dismiss();
-                        }
-                    });
-                    snackbar.show();
-                    */
+                mIsPrincipleSpouse = false;
+                switch(gpe.getState()) {
+                    case ERROR_ONLY_TWO_SOCIAL_SECURITY:
+                        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
+                        snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                snackbar.dismiss();
+                                finish();
+                            }
+                        });
+                        snackbar.show();
+                        break;
+                    case ERROR_NO_SPOUSE_BIRTHDATE:
+                        showDialog("01-01-1900", new BirthdateDialogAction() {
+                            @Override
+                            public void onGetBirthdate(String birthdate) {
+                                mViewModel.updateSpouseBirthdate(birthdate);
+                            }
+                        });
+                        break;
+                    case PRINCIPLE_SPOUSE:
+                        mIsPrincipleSpouse = true;
+                        break;
                 }
+
                 mGPE = (GovPensionEntity) gpe.getObj();
                 updateUI();
             }
@@ -173,6 +172,12 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     private void updateUI() {
         if(mGPE == null) {
             return;
+        }
+
+        if(mIsPrincipleSpouse) {
+            mPrincipleSpouseLabel.setVisibility(View.VISIBLE);
+        } else {
+            mPrincipleSpouseLabel.setVisibility(View.GONE);
         }
 
         mName.setText(mGPE.getName());
