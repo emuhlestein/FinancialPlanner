@@ -73,7 +73,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
     }
 
     public void updateSpouseBirthdate(String birthdate) {
-        new UpdateBirthdateAsyncTask().execute(birthdate);
+        new UpdateSpouseBirthdateAsyncTask().execute(birthdate);
     }
 
     public void delete(GovPensionEntity gpid) {
@@ -93,19 +93,28 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
             mGPE.setValue(gpe);
         }
     }
-    private class UpdateBirthdateAsyncTask extends android.os.AsyncTask<String, Void, Void> {
+    private class UpdateSpouseBirthdateAsyncTask extends android.os.AsyncTask<String, Void, RetirementOptionsEntity> {
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected RetirementOptionsEntity doInBackground(String... params) {
             RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
             roe.setIncludeSpouse(1);
             roe.setSpouseBirthdate(params[0]);
             mDB.retirementOptionsDao().update(roe);
-            return null;
+            return roe;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(RetirementOptionsEntity roe) {
+            GovPensionEntity gpe = (GovPensionEntity) mGPE.getValue().getObj();
+            if(gpe == null) {
+                int year = SystemUtils.getBirthYear(roe.getSpouseBirthdate());
+                AgeData age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
+                gpe = new GovPensionEntity(0, RetirementConstants.INCOME_TYPE_GOV_PENSION,
+                        "", "0", age, 1);
+            }
+            gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getSpouseBirthdate()));
+            mGPE.setValue(new LiveDataWrapper(gpe, 0, ""));
         }
     }
 

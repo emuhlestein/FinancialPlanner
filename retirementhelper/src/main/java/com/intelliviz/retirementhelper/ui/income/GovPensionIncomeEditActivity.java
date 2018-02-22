@@ -122,6 +122,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         mViewModel.get().observe(this, new Observer<LiveDataWrapper>() {
             @Override
             public void onChanged(@Nullable LiveDataWrapper gpe) {
+                mGPE = (GovPensionEntity) gpe.getObj();
                 mIsPrincipleSpouse = false;
                 switch(gpe.getState()) {
                     case ERROR_ONLY_TWO_SOCIAL_SECURITY:
@@ -148,7 +149,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         break;
                 }
 
-                mGPE = (GovPensionEntity) gpe.getObj();
+
                 updateUI();
             }
         });

@@ -174,7 +174,7 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
         boolean addMessage = false;
         if(monthlyBenefit > fullMonthlyBenefit) {
             addMessage = true;
-            message = "spousal benefits apply";
+            message = "Spousal benefits apply. Spouse cannot take benefits before principle spouse.";
         }
 
         List<BenefitData> listBenefitData = gpe.getBenefitData();
@@ -186,6 +186,7 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
             IncomeDetails incomeDetail;
 
             if(addMessage) {
+                line1 += "*";
                 incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), message);
                 incomeDetail.setAcceptClick(true);
                 addMessage = false;

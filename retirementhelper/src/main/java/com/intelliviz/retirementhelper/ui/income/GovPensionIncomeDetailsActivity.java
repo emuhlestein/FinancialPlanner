@@ -198,7 +198,17 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
 
     @Override
     public void onIncomeDetailsSelect(IncomeDetails incomeDetails) {
-        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, incomeDetails.getMessage(), Snackbar.LENGTH_LONG);
+        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, incomeDetails.getMessage(), Snackbar.LENGTH_INDEFINITE);
+        View view = snackbar.getView();
+        TextView tv = (TextView)view.findViewById(android.support.design.R.id.snackbar_text);
+        tv.setMaxLines(3);
+        snackbar.setAction("DISMISS", new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                snackbar.dismiss();
+            }
+        });
         snackbar.show();
     }
 }

@@ -86,6 +86,15 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
 
         @Override
         protected List<IncomeSourceEntityBase> doInBackground(GovPensionEntity... params) {
+            GovPensionEntity gpe = params[0];
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            if(gpe.getSpouse() == 1) {
+                roe.setSpouseBirthdate("0");
+                roe.setIncludeSpouse(0);
+            } else {
+                roe.setBirthdate("0");
+            }
+            mDB.retirementOptionsDao().update(roe);
             mDB.govPensionDao().delete(params[0]);
             updateAppWidgetSummaryData();
             return getAllIncomeSources();
