@@ -10,11 +10,13 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.GovEntityAccessor;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -28,9 +30,7 @@ import java.util.List;
  */
 
 public class GovPensionIncomeEditViewModel extends AndroidViewModel {
-    public static final int ERROR_ONLY_TWO_SOCIAL_SECURITY = 1;
-    public static final int ERROR_NO_SPOUSE_BIRTHDATE = 2;
-    public static final int PRINCIPLE_SPOUSE = 3;
+
     private MutableLiveData<LiveDataWrapper> mGPE =
             new MutableLiveData<>();
     private RetirementOptionsEntity mROE;
@@ -85,7 +85,20 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         @Override
         protected LiveDataWrapper doInBackground(Long... params) {
             long id = params[0];
-            return getEntity(id);
+
+            String[] errorCodes = getApplication().getResources().getStringArray(R.array.error_codes);
+
+            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            GovEntityAccessor govEntityAccessor = new GovEntityAccessor(gpeList, roe);
+            LiveDataWrapper liveDataWrapper = govEntityAccessor.getEntity(id);
+
+            String message = "";
+            if(liveDataWrapper.getState() != 0) {
+                message = errorCodes[liveDataWrapper.getState()];
+                liveDataWrapper.setMessage(message);
+            }
+            return liveDataWrapper;
         }
 
         @Override
@@ -118,7 +131,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         }
     }
 
-    private class UpdateAsyncTask extends android.os.AsyncTask<GovPensionEntity, Void, Integer> {
+    private class UpdateAsyncTask extends AsyncTask<GovPensionEntity, Void, Integer> {
 
         @Override
         protected Integer doInBackground(GovPensionEntity... params) {
@@ -155,6 +168,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         }
     }
 
+    /*
     private LiveDataWrapper getEntity(long id) {
         if(id == 0) {
             // a new entity is requested. see if one can be created
@@ -235,9 +249,5 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         gpe.setRules(new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate()));
         return new LiveDataWrapper(gpe, 0, "");
     }
-
-    private void prepare(GovPensionEntity gpe) {
-        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-
-    }
+    */
 }

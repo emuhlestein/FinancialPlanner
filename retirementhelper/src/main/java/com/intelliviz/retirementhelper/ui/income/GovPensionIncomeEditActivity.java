@@ -30,13 +30,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
 import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
-import static com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel.ERROR_NO_SPOUSE_BIRTHDATE;
-import static com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel.ERROR_ONLY_TWO_SOCIAL_SECURITY;
-import static com.intelliviz.retirementhelper.viewmodel.GovPensionIncomeEditViewModel.PRINCIPLE_SPOUSE;
 
 public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
 
@@ -125,7 +124,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                 mGPE = (GovPensionEntity) gpe.getObj();
                 mIsPrincipleSpouse = false;
                 switch(gpe.getState()) {
-                    case ERROR_ONLY_TWO_SOCIAL_SECURITY:
+                    case EC_MAX_NUM_SOCIAL_SECURITY:
                         final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
                         snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                             @Override
@@ -136,7 +135,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         });
                         snackbar.show();
                         break;
-                    case ERROR_NO_SPOUSE_BIRTHDATE:
+                    case EC_NO_SPOUSE_BIRTHDATE:
                         showDialog("01-01-1900", new BirthdateDialogAction() {
                             @Override
                             public void onGetBirthdate(String birthdate) {
@@ -144,12 +143,11 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                             }
                         });
                         break;
-                    case PRINCIPLE_SPOUSE:
-                        mIsPrincipleSpouse = true;
-                        break;
                 }
 
-
+                if(mGPE != null && mGPE.getSpouse() == 0) {
+                    mIsPrincipleSpouse = true;
+                }
                 updateUI();
             }
         });

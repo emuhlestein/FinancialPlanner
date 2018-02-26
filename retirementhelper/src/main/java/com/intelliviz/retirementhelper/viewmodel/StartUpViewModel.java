@@ -32,11 +32,11 @@ public class StartUpViewModel extends AndroidViewModel {
         return mROE;
     }
 
-    public void updateBirthdate(String birthdate, int includeSpouse, String spouseBirthdate) {
-        RetirementOptionsEntity rom = mROE.getValue();
-        RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), birthdate, includeSpouse, spouseBirthdate);
-        mROE.setValue(newRom);
-        new UpdateRetirementOptionsAsyncTask().execute(newRom);
+    public void updateBirthdate(String birthdate) {
+        //RetirementOptionsEntity rom = mROE.getValue();
+        //RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), birthdate, includeSpouse, spouseBirthdate);
+        //mROE.setValue(newRom);
+        new UpdateRetirementOptionsAsyncTask().execute(birthdate);
     }
 
     private class GetRetirementOptionsAsyncTask extends AsyncTask<Void, Void, RetirementOptionsEntity> {
@@ -53,15 +53,23 @@ public class StartUpViewModel extends AndroidViewModel {
         }
     }
 
-    private class UpdateRetirementOptionsAsyncTask extends android.os.AsyncTask<RetirementOptionsEntity, Void, Void> {
+    private class UpdateRetirementOptionsAsyncTask extends android.os.AsyncTask<String, Void, RetirementOptionsEntity> {
 
         @Override
-        protected Void doInBackground(RetirementOptionsEntity... params) {
-            RetirementOptionsEntity roe = params[0];
+        protected RetirementOptionsEntity doInBackground(String... params) {
+            String birthdate = params[0];
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            roe.setBirthdate(birthdate);
             mDB.retirementOptionsDao().update(roe);
             // TODO when ROM is updated, everything should be updated.
             // SystemUtils.updateAppWidget(getApplication());
-            return null;
+            return roe;
+        }
+
+        @Override
+        protected void onPostExecute(RetirementOptionsEntity roe) {
+            // TODO if rom is null, one needs to be added
+            mROE.setValue(roe);
         }
     }
 

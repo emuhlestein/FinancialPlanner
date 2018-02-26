@@ -9,6 +9,14 @@ public class LiveDataWrapper {
     private int state;
     private String message;
 
+    public LiveDataWrapper(Object obj) {
+        this(obj, 0);
+    }
+
+    public LiveDataWrapper(Object obj, int state) {
+        this(obj, state, "");
+    }
+
     public LiveDataWrapper(Object obj, int state, String message) {
         this.obj = obj;
         this.state = state;

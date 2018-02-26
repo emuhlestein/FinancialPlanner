@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +20,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.StartUpViewModel;
 
@@ -117,7 +120,7 @@ public class StartActivity extends AppCompatActivity implements
                     String spouseBirthdate = intent.getStringExtra(EXTRA_SPOUSE_BIRTHDATE);
                     int includeSpouse = intent.getIntExtra(EXTRA_INCLUDE_SPOUSE, 0);
                     if(SystemUtils.validateBirthday(birthdate)) {
-                        mViewModel.updateBirthdate(birthdate, includeSpouse, spouseBirthdate);
+                        mViewModel.updateBirthdate(birthdate);
                         /*
                         BirthdateQueryHandler queryHandler = new BirthdateQueryHandler(getContentResolver(), this);
                         ContentValues values = new ContentValues();
@@ -125,8 +128,14 @@ public class StartActivity extends AppCompatActivity implements
                         queryHandler.startUpdate(0, null, RetirementContract.RetirementParmsEntry.CONTENT_URI, values, null, null);
                         */
                     } else {
-                        Intent newIntent = new Intent(this, BirthdateActivity.class);
-                        startActivityForResult(newIntent, REQUEST_BIRTHDATE);
+                        //Intent newIntent = new Intent(this, BirthdateActivity.class);
+                        //startActivityForResult(newIntent, REQUEST_BIRTHDATE);
+                        showDialog("01-01-1900", new BirthdateDialogAction() {
+                            @Override
+                            public void onGetBirthdate(String birthdate) {
+                                mViewModel.updateBirthdate(birthdate);
+                            }
+                        });
                     }
                     break;
             }
@@ -190,8 +199,22 @@ public class StartActivity extends AppCompatActivity implements
 
     @Override
     public void onStartBirthdateActivity(String birthdate) {
-        Intent newIntent = new Intent(this, BirthdateActivity.class);
-        newIntent.putExtra(EXTRA_BIRTHDATE, birthdate);
-        startActivityForResult(newIntent, REQUEST_BIRTHDATE);
+        //Intent newIntent = new Intent(this, BirthdateActivity.class);
+        //newIntent.putExtra(EXTRA_BIRTHDATE, birthdate);
+        //startActivityForResult(newIntent, REQUEST_BIRTHDATE);
+        showDialog("01-01-1900", new BirthdateDialogAction() {
+            @Override
+            public void onGetBirthdate(String birthdate) {
+                mViewModel.updateBirthdate(birthdate);
+                onStartNavigationActivity();
+            }
+        });
+    }
+
+    private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
+        birthdateDialog.show(fm, "birhtdate");
     }
 }
