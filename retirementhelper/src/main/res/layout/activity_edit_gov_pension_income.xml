@@ -48,6 +48,7 @@
             android:padding="8sp"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:visibility="gone"
             android:text="@string/principle_spouse"/>
 
         <LinearLayout

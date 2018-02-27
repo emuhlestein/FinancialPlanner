@@ -32,6 +32,7 @@ import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
@@ -143,10 +144,9 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                             }
                         });
                         break;
-                }
-
-                if(mGPE != null && mGPE.getSpouse() == 0) {
-                    mIsPrincipleSpouse = true;
+                    case EC_PRINCIPLE_SPOUSE:
+                        mIsPrincipleSpouse = true;
+                        break;
                 }
                 updateUI();
             }
@@ -165,7 +165,6 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                     super.onActivityResult(requestCode, resultCode, intent);
             }
         }
-
     }
 
     private void updateUI() {

@@ -41,7 +41,7 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
                 if(mGpeList.size() == 2) {
                     return new LiveDataWrapper(gpe, EC_PRINCIPLE_SPOUSE);
                 } else {
-                    return new LiveDataWrapper(gpe, EC_PRINCIPLE_SPOUSE);
+                    return new LiveDataWrapper(gpe);
                 }
             }
         }
@@ -86,7 +86,11 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
         GovPensionEntity gpe = new GovPensionEntity(0, RetirementConstants.INCOME_TYPE_GOV_PENSION,
                 "", "0", age, spouse ? 1 : 0);
         gpe.setRules(new SocialSecurityRules(mROE.getEndAge(), mROE.getBirthdate()));
-        return new LiveDataWrapper(gpe);
+        if(isPrincipleSpouse) {
+            return new LiveDataWrapper(gpe, EC_PRINCIPLE_SPOUSE);
+        } else {
+            return new LiveDataWrapper(gpe);
+        }
     }
 
     private GovPensionEntity getEntityById(long id) {

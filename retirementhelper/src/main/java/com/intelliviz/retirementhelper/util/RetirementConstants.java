@@ -101,8 +101,8 @@ public class RetirementConstants {
     public static final int REQUEST_SPOUSE_BIRTHDATE = 12;
     public static final int REQUEST_SIGN_IN = 13;
 
-    public static final int EC_MAX_NUM_SOCIAL_SECURITY = 1;
-    public static final int EC_MAX_NUM_SOCIAL_SECURITY_FREE = 2;
-    public static final int EC_NO_SPOUSE_BIRTHDATE = 3;
-    public static final int EC_PRINCIPLE_SPOUSE = 4;
+    public static final int EC_MAX_NUM_SOCIAL_SECURITY = 0;
+    public static final int EC_MAX_NUM_SOCIAL_SECURITY_FREE = 1;
+    public static final int EC_NO_SPOUSE_BIRTHDATE = 2;
+    public static final int EC_PRINCIPLE_SPOUSE = 3;
 }
