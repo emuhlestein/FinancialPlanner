@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
@@ -135,6 +136,17 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                             }
                         });
                         snackbar.show();
+                        break;
+                    case EC_MAX_NUM_SOCIAL_SECURITY_FREE:
+                        final Snackbar snackbar1 = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
+                        snackbar1.setAction(R.string.dismiss, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                snackbar1.dismiss();
+                                finish();
+                            }
+                        });
+                        snackbar1.show();
                         break;
                     case EC_NO_SPOUSE_BIRTHDATE:
                         showDialog("01-01-1900", new BirthdateDialogAction() {

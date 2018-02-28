@@ -1,18 +1,24 @@
 package com.intelliviz.retirementhelper.ui.income;
 
 
+import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.transition.Slide;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,13 +31,18 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeSourceAdapter;
+import com.intelliviz.retirementhelper.db.AppDatabase;
+import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
+import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.ListMenuActivity;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
+import com.intelliviz.retirementhelper.util.GovEntityAccessor;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
 import com.intelliviz.retirementhelper.viewmodel.IncomeSourceListViewModel;
+import com.intelliviz.retirementhelper.viewmodel.LiveDataWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +51,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_TYPE;
@@ -48,10 +61,10 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SEL
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_EDIT;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_ACTION_VIEW;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_401K;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_GOV_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_SAVINGS;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_401K;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_INCOME_MENU;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_YES_NO;
 
@@ -293,10 +306,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     }
 
     private void startGovPensionIncomeSourceActivity(long id, int action) {
-        Intent intent = new Intent(getContext(), GovPensionIncomeEditActivity.class);
-        intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
-        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
-        startActivity(intent);
+        new StartGovPensionActivity(getContext(), id, action).execute();
     }
 
     private void startPensionIncomeSourceActivity(long id, int action) {
@@ -304,5 +314,76 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
         startActivity(intent);
+    }
+
+    public static class MyAlertDialog extends DialogFragment {
+        public static MyAlertDialog newInstance(String title) {
+            MyAlertDialog fragment = new MyAlertDialog();
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            String title = getArguments().getString("title");
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setTitle(title);
+            alertDialogBuilder.setMessage("Second Social Security income source only available in paid version.");
+            alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int i) {
+                    dialog.dismiss();
+                }
+            });
+
+            return alertDialogBuilder.create();
+        }
+    }
+
+    private class StartGovPensionActivity extends AsyncTask<Void, Void, Boolean> {
+        private Context mContext;
+        private long mId;
+        private int mAction;
+
+        public StartGovPensionActivity(Context context, long id, int action) {
+            mContext = context.getApplicationContext();
+            mId = id;
+            mAction = action;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            AppDatabase mDB = AppDatabase.getInstance(mContext);
+            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            GovEntityAccessor govEntityAccessor = new GovEntityAccessor(gpeList, roe);
+            LiveDataWrapper liveDataWrapper = govEntityAccessor.getEntity(0);
+            if(liveDataWrapper.getState() == EC_MAX_NUM_SOCIAL_SECURITY ||
+               liveDataWrapper.getState() == EC_MAX_NUM_SOCIAL_SECURITY_FREE) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            tryToStartGovPensionActivity(aBoolean, mId, mAction);
+        }
+    }
+
+    private void tryToStartGovPensionActivity(boolean startActivity, long id, int action) {
+        if(startActivity) {
+            Intent intent = new Intent(getContext(), GovPensionIncomeEditActivity.class);
+            intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
+            intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
+            startActivity(intent);
+        } else {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            MyAlertDialog alertDialog = MyAlertDialog.newInstance("Warning");
+            alertDialog.show(fm, "fragment_alert");
+        }
     }
 }
