@@ -56,11 +56,13 @@
     </string-array>
 
     <string name="principle_spouse">Principle Spouse</string>
+    <string name="ec_no_error">No error</string>
     <string name="ec_no_spouse_birthdate">Need to add birthdate for spouse before adding social security income source</string>
     <string name="ec_only_two_social_security_allowed">Can only have two Social Security income sources</string>
     <string name="ec_only_one_social_security_allowed">Can only have Social Security income source with free version.</string>
     <string name="ec_principle_spouse">Principle Spouse</string>
     <string-array name="error_codes">
+        <item>@string/ec_no_spouse_birthdate</item>
         <item>@string/ec_no_spouse_birthdate</item>
         <item>@string/ec_only_two_social_security_allowed</item>
         <item>@string/ec_only_one_social_security_allowed</item>
