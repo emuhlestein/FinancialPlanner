@@ -71,21 +71,24 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
     private LiveDataWrapper createNew(boolean spouse, boolean isPrincipleSpouse) {
         int year;
         AgeData age;
+        String birthdate;
         if(spouse) {
             if(!SystemUtils.validateBirthday(mROE.getSpouseBirthdate())) {
                 return new LiveDataWrapper(null, EC_NO_SPOUSE_BIRTHDATE);
             } else {
-                year = SystemUtils.getBirthYear(mROE.getSpouseBirthdate());
+                birthdate = mROE.getSpouseBirthdate();
+                year = SystemUtils.getBirthYear(birthdate);
                 age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
             }
         } else {
-            year = SystemUtils.getBirthYear(mROE.getBirthdate());
+            birthdate = mROE.getBirthdate();
+            year = SystemUtils.getBirthYear(birthdate);
             age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
         }
 
         GovPensionEntity gpe = new GovPensionEntity(0, RetirementConstants.INCOME_TYPE_GOV_PENSION,
                 "", "0", age, spouse ? 1 : 0);
-        gpe.setRules(new SocialSecurityRules(mROE.getEndAge(), mROE.getBirthdate()));
+        gpe.setRules(new SocialSecurityRules(mROE.getEndAge(), birthdate));
         if(isPrincipleSpouse) {
             return new LiveDataWrapper(gpe, EC_PRINCIPLE_SPOUSE);
         } else {
