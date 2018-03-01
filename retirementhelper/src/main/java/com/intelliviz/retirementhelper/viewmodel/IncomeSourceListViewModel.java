@@ -45,6 +45,10 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         new GetAllIncomeSourcesAsyncTask().execute();
     }
 
+    public void updateSpouseBirthdate(String birthdate) {
+        new UpdateSpouseBirthdateAsyncTask().execute(birthdate);
+    }
+
     public void delete(IncomeSourceEntityBase incomeSource) {
         if(incomeSource instanceof GovPensionEntity) {
             GovPensionEntity entity = (GovPensionEntity)incomeSource;
@@ -215,5 +219,18 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         }
 
         return incomeSourceList;
+    }
+
+
+    private class UpdateSpouseBirthdateAsyncTask extends android.os.AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            roe.setIncludeSpouse(1);
+            roe.setSpouseBirthdate(params[0]);
+            mDB.retirementOptionsDao().update(roe);
+            return null;
+        }
     }
 }

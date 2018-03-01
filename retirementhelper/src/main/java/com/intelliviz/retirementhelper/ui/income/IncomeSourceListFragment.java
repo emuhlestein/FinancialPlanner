@@ -17,6 +17,7 @@ import android.support.transition.Slide;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -35,9 +36,11 @@ import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.ui.BirthdateActivity;
 import com.intelliviz.retirementhelper.ui.IncomeSourceListMenuFragment;
 import com.intelliviz.retirementhelper.ui.ListMenuActivity;
 import com.intelliviz.retirementhelper.ui.YesNoDialog;
+import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.util.GovEntityAccessor;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SelectIncomeSourceListener;
@@ -53,6 +56,8 @@ import butterknife.ButterKnife;
 import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_NO_ERROR;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_TYPE;
@@ -342,7 +347,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         }
     }
 
-    private class StartGovPensionActivity extends AsyncTask<Void, Void, Boolean> {
+    private class StartGovPensionActivity extends AsyncTask<Void, Void, LiveDataWrapper> {
         private Context mContext;
         private long mId;
         private int mAction;
@@ -354,36 +359,53 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected LiveDataWrapper doInBackground(Void... voids) {
             AppDatabase mDB = AppDatabase.getInstance(mContext);
             List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
             RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
             GovEntityAccessor govEntityAccessor = new GovEntityAccessor(gpeList, roe);
-            LiveDataWrapper liveDataWrapper = govEntityAccessor.getEntity(0);
-            if(liveDataWrapper.getState() == EC_MAX_NUM_SOCIAL_SECURITY ||
-               liveDataWrapper.getState() == EC_MAX_NUM_SOCIAL_SECURITY_FREE) {
-                return false;
-            } else {
-                return true;
-            }
+            return govEntityAccessor.getEntity(mId);
         }
 
         @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            tryToStartGovPensionActivity(aBoolean, mId, mAction);
+        protected void onPostExecute(LiveDataWrapper liveDataWrapper) {
+            tryToStartGovPensionActivity(liveDataWrapper, mId, mAction);
         }
     }
 
-    private void tryToStartGovPensionActivity(boolean startActivity, long id, int action) {
-        if(startActivity) {
+    private void tryToStartGovPensionActivity(LiveDataWrapper liveDataWrapper, long id, int action) {
+        int state = liveDataWrapper.getState();
+        if(state == EC_NO_ERROR) {
             Intent intent = new Intent(getContext(), GovPensionIncomeEditActivity.class);
             intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
             intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
             startActivity(intent);
-        } else {
+        } else if(state == EC_MAX_NUM_SOCIAL_SECURITY ||
+                  state == EC_MAX_NUM_SOCIAL_SECURITY_FREE) {
+            String[] messages = getResources().getStringArray(R.array.error_codes);
             FragmentManager fm = getActivity().getSupportFragmentManager();
             MyAlertDialog alertDialog = MyAlertDialog.newInstance("Warning");
             alertDialog.show(fm, "fragment_alert");
+        } else if(state == EC_NO_SPOUSE_BIRTHDATE) {
+            final long spouseId = id;
+            final int newAction = action;
+            showDialog("01-01-1900", new BirthdateDialogAction() {
+                @Override
+                public void onGetBirthdate(String birthdate) {
+                    mViewModel.updateSpouseBirthdate(birthdate);
+                    Intent intent = new Intent(getContext(), GovPensionIncomeEditActivity.class);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ID, spouseId);
+                    intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, newAction);
+                    startActivity(intent);
+                }
+            });
         }
+    }
+
+    private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
+        birthdateDialog.show(fm, "birhtdate");
     }
 }

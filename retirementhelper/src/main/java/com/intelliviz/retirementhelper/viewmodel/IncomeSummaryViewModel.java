@@ -110,4 +110,5 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         */
         return IncomeSummaryHelper.getIncomeSummary(mDB, roe);
     }
+
 }
