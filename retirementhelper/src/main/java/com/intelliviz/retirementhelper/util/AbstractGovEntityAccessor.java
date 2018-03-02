@@ -54,6 +54,7 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
     private LiveDataWrapper createDefault() {
         int max_num = getMaxEntities();
         if(mGpeList.size() == max_num) {
+            int message = getMaxErrorCode();
             return new LiveDataWrapper(null, getMaxErrorCode());
         } else {
             if(mGpeList.size() == 0) {

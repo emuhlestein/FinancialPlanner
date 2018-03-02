@@ -322,10 +322,11 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     }
 
     public static class MyAlertDialog extends DialogFragment {
-        public static MyAlertDialog newInstance(String title) {
+        public static MyAlertDialog newInstance(String title, String message) {
             MyAlertDialog fragment = new MyAlertDialog();
             Bundle args = new Bundle();
             args.putString("title", title);
+            args.putString("message", message);
             fragment.setArguments(args);
             return fragment;
         }
@@ -333,9 +334,10 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             String title = getArguments().getString("title");
+            String message = getArguments().getString("message");
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
             alertDialogBuilder.setTitle(title);
-            alertDialogBuilder.setMessage("Second Social Security income source only available in paid version.");
+            alertDialogBuilder.setMessage(message);
             alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int i) {
@@ -384,7 +386,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
                   state == EC_MAX_NUM_SOCIAL_SECURITY_FREE) {
             String[] messages = getResources().getStringArray(R.array.error_codes);
             FragmentManager fm = getActivity().getSupportFragmentManager();
-            MyAlertDialog alertDialog = MyAlertDialog.newInstance("Warning");
+            MyAlertDialog alertDialog = MyAlertDialog.newInstance("Warning", messages[state]);
             alertDialog.show(fm, "fragment_alert");
         } else if(state == EC_NO_SPOUSE_BIRTHDATE) {
             final long spouseId = id;
