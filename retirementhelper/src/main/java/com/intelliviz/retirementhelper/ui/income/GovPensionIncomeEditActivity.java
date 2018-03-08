@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.ui.BirthdateActivity;
+import com.intelliviz.retirementhelper.ui.GovPensionAdvancedFragment;
 import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -60,23 +62,6 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
     @BindView(R.id.full_monthly_benefit_edit_text)
     EditText mFullMonthlyBenefit;
-
-    @BindView(R.id.start_age_text_view)
-    TextView mStartRetirementAge;
-
-    @OnClick(R.id.edit_start_age_button) void editAge() {
-
-        AgeData startAge;
-        // TODO clean this up, maybe need default entity
-        if(mGPE != null) {
-            startAge = mGPE.getStartAge();
-        } else {
-            startAge = new AgeData(0, 0);
-        }
-        FragmentManager fm = getSupportFragmentManager();
-        AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
-        dialog.show(fm, "");
-    }
 
     @BindView(R.id.income_source_toolbar)
     Toolbar mToolbar;
@@ -199,7 +184,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         mFullMonthlyBenefit.setText(monthlyBenefit);
 
         age = mGPE.getStartAge();
-        mStartRetirementAge.setText(age.toString());
+        setStartRetirementAge(age.toString());
 
         int type = mGPE.getType();
         String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);
@@ -216,9 +201,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             return;
         }
 
-        String age = mStartRetirementAge.getText().toString();
-        String age2 = SystemUtils.trimAge(age);
-        AgeData startAge = SystemUtils.parseAgeString(age2);
+        AgeData startAge = getStartRetirementAge();
 
         GovPensionEntity gpe = new GovPensionEntity(mGPE.getId(), mGPE.getType(), name,
                 fullBenefit, startAge, mGPE.getSpouse());
@@ -230,13 +213,35 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     @Override
     public void onEditAge(String year, String month) {
         AgeData age = parseAgeString(year, month);
-        mStartRetirementAge.setText(age.toString());
+        setStartRetirementAge(age.toString());
     }
 
     private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
-        birthdateDialog.show(fm, "birhtdate");
+        birthdateDialog.show(fm, "birthdate");
+    }
+
+    private void setStartRetirementAge(String age) {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.gov_pension_advanced_fragment);
+        if(fragment != null && fragment instanceof GovPensionAdvancedFragment) {
+            ((GovPensionAdvancedFragment)fragment).setStartRetirementAge(age.toString());
+        }
+    }
+
+    private AgeData getStartRetirementAge() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.gov_pension_advanced_fragment);
+        if(fragment != null && fragment instanceof GovPensionAdvancedFragment) {
+            String age = ((GovPensionAdvancedFragment)fragment).getStartRetirementAge();
+            String trimmedAge = SystemUtils.trimAge(age);
+            AgeData startAge = SystemUtils.parseAgeString(trimmedAge);
+            if(startAge != null) {
+                return startAge;
+            }
+        }
+        return new AgeData(0);
     }
 }

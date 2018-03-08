@@ -234,7 +234,7 @@ public class SystemUtils {
      * @param age The age.
      * @return The AgeData;
      */
-    // TODO make sure all callers chaeck for invalid age
+    // TODO make sure all callers check for invalid age
     public static AgeData parseAgeString(String age) {
         if(age == null || age.isEmpty()) {
             return null;

@@ -58,6 +58,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NU
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_NO_ERROR;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
+import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_TYPE;
@@ -377,7 +378,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
 
     private void tryToStartGovPensionActivity(LiveDataWrapper liveDataWrapper, long id, int action) {
         int state = liveDataWrapper.getState();
-        if(state == EC_NO_ERROR) {
+        if(state == EC_NO_ERROR || state == EC_PRINCIPLE_SPOUSE) {
             Intent intent = new Intent(getContext(), GovPensionIncomeEditActivity.class);
             intent.putExtra(EXTRA_INCOME_SOURCE_ID, id);
             intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, action);
