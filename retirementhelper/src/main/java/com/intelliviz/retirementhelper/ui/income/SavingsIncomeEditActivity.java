@@ -195,7 +195,9 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         mStartAgeTextView.setText(age.toString());
 
         age = mSIE.getStopMonthlyAdditionAge();
-        setStopMonthlyAdditionAge(age.toString());
+        if(age != null) {
+            setStopMonthlyAdditionAge(age.toString());
+        }
 
         String increase = mSIE.getAnnualPercentIncrease()+"%";
         setAnnualPercentIncrease(increase);
@@ -306,11 +308,11 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         return "0";
     }
 
-    private void setStopMonthlyAdditionAge(String monthlyAddition) {
+    private void setStopMonthlyAdditionAge(String stopMonthlyAdditionAge) {
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
         if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
-            ((SavingsAdvancedFragment)fragment).setStopMonthlyAdditionAge(monthlyAddition);
+            ((SavingsAdvancedFragment)fragment).setStopMonthlyAdditionAge(stopMonthlyAdditionAge);
         }
     }
 
