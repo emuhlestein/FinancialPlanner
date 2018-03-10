@@ -1,11 +1,9 @@
 package com.intelliviz.retirementhelper.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -14,9 +12,6 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
-
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_MONTH;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_YEAR;
 
 
 public class AgeDialog extends DialogFragment {
@@ -102,10 +97,8 @@ public class AgeDialog extends DialogFragment {
                 return;
             }
 
-            Intent intent = new Intent();
-            intent.putExtra(EXTRA_YEAR, year);
-            intent.putExtra(EXTRA_MONTH, month);
-            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            mListener = (OnAgeEditListener) getTargetFragment();
+            mListener.onEditAge(year, month);
         }
     }
 }

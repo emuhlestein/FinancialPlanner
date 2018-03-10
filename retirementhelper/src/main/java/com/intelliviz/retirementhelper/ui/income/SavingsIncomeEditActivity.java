@@ -8,12 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -21,6 +21,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
+import com.intelliviz.retirementhelper.ui.SavingsAdvancedFragment;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.SavingsIncomeEditViewModel;
@@ -31,8 +32,6 @@ import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_TYPE;
-import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
-import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
 public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
     private static final int START_AGE = 0;
@@ -59,38 +58,11 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
     @BindView(R.id.annual_interest_text)
     EditText mAnnualInterest;
 
-    @BindView(R.id.monthly_increase_text)
-    EditText mMonthlyIncrease;
-
     @BindView(R.id.start_age_text_view)
     TextView mStartAgeTextView;
 
     @BindView(R.id.withdraw_percent_edit_text)
     TextView mInitWithdrawPercentTextView;
-
-    @BindView(R.id.annual_percent_increase_edit_text)
-    EditText mAnnualPercentIncrease;
-
-    @BindView(R.id.input_withdraw_percent)
-    android.support.design.widget.TextInputLayout mInputWithdrawPercent;
-
-    @BindView(R.id.stop_age_text_view)
-    TextView mStopMonthlyAdditionAgeTextView;
-
-    @BindView(R.id.show_months_check_box)
-    CheckBox mShowMonths;
-
-    @OnClick(R.id.edit_stop_age_button) void editStopMonthlyAdditionAge() {
-        AgeData stopAge = mSIE.getStopMonthlyAdditionAge();
-        FragmentManager fm = getSupportFragmentManager();
-        AgeDialog dialog = AgeDialog.newInstance(""+stopAge.getYear(), ""+stopAge.getMonth());
-        dialog.show(fm, "");
-        mAgeType = STOP_AGE;
-    }
-
-    @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
-        updateIncomeSourceData();
-    }
 
     @OnClick(R.id.edit_start_age_button) void editStartAge() {
         AgeData startAge = mSIE.getStartAge();
@@ -98,6 +70,10 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
         dialog.show(fm, "");
         mAgeType = START_AGE;
+    }
+
+    @OnClick(R.id.add_income_source_button) void onAddIncomeSource() {
+        updateIncomeSourceData();
     }
 
     @Override
@@ -126,26 +102,10 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
                     TextView textView = (TextView)v;
                     String formattedString;
                     String str = textView.getText().toString();
-                    String value = getFloatValue(str);
+                    String value = SystemUtils.getFloatValue(str);
                     formattedString = SystemUtils.getFormattedCurrency(value);
                     if(formattedString != null) {
                         mBalance.setText(formattedString);
-                    }
-                }
-            }
-        });
-
-        mMonthlyIncrease.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    TextView textView = (TextView)v;
-                    String formattedString;
-                    String str = textView.getText().toString();
-                    String value = getFloatValue(str);
-                    formattedString = SystemUtils.getFormattedCurrency(value);
-                    if(formattedString != null) {
-                        mMonthlyIncrease.setText(formattedString);
                     }
                 }
             }
@@ -157,7 +117,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
                 if(!hasFocus) {
                     TextView textView = (TextView)v;
                     String interest = textView.getText().toString();
-                    interest = getFloatValue(interest);
+                    interest = SystemUtils.getFloatValue(interest);
                     if(interest != null) {
                         interest += "%";
                         mAnnualInterest.setText(interest);
@@ -174,7 +134,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
                 if(!hasFocus) {
                     TextView textView = (TextView)v;
                     String interest = textView.getText().toString();
-                    interest = getFloatValue(interest);
+                    interest = SystemUtils.getFloatValue(interest);
                     if(interest != null) {
                         interest += "%";
                         mInitWithdrawPercentTextView.setText(interest);
@@ -185,22 +145,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
             }
         });
 
-        mAnnualPercentIncrease.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    TextView textView = (TextView)v;
-                    String interest = textView.getText().toString();
-                    interest = getFloatValue(interest);
-                    if(interest != null) {
-                        interest += "%";
-                        mAnnualPercentIncrease.setText(interest);
-                    } else {
-                        mAnnualPercentIncrease.setText("");
-                    }
-                }
-            }
-        });
+
 
         SavingsIncomeEditViewModel.Factory factory = new
                 SavingsIncomeEditViewModel.Factory(getApplication(), mId);
@@ -232,10 +177,6 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         balanceString = mSIE.getBalance();
         balanceString = SystemUtils.getFormattedCurrency(balanceString);
 
-        String monthlyIncreaseString = SystemUtils.getFormattedCurrency(mSIE.getMonthlyAddition());
-        AgeData age;
-
-
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setSubtitle(incomeSourceTypeString);
@@ -245,23 +186,26 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
 
         String interest = mSIE.getInterest()+"%";
         mAnnualInterest.setText(interest);
-        mMonthlyIncrease.setText(monthlyIncreaseString);
 
+        String monthlyAdditionString = SystemUtils.getFormattedCurrency(mSIE.getMonthlyAddition());
+        setMonthlyAddition(monthlyAdditionString);
+
+        AgeData age;
         age = mSIE.getStartAge();
         mStartAgeTextView.setText(age.toString());
 
         age = mSIE.getStopMonthlyAdditionAge();
-        mStopMonthlyAdditionAgeTextView.setText(age.toString());
+        setStopMonthlyAdditionAge(age.toString());
 
         String increase = mSIE.getAnnualPercentIncrease()+"%";
-        mAnnualPercentIncrease.setText(increase);
+        setAnnualPercentIncrease(increase);
 
-        mShowMonths.setChecked(mSIE.getShowMonths() == 1);
+        setShowMonths(mSIE.getShowMonths() == 1);
     }
 
     private void updateIncomeSourceData() {
         String value = mBalance.getText().toString();
-        String balance = getFloatValue(value);
+        String balance = SystemUtils.getFloatValue(value);
         if(balance == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.balance_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
@@ -269,15 +213,15 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         }
 
         value = mAnnualInterest.getText().toString();
-        String interest = getFloatValue(value);
+        String interest = SystemUtils.getFloatValue(value);
         if(interest == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.interest_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
 
-        value = mMonthlyIncrease.getText().toString();
-        String monthlyAddition = getFloatValue(value);
+        value = getMonthlyAddition();
+        String monthlyAddition = SystemUtils.getFloatValue(value);
         if(monthlyAddition == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
@@ -287,15 +231,15 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         String withdrawPercent = mInitWithdrawPercentTextView.getText().toString();
 
         value = withdrawPercent;
-        withdrawPercent = getFloatValue(withdrawPercent);
+        withdrawPercent = SystemUtils.getFloatValue(withdrawPercent);
         if(withdrawPercent == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.monthly_increase_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
         }
 
-        value = mAnnualPercentIncrease.getText().toString();
-        String annualPercentIncrease = getFloatValue(value);
+        value = getAnnualPercentIncrease();
+        String annualPercentIncrease = SystemUtils.getFloatValue(value);
         if(annualPercentIncrease == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.annual_withdraw_increase_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
@@ -306,13 +250,13 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         String age2 = SystemUtils.trimAge(age);
         AgeData startAge = SystemUtils.parseAgeString(age2);
 
-        age = mStopMonthlyAdditionAgeTextView.getText().toString();
+        age = getStopMonthlyAdditionAge();
         age2 = SystemUtils.trimAge(age);
         AgeData stopAge = SystemUtils.parseAgeString(age2);
 
         String name = mIncomeSourceName.getText().toString();
 
-        int showMonths = mShowMonths.isChecked() ? 1 : 0;
+        int showMonths = getShowMonths() ? 1 : 0;
         SavingsIncomeEntity sie = new SavingsIncomeEntity(mId, mIncomeType, name, startAge, balance, interest, monthlyAddition,
                 stopAge, withdrawPercent, annualPercentIncrease, showMonths);
         if(mActivityResult) {
@@ -327,12 +271,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = parseAgeString(year, month);
-        if(mAgeType == START_AGE) {
-            mStartAgeTextView.setText(age.toString());
-        } else {
-            mStopMonthlyAdditionAgeTextView.setText(age.toString());
-        }
+        AgeData age = SystemUtils.parseAgeString(year, month);
+        mStartAgeTextView.setText(age.toString());
     }
 
     private void sendData(long id, String name, AgeData startAge, String balance, String interest, String monthlyAddition,
@@ -355,5 +295,73 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         returnIntent.putExtras(bundle);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+    }
+
+    private String getStopMonthlyAdditionAge() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
+        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
+            return ((SavingsAdvancedFragment)fragment).getStopMonthlyAdditionAge();
+        }
+        return "0";
+    }
+
+    private void setStopMonthlyAdditionAge(String monthlyAddition) {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
+        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
+            ((SavingsAdvancedFragment)fragment).setStopMonthlyAdditionAge(monthlyAddition);
+        }
+    }
+
+    private String getAnnualPercentIncrease() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
+        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
+            return ((SavingsAdvancedFragment)fragment).getAnnualPercentIncrease();
+        }
+        return "0";
+    }
+
+    private void setAnnualPercentIncrease(String annualPercentIncrease) {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
+        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
+            ((SavingsAdvancedFragment)fragment).setAnnualPercentIncrease(annualPercentIncrease);
+        }
+    }
+
+    private String getMonthlyAddition() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
+        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
+            return ((SavingsAdvancedFragment)fragment).getMonthlyAddition();
+        }
+        return "0";
+    }
+
+    private void setMonthlyAddition(String monthlyIncrease) {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
+        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
+            ((SavingsAdvancedFragment)fragment).setMonthlyAddition(monthlyIncrease);
+        }
+    }
+
+    private void setShowMonths(boolean showMonths) {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
+        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
+            ((SavingsAdvancedFragment)fragment).setShowMonths(showMonths);
+        }
+    }
+
+    private boolean getShowMonths() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
+        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
+            return ((SavingsAdvancedFragment)fragment).getShowMonths();
+        }
+        return false;
     }
 }
