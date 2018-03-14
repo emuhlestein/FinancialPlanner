@@ -13,6 +13,7 @@ import com.intelliviz.retirementhelper.R;
  * A simple {@link Fragment} subclass.
  */
 public class GovPensionAdvancedFragment extends Fragment {
+    private String mStartAge;
 
     public GovPensionAdvancedFragment() {
         // Required empty public constructor
@@ -25,11 +26,11 @@ public class GovPensionAdvancedFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_gov_pension_advanced, container, false);
     }
 
-
     public void setStartRetirementAge(String age) {
+        mStartAge = age;
     }
 
     public String getStartRetirementAge() {
-        return "";
+        return mStartAge;
     }
 }

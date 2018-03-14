@@ -40,6 +40,14 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     @Ignore
     private SocialSecurityRules mRules;
 
+    @Ignore
+    public GovPensionEntity(long id, int type) {
+        super(id, type, "");
+        mFullMonthlyBenefit = "0";
+        mStartAge = new AgeData(0);
+        mSpouse = 0;
+    }
+
     public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit, AgeData startAge, int spouse) {
         super(id, type, name);
         mFullMonthlyBenefit = fullMonthlyBenefit;

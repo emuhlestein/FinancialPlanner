@@ -6,6 +6,8 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,6 +18,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
+import com.intelliviz.retirementhelper.ui.BirthdateActivity;
 import com.intelliviz.retirementhelper.widget.WidgetProvider;
 
 import java.text.NumberFormat;
@@ -367,5 +370,12 @@ public class SystemUtils {
             // spouse is older
              return spouseAge.add(numMonths);
         }
+    }
+
+    public static void showDialog(FragmentActivity activity, String birthdate, BirthdateDialogAction birthdateDialogAction) {
+        FragmentManager fm = activity.getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
+        birthdateDialog.show(fm, "birhtdate");
     }
 }

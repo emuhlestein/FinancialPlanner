@@ -66,6 +66,19 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     @Ignore
     private IncomeTypeRules mRules;
 
+    @Ignore
+    public SavingsIncomeEntity(long id, int type) {
+        super(id, type, "");
+        mStartAge = new AgeData(0);
+        mBalance = "0";
+        mInterest = "0";
+        mMonthlyAddition = "0";
+        mStopMonthlyAdditionAge = new AgeData(0);
+        mWithdrawPercent = "0";
+        mAnnualPercentIncrease = "0";
+        mShowMonths = 0;
+    }
+
     public SavingsIncomeEntity(long id, int type, String name, AgeData startAge, String balance, String interest,
                                String monthlyAddition, AgeData stopMonthlyAdditionAge,
                                String withdrawPercent, String annualPercentIncrease, int showMonths) {
