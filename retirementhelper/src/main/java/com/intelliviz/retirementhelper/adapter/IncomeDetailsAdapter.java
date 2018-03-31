@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
@@ -76,6 +77,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         private TextView mLine1TextView;
         private TextView mLine2TextView;
         private TextView mLine3TextView;
+        private ImageView mImageView;
         private android.support.v7.widget.CardView mCardView;
 
         public IncomeDetailsHolder(View itemView) {
@@ -89,7 +91,9 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
                 mLine2TextView = itemView.findViewById(R.id.line2);
                 mLine3TextView = itemView.findViewById(R.id.line3);
             }
-            itemView.setOnClickListener(this);
+            //itemView.setOnClickListener(this);
+            mImageView = itemView.findViewById(R.id.info_image);
+            mImageView.setOnClickListener(this);
         }
 
         private void bindIncomeDetails(IncomeDetails incomeDetails) {
@@ -120,6 +124,9 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
             }
 
             if(incomeDetails.getNumLines() == 1) {
+                if(incomeDetails.hasDetails()) {
+                    mImageView.setImageResource(R.drawable.blue_info_icon);
+                }
                 mLine1TextView.setText(incomeDetails.getLine1());
                 //mLine1TextView.setText("Line 1\nLine 2\nLine 3\nLine 4");
             } else {

@@ -186,7 +186,6 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
             IncomeDetails incomeDetail;
 
             if(addMessage) {
-                line1 += "*";
                 incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), message);
                 incomeDetail.setAcceptClick(true);
                 addMessage = false;

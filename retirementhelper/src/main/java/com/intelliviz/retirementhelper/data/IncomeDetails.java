@@ -59,4 +59,8 @@ public class IncomeDetails {
     public void setAcceptClick(boolean acceptClick) {
         mAcceptClick = acceptClick;
     }
+
+    public boolean hasDetails() {
+        return (mMessage != null && !mMessage.isEmpty());
+    }
 }

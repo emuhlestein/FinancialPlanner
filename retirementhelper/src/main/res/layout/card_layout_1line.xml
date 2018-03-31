@@ -13,9 +13,8 @@
     android:foreground="?selectableItemBackground"
     android:clickable="true" >
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/gov_pension_item_layout"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="15dp"
@@ -27,7 +26,14 @@
             android:id="@+id/line1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:layout_alignParentLeft="true"/>
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/info_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
 </android.support.v7.widget.CardView>
