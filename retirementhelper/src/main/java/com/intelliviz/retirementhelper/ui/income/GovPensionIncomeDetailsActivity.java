@@ -49,6 +49,9 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
     @BindView(R.id.appbar)
     android.support.design.widget.AppBarLayout mAppBarLayout;
 
+    @BindView(R.id.principle_spouse_text_view)
+    TextView mPrincipleSpouseTextView;
+
     @BindView(R.id.name_text_view)
     TextView mNameTextView;
 
@@ -84,6 +87,8 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gov_pension_income_details);
         ButterKnife.bind(this);
+
+        mPrincipleSpouseTextView.setVisibility(View.GONE);
 
         Intent intent = getIntent();
         mId = 0;
@@ -174,6 +179,10 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         }
 
         SystemUtils.setToolbarSubtitle(this, "Social Security - " + mGPE.getName());
+
+        if(mGPE.isPrincipleSpouse()) {
+            mPrincipleSpouseTextView.setVisibility(View.VISIBLE);
+        }
 
         mNameTextView.setText(mGPE.getName());
 

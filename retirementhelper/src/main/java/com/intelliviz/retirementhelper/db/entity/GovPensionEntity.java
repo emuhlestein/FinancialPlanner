@@ -41,6 +41,9 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     private SocialSecurityRules mRules;
 
     @Ignore
+    private boolean mIsPrincipleSpouse;
+
+    @Ignore
     public GovPensionEntity(long id, int type) {
         super(id, type, "");
         mFullMonthlyBenefit = "0";
@@ -85,6 +88,14 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
     public AgeData getFullRetirementAge(String birthdate) {
         return mRules.getFullRetirementAge(birthdate);
+    }
+
+    public boolean isPrincipleSpouse() {
+        return mIsPrincipleSpouse;
+    }
+
+    public void setPrincipleSpouse(boolean principleSpouse) {
+        mIsPrincipleSpouse = principleSpouse;
     }
 
     public double getSpousalMonthlyBenefit() {

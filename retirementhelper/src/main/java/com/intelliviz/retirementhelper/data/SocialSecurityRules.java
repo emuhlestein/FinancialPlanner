@@ -179,6 +179,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
             SocialSecurityRules ssr = new SocialSecurityRules(endAge, birthdate, roe.getSpouseBirthdate(),
                     Double.parseDouble(spouse.getFullMonthlyBenefit()), spouse.getStartAge(), true, false);
             principleSpouse.setRules(ssr);
+            principleSpouse.setPrincipleSpouse(true);
             ssr = new SocialSecurityRules(endAge, roe.getSpouseBirthdate(), birthdate,
                     Double.parseDouble(principleSpouse.getFullMonthlyBenefit()), principleSpouse.getStartAge(), true, true);
             spouse.setRules(ssr);
