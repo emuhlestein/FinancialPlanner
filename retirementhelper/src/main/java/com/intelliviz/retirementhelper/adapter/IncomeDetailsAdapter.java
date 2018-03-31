@@ -125,7 +125,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
 
             if(incomeDetails.getNumLines() == 1) {
                 if(incomeDetails.hasDetails()) {
-                    mImageView.setImageResource(R.drawable.blue_info_icon);
+                    mImageView.setImageResource(R.drawable.blue_info_icon_36);
                 } else {
                     mImageView.setImageResource(0);
                 }

@@ -102,6 +102,10 @@ public class StartActivity extends AppCompatActivity implements
                 mROE = roe;
             }
         });
+
+        String country = getResources().getConfiguration().locale.getCountry();
+        String isoCountry = getResources().getConfiguration().locale.getISO3Country();
+        Log.i("StartActivity", country);
     }
 
     @Override

@@ -26,7 +26,9 @@
             android:id="@+id/line1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:textSize="16sp"
+            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"/>
 
         <ImageView
