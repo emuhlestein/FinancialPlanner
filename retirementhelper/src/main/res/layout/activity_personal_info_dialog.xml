@@ -88,39 +88,12 @@
 
             </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/include_spouse_check_box"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/include_spouse"
-                android:layout_marginStart="16dp"
-                android:checked="true"/>
-
-            <LinearLayout
+            <fragment
+                android:name="com.intelliviz.retirementhelper.ui.PersonalInfoAdvancedFragment"
+                android:id="@+id/personal_info_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/spouse_birthdate_button"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/edit_birthdate_desc"
-                    android:layout_gravity="end"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/edit_spouse_birthdate" />
-
-                <TextView
-                    android:id="@+id/spouse_birthdate_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:padding="8dp"
-                    android:minEms="7"
-                    android:textSize="18sp"/>
-
-            </LinearLayout>
+                android:layout_height="wrap_content">
+            </fragment>
 
             <View
                 android:id="@+id/divider2"

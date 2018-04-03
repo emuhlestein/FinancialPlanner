@@ -6,14 +6,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,17 +56,11 @@ public class PersonalInfoDialog extends DialogFragment {
     @BindView(R.id.birthdate_text_view)
     TextView mBirthDateViewText;
 
-    @BindView(R.id.spouse_birthdate_text_view)
-    TextView mSpouseBirthDateViewText;
-
-    @BindView(R.id.include_spouse_check_box)
-    CheckBox mIncludeSpouseCheckBox;
-
     @BindView(R.id.birthdate_button)
     Button mBirthdateButton;
 
-    @BindView(R.id.spouse_birthdate_button)
-    Button mSpouseBirthdateButton;
+    //@BindView(R.id.spouse_birthdate_button)
+    //Button mSpouseBirthdateButton;
 
     @OnClick(R.id.birthdate_button) void editBirthdate() {
         String birthdate = mBirthDateViewText.getText().toString();
@@ -86,7 +79,7 @@ public class PersonalInfoDialog extends DialogFragment {
             }
         });
     }
-
+/*
     @OnClick(R.id.spouse_birthdate_button) void editSpouseBirthdate() {
         String birthdate = mSpouseBirthDateViewText.getText().toString();
         showDialog(birthdate, new BirthdateDialogAction() {
@@ -104,6 +97,7 @@ public class PersonalInfoDialog extends DialogFragment {
             }
         });
     }
+    */
 
     @BindView(R.id.personal_info_ok)
     Button mOk;
@@ -160,7 +154,7 @@ public class PersonalInfoDialog extends DialogFragment {
             }
         });
         */
-
+/*
         mIncludeSpouseCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -173,8 +167,10 @@ public class PersonalInfoDialog extends DialogFragment {
                 }
             }
         });
+        */
 
 
+        setCoordinatorLayout(mCoordinatorLayout);
         return view;
     }
 
@@ -204,6 +200,7 @@ public class PersonalInfoDialog extends DialogFragment {
             displayName = user.getDisplayName();
         }
 
+        /*
         if(includeSpouse == 1) {
             mSpouseBirthdateButton.setEnabled(true);
             mSpouseBirthDateViewText.setEnabled(true);
@@ -211,13 +208,17 @@ public class PersonalInfoDialog extends DialogFragment {
             mSpouseBirthdateButton.setEnabled(false);
             mSpouseBirthDateViewText.setEnabled(false);
         }
+        */
 
         mNameTextView.setText(displayName);
 
         mEmailTextView.setText(email);
         mBirthDateViewText.setText(birthdate);
-        mSpouseBirthDateViewText.setText(spouseBirhtdate);
-        mIncludeSpouseCheckBox.setChecked(includeSpouse == 1);
+
+        setSpouseBirthdate(spouseBirhtdate);
+        //mSpouseBirthDateViewText.setText(spouseBirhtdate);
+        setIncludeSpouse(includeSpouse == 1);
+        //mIncludeSpouseCheckBox.setChecked(includeSpouse == 1);
 
         if(!SystemUtils.validateBirthday(birthdate)) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.enter_birthdate), Snackbar.LENGTH_LONG);
@@ -239,8 +240,8 @@ public class PersonalInfoDialog extends DialogFragment {
         int includeSpouse = 0;
         String spouseBirthdate = "";
 
-        if(mIncludeSpouseCheckBox.isChecked()) {
-            spouseBirthdate = mSpouseBirthDateViewText.getText().toString();
+        if(getIncludeSpouse()) {
+            spouseBirthdate = getSpouseBirthdate();
             if (!SystemUtils.validateBirthday(spouseBirthdate)) {
                 String message;
                 String errMsg = getResources().getString(R.string.spouse_birthdate_not_valid);
@@ -274,6 +275,50 @@ public class PersonalInfoDialog extends DialogFragment {
         //finish();
         //overridePendingTransition(0, R.anim.slide_right_out);
         dismiss();
+    }
+
+    private String getSpouseBirthdate() {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
+        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
+            return ((PersonalInfoAdvancedFragment)fragment).getSpouseBirthdate();
+        } else {
+            return "";
+        }
+    }
+
+    private void setSpouseBirthdate(String spouseBirthdate) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
+        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
+            ((PersonalInfoAdvancedFragment)fragment).setSpouseBirthdate(spouseBirthdate);
+        }
+    }
+
+    private boolean getIncludeSpouse() {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
+        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
+            return ((PersonalInfoAdvancedFragment)fragment).getIncludeSpouse();
+        } else {
+            return false;
+        }
+    }
+
+    private void setIncludeSpouse(boolean includeSpouse) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
+        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
+            ((PersonalInfoAdvancedFragment)fragment).setIncludeSpouse(includeSpouse);
+        }
+    }
+
+    private void setCoordinatorLayout(CoordinatorLayout coordinatorLayout) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
+        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
+            ((PersonalInfoAdvancedFragment)fragment).setCoordinatorLayout(coordinatorLayout);
+        }
     }
 
     private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
