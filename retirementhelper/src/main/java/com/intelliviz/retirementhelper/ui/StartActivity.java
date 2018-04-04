@@ -100,6 +100,7 @@ public class StartActivity extends AppCompatActivity implements
             @Override
             public void onChanged(@Nullable RetirementOptionsEntity roe) {
                 mROE = roe;
+                attemptToStartNavigateActivity();
             }
         });
 
@@ -220,5 +221,13 @@ public class StartActivity extends AppCompatActivity implements
         FragmentTransaction ft = fm.beginTransaction();
         BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
         birthdateDialog.show(fm, "birhtdate");
+    }
+
+    private void attemptToStartNavigateActivity() {
+        if(SystemUtils.validateBirthday(mROE.getBirthdate())) {
+            onStartNavigationActivity();
+        } else {
+            onStartBirthdateActivity(mROE.getBirthdate());
+        }
     }
 }
