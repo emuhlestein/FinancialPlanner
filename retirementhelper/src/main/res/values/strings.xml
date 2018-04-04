@@ -38,6 +38,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="monthly_benefit_noc">Monthly Benefit</string>
     <string name="retirement_age">Retirement Age</string>
+    <string name="age">Age</string>
     <string name="current_balance">Current Balance:</string>
     <string name="full_retirement_age">Full Retirement Age:</string>
     <string name="penalty_amount">Penalty Amount:</string>

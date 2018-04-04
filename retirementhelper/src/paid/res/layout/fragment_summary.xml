@@ -31,7 +31,7 @@
                     android:layout_marginStart="16sp"
                     android:paddingBottom="8dp"
                     android:paddingTop="8dp"
-                    android:text="@string/retirement_age"
+                    android:text="@string/age"
                     android:textSize="22sp" />
 
                 <TextView
