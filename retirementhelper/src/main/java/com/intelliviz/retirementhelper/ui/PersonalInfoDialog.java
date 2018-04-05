@@ -12,7 +12,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +23,9 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.util.PersonalInfoDialogAction;
 import com.intelliviz.retirementhelper.util.SystemUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +63,9 @@ public class PersonalInfoDialog extends DialogFragment {
 
     @BindView(R.id.birthdate_button)
     Button mBirthdateButton;
+
+    @BindView(R.id.country_spinner)
+    Spinner mCountrySpinner;
 
     //@BindView(R.id.spouse_birthdate_button)
     //Button mSpouseBirthdateButton;
@@ -169,6 +177,10 @@ public class PersonalInfoDialog extends DialogFragment {
         });
         */
 
+        String[] countries = getResources().getStringArray(R.array.country_array);
+        List<String> countryList = Arrays.asList(countries);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, countryList);
+        mCountrySpinner.setAdapter(adapter);
 
         setCoordinatorLayout(mCoordinatorLayout);
         return view;

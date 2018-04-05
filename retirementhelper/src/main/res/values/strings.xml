@@ -55,6 +55,13 @@
         <item>@string/social_security</item>
     </string-array>
 
+    <string name="usa">USA</string>
+    <string name="other_country">Other</string>
+    <string-array name="country_array">
+        <item>@string/usa</item>
+        <item>@string/other_country</item>
+    </string-array>
+
     <string name="principle_spouse">Principle Spouse</string>
     <string name="ec_no_error">No error</string>
     <string name="ec_no_spouse_birthdate">Need to add birthdate for spouse before adding social security income source</string>
@@ -174,4 +181,6 @@
     <string name="save">Save</string>
     <string name="stop_addition_age">Stop Addition Age</string>
     <string name="show_months">Show Months</string>
+    <string name="country">Country</string>
+    <string name="country_desc">Choose Country</string>
 </resources>
