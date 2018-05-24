@@ -209,7 +209,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
     public void onIncomeDetailsSelect(IncomeDetails incomeDetails) {
         final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, incomeDetails.getMessage(), Snackbar.LENGTH_INDEFINITE);
         View view = snackbar.getView();
-        TextView tv = (TextView)view.findViewById(android.support.design.R.id.snackbar_text);
+        TextView tv = view.findViewById(android.support.design.R.id.snackbar_text);
         tv.setMaxLines(3);
         snackbar.setAction("DISMISS", new View.OnClickListener() {
 

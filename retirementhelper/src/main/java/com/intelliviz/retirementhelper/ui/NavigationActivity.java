@@ -79,6 +79,8 @@ public class NavigationActivity extends AppCompatActivity {
 
         initBottomNavigation();
 
+
+
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.content_frame);
         if(fragment == null) {

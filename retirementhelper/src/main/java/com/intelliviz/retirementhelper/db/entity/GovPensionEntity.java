@@ -18,6 +18,8 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
 
 /**
+ * Database table for government pension income source.
+ *
  * Created by Ed Muhlestein on 10/2/2017.
  */
 @Entity(tableName = TABLE_NAME)
@@ -51,6 +53,15 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         mSpouse = 0;
     }
 
+    /**
+     * Constructor.
+     * @param id Database id.
+     * @param type Type of income source.
+     * @param name Name of income source.
+     * @param fullMonthlyBenefit Monthly benefit when full retirement age is reached.
+     * @param startAge The age at which to start receiving benefits.
+     * @param spouse 1 if this is a spouse. 0 otherwise.
+     */
     public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit, AgeData startAge, int spouse) {
         super(id, type, name);
         mFullMonthlyBenefit = fullMonthlyBenefit;
@@ -58,12 +69,12 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         mSpouse = spouse;
     }
 
+    /**
+     * Get the full monthly benefit.
+     * @return The full monthly benefit.
+     */
     public String getFullMonthlyBenefit() {
         return mFullMonthlyBenefit;
-    }
-
-    public void setFullMonthlyBenefit(String fullMonthlyBenefit) {
-        mFullMonthlyBenefit = fullMonthlyBenefit;
     }
 
     public AgeData getStartAge() {
@@ -86,24 +97,12 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         return mRules.getFullRetirementAge();
     }
 
-    public AgeData getFullRetirementAge(String birthdate) {
-        return mRules.getFullRetirementAge(birthdate);
-    }
-
     public boolean isPrincipleSpouse() {
         return mIsPrincipleSpouse;
     }
 
     public void setPrincipleSpouse(boolean principleSpouse) {
         mIsPrincipleSpouse = principleSpouse;
-    }
-
-    public double getSpousalMonthlyBenefit() {
-        if(mRules != null) {
-            return mRules.getSpousalMonthlyBenefit();
-        } else {
-            return 0;
-        }
     }
 
     public double getMonthlyBenefit() {
@@ -118,7 +117,7 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
         if(rules instanceof SocialSecurityRules) {
             mRules = (SocialSecurityRules)rules;
             Bundle bundle = new Bundle();
-            bundle.putDouble(EXTRA_INCOME_FULL_BENEFIT, Double.parseDouble(mFullMonthlyBenefit));
+            bundle.putString(EXTRA_INCOME_FULL_BENEFIT, mFullMonthlyBenefit);
             bundle.putParcelable(EXTRA_INCOME_START_AGE, mStartAge);
             mRules.setValues(bundle);
         } else {

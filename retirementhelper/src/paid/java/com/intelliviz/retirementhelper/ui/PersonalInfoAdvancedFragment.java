@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,23 +72,28 @@ public class PersonalInfoAdvancedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_personal_info_advanced, container, false);
-        ButterKnife.bind(this, view);
+        try {
+            // Inflate the layout for this fragment
+            View view = inflater.inflate(R.layout.fragment_personal_info_advanced, container, false);
+            ButterKnife.bind(this, view);
 
-        mIncludeSpouse.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
-                    mSpouseBirthdateButton.setEnabled(true);
-                    mSpouseBirthdateTextView.setEnabled(true);
-                } else {
-                    mSpouseBirthdateButton.setEnabled(false);
-                    mSpouseBirthdateTextView.setEnabled(false);
+            mIncludeSpouse.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b) {
+                        mSpouseBirthdateButton.setEnabled(true);
+                        mSpouseBirthdateTextView.setEnabled(true);
+                    } else {
+                        mSpouseBirthdateButton.setEnabled(false);
+                        mSpouseBirthdateTextView.setEnabled(false);
+                    }
                 }
-            }
-        });
-        return view;
+            });
+            return view;
+        } catch (Exception e) {
+            Log.e("TAG", "onCreateView", e);
+            throw e;
+        }
     }
 
     public void setCoordinatorLayout(CoordinatorLayout coordinatorLayout) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout android:id="@+id/coordinatorLayout"
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coordinatorLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -117,13 +118,11 @@
 
             </LinearLayout>
 
-
-            <fragment
-                android:name="com.intelliviz.retirementhelper.ui.PersonalInfoAdvancedFragment"
+            <FrameLayout
                 android:id="@+id/personal_info_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </fragment>
+                android:layout_height="0px"
+                android:layout_weight="1"/>
 
             <View
                 android:id="@+id/divider2"

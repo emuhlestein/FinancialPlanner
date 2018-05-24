@@ -4,15 +4,15 @@ import android.os.Bundle;
 
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_FULL_BENEFIT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_IS_SPOUSE_ENTITY;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_START_AGE;
 
 /**
@@ -20,59 +20,79 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INC
  * the second spouse. If this is a spouse benefit, need to swap birthdate,
  * start age and full benefit.
  *
+ * Benefits are reduced by 5/9 of 1% per month benefits are taken early, ie before full retirement
+ * age. This applies for the first 36 months. If benefits are taken more than 36 months early, the
+ * monthly penalty is 5/12 of 1%.
+ *
+ * Credit for delaying benefits is 2/3 of 1% or 8% per year, up until age 70.
+ *
  * Created by Ed Muhlestein on 8/14/2017.
  */
 
 public class SocialSecurityRules implements IncomeTypeRules {
-    private static final double MAX_SS_PENALTY = 30.0;
+    private static final BigDecimal MAX_SS_PENALTY = new BigDecimal(30.0);
     private String mBirthdate;
     private AgeData mMinAge = new AgeData(62, 0);
     private AgeData mMaxAge = new AgeData(70, 0);
     private AgeData mEndAge;
     private AgeData mStartAge;
-    private double mFullMonthlyBenefit;
-    private double mMonthlyBenefit;
+    private BigDecimal mFullMonthlyBenefit;
+    private BigDecimal mMonthlyBenefit;
     private int mBenefitInfo;
-    private double mSpouseFullBenefit;
+    private BigDecimal mSpouseFullBenefit;
     private String mSpouseBirthdate;
     private AgeData mSpouseStartAge;
     private boolean mIsSpouseIncluded;
     private boolean mIsSpouseEntity;
+    private BigDecimal mPenaltyFraction;
 
     public SocialSecurityRules(AgeData endAge, String birthDate) {
-        this(endAge, birthDate, null, 0, null, false, false);
+        this(endAge, birthDate, null, "0", null, false, false);
     }
 
-    public SocialSecurityRules(AgeData endAge, String birthDate, String spouseBirthdate, double spouseFullBenefit,
+    public SocialSecurityRules(AgeData endAge, String birthDate, String spouseBirthdate, String spouseFullBenefit,
                                AgeData spouseStartAge, boolean isSpouseIncluded, boolean isSpouseEntity) {
         mEndAge = endAge;
         mBirthdate = birthDate;
         mSpouseBirthdate = spouseBirthdate;
-        mSpouseFullBenefit = spouseFullBenefit;
+        if(spouseFullBenefit != null) {
+            mSpouseFullBenefit = new BigDecimal(spouseFullBenefit);
+        }
         mSpouseStartAge = spouseStartAge;
         mIsSpouseIncluded = isSpouseIncluded;
         mIsSpouseEntity = isSpouseEntity;
+
+        BigDecimal five = new BigDecimal("5");
+        BigDecimal nine = new BigDecimal("9");
+        MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+        mPenaltyFraction = five.divide(nine, mc);
     }
 
     @Override
     public void setValues(Bundle bundle) {
-        mFullMonthlyBenefit = bundle.getDouble(EXTRA_INCOME_FULL_BENEFIT);
+        String value = bundle.getString(EXTRA_INCOME_FULL_BENEFIT);
+        mFullMonthlyBenefit = new BigDecimal(value);
+
         mStartAge = bundle.getParcelable(EXTRA_INCOME_START_AGE);
 
         int birthYear = SystemUtils.getBirthYear(mBirthdate);
         if(mIsSpouseIncluded) {
-            if (mFullMonthlyBenefit < mSpouseFullBenefit / 2) {
-                mMonthlyBenefit = mSpouseFullBenefit / 2;
+            BigDecimal two = new BigDecimal(2);
+            MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+            BigDecimal halfSpouseBenefit = mSpouseFullBenefit.divide(two, mc);
+            if (mFullMonthlyBenefit.compareTo(halfSpouseBenefit) < 0) {
+                mMonthlyBenefit = halfSpouseBenefit;
 
-                if(mStartAge.isBefore(mSpouseStartAge)) {
-                    mStartAge = mSpouseStartAge;
-                }
-                mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mMonthlyBenefit);
+                // since this is spousal benefits, can't claim social security before principle spouse
+                //if(mStartAge.isBefore(mSpouseStartAge)) {
+                //    mStartAge = mSpouseStartAge;
+                //}
+                mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mMonthlyBenefit, true);
             } else {
-                mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mFullMonthlyBenefit);
+                mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mFullMonthlyBenefit, false);
             }
         } else {
-            mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mFullMonthlyBenefit);
+            mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mFullMonthlyBenefit, false);
         }
     }
 
@@ -92,7 +112,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         BenefitData benefitData;
         while(true) {
             if(age.equals(mStartAge) || age.isAfter(mStartAge)) {
-                benefitData = new BenefitData(age, mMonthlyBenefit, 0, 0, false);
+                benefitData = new BenefitData(age, mMonthlyBenefit.doubleValue(), 0, 0, false);
             } else {
                 benefitData = new BenefitData(age, 0, 0, 0, false);
             }
@@ -116,7 +136,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     public double getMonthlyBenefit() {
-        return mMonthlyBenefit;
+        return mMonthlyBenefit.doubleValue();
     }
 
     public AgeData getFullRetirementAge() {
@@ -149,7 +169,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         }
 
         if(age.equals(mStartAge) || age.isAfter(mStartAge)) {
-            return new BenefitData(age, mMonthlyBenefit, 0, 0, false);
+            return new BenefitData(age, mMonthlyBenefit.doubleValue(), 0, 0, false);
         } else {
             return new BenefitData(age, 0, 0, 0, false);
         }
@@ -163,7 +183,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         AgeData endAge = roe.getEndAge();
         if(gpeList.size() == 1) {
             GovPensionEntity spouse1 = gpeList.get(0);
-            SocialSecurityRules ssr = new SocialSecurityRules(endAge, birthdate, "", 0, null, false, false);
+            SocialSecurityRules ssr = new SocialSecurityRules(endAge, birthdate, "", "0", null, false, false);
             spouse1.setRules(ssr);
         } else if(gpeList.size() == 2) {
             GovPensionEntity principleSpouse;
@@ -177,11 +197,11 @@ public class SocialSecurityRules implements IncomeTypeRules {
             }
 
             SocialSecurityRules ssr = new SocialSecurityRules(endAge, birthdate, roe.getSpouseBirthdate(),
-                    Double.parseDouble(spouse.getFullMonthlyBenefit()), spouse.getStartAge(), true, false);
+                    spouse.getFullMonthlyBenefit(), spouse.getStartAge(), true, false);
             principleSpouse.setRules(ssr);
             principleSpouse.setPrincipleSpouse(true);
             ssr = new SocialSecurityRules(endAge, roe.getSpouseBirthdate(), birthdate,
-                    Double.parseDouble(principleSpouse.getFullMonthlyBenefit()), principleSpouse.getStartAge(), true, true);
+                    principleSpouse.getFullMonthlyBenefit(), principleSpouse.getStartAge(), true, true);
             spouse.setRules(ssr);
         }
     }
@@ -224,104 +244,108 @@ public class SocialSecurityRules implements IncomeTypeRules {
      * @param birthyear The birth year.
      * @return THe delayed credit.
      */
-    private static double getDelayedCredit(int birthyear) {
+    private static BigDecimal getDelayedCredit(int birthyear) {
         if(birthyear < 1925) {
-            return 3;
+            return new BigDecimal("3");
         } else if(birthyear < 1927) {
-            return 3.5;
+            return new BigDecimal("3.5");
         } else if(birthyear < 1929) {
-            return 4.0;
+            return new BigDecimal("4.0");
         } else if(birthyear < 1931) {
-            return 4.5;
+            return new BigDecimal("4.5");
         } else if(birthyear < 1933 ) {
-            return 5.0;
+            return new BigDecimal("5.0");
         } else if(birthyear < 1935) {
-            return 5.5;
+            return new BigDecimal("5.5");
         } else if(birthyear < 1937) {
-            return 6.0;
+            return new BigDecimal("6.0");
         } else if(birthyear < 1939) {
-            return 6.5;
+            return new BigDecimal("6.5");
         } else if(birthyear < 1941) {
-            return 7.0;
+            return new BigDecimal("7.0");
         } else if(birthyear < 1943) {
-            return 7.5;
+            return new BigDecimal("7.5");
         } else {
-            return 8.0; // the max
+            return new BigDecimal("8.0"); // the max
         }
     }
 
-    private double getSocialSecurityAdjustment(int birthYear, AgeData startAge) {
+    private BigDecimal getMonthlyBenefit(AgeData startAge, int birthYear, BigDecimal monthlyBenefit, boolean spousalBenefit) {
+        AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
+        if(startAge.isBefore(mMinAge)) {
+            return new BigDecimal("0");
+        } else if(startAge.diff(retireAge) == 0) {
+            return mFullMonthlyBenefit;
+        } else if(startAge.isBefore(retireAge)) {
+            BigDecimal adjustment = getSocialSecurityAdjustment(birthYear, startAge);
+            BigDecimal one = new BigDecimal(1);
+            BigDecimal temp = one.subtract(adjustment);
+            return temp.multiply(monthlyBenefit);
+        } else {
+            if(spousalBenefit) {
+                return monthlyBenefit;
+            } else {
+                BigDecimal adjustment = getSocialSecurityAdjustment(birthYear, startAge);
+                BigDecimal one = new BigDecimal(1);
+                BigDecimal temp = adjustment.add(one);
+                return temp.multiply(monthlyBenefit);
+            }
+        }
+    }
+
+    private BigDecimal getSocialSecurityAdjustment(int birthYear, AgeData startAge) {
         AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
         int numMonths = retireAge.diff(startAge);
         if(startAge.isBefore(retireAge)) {
             // this is early retirement; the adjustment will be a penalty.
-            double penalty;
+            BigDecimal penalty;
             if(numMonths < 37) {
-                penalty = ((numMonths * 5.0) / 9.0)/100;
-                return penalty;
+                return calculatePenalty(numMonths);
             } else {
-                penalty = ((36 * 5.0) / 9.0)/100;
-                penalty += (((numMonths-36) * 5.0) / 12.0)/100;
-                if(penalty > MAX_SS_PENALTY) {
-                    penalty = MAX_SS_PENALTY;
+                penalty = calculatePenalty(36);
+                BigDecimal alternatePenalty = calculateAlternatePenalty(numMonths-36);
+                BigDecimal penaltySum = penalty.add(alternatePenalty);
+                //penalty += (((numMonths-36) * 5.0) / 12.0)/100;
+                int comp = penaltySum.compareTo(MAX_SS_PENALTY);
+                if(comp > 0) {
+                    penaltySum = MAX_SS_PENALTY;
                 }
-                return penalty;
+                return penaltySum;
             }
         } else {
             // this is delayed retirement; the adjustment is a credit.
-            double annualCredit = getDelayedCredit(birthYear);
-            return (numMonths * (annualCredit / 12.0))/100;
-        }
-    }
-
-    private double getMonthlyBenefit(AgeData startAge, int birthYear, double monthlyBenefit) {
-        AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
-        if(startAge.isBefore(retireAge)) {
-            double adjustment = getSocialSecurityAdjustment(birthYear, startAge);
-            return (1.0 - adjustment) * monthlyBenefit;
-        } else {
-            double adjustment = getSocialSecurityAdjustment(birthYear, startAge);
-            adjustment += 1.0;
-            return monthlyBenefit * adjustment;
-        }
-    }
-
-    private int getBenefitInfo(int birthYear) {
-        AgeData fullRetireAge = getFullRetirementAgeFromYear(birthYear);
-        if (mStartAge.isBefore(fullRetireAge)) {
-            return RetirementConstants.BALANCE_STATE_LOW;
-        } else {
-            return RetirementConstants.BALANCE_STATE_GOOD;
-        }
-    }
-
-    public void setValuesOld(Bundle bundle) {
-        mFullMonthlyBenefit = bundle.getDouble(EXTRA_INCOME_FULL_BENEFIT);
-        mStartAge = bundle.getParcelable(EXTRA_INCOME_START_AGE);
-        mIsSpouseEntity = bundle.getBoolean(EXTRA_INCOME_IS_SPOUSE_ENTITY, false);
-        mSpouseBirthdate = bundle.getString(EXTRA_INCOME_SPOUSE_BIRTHDATE);
-
-        int birthYear = SystemUtils.getBirthYear(mBirthdate);
-        mBenefitInfo = getBenefitInfo(birthYear);
-        if(mIsSpouseIncluded) {
-            if (mFullMonthlyBenefit < mSpouseFullBenefit / 2) {
-                mMonthlyBenefit = mSpouseFullBenefit / 2;
-                if(mStartAge.isBefore(mSpouseStartAge)) {
-                    mStartAge = new AgeData(mSpouseStartAge.getNumberOfMonths());
-                }
-                mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mMonthlyBenefit);
-            } else if (mSpouseFullBenefit < mFullMonthlyBenefit / 2) {
-                mMonthlyBenefit = mFullMonthlyBenefit / 2;
-                if(mSpouseStartAge.isBefore(mStartAge)) {
-                    mSpouseStartAge = new AgeData(mStartAge.getNumberOfMonths());
-                }
-                mMonthlyBenefit = getMonthlyBenefit(mSpouseStartAge, birthYear, mMonthlyBenefit);
-            } else {
-                mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mFullMonthlyBenefit);
+            if(startAge.isAfter(mMaxAge)) {
+                startAge = mMaxAge;
+                numMonths = retireAge.diff(startAge);
             }
-        } else {
-            mMonthlyBenefit = getMonthlyBenefit(mStartAge, birthYear, mFullMonthlyBenefit);
+
+            BigDecimal annualCredit = getDelayedCredit(birthYear);
+            BigDecimal twelve = new BigDecimal(12);
+            MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+            BigDecimal monthlyCredit = annualCredit.divide(twelve, mc);
+            BigDecimal nMonths = new BigDecimal(numMonths);
+            BigDecimal hundred = new BigDecimal("100");
+            return nMonths.multiply(monthlyCredit).divide(hundred, mc);
+            //return (numMonths * (annualCredit / 12.0))/100;
         }
     }
 
+    private BigDecimal calculatePenalty(int numMonths) {
+        BigDecimal months = new BigDecimal(numMonths);
+        BigDecimal temp = months.multiply(mPenaltyFraction);
+        BigDecimal hundred = new BigDecimal("100");
+        MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+        return temp.divide(hundred, mc);
+    }
+
+    private BigDecimal calculateAlternatePenalty(int numMonths) {
+        BigDecimal months = new BigDecimal(numMonths);
+        BigDecimal five = new BigDecimal("5");
+        BigDecimal twelve = new BigDecimal("12");
+        MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+        BigDecimal penaltyFraction = five.divide(twelve, mc);
+        BigDecimal temp = months.multiply(penaltyFraction);
+        BigDecimal hundred = new BigDecimal("100");
+        return temp.divide(hundred, mc);
+    }
 }
