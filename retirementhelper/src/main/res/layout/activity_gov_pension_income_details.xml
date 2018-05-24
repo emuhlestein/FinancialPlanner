@@ -12,12 +12,6 @@
         android:layout_height="@dimen/app_bar_height"
         android:fitsSystemWindows="true">
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
             <LinearLayout
                 android:id="@+id/expanded_text_layout"
                 android:layout_width="match_parent"
@@ -147,15 +141,8 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"/>
 
-        </android.support.design.widget.CollapsingToolbarLayout>
-
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/editPensionFAB"
         android:layout_width="wrap_content"
@@ -167,6 +154,5 @@
         app:layout_anchor="@+id/appbar"
         app:layout_anchorGravity="bottom|right|end"
         android:contentDescription="@string/add_income_source"/>
-
 
 </android.support.design.widget.CoordinatorLayout>

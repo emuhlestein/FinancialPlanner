@@ -275,7 +275,11 @@ public class SocialSecurityRules implements IncomeTypeRules {
         if(startAge.isBefore(mMinAge)) {
             return new BigDecimal("0");
         } else if(startAge.diff(retireAge) == 0) {
-            return mFullMonthlyBenefit;
+            if (spousalBenefit) {
+                return monthlyBenefit;
+            } else {
+                return mFullMonthlyBenefit;
+            }
         } else if(startAge.isBefore(retireAge)) {
             BigDecimal adjustment = getSocialSecurityAdjustment(birthYear, startAge);
             BigDecimal one = new BigDecimal(1);

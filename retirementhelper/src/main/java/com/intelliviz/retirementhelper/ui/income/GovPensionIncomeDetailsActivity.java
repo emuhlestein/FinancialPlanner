@@ -7,21 +7,17 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
@@ -38,7 +34,7 @@ import butterknife.ButterKnife;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 public class GovPensionIncomeDetailsActivity extends AppCompatActivity implements IncomeDetailsSelectListener{
-    private IncomeDetailsAdapter mAdapter;
+    //private IncomeDetailsAdapter mAdapter;
     private GovPensionIncomeDetailsViewModel mViewModel;
     private GovPensionEntity mGPE;
     private long mId;
@@ -70,14 +66,8 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
     @BindView(R.id.expanded_text_layout)
     LinearLayout mExpandedTextLayout;
 
-    @BindView(R.id.collapsing_toolbar)
-    CollapsingToolbarLayout mCollapsingToolbarLayout;
-
     @BindView(R.id.editPensionFAB)
     FloatingActionButton mEditPensionFAB;
-
-    @BindView(R.id.recyclerview)
-    RecyclerView mRecyclerView;
 
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -96,6 +86,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
         }
 
+        /*
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
 
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -118,14 +109,15 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
                 }
             }
         });
+        */
 
         List<IncomeDetails> incomeDetails = new ArrayList<>();
-        mAdapter = new IncomeDetailsAdapter(this, incomeDetails);
+        //mAdapter = new IncomeDetailsAdapter(this, incomeDetails);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+        //mRecyclerView.setLayoutManager(linearLayoutManager);
+        //mRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.setIncomeDetailsSelectListener(this);
+        //mAdapter.setIncomeDetailsSelectListener(this);
 
         // The FAB will pop up an activity to allow a new income source to be edited
         mEditPensionFAB.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +146,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
                 if(listIncomeDetails == null) {
                     return;
                 }
-                mAdapter.update(listIncomeDetails);
+                //mAdapter.update(listIncomeDetails);
             }
         });
 
