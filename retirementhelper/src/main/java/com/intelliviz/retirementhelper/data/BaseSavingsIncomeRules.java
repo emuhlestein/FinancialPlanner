@@ -2,8 +2,8 @@ package com.intelliviz.retirementhelper.data;
 
 import android.os.Bundle;
 
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public abstract class BaseSavingsIncomeRules {
      * @param endAge The end retirement age.
      */
     public BaseSavingsIncomeRules(String birthDate, AgeData endAge) {
-        mCurrentAge = SystemUtils.getAge(birthDate);
+        mCurrentAge = AgeUtils.getAge(birthDate);
         mEndAge = endAge;
     }
 

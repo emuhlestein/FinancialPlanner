@@ -16,8 +16,8 @@ import android.widget.LinearLayout;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.RetirementOptionsViewModel;
 
 import butterknife.BindView;
@@ -87,8 +87,8 @@ public class RetirementOptionsDialog extends AppCompatActivity {
         String value;
 
         value = mEndAgeEditText.getText().toString();
-        value = SystemUtils.trimAge(value);
-        AgeData endAge = SystemUtils.parseAgeString(value);
+        value = AgeUtils.trimAge(value);
+        AgeData endAge = AgeUtils.parseAgeString(value);
         if (endAge == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();

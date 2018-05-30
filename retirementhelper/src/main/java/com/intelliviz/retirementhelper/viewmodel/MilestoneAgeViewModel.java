@@ -10,6 +10,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -93,7 +94,7 @@ public class MilestoneAgeViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(RetirementOptionsEntity rom) {
             mROM = rom;
-            mCurrentAge.setValue(SystemUtils.getAge(mROM.getBirthdate()));
+            mCurrentAge.setValue(AgeUtils.getAge(mROM.getBirthdate()));
         }
     }
 

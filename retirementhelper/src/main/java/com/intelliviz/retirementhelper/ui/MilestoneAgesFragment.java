@@ -25,8 +25,8 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAgeAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.MilestoneAgeViewModel;
 
 import java.util.ArrayList;
@@ -191,7 +191,7 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
             return;
         }
 
-        mNewAge = SystemUtils.parseAgeString(year + " " + month);
+        mNewAge = AgeUtils.parseAgeString(year + " " + month);
         if(mNewAge == null) {
             return;
         }

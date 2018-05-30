@@ -20,6 +20,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.StartUpViewModel;
@@ -124,7 +125,7 @@ public class StartActivity extends AppCompatActivity implements
                     String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
                     String spouseBirthdate = intent.getStringExtra(EXTRA_SPOUSE_BIRTHDATE);
                     int includeSpouse = intent.getIntExtra(EXTRA_INCLUDE_SPOUSE, 0);
-                    if(SystemUtils.validateBirthday(birthdate)) {
+                    if(AgeUtils.validateBirthday(birthdate)) {
                         mViewModel.updateBirthdate(birthdate);
                         /*
                         BirthdateQueryHandler queryHandler = new BirthdateQueryHandler(getContentResolver(), this);
@@ -178,7 +179,7 @@ public class StartActivity extends AppCompatActivity implements
         mResponse = response;
 
         boolean isBirthdateValid = false;
-        if(SystemUtils.validateBirthday(mROE.getBirthdate())) {
+        if(AgeUtils.validateBirthday(mROE.getBirthdate())) {
             isBirthdateValid = true;
         }
 
@@ -224,7 +225,7 @@ public class StartActivity extends AppCompatActivity implements
     }
 
     private void attemptToStartNavigateActivity() {
-        if(SystemUtils.validateBirthday(mROE.getBirthdate())) {
+        if(AgeUtils.validateBirthday(mROE.getBirthdate())) {
             onStartNavigationActivity();
         } else {
             onStartBirthdateActivity(mROE.getBirthdate());

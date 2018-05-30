@@ -13,7 +13,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
-import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_UNKNOWN;
 
@@ -80,7 +80,7 @@ public class SavingsIncomeEditViewModel extends AndroidViewModel {
                 // need to create default
                 RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
                 String birthdate = roe.getBirthdate();
-                AgeData startAge = SystemUtils.getAge(birthdate);
+                AgeData startAge = AgeUtils.getAge(birthdate);
                 return new SavingsIncomeEntity(id, INCOME_TYPE_UNKNOWN,
                         "", startAge, "0", "0", "0", startAge, "0", "0", 0);
             } else {

@@ -74,16 +74,16 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
         AgeData age;
         String birthdate;
         if(spouse) {
-            if(!SystemUtils.validateBirthday(mROE.getSpouseBirthdate())) {
+            if(!AgeUtils.validateBirthday(mROE.getSpouseBirthdate())) {
                 return new LiveDataWrapper(null, EC_NO_SPOUSE_BIRTHDATE);
             } else {
                 birthdate = mROE.getSpouseBirthdate();
-                year = SystemUtils.getBirthYear(birthdate);
+                year = AgeUtils.getBirthYear(birthdate);
                 age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
             }
         } else {
             birthdate = mROE.getBirthdate();
-            year = SystemUtils.getBirthYear(birthdate);
+            year = AgeUtils.getBirthYear(birthdate);
             age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
         }
 

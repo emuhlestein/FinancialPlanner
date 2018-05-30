@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.BindView;
@@ -20,7 +21,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
-import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,8 +42,8 @@ public class SavingsAdvancedFragment extends Fragment implements AgeDialog.OnAge
     @OnClick(R.id.edit_stop_age_button) void editStopMonthlyAdditionAge() {
         AgeData stopAge;
         String age = mStopMonthlyAdditionAgeTextView.getText().toString();
-        String trimmedAge = SystemUtils.trimAge(age);
-        stopAge = SystemUtils.parseAgeString(trimmedAge);
+        String trimmedAge = AgeUtils.trimAge(age);
+        stopAge = AgeUtils.parseAgeString(trimmedAge);
         FragmentManager fm = getActivity().getSupportFragmentManager();
         AgeDialog dialog = AgeDialog.newInstance(""+stopAge.getYear(), ""+stopAge.getMonth());
         dialog.show(fm, "");
@@ -131,7 +131,7 @@ public class SavingsAdvancedFragment extends Fragment implements AgeDialog.OnAge
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = parseAgeString(year, month);
+        AgeData age = AgeUtils.parseAgeString(year, month);
         mStopMonthlyAdditionAgeTextView.setText(age.toString());
     }
 }

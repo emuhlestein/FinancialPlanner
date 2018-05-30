@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -108,7 +109,7 @@ public class MilestoneDataAdapter extends RecyclerView.Adapter<MilestoneDataAdap
             double monthlyAmount = mMSD.getMonthlyBenefit();
             String formattedCurrency = SystemUtils.getFormattedCurrency(monthlyAmount);
             mMonthlyAmountTextView.setText(formattedCurrency);
-            mMilestoneTextView.setText(SystemUtils.getFormattedAge(mMSD.getStartAge()));
+            mMilestoneTextView.setText(AgeUtils.getFormattedAge(mMSD.getStartAge()));
         }
 
         @Override

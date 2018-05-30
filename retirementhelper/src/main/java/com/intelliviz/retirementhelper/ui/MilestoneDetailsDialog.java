@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -54,7 +55,7 @@ public class MilestoneDetailsDialog extends AppCompatActivity {
         StringBuilder sb = new StringBuilder();
         Intent intent = getIntent();
         MilestoneData msd = intent.getParcelableExtra(RetirementConstants.EXTRA_MILESTONEDATA);
-        mAge.setText(SystemUtils.getFormattedAge(msd.getStartAge()));
+        mAge.setText(AgeUtils.getFormattedAge(msd.getStartAge()));
         String formattedCurrency = SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit());
         double penaltyAmount = msd.getPenaltyAmount();
         if(penaltyAmount > 0) {

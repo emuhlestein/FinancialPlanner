@@ -22,6 +22,7 @@ import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.ui.BirthdateActivity;
 import com.intelliviz.retirementhelper.ui.GovPensionAdvancedFragment;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -39,7 +40,7 @@ import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_PRINCI
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
-import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
+
 
 public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
 
@@ -212,7 +213,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = parseAgeString(year, month);
+        AgeData age = AgeUtils.parseAgeString(year, month);
         setStartRetirementAge(age.toString());
     }
 
@@ -236,8 +237,8 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         Fragment fragment = fm.findFragmentById(R.id.gov_pension_advanced_fragment);
         if(fragment != null && fragment instanceof GovPensionAdvancedFragment) {
             String age = ((GovPensionAdvancedFragment)fragment).getStartRetirementAge();
-            String trimmedAge = SystemUtils.trimAge(age);
-            AgeData startAge = SystemUtils.parseAgeString(trimmedAge);
+            String trimmedAge = AgeUtils.trimAge(age);
+            AgeData startAge = AgeUtils.parseAgeString(trimmedAge);
             if(startAge != null) {
                 return startAge;
             }

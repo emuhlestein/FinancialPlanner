@@ -108,8 +108,16 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     public double getMonthlyBenefit() {
         if(mRules != null) {
             return mRules.getMonthlyBenefit();
-        }else {
+         }else {
             return 0;
+        }
+    }
+
+    public AgeData getActualStartAge() {
+        if(mRules != null) {
+            return mRules.getActualStartAge();
+        } else {
+            return null;
         }
     }
 

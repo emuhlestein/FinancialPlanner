@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
@@ -92,7 +92,7 @@ public class MilestoneAgeAdapter extends RecyclerView.Adapter<MilestoneAgeAdapte
         }
 
         private void bindMilestone(MilestoneAgeEntity ageData) {
-            mMilestoneAgeTextView.setText(SystemUtils.getFormattedAge(ageData.getAge()));
+            mMilestoneAgeTextView.setText(AgeUtils.getFormattedAge(ageData.getAge()));
             if(ageData.getId() == 0) {
                 mImage.setVisibility(View.GONE);
             }

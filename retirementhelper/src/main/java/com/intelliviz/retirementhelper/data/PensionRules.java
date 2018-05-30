@@ -2,7 +2,7 @@ package com.intelliviz.retirementhelper.data;
 
 import android.os.Bundle;
 
-import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class PensionRules implements IncomeTypeRules {
     private double mMonthlyAmount;
 
     public PensionRules(String birthDate, AgeData minAge, AgeData endAge, double monthlyAmount) {
-        mCurrentAge = SystemUtils.getAge(birthDate);
+        mCurrentAge = AgeUtils.getAge(birthDate);
         mMinAge = minAge;
         mEndAge = endAge;
         mMonthlyAmount = monthlyAmount;

@@ -17,8 +17,8 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,7 +49,7 @@ public class PersonalInfoAdvancedFragment extends Fragment {
         showDialog(birthdate, new BirthdateDialogAction() {
             @Override
             public void onGetBirthdate(String birthdate) {
-                if (SystemUtils.validateBirthday(birthdate)) {
+                if (AgeUtils.validateBirthday(birthdate)) {
                     mSpouseBirthdateTextView.setText(birthdate);
                 } else {
                     String message;

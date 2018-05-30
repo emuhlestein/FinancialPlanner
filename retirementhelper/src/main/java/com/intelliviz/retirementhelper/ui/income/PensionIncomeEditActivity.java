@@ -19,6 +19,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.PensionIncomeEditViewModel;
@@ -30,7 +31,6 @@ import butterknife.OnClick;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.retirementhelper.util.SystemUtils.getFloatValue;
-import static com.intelliviz.retirementhelper.util.SystemUtils.parseAgeString;
 
 public class PensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
@@ -142,8 +142,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             return;
         }
 
-        age = SystemUtils.trimAge(age);
-        AgeData minAge = SystemUtils.parseAgeString(age);
+        age = AgeUtils.trimAge(age);
+        AgeData minAge = AgeUtils.parseAgeString(age);
         if(minAge == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
@@ -162,7 +162,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = parseAgeString(year, month);
+        AgeData age = AgeUtils.parseAgeString(year, month);
         mMinAge.setText(age.toString());
     }
 

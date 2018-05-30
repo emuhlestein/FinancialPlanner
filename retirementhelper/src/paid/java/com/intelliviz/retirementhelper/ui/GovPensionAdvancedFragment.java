@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,8 +27,8 @@ public class GovPensionAdvancedFragment extends Fragment {
     @OnClick(R.id.edit_start_age_button) void editAge() {
         AgeData startAge;
         String age = mStartRetirementAge.getText().toString();
-        String trimmedAge = SystemUtils.trimAge(age);
-        startAge = SystemUtils.parseAgeString(trimmedAge);
+        String trimmedAge = AgeUtils.trimAge(age);
+        startAge = AgeUtils.parseAgeString(trimmedAge);
         FragmentManager fm = getActivity().getSupportFragmentManager();
         AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
         dialog.show(fm, "");

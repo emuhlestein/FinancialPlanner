@@ -16,9 +16,9 @@ import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.GovEntityAccessor;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
 
@@ -121,7 +121,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
         protected void onPostExecute(RetirementOptionsEntity roe) {
             GovPensionEntity gpe = (GovPensionEntity) mGPE.getValue().getObj();
             if(gpe == null) {
-                int year = SystemUtils.getBirthYear(roe.getSpouseBirthdate());
+                int year = AgeUtils.getBirthYear(roe.getSpouseBirthdate());
                 AgeData age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
                 gpe = new GovPensionEntity(0, RetirementConstants.INCOME_TYPE_GOV_PENSION,
                         "", "0", age, 1);

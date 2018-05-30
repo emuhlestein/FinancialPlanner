@@ -12,6 +12,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
 import com.intelliviz.retirementhelper.ui.SelectAmountListener;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -83,7 +84,7 @@ public class RetirementDetailsAdapter extends
 
             String formattedCurrency = SystemUtils.getFormattedCurrency(amount);
             mMonthlyAmountTextView.setText(formattedCurrency);
-            mMilestoneTextView.setText(SystemUtils.getFormattedAge(age));
+            mMilestoneTextView.setText(AgeUtils.getFormattedAge(age));
         }
 
         @Override

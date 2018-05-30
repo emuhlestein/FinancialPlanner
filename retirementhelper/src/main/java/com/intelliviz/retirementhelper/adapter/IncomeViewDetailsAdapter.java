@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SelectMilestoneDataListener;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
@@ -121,7 +122,7 @@ public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDet
             }
 
             mLine2TextView.setText(formattedCurrency);
-            mLine1TextView.setText(SystemUtils.getFormattedAge(startAge));
+            mLine1TextView.setText(AgeUtils.getFormattedAge(startAge));
         }
 
         @Override

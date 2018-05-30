@@ -23,9 +23,9 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.util.PersonalInfoDialogAction;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +78,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         showDialog(birthdate, new BirthdateDialogAction() {
             @Override
             public void onGetBirthdate(String birthdate) {
-                if (SystemUtils.validateBirthday(birthdate)) {
+                if (AgeUtils.validateBirthday(birthdate)) {
                     mBirthDateViewText.setText(birthdate);
                 } else {
                     String message;
@@ -247,7 +247,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         setIncludeSpouse(includeSpouse == 1);
         //mIncludeSpouseCheckBox.setChecked(includeSpouse == 1);
 
-        if(!SystemUtils.validateBirthday(birthdate)) {
+        if(!AgeUtils.validateBirthday(birthdate)) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.enter_birthdate), Snackbar.LENGTH_LONG);
             snackbar.show();
         }
@@ -255,7 +255,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
 
     private void saveData() {
         String birthdate = mBirthDateViewText.getText().toString();
-        if(!SystemUtils.validateBirthday(birthdate)) {
+        if(!AgeUtils.validateBirthday(birthdate)) {
             String message;
             String errMsg = getResources().getString(R.string.birthdate_not_valid);
             message = errMsg + " (" + DATE_FORMAT + ").";
@@ -269,7 +269,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
 
         if(getIncludeSpouse()) {
             spouseBirthdate = getSpouseBirthdate();
-            if (!SystemUtils.validateBirthday(spouseBirthdate)) {
+            if (!AgeUtils.validateBirthday(spouseBirthdate)) {
                 String message;
                 String errMsg = getResources().getString(R.string.spouse_birthdate_not_valid);
                 message = errMsg + " (" + DATE_FORMAT + ").";

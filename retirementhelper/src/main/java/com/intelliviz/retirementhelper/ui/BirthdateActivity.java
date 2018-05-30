@@ -17,9 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.intelliviz.retirementhelper.R;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -121,7 +121,7 @@ public class BirthdateActivity extends DialogFragment {
                 String year = mEditTextYear.getText().toString();
 
                 String birthdate = day + "-" + month + "-" + year;
-                if(!SystemUtils.validateBirthday(birthdate)) {
+                if(!AgeUtils.validateBirthday(birthdate)) {
                     String message;
                     String errMsg = getResources().getString(R.string.birthdate_not_valid);
                     message = errMsg + " (" + DATE_FORMAT + ").";
@@ -149,10 +149,10 @@ public class BirthdateActivity extends DialogFragment {
     }
 
     private void updateUI(String birthdate) {
-        if(SystemUtils.validateBirthday(birthdate)) {
-            String day = Integer.toString(SystemUtils.getBirthDay(birthdate));
-            String month = Integer.toString(SystemUtils.getBirthMonth(birthdate));
-            String year = Integer.toString(SystemUtils.getBirthYear(birthdate));
+        if(AgeUtils.validateBirthday(birthdate)) {
+            String day = Integer.toString(AgeUtils.getBirthDay(birthdate));
+            String month = Integer.toString(AgeUtils.getBirthMonth(birthdate));
+            String year = Integer.toString(AgeUtils.getBirthYear(birthdate));
             mEditTextDay.setText(day);
             mEditTextMonth.setText(month);
             mEditTextYear.setText(year);

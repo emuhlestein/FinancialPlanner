@@ -22,6 +22,7 @@ import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
 import com.intelliviz.retirementhelper.ui.AgeDialog;
 import com.intelliviz.retirementhelper.ui.SavingsAdvancedFragment;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.SavingsIncomeEditViewModel;
@@ -249,12 +250,12 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         }
 
         String age = mStartAgeTextView.getText().toString();
-        String age2 = SystemUtils.trimAge(age);
-        AgeData startAge = SystemUtils.parseAgeString(age2);
+        String age2 = AgeUtils.trimAge(age);
+        AgeData startAge = AgeUtils.parseAgeString(age2);
 
         age = getStopMonthlyAdditionAge();
-        age2 = SystemUtils.trimAge(age);
-        AgeData stopAge = SystemUtils.parseAgeString(age2);
+        age2 = AgeUtils.trimAge(age);
+        AgeData stopAge = AgeUtils.parseAgeString(age2);
 
         String name = mIncomeSourceName.getText().toString();
 
@@ -273,7 +274,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = SystemUtils.parseAgeString(year, month);
+        AgeData age = AgeUtils.parseAgeString(year, month);
         mStartAgeTextView.setText(age.toString());
     }
 

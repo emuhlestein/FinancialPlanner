@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
 
 import java.util.List;
@@ -129,7 +130,7 @@ public class SummaryMilestoneAdapter extends RecyclerView.Adapter<SummaryMilesto
             }
 
             mMonthlyAmountTextView.setText(formattedCurrency);
-            mMilestoneTextView.setText(SystemUtils.getFormattedAge(startAge));
+            mMilestoneTextView.setText(AgeUtils.getFormattedAge(startAge));
         }
 
         @Override
