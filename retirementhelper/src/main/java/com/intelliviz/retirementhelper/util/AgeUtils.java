@@ -44,8 +44,8 @@ public class AgeUtils {
             return new AgeData();
         }
 
-        int birthMonth = parseInt(birthTokens[0]);
-        int birthDay = parseInt(birthTokens[1]);
+        int birthDay = parseInt(birthTokens[0]);
+        int birthMonth = parseInt(birthTokens[1]);
         int birthYear = parseInt(birthTokens[2]);
 
         String today = getTodaysDate();
@@ -242,5 +242,10 @@ public class AgeUtils {
         }
     }
 
-
+    public static AgeData ageDiff(String birthdate, String spouseBirthdate) {
+        AgeData currentAge = AgeUtils.getAge(birthdate);
+        AgeData spouseCurrentAge = AgeUtils.getAge(spouseBirthdate);
+        int numMonths = spouseCurrentAge.diff(currentAge);
+        return new AgeData(numMonths);
+    }
 }

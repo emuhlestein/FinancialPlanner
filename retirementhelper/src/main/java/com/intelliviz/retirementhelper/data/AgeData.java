@@ -50,6 +50,10 @@ public class AgeData implements Parcelable {
         return getNumberOfMonths() > age.getNumberOfMonths();
     }
 
+    public boolean isOnOrAfter(AgeData age) {
+        return getNumberOfMonths() >= age.getNumberOfMonths();
+    }
+
     public void addMonths(int numMonths) {
         if(numMonths <= 0) {
             return;

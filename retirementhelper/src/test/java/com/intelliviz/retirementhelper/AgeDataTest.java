@@ -1,6 +1,7 @@
 package com.intelliviz.retirementhelper;
 
 import com.intelliviz.retirementhelper.data.AgeData;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 
 import org.junit.Test;
 
@@ -59,6 +60,55 @@ public class AgeDataTest {
 
     @Test
     public void testSubtractAge() {
+        AgeData age1 = new AgeData(62, 10);
+        AgeData age2 = new AgeData(58, 8);
+        AgeData age = age1.subtract(age2);
+        verifyAge(age, new AgeData(4, 2));
 
+        age1 = new AgeData(58, 8);
+        age2 = new AgeData(62, 10);
+        age = age1.subtract(age2);
+        verifyAge(age, new AgeData(-4, -2));
+    }
+
+    @Test
+    public void testSpouseAge() {
+        AgeData age = new AgeData(62, 0);
+        String birthdate = "1-1-1960";
+        String spousBirthdate = "1-1-1930";
+        AgeData spouseAge = AgeUtils.getSpouseAge(birthdate, spousBirthdate, age);
+        assertEquals(spouseAge.getYear(), 92);
+        assertEquals(spouseAge.getMonth(), 0);
+
+        age = new AgeData(62, 0);
+        birthdate = "1-1-1960";
+        spousBirthdate = "1-1-1970";
+        spouseAge = AgeUtils.getSpouseAge(birthdate, spousBirthdate, age);
+        assertEquals(spouseAge.getYear(), 52);
+        assertEquals(spouseAge.getMonth(), 0);
+
+        age = new AgeData(67, 0);
+        birthdate = "10-8-1960";
+        spousBirthdate = "5-11-1958";
+        spouseAge = AgeUtils.getSpouseAge(birthdate, spousBirthdate, age);
+        assertEquals(spouseAge.getYear(), 68);
+        assertEquals(spouseAge.getMonth(), 9);
+
+        age = new AgeData(71, 0);
+        birthdate = "10-8-1960";
+        spousBirthdate = "31-7-1968";
+        spouseAge = AgeUtils.getSpouseAge(birthdate, spousBirthdate, age);
+        verifyAge(spouseAge, new AgeData(63, 1));
+
+        age = new AgeData(71, 0);
+        birthdate = "10-8-1960";
+        spousBirthdate = "9-12-1968";
+        spouseAge = AgeUtils.getSpouseAge(birthdate, spousBirthdate, age);
+        verifyAge(spouseAge, new AgeData(62, 8));
+    }
+
+    private void verifyAge(AgeData age, AgeData desiredAge) {
+        assertEquals(age.getYear(), desiredAge.getYear());
+        assertEquals(age.getMonth(), desiredAge.getMonth());
     }
 }

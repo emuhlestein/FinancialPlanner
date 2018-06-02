@@ -64,7 +64,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
         BigDecimal five = new BigDecimal("5");
         BigDecimal nine = new BigDecimal("9");
-        MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+        MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
         mPenaltyFraction = five.divide(nine, mc);
     }
 
@@ -78,7 +78,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         int birthYear = AgeUtils.getBirthYear(mBirthdate);
         if(mIsSpouseIncluded) {
             BigDecimal two = new BigDecimal(2);
-            MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+            MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
             BigDecimal halfSpouseBenefit = mSpouseFullBenefit.divide(two, mc);
             if (mFullMonthlyBenefit.compareTo(halfSpouseBenefit) < 0) {
                 mMonthlyBenefit = getMonthlySpousalBenefit(halfSpouseBenefit);
@@ -275,6 +275,8 @@ public class SocialSecurityRules implements IncomeTypeRules {
             }
 
         }
+
+        MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
         AgeData retireAge = getFullRetirementAgeFromYear(birthYear);
         if(startAge.isBefore(mMinAge)) {
             return new BigDecimal("0");
@@ -288,7 +290,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
             BigDecimal adjustment = getSocialSecurityAdjustment(birthYear, startAge);
             BigDecimal one = new BigDecimal(1);
             BigDecimal temp = one.subtract(adjustment);
-            return temp.multiply(monthlyBenefit);
+            return temp.multiply(monthlyBenefit, mc);
         } else {
             if(spousalBenefit) {
                 return monthlyBenefit;
@@ -296,7 +298,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 BigDecimal adjustment = getSocialSecurityAdjustment(birthYear, startAge);
                 BigDecimal one = new BigDecimal(1);
                 BigDecimal temp = adjustment.add(one);
-                return temp.multiply(monthlyBenefit);
+                return temp.multiply(monthlyBenefit, mc);
             }
         }
     }
@@ -308,13 +310,13 @@ public class SocialSecurityRules implements IncomeTypeRules {
         AgeData currentSpouseAge = AgeUtils.getAge(mSpouseBirthdate);
         AgeData diffAge = currentSpouseAge.subtract(currentAge);
 
-        // calculate the start age in terms of the spouse age.
-        AgeData convertedStartAge = mStartAge.add(diffAge);
+        // calculate the spouse age at start age.
+        AgeData spouseAge = AgeUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, mStartAge);
 
         AgeData startAge;
-        if(convertedStartAge.isBefore(mSpouseStartAge)) {
+        if(spouseAge.isBefore(mSpouseStartAge)) {
             // invalid start age--need to determine valid start age or the actual start age.
-            mActualStartAge = mSpouseStartAge.subtract(diffAge);
+            mActualStartAge = mSpouseStartAge.subtract(diffAge.getNumberOfMonths());
             startAge = mActualStartAge;
         } else {
             startAge = mStartAge;
@@ -330,7 +332,8 @@ public class SocialSecurityRules implements IncomeTypeRules {
             BigDecimal adjustment = getSocialSecurityAdjustment(birthYear, startAge);
             BigDecimal one = new BigDecimal(1);
             BigDecimal temp = one.subtract(adjustment);
-            return temp.multiply(fullMonthlyBenefit);
+            MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
+            return temp.multiply(fullMonthlyBenefit, mc);
         }
     }
 
@@ -362,20 +365,20 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
             BigDecimal annualCredit = getDelayedCredit(birthYear);
             BigDecimal twelve = new BigDecimal(12);
-            MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+            MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
             BigDecimal monthlyCredit = annualCredit.divide(twelve, mc);
             BigDecimal nMonths = new BigDecimal(numMonths);
             BigDecimal hundred = new BigDecimal("100");
-            return nMonths.multiply(monthlyCredit).divide(hundred, mc);
+            return nMonths.multiply(monthlyCredit, mc).divide(hundred, mc);
             //return (numMonths * (annualCredit / 12.0))/100;
         }
     }
 
     private BigDecimal calculatePenalty(int numMonths) {
         BigDecimal months = new BigDecimal(numMonths);
-        BigDecimal temp = months.multiply(mPenaltyFraction);
+        MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
+        BigDecimal temp = months.multiply(mPenaltyFraction, mc);
         BigDecimal hundred = new BigDecimal("100");
-        MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
         return temp.divide(hundred, mc);
     }
 
@@ -383,9 +386,9 @@ public class SocialSecurityRules implements IncomeTypeRules {
         BigDecimal months = new BigDecimal(numMonths);
         BigDecimal five = new BigDecimal("5");
         BigDecimal twelve = new BigDecimal("12");
-        MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+        MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
         BigDecimal penaltyFraction = five.divide(twelve, mc);
-        BigDecimal temp = months.multiply(penaltyFraction);
+        BigDecimal temp = months.multiply(penaltyFraction, mc);
         BigDecimal hundred = new BigDecimal("100");
         return temp.divide(hundred, mc);
     }
