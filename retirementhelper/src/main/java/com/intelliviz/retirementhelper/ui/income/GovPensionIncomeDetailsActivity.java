@@ -31,10 +31,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.view.View.GONE;
 import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 public class GovPensionIncomeDetailsActivity extends AppCompatActivity implements IncomeDetailsSelectListener{
-    //private IncomeDetailsAdapter mAdapter;
     private GovPensionIncomeDetailsViewModel mViewModel;
     private GovPensionEntity mGPE;
     private long mId;
@@ -53,6 +53,15 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
 
     @BindView(R.id.start_age_text_view)
     TextView mStartAgeTextView;
+
+    @BindView(R.id.start_age_label)
+    TextView mStartAgeLabel;
+
+    @BindView(R.id.actual_start_age_layout)
+    LinearLayout mActualStartAgeLayout;
+
+    @BindView(R.id.actual_start_age_text_view)
+    TextView mActualStartAgeTextView;
 
     @BindView(R.id.full_monthly_benefit_text_view)
     TextView mFullMonthlyBenefitTextView;
@@ -78,7 +87,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         setContentView(R.layout.activity_gov_pension_income_details);
         ButterKnife.bind(this);
 
-        mPrincipleSpouseTextView.setVisibility(View.GONE);
+        mPrincipleSpouseTextView.setVisibility(GONE);
 
         Intent intent = getIntent();
         mId = 0;
@@ -179,7 +188,18 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         mNameTextView.setText(mGPE.getName());
 
         AgeData age = mGPE.getStartAge();
-        mStartAgeTextView.setText(age.toString());
+        AgeData actualStartAge = mGPE.getActualStartAge();
+
+        if(actualStartAge != null) {
+            String temp = getResources().getString(R.string.desired_start_age);
+            mStartAgeLabel.setText(temp);
+            mStartAgeTextView.setText(age.toString());
+            mActualStartAgeTextView.setText(actualStartAge.toString());
+            mActualStartAgeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mActualStartAgeLayout.setVisibility(View.GONE);
+            mStartAgeTextView.setText(age.toString());
+        }
 
         age = mGPE.getFullRetirementAge();
         mFullRetirementAgeTextView.setText(age.toString());
@@ -189,6 +209,8 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
 
         formattedValue = SystemUtils.getFormattedCurrency(mGPE.getMonthlyBenefit());
         mMonthlyBenefitTextView.setText(formattedValue);
+
+        // TODO add multiline text view for info about benefits
     }
 
     public String getApplicationName(Context context) {

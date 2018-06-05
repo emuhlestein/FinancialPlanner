@@ -55,6 +55,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/start_age_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -64,6 +65,29 @@
 
                     <TextView
                         android:id="@+id/start_age_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="16dp"
+                        android:textSize="22sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/actual_start_age_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/actual_start_age_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="16dp"
+                        android:textSize="22sp"
+                        android:text="@string/actual_start_age" />
+
+                    <TextView
+                        android:id="@+id/actual_start_age_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"

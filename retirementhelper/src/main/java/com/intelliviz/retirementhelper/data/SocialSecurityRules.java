@@ -194,6 +194,8 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 spouse = gpeList.get(0);
             }
 
+            AgeData actualStartAge = spouse.getActualStartAge();
+
             SocialSecurityRules ssr = new SocialSecurityRules(endAge, birthdate, roe.getSpouseBirthdate(),
                     spouse.getFullMonthlyBenefit(), spouse.getStartAge(), true, false);
             principleSpouse.setRules(ssr);

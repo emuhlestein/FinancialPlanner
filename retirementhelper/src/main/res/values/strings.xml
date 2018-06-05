@@ -1,6 +1,8 @@
 <resources>
     <string name="retirement_options">Retirement Options</string>
     <string name="start_age">Start Age:</string>
+    <string name="desired_start_age">Desired Start Age:</string>
+    <string name="actual_start_age">Actual Start Age:</string>
     <string name="end_age">End Age</string>
     <string name="withdraw_amount">Initial Withdraw Amount</string>
     <string name="withdraw_percentage">Initial Withdraw Percentage</string>
