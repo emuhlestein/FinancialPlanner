@@ -5,5 +5,5 @@ package com.intelliviz.retirementhelper.data;
  */
 
 public interface IncomeDataAccessor {
-    BenefitData getBenefitData(AgeData age);
+    IncomeData getIncomeData(AgeData age);
 }

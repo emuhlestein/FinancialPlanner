@@ -91,7 +91,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     @Override
-    public List<BenefitData> getBenefitData() {
+    public List<IncomeData> getIncomeData() {
         AgeData age;
         if(mIsSpouseEntity) {
             // need to convert age to be in terms of principle spouse age.
@@ -101,16 +101,16 @@ public class SocialSecurityRules implements IncomeTypeRules {
         }
         age = mStartAge;
         age = new AgeData(age.getYear(), 0);
-        List<BenefitData> listAmountDate = new ArrayList<>();
+        List<IncomeData> listAmountDate = new ArrayList<>();
 
-        BenefitData benefitData;
+        IncomeData incomeData;
         while(true) {
             if(age.equals(mStartAge) || age.isAfter(mStartAge)) {
-                benefitData = new BenefitData(age, mMonthlyBenefit.doubleValue(), 0, 0, false);
+                incomeData = new IncomeData(age, mMonthlyBenefit.doubleValue(), 0, 0, false);
             } else {
-                benefitData = new BenefitData(age, 0, 0, 0, false);
+                incomeData = new IncomeData(age, 0, 0, 0, false);
             }
-            listAmountDate.add(benefitData);
+            listAmountDate.add(incomeData);
 
             // get next age
             AgeData nextAge = new AgeData(age.getYear()+1, 0);
@@ -125,7 +125,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     @Override
-    public BenefitData getBenefitData(BenefitData benefitData) {
+    public IncomeData getIncomeData(IncomeData incomeData) {
         return null;
     }
 
@@ -165,7 +165,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
      * @param principleSpouseAge The age of the principle spouse.
      * @return The benefit data.
      */
-    public BenefitData getMonthlyBenefitForAge(AgeData principleSpouseAge) {
+    public IncomeData getMonthlyBenefitForAge(AgeData principleSpouseAge) {
 
         AgeData age;
         if(mIsSpouseEntity) {
@@ -176,9 +176,9 @@ public class SocialSecurityRules implements IncomeTypeRules {
         }
 
         if(age.equals(mStartAge) || age.isAfter(mStartAge)) {
-            return new BenefitData(age, mMonthlyBenefit.doubleValue(), 0, 0, false);
+            return new IncomeData(age, mMonthlyBenefit.doubleValue(), 0, 0, false);
         } else {
-            return new BenefitData(age, 0, 0, 0, false);
+            return new IncomeData(age, 0, 0, 0, false);
         }
     }
 

@@ -9,21 +9,21 @@ import java.util.Map;
  */
 
 public class Savings401kIncomeDataAccessor implements IncomeDataAccessor {
-    private List<BenefitData> mBenefitData;
-    Map<Integer, BenefitData> mBenefitDataMap;
+    private List<IncomeData> mIncomeData;
+    Map<Integer, IncomeData> mIncomeDataMap;
 
-    public Savings401kIncomeDataAccessor(List<BenefitData> benefitData) {
-        mBenefitData = benefitData;
+    public Savings401kIncomeDataAccessor(List<IncomeData> incomeData) {
+        mIncomeData = incomeData;
 
-        mBenefitDataMap = new HashMap<>();
-        for(BenefitData bData : mBenefitData) {
-            int year = bData.getAge().getYear();
-            mBenefitDataMap.put(year, bData);
+        mIncomeDataMap = new HashMap<>();
+        for(IncomeData iData : mIncomeData) {
+            int year = iData.getAge().getYear();
+            mIncomeDataMap.put(year, iData);
         }
     }
 
     @Override
-    public BenefitData getBenefitData(AgeData age) {
-        return mBenefitDataMap.get(age.getYear());
+    public IncomeData getIncomeData(AgeData age) {
+        return mIncomeDataMap.get(age.getYear());
     }
 }

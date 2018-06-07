@@ -14,11 +14,11 @@ public class PensionIncomeDataAccessor implements IncomeDataAccessor {
     }
 
     @Override
-    public BenefitData getBenefitData(AgeData age) {
+    public IncomeData getIncomeData(AgeData age) {
         if(age.isOnOrAfter(mStartAge)) {
-            return new BenefitData(age, mMonthlyAmount, 0, 0, false);
+            return new IncomeData(age, mMonthlyAmount, 0, 0, false);
         } else {
-            return new BenefitData(age, 0, 0, 0, false);
+            return new IncomeData(age, 0, 0, 0, false);
         }
     }
 }

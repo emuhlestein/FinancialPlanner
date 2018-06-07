@@ -4,7 +4,7 @@ package com.intelliviz.retirementhelper.data;
  * Created by edm on 11/3/2017.
  */
 
-public class BenefitData {
+public class IncomeData {
     private AgeData mAge;
     private double mMonthlyAmount;
     private double mPenaltyAmount;
@@ -12,11 +12,11 @@ public class BenefitData {
     private int mBalanceState;
     private boolean mPenalty;
 
-    public BenefitData(AgeData age, double monthlyAmount, double balance, int balanceState, boolean penalty) {
+    public IncomeData(AgeData age, double monthlyAmount, double balance, int balanceState, boolean penalty) {
         this(age, monthlyAmount, 0, balance, balanceState, penalty);
     }
 
-    public BenefitData(AgeData age, double monthlyAmount, double penaltyAmount, double balance, int balanceState, boolean penalty) {
+    public IncomeData(AgeData age, double monthlyAmount, double penaltyAmount, double balance, int balanceState, boolean penalty) {
         mAge = age;
         mMonthlyAmount = monthlyAmount;
         mPenaltyAmount = penaltyAmount;

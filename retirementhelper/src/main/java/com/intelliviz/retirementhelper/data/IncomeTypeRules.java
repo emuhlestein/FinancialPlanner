@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IncomeTypeRules {
     void setValues(Bundle bundle);
-    List<BenefitData> getBenefitData();
-    BenefitData getBenefitData(BenefitData benefitData);
+    List<IncomeData> getIncomeData();
+    IncomeData getIncomeData(IncomeData incomeData);
     IncomeDataAccessor getIncomeDataAccessor();
 }

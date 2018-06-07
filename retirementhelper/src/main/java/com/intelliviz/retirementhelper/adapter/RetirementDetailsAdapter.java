@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.ui.SelectAmountListener;
 import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -24,10 +24,10 @@ import java.util.List;
 public class RetirementDetailsAdapter extends
         RecyclerView.Adapter<RetirementDetailsAdapter.AmountDataHolder>{
     private Context mContext;
-    private List<BenefitData> mBenefitData;
+    private List<IncomeData> mBenefitData;
     private SelectAmountListener mListener;
 
-    public RetirementDetailsAdapter(Context context, List<BenefitData> benefitData) {
+    public RetirementDetailsAdapter(Context context, List<IncomeData> benefitData) {
         mContext = context;
         mBenefitData = benefitData;
     }
@@ -57,7 +57,7 @@ public class RetirementDetailsAdapter extends
         mListener = listener;
     }
 
-    public void update(List<BenefitData> benefitData) {
+    public void update(List<IncomeData> benefitData) {
         mBenefitData.clear();
         mBenefitData.addAll(benefitData);
         notifyDataSetChanged();
@@ -67,7 +67,7 @@ public class RetirementDetailsAdapter extends
         private TextView mMilestoneTextView;
         private TextView mMonthlyAmountTextView;
         private LinearLayout mLinearLayout;
-        private BenefitData mAmount;
+        private IncomeData mAmount;
 
         private AmountDataHolder(View itemView) {
             super(itemView);
@@ -77,7 +77,7 @@ public class RetirementDetailsAdapter extends
             itemView.setOnClickListener(this);
         }
 
-        private void bindAmount(BenefitData benefitData) {
+        private void bindAmount(IncomeData benefitData) {
             mAmount = benefitData;
             double amount = mAmount.getMonthlyAmount();
             AgeData age = mAmount.getAge();

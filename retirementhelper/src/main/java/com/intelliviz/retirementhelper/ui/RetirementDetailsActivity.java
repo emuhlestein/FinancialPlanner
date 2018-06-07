@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.RetirementDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.util.BalanceUtils;
 import com.intelliviz.retirementhelper.util.SystemUtils;
@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
 public class RetirementDetailsActivity extends AppCompatActivity implements SelectAmountListener {
 
     private RetirementDetailsAdapter mRetirementDetailsAdapter;
-    private List<BenefitData> mBenefitData;
+    private List<IncomeData> mBenefitData;
     private MilestoneData mMSD;
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
@@ -76,11 +76,11 @@ public class RetirementDetailsActivity extends AppCompatActivity implements Sele
 
         mCurrentBalanceTextView.setText(SystemUtils.getFormattedCurrency(balance));
 
-        List<BenefitData> benefitDataList = new ArrayList<>();
+        List<IncomeData> benefitDataList = new ArrayList<>();
         AgeData stopAge = new AgeData(startAge.getYear(), startAge.getMonth());
         stopAge.addMonths(12);
         for(AgeData age = startAge; age.isBefore(endAge); age.addMonths(12)) {
-            BenefitData benefitData = BalanceUtils.getBenefitData(age, stopAge, interest, balance, withdrawMode, withdrawAmount);
+            IncomeData benefitData = BalanceUtils.getIncomeData(age, stopAge, interest, balance, withdrawMode, withdrawAmount);
             balance = benefitData.getBalance();
             benefitDataList.add(benefitData);
             stopAge.addMonths(12);
@@ -90,7 +90,7 @@ public class RetirementDetailsActivity extends AppCompatActivity implements Sele
     }
 
     @Override
-    public void onSelectAmount(BenefitData benefitData) {
+    public void onSelectAmount(IncomeData benefitData) {
         String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
         String message = "Balance: " + balance + "\nAge: " + benefitData.getAge().toString();
         final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_INDEFINITE);

@@ -67,18 +67,55 @@ public abstract class BaseSavingsIncomeRules {
         }
     }
 
-    public List<BenefitData> getBenefitData() {
-        int numMonths = 12;
-        List<BenefitData> listAmountDate = new ArrayList<>();
+    public List<IncomeData> getIncomeDataNew() {
+        double monthlyWithdraw = 0;
+        double balance = mBalance;
+        double monthlyDeposit = mMonthlyDeposit;
 
-        BenefitData benefitData = null;
+        List<IncomeData> listAmountDate = new ArrayList<>();
+
+        for(int month = mCurrentAge.getNumberOfMonths(); month <= mEndAge.getNumberOfMonths(); month++) {
+            AgeData age = new AgeData(month);
+            if(age.isOnOrAfter(mStartAge)) {
+                // monthly withdrawals apply
+                if(age.equals(mStartAge)) {
+                    monthlyWithdraw = mBalance * 0.04 / 12;
+                }
+            } else {
+                monthlyWithdraw = 0;
+            }
+
+            balance = balance - monthlyWithdraw;
+
+            if(age.isAfter(mStopAge)) {
+                monthlyDeposit = 0;
+            }
+            balance += monthlyDeposit;
+            double interest = mInterest / 1200;
+            double amount = balance * interest;
+            balance += amount;
+            listAmountDate.add(new IncomeData(age, monthlyWithdraw, 0, balance, 0, false));
+        }
+
+        return listAmountDate;
+    }
+
+    public List<IncomeData> getIncomeData() {
+
+        int numMonths = 12;
+        List<IncomeData> listAmountDate = getIncomeDataNew();
+        if(!listAmountDate.isEmpty()) {
+            return listAmountDate;
+        }
+
+        IncomeData benefitData = null;
         boolean done = false;
         while(true) {
             //benefitData = getBenefitDataForNextYear(benefitData);
             if(benefitData == null) {
                 benefitData = getInitBenefitDataForNextMonth(new AgeData(mCurrentAge.getYear(), 0));
             } else {
-                BenefitData bd = benefitData;
+                IncomeData bd = benefitData;
                 for(int month = 0; month < numMonths; month++) {
                     bd = getBenefitDataForNextMonth(bd.getAge(),
                             bd.getBalance(), bd.getMonthlyAmountNoPenalty());
@@ -104,16 +141,16 @@ public abstract class BaseSavingsIncomeRules {
         return listAmountDate;
     }
 
-    public BenefitData getBenefitData(BenefitData benefitData) {
+    public IncomeData getIncomeData(IncomeData benefitData) {
         return getBenefitDataForNextYear(benefitData);
     }
 
-    BenefitData getBenefitDataForNextYear(BenefitData benefitData) {
+    IncomeData getBenefitDataForNextYear(IncomeData benefitData) {
         int numMonths = 1;
         if(benefitData == null) {
             return getInitBenefitDataForNextMonth(new AgeData(mCurrentAge.getYear(), 0));
         } else {
-            BenefitData bd = benefitData;
+            IncomeData bd = benefitData;
             for(int month = 0; month < numMonths; month++) {
                 bd =  getBenefitDataForNextMonth(bd.getAge(),
                         bd.getBalance(), bd.getMonthlyAmountNoPenalty());
@@ -124,7 +161,7 @@ public abstract class BaseSavingsIncomeRules {
         }
     }
 
-    BenefitData getInitBenefitDataForNextMonth(AgeData age) {
+    IncomeData getInitBenefitDataForNextMonth(AgeData age) {
         double monthlyWithdrawAmount = 0;
         if(age.isBefore(mStartAge)) {
             monthlyWithdrawAmount = 0;
@@ -135,10 +172,10 @@ public abstract class BaseSavingsIncomeRules {
         int status = checkBalance(mBalance, monthlyWithdrawAmount);
         double penaltyAmount = getPenaltyAmount(age, monthlyWithdrawAmount);
 
-        return new BenefitData(age, monthlyWithdrawAmount, penaltyAmount, mBalance, status, isPenalty(age));
+        return new IncomeData(age, monthlyWithdrawAmount, penaltyAmount, mBalance, status, isPenalty(age));
     }
 
-    BenefitData getBenefitDataForNextMonth(AgeData age, double balance, double monthlyWithdrawAmount) {
+    IncomeData getBenefitDataForNextMonth(AgeData age, double balance, double monthlyWithdrawAmount) {
         AgeData nextAge = new AgeData(age.getNumberOfMonths()+1);
 
         double monthlyDeposit;
@@ -165,7 +202,7 @@ public abstract class BaseSavingsIncomeRules {
         if(isPenalty(nextAge) && monthlyWithdrawAmount > 0) {
             status = RetirementConstants.BALANCE_STATE_LOW;
         }
-        return new BenefitData(nextAge, monthlyWithdrawAmount, penaltyAmount, balance, status, isPenalty(nextAge));
+        return new IncomeData(nextAge, monthlyWithdrawAmount, penaltyAmount, balance, status, isPenalty(nextAge));
     }
 
     private int checkBalance(double balance, double monthlyWithdrawAmount) {

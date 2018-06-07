@@ -22,6 +22,6 @@ public class SavingsIncomeRules extends BaseSavingsIncomeRules implements Income
 
     @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
-        return new SavingIncomeDataAccessor(getBenefitData());
+        return new SavingIncomeDataAccessor(getIncomeData());
     }
 }

@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.IncomeDataAccessor;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
@@ -162,7 +162,7 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         List<IncomeDetails> incomeDetails = new ArrayList<>();
         for(int year = startAge.getYear(); year <= endAge.getYear(); year++) {
             AgeData age = new AgeData(year, 0);
-            BenefitData benefitData = accessor.getBenefitData(age);
+            IncomeData benefitData = accessor.getIncomeData(age);
             String line1;
             int status;
             String balance;

@@ -2,7 +2,7 @@ package com.intelliviz.retirementhelper.db.entity;
 
 import android.arch.persistence.room.PrimaryKey;
 
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.IncomeDataAccessor;
 import com.intelliviz.retirementhelper.data.IncomeSourceType;
 
@@ -57,7 +57,7 @@ public abstract class IncomeSourceEntityBase implements IncomeSourceType {
         this.name = name;
     }
 
-    public abstract List<BenefitData> getBenefitData();
+    public abstract List<IncomeData> getIncomeData();
 
     public abstract IncomeDataAccessor getIncomeDataAccessor();
 }

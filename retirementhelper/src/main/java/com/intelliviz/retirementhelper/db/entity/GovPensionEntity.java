@@ -7,7 +7,7 @@ import android.arch.persistence.room.TypeConverters;
 import android.os.Bundle;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.IncomeDataAccessor;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
@@ -135,9 +135,9 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     }
 
     @Override
-    public List<BenefitData> getBenefitData() {
+    public List<IncomeData> getIncomeData() {
         if(mRules != null) {
-            return mRules.getBenefitData();
+            return mRules.getIncomeData();
         } else {
             return null;
         }

@@ -20,7 +20,7 @@ import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
@@ -88,16 +88,16 @@ public abstract class BaseSummaryFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(IncomeSummaryViewModel.class);
 
-        mViewModel.getList().observe(this, new Observer<List<BenefitData>>() {
+        mViewModel.getList().observe(this, new Observer<List<IncomeData>>() {
             @Override
-            public void onChanged(@Nullable List<BenefitData> benefitDataList) {
+            public void onChanged(@Nullable List<IncomeData> benefitDataList) {
                 if(benefitDataList == null) {
                     return;
                 }
 
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
 
-                for(BenefitData benefitData : benefitDataList) {
+                for(IncomeData benefitData : benefitDataList) {
                     AgeData age = benefitData.getAge();
                     String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
                     String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());

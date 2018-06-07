@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.PensionRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
@@ -26,7 +26,7 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
             new MutableLiveData<>();
     private AppDatabase mDB;
     private long mIncomeId;
-    private MutableLiveData<List<BenefitData>> mBenefitDataList = new MutableLiveData<List<BenefitData>>();
+    private MutableLiveData<List<IncomeData>> mBenefitDataList = new MutableLiveData<List<IncomeData>>();
 
     public PensionIncomeDetailsViewModel(Application application, long incomeId) {
         super(application);
@@ -36,7 +36,7 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
         new GetBenefitDataListByIdAsyncTask().execute(incomeId);
     }
 
-    public MutableLiveData<List<BenefitData>> getList() {
+    public MutableLiveData<List<IncomeData>> getList() {
         return mBenefitDataList;
     }
 
@@ -85,24 +85,24 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetBenefitDataListByIdAsyncTask extends AsyncTask<Long, Void, List<BenefitData>> {
+    private class GetBenefitDataListByIdAsyncTask extends AsyncTask<Long, Void, List<IncomeData>> {
 
         @Override
-        protected List<BenefitData> doInBackground(Long... params) {
+        protected List<IncomeData> doInBackground(Long... params) {
             long id = params[0];
             return getBenefitData(id);
         }
 
         @Override
-        protected void onPostExecute(List<BenefitData> benefitDataList) {
+        protected void onPostExecute(List<IncomeData> benefitDataList) {
             mBenefitDataList.setValue(benefitDataList);
         }
     }
 
-    private class GetBenefitDataListAsyncTask extends AsyncTask<PensionIncomeEntity, Void, List<BenefitData>> {
+    private class GetBenefitDataListAsyncTask extends AsyncTask<PensionIncomeEntity, Void, List<IncomeData>> {
 
         @Override
-        protected List<BenefitData> doInBackground(PensionIncomeEntity... params) {
+        protected List<IncomeData> doInBackground(PensionIncomeEntity... params) {
             PensionIncomeEntity pie = params[0];
             long id = pie.getId();
             if(id > 0) {
@@ -113,7 +113,7 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
         }
 
         @Override
-        protected void onPostExecute(List<BenefitData> benefitData) {
+        protected void onPostExecute(List<IncomeData> benefitData) {
             if(benefitData != null) {
                 mBenefitDataList.setValue(benefitData);
             }
@@ -134,7 +134,7 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private List<BenefitData> getBenefitData(long id) {
+    private List<IncomeData> getBenefitData(long id) {
         PensionIncomeEntity entity = mDB.pensionIncomeDao().get(id);
         RetirementOptionsEntity rod = mDB.retirementOptionsDao().get();
         String birthdate = rod.getBirthdate();
@@ -145,6 +145,6 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
         PensionRules rules = new PensionRules(birthdate, minAge, endAge, Double.parseDouble(monthlyBenefit));
         entity.setRules(rules);
 
-        return entity.getBenefitData();
+        return entity.getIncomeData();
     }
 }

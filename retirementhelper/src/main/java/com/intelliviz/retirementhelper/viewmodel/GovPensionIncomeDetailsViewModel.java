@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.data.SocialSecurityRules;
 import com.intelliviz.retirementhelper.db.AppDatabase;
@@ -143,7 +143,7 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
 
             if(gpeList.size() == 1) {
                 mGPE.setValue(gpeList.get(0));
-                List<BenefitData> benefitDataList = gpeList.get(0).getBenefitData();
+                List<IncomeData> benefitDataList = gpeList.get(0).getIncomeData();
                 if(benefitDataList != null) {
                     mBenefitDataList.setValue(getIncomeDetails(gpeList.get(0)));
                 }
@@ -156,7 +156,7 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
                 }
 
 
-                List<BenefitData> benefitDataList = gpe.getBenefitData();
+                List<IncomeData> benefitDataList = gpe.getIncomeData();
                 if(benefitDataList != null) {
                     mBenefitDataList.setValue(getIncomeDetails(gpe));
                 }
@@ -177,20 +177,20 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
             message = "Spousal benefits apply. Spouse cannot take benefits before principle spouse.";
         }
 
-        List<BenefitData> listBenefitData = gpe.getBenefitData();
+        List<IncomeData> listIncomeData = gpe.getIncomeData();
         List<IncomeDetails> incomeDetails = new ArrayList<>();
-        for(BenefitData benefitData : listBenefitData) {
-            AgeData age = benefitData.getAge();
-            String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
+        for(IncomeData incomeData : listIncomeData) {
+            AgeData age = incomeData.getAge();
+            String amount = SystemUtils.getFormattedCurrency(incomeData.getMonthlyAmount());
             String line1 = age.toString() + "   " + amount;
             IncomeDetails incomeDetail;
 
             if(addMessage) {
-                incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), message);
+                incomeDetail = new IncomeDetails(line1, incomeData.getBalanceState(), message);
                 incomeDetail.setAcceptClick(true);
                 addMessage = false;
             } else {
-                incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), "");
+                incomeDetail = new IncomeDetails(line1, incomeData.getBalanceState(), "");
             }
 
             incomeDetails.add(incomeDetail);

@@ -6,7 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.db.AppDatabase;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 
@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 public class IncomeSummaryViewModel extends AndroidViewModel {
-    private MutableLiveData<List<BenefitData>> mAmountData = new MutableLiveData<>();
+    private MutableLiveData<List<IncomeData>> mAmountData = new MutableLiveData<>();
     private AppDatabase mDB;
 
     public IncomeSummaryViewModel(Application application) {
@@ -26,7 +26,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         new GetAmountDataAsyncTask().execute();
     }
 
-    public LiveData<List<BenefitData>> getList() {
+    public LiveData<List<IncomeData>> getList() {
         return mAmountData;
     }
 
@@ -34,46 +34,46 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         new GetAmountDataAsyncTask().execute();
     }
 
-    private class GetAmountDataAsyncTask extends AsyncTask<Void, Void, List<BenefitData>> {
+    private class GetAmountDataAsyncTask extends AsyncTask<Void, Void, List<IncomeData>> {
 
         @Override
-        protected List<BenefitData> doInBackground(Void... voids) {
+        protected List<IncomeData> doInBackground(Void... voids) {
             return getAllIncomeSources();
         }
 
         @Override
-        protected void onPostExecute(List<BenefitData> benefitData) {
+        protected void onPostExecute(List<IncomeData> benefitData) {
             mAmountData.setValue(benefitData);
         }
     }
 
-    private List<BenefitData> getAllIncomeSources() {
+    private List<IncomeData> getAllIncomeSources() {
         RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
         return getIncomeSummary(roe);
     }
 
-    private List<BenefitData> getIncomeSummary(RetirementOptionsEntity roe) {
+    private List<IncomeData> getIncomeSummary(RetirementOptionsEntity roe) {
         /*
-        List<BenefitData> benefitDataList = new ArrayList<>();
+        List<IncomeData> benefitDataList = new ArrayList<>();
 
         List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
-        List<List<BenefitData>> incomeSourceEntityList = new ArrayList<>();
+        List<List<IncomeData>> incomeSourceEntityList = new ArrayList<>();
         for (SavingsIncomeEntity sie : tdieList) {
             if (sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
                 SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), roe.getEndAge());
                 sie.setRules(sir);
-                incomeSourceEntityList.add(sie.getBenefitData());
+                incomeSourceEntityList.add(sie.getIncomeData());
             } else if (sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
                 Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), roe.getEndAge());
                 sie.setRules(tdir);
-                incomeSourceEntityList.add(sie.getBenefitData());
+                incomeSourceEntityList.add(sie.getIncomeData());
             }
         }
 
         List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
         SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
         for (GovPensionEntity gpe : gpeList) {
-            incomeSourceEntityList.add(gpe.getBenefitData());
+            incomeSourceEntityList.add(gpe.getIncomeData());
         }
 
         List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
@@ -81,7 +81,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
             AgeData minAge = pie.getMinAge();
             PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, roe.getEndAge(), Double.parseDouble(pie.getMonthlyBenefit()));
             pie.setRules(pr);
-            incomeSourceEntityList.add(pie.getBenefitData());
+            incomeSourceEntityList.add(pie.getIncomeData());
         }
 
         if(incomeSourceEntityList.isEmpty()) {
@@ -90,20 +90,20 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
 
         int numYears = incomeSourceEntityList.get(0).size();
 
-        BenefitData benefitData;
+        IncomeData benefitData;
         for(int year = 0; year < numYears; year++) {
             double sumBalance = 0;
             double sumMonthlyWithdraw = 0;
             AgeData age = incomeSourceEntityList.get(0).get(0).getAge();
 
-            for (List<BenefitData> bdList : incomeSourceEntityList) {
+            for (List<IncomeData> bdList : incomeSourceEntityList) {
                 benefitData = bdList.get(year);
                 age = new AgeData(benefitData.getAge().getNumberOfMonths());
                 sumBalance += benefitData.getBalance();
                 sumMonthlyWithdraw += benefitData.getMonthlyAmount();
             }
 
-            benefitDataList.add(new BenefitData(new AgeData(age.getNumberOfMonths()), sumMonthlyWithdraw, sumBalance, 0, false));
+            benefitDataList.add(new IncomeData(new AgeData(age.getNumberOfMonths()), sumMonthlyWithdraw, sumBalance, 0, false));
         }
 
         return benefitDataList;

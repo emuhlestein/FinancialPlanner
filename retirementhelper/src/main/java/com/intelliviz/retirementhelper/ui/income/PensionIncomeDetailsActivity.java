@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.IncomeDetails;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
@@ -134,12 +134,12 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeDetailsViewModel.class);
 
-        mViewModel.getList().observe(this, new Observer<List<BenefitData>>() {
+        mViewModel.getList().observe(this, new Observer<List<IncomeData>>() {
             @Override
-            public void onChanged(@Nullable List<BenefitData> listBenefitData) {
+            public void onChanged(@Nullable List<IncomeData> listBenefitData) {
 
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
-                for(BenefitData benefitData : listBenefitData) {
+                for(IncomeData benefitData : listBenefitData) {
                     AgeData age = benefitData.getAge();
                     String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
                     String line1 = age.toString() + "   " + amount;

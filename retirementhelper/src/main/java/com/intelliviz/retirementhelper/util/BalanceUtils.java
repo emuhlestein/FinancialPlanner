@@ -1,7 +1,7 @@
 package com.intelliviz.retirementhelper.util;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.MilestoneData;
 
 import static com.intelliviz.retirementhelper.R.string.balance;
@@ -73,11 +73,11 @@ public class BalanceUtils {
         return new MilestoneData(startAge, endAge, null, monthlyAmount, startBalance, lastBalance, interest, 0, numMonths, withdrawMode, withdrawAmount);
     }
 
-    public static BenefitData getBenefitData(AgeData startAge, AgeData endAge, double interest, double startBalance, int withdrawMode, double withdrawAmount) {
+    public static IncomeData getIncomeData(AgeData startAge, AgeData endAge, double interest, double startBalance, int withdrawMode, double withdrawAmount) {
         int numMonths = endAge.diff(startAge);
         AgeData age = new AgeData(startAge.getYear(), startAge.getMonth());
         if(numMonths == 0) {
-            return new BenefitData(age, getMonthlyAmount(balance, withdrawMode, withdrawAmount),  startBalance, 0, false);
+            return new IncomeData(age, getMonthlyAmount(balance, withdrawMode, withdrawAmount),  startBalance, 0, false);
         }
         double balance = startBalance;
         double monthlyInterest = interest / 1200;
@@ -100,6 +100,6 @@ public class BalanceUtils {
             }
         }
 
-        return new BenefitData(age, monthlyAmount,  balance, 0, false);
+        return new IncomeData(age, monthlyAmount,  balance, 0, false);
     }
 }

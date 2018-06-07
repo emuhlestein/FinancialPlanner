@@ -30,20 +30,20 @@ public class PensionRules implements IncomeTypeRules {
     }
 
     @Override
-    public List<BenefitData> getBenefitData() {
+    public List<IncomeData> getIncomeData() {
         AgeData age = mCurrentAge;
-        List<BenefitData> listAmountDate = new ArrayList<>();
+        List<IncomeData> listAmountDate = new ArrayList<>();
 
-        BenefitData benefitData;
+        IncomeData benefitData;
 
         while(true) {
 
             age = new AgeData(age.getYear(), 0);
 
             if(age.isBefore(mMinAge)) {
-                benefitData = new BenefitData(age, 0, 0, 0, false);
+                benefitData = new IncomeData(age, 0, 0, 0, false);
             } else {
-                benefitData = new BenefitData(age, mMonthlyAmount, 0, 0, false);
+                benefitData = new IncomeData(age, mMonthlyAmount, 0, 0, false);
             }
             listAmountDate.add(benefitData);
 
@@ -58,7 +58,7 @@ public class PensionRules implements IncomeTypeRules {
     }
 
     @Override
-    public BenefitData getBenefitData(BenefitData benefitData) {
+    public IncomeData getIncomeData(IncomeData incomeData) {
         return null;
     }
 

@@ -1,7 +1,7 @@
 package com.intelliviz.retirementhelper.viewmodel;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.IncomeDataAccessor;
 import com.intelliviz.retirementhelper.data.PensionRules;
 import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
@@ -25,8 +25,8 @@ import java.util.Map;
  */
 
 public class IncomeSummaryHelper {
-    public static List<BenefitData> getIncomeSummary(AppDatabase mDB, RetirementOptionsEntity roe) {
-        List<BenefitData> benefitDataList = new ArrayList<>();
+    public static List<IncomeData> getIncomeSummary(AppDatabase mDB, RetirementOptionsEntity roe) {
+        List<IncomeData> benefitDataList = new ArrayList<>();
 
         List<SavingsIncomeEntity> sieList = mDB.savingsIncomeDao().get();
         List<IncomeDataAccessor> incomeSourceEntityList = new ArrayList<>();
@@ -62,13 +62,13 @@ public class IncomeSummaryHelper {
 
         int minYear = 999;
         int maxYear = 0;
-        List<Map<Integer, BenefitData>> mapListBenefitData = new ArrayList<>();
+        List<Map<Integer, IncomeData>> mapListBenefitData = new ArrayList<>();
         for(int year = minYear; year <= maxYear; year++) {
             for (IncomeDataAccessor incomeDataAccessor : incomeSourceEntityList) {
             /*
-            Map<Integer, BenefitData> benefitDataMap = new HashMap<>();
+            Map<Integer, IncomeData> benefitDataMap = new HashMap<>();
             mapListBenefitData.add(benefitDataMap);
-            for(BenefitData benefitData : listBenefitData) {
+            for(IncomeData benefitData : listBenefitData) {
                 int year = benefitData.getAge().getYear();
                 benefitDataMap.put(year, benefitData);
                 if(year < minYear) {
@@ -91,16 +91,16 @@ public class IncomeSummaryHelper {
             //AgeData age = incomeSourceEntityList.get(0).get(0).getAge();
 
             for(IncomeDataAccessor accessor : incomeSourceEntityList) {
-                BenefitData benefitData = accessor.getBenefitData(new AgeData(year, 0));
+                IncomeData benefitData = accessor.getIncomeData(new AgeData(year, 0));
                 if(benefitData != null) {
                     sumBalance += benefitData.getBalance();
                     sumMonthlyWithdraw += benefitData.getMonthlyAmount();
                 }
             }
 
-            benefitDataList.add(new BenefitData(new AgeData(year, 0), sumMonthlyWithdraw, sumBalance, 0, false));
+            benefitDataList.add(new IncomeData(new AgeData(year, 0), sumMonthlyWithdraw, sumBalance, 0, false));
 /*
-            for (List<BenefitData> bdList : incomeSourceEntityList) {
+            for (List<IncomeData> bdList : incomeSourceEntityList) {
                 benefitData = bdList.get(year);
                 age = new AgeData(benefitData.getAge().getNumberOfMonths());
                 sumBalance += benefitData.getBalance();

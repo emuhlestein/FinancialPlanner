@@ -7,7 +7,7 @@ import android.arch.persistence.room.TypeConverters;
 import android.os.Bundle;
 
 import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeData;
 import com.intelliviz.retirementhelper.data.IncomeDataAccessor;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 
@@ -174,9 +174,9 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     }
 
     @Override
-    public List<BenefitData> getBenefitData() {
+    public List<IncomeData> getIncomeData() {
         if(mRules != null) {
-            return mRules.getBenefitData();
+            return mRules.getIncomeData();
         } else {
             return null;
         }
@@ -191,9 +191,9 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         }
     }
 
-    public BenefitData getBenefitData(BenefitData benefitData) {
+    public IncomeData getIncomeData(IncomeData incomeData) {
         if(mRules != null) {
-            return mRules.getBenefitData(benefitData);
+            return mRules.getIncomeData(incomeData);
         } else {
             return null;
         }
