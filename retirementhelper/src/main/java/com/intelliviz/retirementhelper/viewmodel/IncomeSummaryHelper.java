@@ -2,6 +2,7 @@ package com.intelliviz.retirementhelper.viewmodel;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeDataAccessor;
 import com.intelliviz.retirementhelper.data.PensionRules;
 import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
 import com.intelliviz.retirementhelper.data.SavingsIncomeRules;
@@ -11,11 +12,11 @@ import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
 import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
 import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
 import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
+import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,23 +29,23 @@ public class IncomeSummaryHelper {
         List<BenefitData> benefitDataList = new ArrayList<>();
 
         List<SavingsIncomeEntity> sieList = mDB.savingsIncomeDao().get();
-        List<List<BenefitData>> incomeSourceEntityList = new ArrayList<>();
+        List<IncomeDataAccessor> incomeSourceEntityList = new ArrayList<>();
         for (SavingsIncomeEntity sie : sieList) {
             if (sie.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
                 SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), roe.getEndAge());
                 sie.setRules(sir);
-                incomeSourceEntityList.add(sie.getBenefitData());
+                incomeSourceEntityList.add(sie.getIncomeDataAccessor());
             } else if (sie.getType() == RetirementConstants.INCOME_TYPE_401K) {
                 Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), roe.getEndAge());
                 sie.setRules(tdir);
-                incomeSourceEntityList.add(sie.getBenefitData());
+                incomeSourceEntityList.add(sie.getIncomeDataAccessor());
             }
         }
 
         List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
         SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
         for (GovPensionEntity gpe : gpeList) {
-            incomeSourceEntityList.add(gpe.getBenefitData());
+            incomeSourceEntityList.add(gpe.getIncomeDataAccessor());
         }
 
         List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
@@ -52,7 +53,7 @@ public class IncomeSummaryHelper {
             AgeData minAge = pie.getMinAge();
             PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, roe.getEndAge(), Double.parseDouble(pie.getMonthlyBenefit()));
             pie.setRules(pr);
-            incomeSourceEntityList.add(pie.getBenefitData());
+            incomeSourceEntityList.add(pie.getIncomeDataAccessor());
         }
 
         if(incomeSourceEntityList.isEmpty()) {
@@ -62,7 +63,9 @@ public class IncomeSummaryHelper {
         int minYear = 999;
         int maxYear = 0;
         List<Map<Integer, BenefitData>> mapListBenefitData = new ArrayList<>();
-        for(List<BenefitData> listBenefitData : incomeSourceEntityList) {
+        for(int year = minYear; year <= maxYear; year++) {
+            for (IncomeDataAccessor incomeDataAccessor : incomeSourceEntityList) {
+            /*
             Map<Integer, BenefitData> benefitDataMap = new HashMap<>();
             mapListBenefitData.add(benefitDataMap);
             for(BenefitData benefitData : listBenefitData) {
@@ -75,15 +78,20 @@ public class IncomeSummaryHelper {
                     maxYear = year;
                 }
             }
+            */
+            }
         }
 
-        for(int year = minYear; year <= maxYear; year++) {
+        AgeData age = AgeUtils.getAge(roe.getBirthdate());
+        AgeData endAge = roe.getEndAge();
+
+        for(int year = age.getYear(); year <= endAge.getYear(); year++) {
             double sumBalance = 0;
             double sumMonthlyWithdraw = 0;
             //AgeData age = incomeSourceEntityList.get(0).get(0).getAge();
 
-            for(Map<Integer, BenefitData> mapBenefitData : mapListBenefitData) {
-                BenefitData benefitData = mapBenefitData.get(year);
+            for(IncomeDataAccessor accessor : incomeSourceEntityList) {
+                BenefitData benefitData = accessor.getBenefitData(new AgeData(year, 0));
                 if(benefitData != null) {
                     sumBalance += benefitData.getBalance();
                     sumMonthlyWithdraw += benefitData.getMonthlyAmount();

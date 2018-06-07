@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.intelliviz.retirementhelper.data.AgeData;
 import com.intelliviz.retirementhelper.data.BenefitData;
+import com.intelliviz.retirementhelper.data.IncomeDataAccessor;
 import com.intelliviz.retirementhelper.data.IncomeTypeRules;
 
 import java.util.List;
@@ -176,6 +177,15 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     public List<BenefitData> getBenefitData() {
         if(mRules != null) {
             return mRules.getBenefitData();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public IncomeDataAccessor getIncomeDataAccessor() {
+        if(mRules != null) {
+            return mRules.getIncomeDataAccessor();
         } else {
             return null;
         }

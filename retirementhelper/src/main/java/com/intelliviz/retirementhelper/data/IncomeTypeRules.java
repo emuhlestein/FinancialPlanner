@@ -12,4 +12,5 @@ public interface IncomeTypeRules {
     void setValues(Bundle bundle);
     List<BenefitData> getBenefitData();
     BenefitData getBenefitData(BenefitData benefitData);
+    IncomeDataAccessor getIncomeDataAccessor();
 }

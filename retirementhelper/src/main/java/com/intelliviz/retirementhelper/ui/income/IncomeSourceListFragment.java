@@ -18,7 +18,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -103,8 +102,8 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mIncomeSourceAdapter);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-                linearLayoutManager.getOrientation()));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+        //        linearLayoutManager.getOrientation()));
         mIncomeSourceAdapter.setOnSelectIncomeSourceListener(this);
 
         // The FAB will pop up an activity to allow a new income source to be created.

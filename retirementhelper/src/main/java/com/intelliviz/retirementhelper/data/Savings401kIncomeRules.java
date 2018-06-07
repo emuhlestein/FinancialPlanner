@@ -33,4 +33,9 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
             return false;
         }
     }
+
+    @Override
+    public IncomeDataAccessor getIncomeDataAccessor() {
+        return new Savings401kIncomeDataAccessor(getBenefitData());
+    }
 }

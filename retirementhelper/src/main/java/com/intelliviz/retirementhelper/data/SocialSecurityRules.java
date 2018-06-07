@@ -129,6 +129,15 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return null;
     }
 
+    @Override
+    public IncomeDataAccessor getIncomeDataAccessor() {
+        AgeData age = mStartAge;
+        if(mActualStartAge != null) {
+            age = mActualStartAge;
+        }
+        return new SocialSecurityIncomeDataAccessor(age, mMonthlyBenefit.doubleValue());
+    }
+
     public double getMonthlyBenefit() {
         return mMonthlyBenefit.doubleValue();
     }

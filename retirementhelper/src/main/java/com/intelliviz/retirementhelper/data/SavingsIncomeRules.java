@@ -19,4 +19,9 @@ public class SavingsIncomeRules extends BaseSavingsIncomeRules implements Income
     protected boolean isPenalty(AgeData age) {
         return false;
     }
+
+    @Override
+    public IncomeDataAccessor getIncomeDataAccessor() {
+        return new SavingIncomeDataAccessor(getBenefitData());
+    }
 }

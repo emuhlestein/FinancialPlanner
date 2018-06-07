@@ -45,6 +45,7 @@ public abstract class BaseSavingsIncomeRules {
 
     protected abstract double getPenaltyAmount(AgeData age, double amount);
     protected abstract boolean isPenalty(AgeData age);
+    protected abstract IncomeDataAccessor getIncomeDataAccessor();
 
     public void setValues(Bundle bundle) {
         mBalance = bundle.getDouble(EXTRA_INCOME_SOURCE_BALANCE);
