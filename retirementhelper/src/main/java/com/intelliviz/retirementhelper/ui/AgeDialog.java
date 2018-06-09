@@ -90,14 +90,11 @@ public class AgeDialog extends DialogFragment {
     private void sendResult() {
         String year = mYearEditText.getText().toString();
         String month = mMonthEditText.getText().toString();
-        if(mListener != null) {
-            mListener.onEditAge(year, month);
-        } else {
-            if (getTargetFragment() == null) {
-                return;
-            }
 
+        if (getTargetFragment() != null) {
             mListener = (OnAgeEditListener) getTargetFragment();
+            mListener.onEditAge(year, month);
+        } else if(mListener != null) {
             mListener.onEditAge(year, month);
         }
     }

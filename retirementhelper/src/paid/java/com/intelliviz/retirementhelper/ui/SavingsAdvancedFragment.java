@@ -1,6 +1,8 @@
 package com.intelliviz.retirementhelper.ui;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -95,6 +97,14 @@ public class SavingsAdvancedFragment extends Fragment implements AgeDialog.OnAge
         });
 
         return view;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent)
+    {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode == Activity.RESULT_OK)
+        {
+        }
     }
 
     public void setMonthlyAddition(String monthlyAddition) {

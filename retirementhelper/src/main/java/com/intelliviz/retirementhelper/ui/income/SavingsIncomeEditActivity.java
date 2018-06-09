@@ -40,7 +40,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
     private SavingsIncomeEntity mSIE;
     private long mId;
     private int mIncomeType;
-    private int mAgeType = START_AGE;
+    private int mAgeType = STOP_AGE;
     private boolean mActivityResult;
     private SavingsIncomeEditViewModel mViewModel;
 
@@ -275,7 +275,9 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
     @Override
     public void onEditAge(String year, String month) {
         AgeData age = AgeUtils.parseAgeString(year, month);
-        mStartAgeTextView.setText(age.toString());
+        if(mAgeType == START_AGE) {
+            mStartAgeTextView.setText(age.toString());
+        }
     }
 
     private void sendData(long id, String name, AgeData startAge, String balance, String interest, String monthlyAddition,
