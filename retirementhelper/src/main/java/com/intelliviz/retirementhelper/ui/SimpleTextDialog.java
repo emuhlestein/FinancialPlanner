@@ -11,7 +11,8 @@ import android.support.v4.app.DialogFragment;
 import android.text.InputType;
 import android.widget.EditText;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
+import static com.intelliviz.income.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
+
 
 /**
  * Dialog for gathering simple text.

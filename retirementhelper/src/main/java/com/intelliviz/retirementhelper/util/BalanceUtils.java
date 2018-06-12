@@ -1,12 +1,12 @@
 package com.intelliviz.retirementhelper.util;
 
-import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.IncomeData;
-import com.intelliviz.retirementhelper.data.MilestoneData;
 
-import static com.intelliviz.retirementhelper.R.string.balance;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_AMOUNT;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
+import com.intelliviz.income.data.AgeData;
+import com.intelliviz.income.data.IncomeData;
+import com.intelliviz.income.data.MilestoneData;
+
+import static com.intelliviz.income.util.RetirementConstants.WITHDRAW_MODE_AMOUNT;
+import static com.intelliviz.income.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
 
 /**
  * Created by edm on 10/20/2017.
@@ -75,11 +75,12 @@ public class BalanceUtils {
 
     public static IncomeData getIncomeData(AgeData startAge, AgeData endAge, double interest, double startBalance, int withdrawMode, double withdrawAmount) {
         int numMonths = endAge.diff(startAge);
+        double balance = startBalance;
         AgeData age = new AgeData(startAge.getYear(), startAge.getMonth());
         if(numMonths == 0) {
             return new IncomeData(age, getMonthlyAmount(balance, withdrawMode, withdrawAmount),  startBalance, 0, false);
         }
-        double balance = startBalance;
+
         double monthlyInterest = interest / 1200;
         double monthlyAmount = 0;
 

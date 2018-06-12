@@ -16,16 +16,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.intelliviz.income.adapter.IncomeDetailsAdapter;
+import com.intelliviz.income.data.AgeData;
+import com.intelliviz.income.data.IncomeData;
+import com.intelliviz.income.data.IncomeDetails;
+import com.intelliviz.income.data.MilestoneData;
+import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.income.util.RetirementConstants;
+import com.intelliviz.income.util.SystemUtils;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.adapter.IncomeDetailsAdapter;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
-import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.IncomeData;
-import com.intelliviz.retirementhelper.data.IncomeDetails;
-import com.intelliviz.retirementhelper.data.MilestoneData;
-import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.util.UpdateRetirementOptions;
 import com.intelliviz.retirementhelper.viewmodel.IncomeSummaryViewModel;
 

@@ -1,0 +1,13 @@
+<manifest package="com.intelliviz.income"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="com.intelliviz.income.ui.SavingsIncomeEditActivity" />
+        <activity android:name="com.intelliviz.income.ui.GovPensionIncomeEditActivity" />
+        <activity android:name="com.intelliviz.income.ui.PensionIncomeEditActivity" />
+        <activity android:name="com.intelliviz.income.ui.GovPensionIncomeDetailsActivity" />
+        <activity android:name="com.intelliviz.income.ui.SavingsIncomeDetailsActivity" />
+    </application>
+</manifest>

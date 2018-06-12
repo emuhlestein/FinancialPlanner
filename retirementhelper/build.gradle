@@ -3,9 +3,7 @@ apply plugin: 'com.android.application'
 
 
 android {
-    productFlavors {
 
-    }
     signingConfigs {
         config {
             keyAlias 'CapstoneKey'
@@ -57,14 +55,12 @@ android {
     productFlavors {
         free {
             applicationIdSuffix ".free"
-            buildConfigField 'String', 'AUTHORITY', '"com.intelliviz.retirementhelper.free.RetirementProvider"'
             minSdkVersion 17
             signingConfig signingConfigs.freeConfig
             dimension "tier"
         }
         paid {
             applicationIdSuffix ".paid"
-            buildConfigField 'String', 'AUTHORITY', '"com.intelliviz.retirementhelper.paid.RetirementProvider"'
             minSdkVersion 17
             signingConfig signingConfigs.paidConfig
             dimension "tier"
@@ -96,7 +92,7 @@ dependencies {
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     freeCompile 'com.google.firebase:firebase-ads:11.6.0'
-
+    implementation project(':income')
 }
 
 apply plugin: 'com.google.gms.google-services'

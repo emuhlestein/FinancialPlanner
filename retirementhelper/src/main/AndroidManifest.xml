@@ -31,7 +31,7 @@
         <activity android:name=".ui.PersonalInfoDialog" />
         <activity android:name=".ui.MilestoneDetailsDialog" />
         <activity
-            android:name=".ui.IncomeSourceListMenuFragment"
+            android:name="com.intelliviz.income.ui.IncomeSourceListMenuFragment"
             android:theme="@style/RetireDialog" />
 
         <service
@@ -39,16 +39,11 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity
-            android:name=".ui.ListMenuActivity"
+            android:name="com.intelliviz.income.ui.ListMenuActivity"
             android:theme="@style/RetireDialog" />
-        <activity android:name=".ui.BirthdateActivity" />
-        <activity android:name=".ui.income.SavingsIncomeEditActivity" />
-        <activity android:name=".ui.income.GovPensionIncomeEditActivity" />
-        <activity android:name=".ui.income.PensionIncomeEditActivity" />
-        <activity android:name=".ui.income.GovPensionIncomeDetailsActivity" />
-        <activity android:name=".ui.income.SavingsIncomeDetailsActivity" />
+
         <activity android:name=".ui.RetirementDetailsActivity" />
-        <activity android:name=".ui.income.PensionIncomeDetailsActivity" />
+        <activity android:name="com.intelliviz.income.ui.PensionIncomeDetailsActivity" />
     </application>
 
 </manifest>

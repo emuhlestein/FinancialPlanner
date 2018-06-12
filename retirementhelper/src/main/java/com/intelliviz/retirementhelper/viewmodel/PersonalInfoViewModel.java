@@ -5,8 +5,8 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.income.db.AppDatabase;
+import com.intelliviz.income.db.entity.RetirementOptionsEntity;
 
 /**
  * Created by edm on 2/12/2018.

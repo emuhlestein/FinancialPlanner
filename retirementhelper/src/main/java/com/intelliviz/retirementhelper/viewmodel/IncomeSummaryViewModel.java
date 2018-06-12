@@ -6,9 +6,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.intelliviz.retirementhelper.data.IncomeData;
-import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+import com.intelliviz.income.data.IncomeData;
+import com.intelliviz.income.db.AppDatabase;
+import com.intelliviz.income.db.entity.RetirementOptionsEntity;
 
 import java.util.List;
 

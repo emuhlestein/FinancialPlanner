@@ -1,6 +1,6 @@
 package com.intelliviz.retirementhelper.ui;
 
-import com.intelliviz.retirementhelper.data.IncomeData;
+import com.intelliviz.income.data.IncomeData;
 
 /**
  * Created by edm on 11/8/2017.

@@ -18,11 +18,12 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.income.ui.BirthdateActivity;
+import com.intelliviz.income.util.AgeUtils;
+import com.intelliviz.income.util.BirthdateDialogAction;
+import com.intelliviz.income.util.SystemUtils;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.util.AgeUtils;
-import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
-import com.intelliviz.retirementhelper.util.SystemUtils;
 import com.intelliviz.retirementhelper.viewmodel.StartUpViewModel;
 
 import java.util.ArrayList;
@@ -32,12 +33,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_BIRTHDATE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_BIRTHDATE;
-import static com.intelliviz.retirementhelper.util.RetirementConstants.REQUEST_SIGN_IN;
+import static com.intelliviz.income.util.RetirementConstants.EXTRA_BIRTHDATE;
+import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
+import static com.intelliviz.income.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
+import static com.intelliviz.income.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
+import static com.intelliviz.income.util.RetirementConstants.REQUEST_BIRTHDATE;
+import static com.intelliviz.income.util.RetirementConstants.REQUEST_SIGN_IN;
+
 
 /**
  * The start activity

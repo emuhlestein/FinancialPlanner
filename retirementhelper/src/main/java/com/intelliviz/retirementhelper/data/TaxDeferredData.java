@@ -1,5 +1,7 @@
 package com.intelliviz.retirementhelper.data;
 
+import com.intelliviz.income.data.AgeData;
+
 /**
  * Created by edm on 11/21/2017.
  */

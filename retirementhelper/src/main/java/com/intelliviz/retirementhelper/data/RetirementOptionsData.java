@@ -3,6 +3,8 @@ package com.intelliviz.retirementhelper.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.intelliviz.income.data.AgeData;
+
 /**
  * CLass for managing retirement options.
  * Created by Ed Muhlestein on 5/16/2017.

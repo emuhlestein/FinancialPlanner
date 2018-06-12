@@ -6,9 +6,9 @@ import android.os.AsyncTask;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.intelliviz.income.db.AppDatabase;
+import com.intelliviz.income.db.entity.SummaryEntity;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.entity.SummaryEntity;
 
 import java.util.List;
 

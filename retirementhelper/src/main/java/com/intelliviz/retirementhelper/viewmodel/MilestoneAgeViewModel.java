@@ -6,12 +6,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
-import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.util.AgeUtils;
-import com.intelliviz.retirementhelper.util.SystemUtils;
+import com.intelliviz.income.data.AgeData;
+import com.intelliviz.income.db.AppDatabase;
+import com.intelliviz.income.db.entity.MilestoneAgeEntity;
+import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.income.util.AgeUtils;
+import com.intelliviz.income.util.SystemUtils;
 
 import java.util.List;
 

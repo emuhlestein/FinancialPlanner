@@ -4,5 +4,5 @@
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
-/build
+/com.intelliviz.income.db.build
 /captures

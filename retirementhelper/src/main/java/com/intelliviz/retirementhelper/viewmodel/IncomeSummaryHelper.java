@@ -1,19 +1,20 @@
 package com.intelliviz.retirementhelper.viewmodel;
 
-import com.intelliviz.retirementhelper.data.AgeData;
-import com.intelliviz.retirementhelper.data.IncomeData;
-import com.intelliviz.retirementhelper.data.IncomeDataAccessor;
-import com.intelliviz.retirementhelper.data.PensionRules;
-import com.intelliviz.retirementhelper.data.Savings401kIncomeRules;
-import com.intelliviz.retirementhelper.data.SavingsIncomeRules;
-import com.intelliviz.retirementhelper.data.SocialSecurityRules;
-import com.intelliviz.retirementhelper.db.AppDatabase;
-import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
-import com.intelliviz.retirementhelper.db.entity.PensionIncomeEntity;
-import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
-import com.intelliviz.retirementhelper.db.entity.SavingsIncomeEntity;
-import com.intelliviz.retirementhelper.util.AgeUtils;
-import com.intelliviz.retirementhelper.util.RetirementConstants;
+
+import com.intelliviz.income.data.AgeData;
+import com.intelliviz.income.data.IncomeData;
+import com.intelliviz.income.data.IncomeDataAccessor;
+import com.intelliviz.income.data.PensionRules;
+import com.intelliviz.income.data.Savings401kIncomeRules;
+import com.intelliviz.income.data.SavingsIncomeRules;
+import com.intelliviz.income.data.SocialSecurityRules;
+import com.intelliviz.income.db.AppDatabase;
+import com.intelliviz.income.db.entity.GovPensionEntity;
+import com.intelliviz.income.db.entity.PensionIncomeEntity;
+import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.income.db.entity.SavingsIncomeEntity;
+import com.intelliviz.income.util.AgeUtils;
+import com.intelliviz.income.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;

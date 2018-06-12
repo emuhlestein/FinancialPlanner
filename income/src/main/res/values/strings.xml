@@ -1,0 +1,70 @@
+<resources>
+    <string name="save_income_source">Save Income Source</string>
+    <string name="full_monthly_benefit">Full Monthly Benefit:</string>
+    <string name="full_retirement_age">Full Retirement Age:</string>
+    <string name="principle_spouse">Principle Spouse</string>
+    <string name="name">Name: </string>
+
+    <string name="savings_account">Savings Account</string>
+    <string name="tax_deferred_account">Tax Deferred Account</string>
+    <string name="savings_401k_account">401(k)</string>
+    <string name="pension">Pension</string>
+    <string name="social_security">Social Security</string>
+    <string-array name="income_types">
+        <item>@string/savings_account</item>
+        <item>@string/savings_401k_account</item>
+        <item>@string/pension</item>
+        <item>@string/social_security</item>
+    </string-array>
+
+    <string name="birthdate_not_valid">Birthdate is not valid</string>
+    <string name="monthly_benefit_not_valid">Spouse monthly benefit value is not valid</string>
+
+
+
+    <string name="ec_no_error">No error</string>
+    <string name="ec_no_spouse_birthdate">Need to add birthdate for spouse before adding social security income source</string>
+    <string name="ec_only_two_social_security_allowed">Can only have two Social Security income sources</string>
+    <string name="ec_only_one_social_security_allowed">Can only have Social Security income source with free version.</string>
+    <string name="ec_principle_spouse">Principle Spouse</string>
+    <string-array name="error_codes">
+        <item>@string/ec_no_error</item>
+        <item>@string/ec_only_two_social_security_allowed</item>
+        <item>@string/ec_only_one_social_security_allowed</item>
+        <item>@string/ec_no_spouse_birthdate</item>
+        <item>@string/ec_principle_spouse</item>
+    </string-array>
+
+    <string name="dismiss">Dismiss</string>
+    <string name="desired_start_age">Desired Start Age:</string>
+    <string name="actual_start_age">Actual Start Age:</string>
+    <string name="age_not_valid">Age is not valid</string>
+    <string name="value_not_valid">Monthly increase value is not valid</string>
+    <string name="balance_not_valid">Balance value is not valid</string>
+    <string name="interest_not_valid">Interest value is not valid</string>
+
+    <string name="reach_percent_value_is_not_valid">Reach percent value is not valid</string>
+    <string name="reach_amount_value_is_not_valid">Reach amount value is not valid</string>
+    <string name="monthly_increase_not_valid">Monthly increase value is not valid</string>
+    <string name="annual_withdraw_increase_not_valid">Annual withdraw increase value is not valid</string>
+    <string name="add_income_source">Add Income Source</string>
+
+
+    <string name="only_two_gov_pension">Only two Social Security income sources are allowed\nOne for you and one for your spouse.</string>
+
+    <string name="income_source_subtitle">Income Source Summary</string>
+    <string name="summary_screen_subtitle">Monthly Benefit Summary</string>
+    <string name="milestone_age_subtitle">Retirement Milestone Ages</string>
+    <string name="delete_income_source">Delete income source?</string>
+
+    <string name="income_source_view_action">View Details</string>
+    <string name="income_source_edit_action">Edit</string>
+    <string name="income_source_delete_action">Delete</string>
+
+    <string-array name="income_source_actions">
+        <item>@string/income_source_edit_action</item>
+        <item>@string/income_source_delete_action</item>
+    </string-array>
+
+
+</resources>

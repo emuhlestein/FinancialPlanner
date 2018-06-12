@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.intelliviz.income.db.entity.MilestoneAgeEntity;
+import com.intelliviz.income.util.AgeUtils;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.db.entity.MilestoneAgeEntity;
-import com.intelliviz.retirementhelper.util.AgeUtils;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
 
 import java.util.List;

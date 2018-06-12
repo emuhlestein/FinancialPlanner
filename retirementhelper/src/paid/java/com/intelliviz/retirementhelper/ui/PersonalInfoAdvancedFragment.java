@@ -16,15 +16,17 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.intelliviz.income.ui.BirthdateActivity;
+import com.intelliviz.income.util.AgeUtils;
+import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.util.AgeUtils;
-import com.intelliviz.retirementhelper.util.BirthdateDialogAction;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.DATE_FORMAT;
+import static com.intelliviz.income.util.RetirementConstants.DATE_FORMAT;
+
 
 /**
  * A simple {@link Fragment} subclass.
