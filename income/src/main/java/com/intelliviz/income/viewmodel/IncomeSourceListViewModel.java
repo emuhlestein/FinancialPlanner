@@ -218,7 +218,6 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         return incomeSourceList;
     }
 
-
     private class UpdateSpouseBirthdateAsyncTask extends android.os.AsyncTask<String, Void, Void> {
 
         @Override

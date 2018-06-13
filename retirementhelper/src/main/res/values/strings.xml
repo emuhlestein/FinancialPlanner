@@ -25,7 +25,7 @@
     <string name="minimum_age">Minimum Age:</string>
 
 
-    <string name="monthly_benefit">Monthly Benefit:</string>
+
 
     <string name="name_of_institution">Name of Institution:</string>
     <string name="balance">Balance:</string>
@@ -122,9 +122,7 @@
     <string name="year">Year</string>
     <string name="month">Month</string>
     <string name="edit_birthdate_desc">edit birthdate</string>
-    <string name="edit_age_desc">Edit age</string>
-    <string name="edit_start_age_desc">Start Age</string>
-    <string name="edit_min_age">Edit minimum age</string>
+
     <string name="edit_age">Start Retirement Age</string>
     <string name="spouse_full_retirement_age">Spouse Full Retirement Age:</string>
     <string name="reach_amount">When will savings reach this amount?</string>

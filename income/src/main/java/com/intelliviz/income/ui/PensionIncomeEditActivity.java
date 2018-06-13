@@ -63,7 +63,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
                 dialog.show(fm, "");
             }
         });
-        mAddIncomeSourceButton = findViewById(R.id.edit_minimum_age_button);
+        mAddIncomeSourceButton = findViewById(R.id.add_income_source_button);
         mAddIncomeSourceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

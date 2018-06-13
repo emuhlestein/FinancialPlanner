@@ -66,5 +66,8 @@
         <item>@string/income_source_delete_action</item>
     </string-array>
 
-
+    <string name="edit_age_desc">Edit age</string>
+    <string name="edit_start_age_desc">Start Age</string>
+    <string name="edit_min_age">Edit minimum age</string>
+    <string name="monthly_benefit">Monthly Benefit:</string>
 </resources>
