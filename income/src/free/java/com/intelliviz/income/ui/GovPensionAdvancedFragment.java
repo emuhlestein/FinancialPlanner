@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.ui;
+package com.intelliviz.income.ui;
 
 
 import android.os.Bundle;
@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.intelliviz.retirementhelper.R;
+import com.intelliviz.income.R;
+
 
 /**
  * A simple {@link Fragment} subclass.

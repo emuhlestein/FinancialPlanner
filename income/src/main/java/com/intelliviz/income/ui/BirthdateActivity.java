@@ -106,6 +106,7 @@ public class BirthdateActivity extends DialogFragment {
             }
         });
 
+        mSaveBirthdateButton = view.findViewById(R.id.save_birthdate_button);
         mSaveBirthdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

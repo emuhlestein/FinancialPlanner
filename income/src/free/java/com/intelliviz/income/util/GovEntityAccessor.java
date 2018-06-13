@@ -1,11 +1,13 @@
-package com.intelliviz.retirementhelper.util;
+package com.intelliviz.income.util;
 
-import com.intelliviz.retirementhelper.db.entity.GovPensionEntity;
-import com.intelliviz.retirementhelper.db.entity.RetirementOptionsEntity;
+
+import com.intelliviz.income.db.entity.GovPensionEntity;
+import com.intelliviz.income.db.entity.RetirementOptionsEntity;
 
 import java.util.List;
 
-import static com.intelliviz.retirementhelper.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
+import static com.intelliviz.income.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
+
 
 /**
  * Created by edm on 2/24/2018.
