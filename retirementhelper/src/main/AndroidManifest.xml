@@ -28,7 +28,6 @@
                 android:resource="@xml/milestone_list_widget_info" />
         </receiver>
 
-        <activity android:name=".ui.PersonalInfoDialog" />
         <activity android:name=".ui.MilestoneDetailsDialog" />
         <activity
             android:name="com.intelliviz.income.ui.IncomeSourceListMenuFragment"

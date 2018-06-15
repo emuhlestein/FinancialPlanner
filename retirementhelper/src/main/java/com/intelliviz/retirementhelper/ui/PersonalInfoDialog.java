@@ -1,5 +1,7 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,18 +24,16 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.intelliviz.income.db.entity.RetirementOptionsEntity;
 import com.intelliviz.income.ui.BirthdateActivity;
 import com.intelliviz.income.util.AgeUtils;
 import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.PersonalInfoDialogAction;
+import com.intelliviz.retirementhelper.viewmodel.PersonalInfoViewModel;
 
 import java.util.Arrays;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static com.intelliviz.income.util.RetirementConstants.DATE_FORMAT;
 import static com.intelliviz.income.util.RetirementConstants.EXTRA_BIRTHDATE;
@@ -47,76 +47,20 @@ import static com.intelliviz.income.util.RetirementConstants.EXTRA_SPOUSE_BIRTHD
  * @author Ed Muhlestein
  */
 public class PersonalInfoDialog extends DialogFragment implements AdapterView.OnItemSelectedListener{
-    //private String mBirthdate;
-    //private String mSpouseBirthdate;
-    //private boolean mIncludeSpouse;
-    //private PersonalInfoViewModel mViewModel;
-    //private RetirementOptionsEntity mROE;
+    private PersonalInfoViewModel mViewModel;
+    private RetirementOptionsEntity mROE;
     private PersonalInfoDialogAction mPersonalInfoDialogAction;
-
-    @BindView(R.id.coordinatorLayout)
-    CoordinatorLayout mCoordinatorLayout;
-
-    @BindView(R.id.name_edit_text)
-    TextView mNameTextView;
-
-    @BindView(R.id.email_edit_text)
-    TextView mEmailTextView;
-
-    @BindView(R.id.birthdate_text_view)
-    TextView mBirthDateViewText;
-
-    @BindView(R.id.birthdate_button)
-    Button mBirthdateButton;
-
-    @BindView(R.id.country_spinner)
-    Spinner mCountrySpinner;
-
-    //@BindView(R.id.spouse_birthdate_button)
-    //Button mSpouseBirthdateButton;
-
-    @OnClick(R.id.birthdate_button) void editBirthdate() {
-        String birthdate = mBirthDateViewText.getText().toString();
-        showDialog(birthdate, new BirthdateDialogAction() {
-            @Override
-            public void onGetBirthdate(String birthdate) {
-                if (AgeUtils.validateBirthday(birthdate)) {
-                    mBirthDateViewText.setText(birthdate);
-                } else {
-                    String message;
-                    String errMsg = getResources().getString(R.string.birthdate_not_valid);
-                    message = errMsg + " (" + DATE_FORMAT + ").";
-                    Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
-                    snackbar.show();
-                }
-            }
-        });
-    }
-/*
-    @OnClick(R.id.spouse_birthdate_button) void editSpouseBirthdate() {
-        String birthdate = mSpouseBirthDateViewText.getText().toString();
-        showDialog(birthdate, new BirthdateDialogAction() {
-            @Override
-            public void onGetBirthdate(String birthdate) {
-                if (SystemUtils.validateBirthday(birthdate)) {
-                    mSpouseBirthDateViewText.setText(birthdate);
-                } else {
-                    String message;
-                    String errMsg = getResources().getString(R.string.birthdate_not_valid);
-                    message = errMsg + " (" + DATE_FORMAT + ").";
-                    Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
-                    snackbar.show();
-                }
-            }
-        });
-    }
-    */
-
-    @BindView(R.id.personal_info_ok)
-    Button mOk;
-
-    @BindView(R.id.personal_info_cancel)
-    Button mCancel;
+    private CoordinatorLayout mCoordinatorLayout;
+    private TextView mNameTextView;
+    private TextView mEmailTextView;
+    private TextView mBirthDateViewText;
+    private Button mBirthdateButton;
+    private Spinner mCountrySpinner;
+    //private TextView mSpouseBirthdateTextView;
+    //private Button mSpouseBirthdateButton;
+    //private CheckBox mIncludeSpouseCheckBox;
+    private Button mOk;
+    private Button mCancel;
 
     public static PersonalInfoDialog getInstance(String birthdate, int includeSpouse, String spouseBirhtdate, PersonalInfoDialogAction personalInfoDialogAction) {
         PersonalInfoDialog fragment = new PersonalInfoDialog();
@@ -136,9 +80,19 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_personal_info_dialog, container, false);
-        ButterKnife.bind(this, view);
 
         setCancelable(false);
+
+        mCoordinatorLayout = view.findViewById(R.id.coordinatorLayout);
+        setCoordinatorLayout((mCoordinatorLayout));
+
+        mNameTextView = view.findViewById(R.id.name_edit_text);
+        mEmailTextView = view.findViewById(R.id.email_edit_text);
+        mBirthDateViewText = view.findViewById(R.id.birthdate_text_view);
+        mBirthdateButton = view.findViewById(R.id.birthdate_button);
+        mCountrySpinner = view.findViewById(R.id.country_spinner);
+        mOk = view.findViewById(R.id.personal_info_ok);
+        mCancel = view.findViewById(R.id.personal_info_cancel);
 
         mOk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,8 +108,49 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
                 dismiss();
             }
         });
+        mBirthdateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String birthdate = mBirthDateViewText.getText().toString();
+                showDialog(birthdate, new BirthdateDialogAction() {
+                    @Override
+                    public void onGetBirthdate(String birthdate) {
+                        if (AgeUtils.validateBirthday(birthdate)) {
+                            mBirthDateViewText.setText(birthdate);
+                        } else {
+                            String message;
+                            String errMsg = getResources().getString(R.string.birthdate_not_valid);
+                            message = errMsg + " (" + DATE_FORMAT + ").";
+                            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
+                    }
+                });
+            }
+        });
+/*
+        mSpouseBirthdateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String birthdate = mSpouseBirthdateTextView.getText().toString();
+                showDialog(birthdate, new BirthdateDialogAction() {
+                    @Override
+                    public void onGetBirthdate(String birthdate) {
+                        if (AgeUtils.validateBirthday(birthdate)) {
+                            mSpouseBirthdateTextView.setText(birthdate);
+                        } else {
+                            String message;
+                            String errMsg = getResources().getString(R.string.birthdate_not_valid);
+                            message = errMsg + " (" + DATE_FORMAT + ").";
+                            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
+                    }
+                });
+            }
+        });
+        */
 
-        /*
         mViewModel = ViewModelProviders.of(this).
                 get(PersonalInfoViewModel.class);
 
@@ -163,20 +158,19 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
             @Override
             public void onChanged(@Nullable RetirementOptionsEntity roe) {
                 mROE = roe;
-                updateUI();
+                updateUI(roe);
             }
         });
-        */
 /*
         mIncludeSpouseCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b) {
                     mSpouseBirthdateButton.setEnabled(true);
-                    mSpouseBirthDateViewText.setEnabled(true);
+                    mSpouseBirthdateTextView.setEnabled(true);
                 } else {
                     mSpouseBirthdateButton.setEnabled(false);
-                    mSpouseBirthDateViewText.setEnabled(false);
+                    mSpouseBirthdateTextView.setEnabled(false);
                 }
             }
         });
@@ -188,7 +182,6 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         mCountrySpinner.setAdapter(adapter);
         mCountrySpinner.setOnItemSelectedListener(this);
 
-        setCoordinatorLayout(mCoordinatorLayout);
         return view;
     }
 
@@ -202,10 +195,10 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
         if(bundle != null) {
-            String birthdate = bundle.getString(EXTRA_BIRTHDATE);
-            String spouseBirthdate = bundle.getString(EXTRA_SPOUSE_BIRTHDATE);
-            int includeSpouse = bundle.getInt(EXTRA_INCLUDE_SPOUSE, 0);
-            updateUI(birthdate, includeSpouse, spouseBirthdate);
+            //String birthdate = bundle.getString(EXTRA_BIRTHDATE);
+            //String spouseBirthdate = bundle.getString(EXTRA_SPOUSE_BIRTHDATE);
+            //int includeSpouse = bundle.getInt(EXTRA_INCLUDE_SPOUSE, 0);
+            //updateUI(birthdate, includeSpouse, spouseBirthdate);
         }
 
         FragmentManager fm = getChildFragmentManager();
@@ -214,7 +207,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         ft.commit();
     }
 
-    private void updateUI(String birthdate, int includeSpouse, String spouseBirhtdate) {
+    private void updateUI(RetirementOptionsEntity roe) {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
@@ -229,30 +222,25 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         }
 
         mCountrySpinner.setSelection(1);
+
+        setIncludeSpouse(roe.getIncludeSpouse() == 1);
+        setSpouseBirthdate(roe.getSpouseBirthdate());
         /*
-        if(includeSpouse == 1) {
+        if(roe.getIncludeSpouse() == 1) {
             mSpouseBirthdateButton.setEnabled(true);
-            mSpouseBirthDateViewText.setEnabled(true);
+            mSpouseBirthdateTextView.setEnabled(true);
         } else {
             mSpouseBirthdateButton.setEnabled(false);
-            mSpouseBirthDateViewText.setEnabled(false);
+            mSpouseBirthdateTextView.setEnabled(false);
         }
         */
 
         mNameTextView.setText(displayName);
 
         mEmailTextView.setText(email);
-        mBirthDateViewText.setText(birthdate);
+        mBirthDateViewText.setText(roe.getBirthdate());
+        //mSpouseBirthdateTextView.setText(roe.getSpouseBirthdate());
 
-        setSpouseBirthdate(spouseBirhtdate);
-        //mSpouseBirthDateViewText.setText(spouseBirhtdate);
-        setIncludeSpouse(includeSpouse == 1);
-        //mIncludeSpouseCheckBox.setChecked(includeSpouse == 1);
-
-        if(!AgeUtils.validateBirthday(birthdate)) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.enter_birthdate), Snackbar.LENGTH_LONG);
-            snackbar.show();
-        }
     }
 
     private void saveData() {
@@ -266,10 +254,10 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
             return;
         }
 
-        int includeSpouse = 0;
+        int includeSpouse = getIncludeSpouse() ? 1 : 0;
         String spouseBirthdate = "";
 
-        if(getIncludeSpouse()) {
+        if(includeSpouse == 1) {
             spouseBirthdate = getSpouseBirthdate();
             if (!AgeUtils.validateBirthday(spouseBirthdate)) {
                 String message;
@@ -279,8 +267,6 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
                 snackbar.show();
                 return;
             }
-
-            includeSpouse = 1;
         }
 
         if(mPersonalInfoDialogAction != null) {
@@ -291,24 +277,17 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         String[] countries = getResources().getStringArray(R.array.country_array);
         Log.d("PeronsalInfoDialog", countries[i] + " is selected");
 
-        /*
-        mROE.setIncludeSpouse(includeSpouse);
-        mROE.setSpouseBirthdate(spouseBirthday);
-        mROE.setBirthdate(birthday);
-        mViewModel.update(mROE);
-        */
 
-        /*
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(RetirementConstants.EXTRA_BIRTHDATE, birthday);
-        returnIntent.putExtra(RetirementConstants.EXTRA_SPOUSE_BIRTHDATE, spouseBirthday);
-        returnIntent.putExtra(RetirementConstants.EXTRA_INCLUDE_SPOUSE, includeSpouse);
-        setResult(Activity.RESULT_OK, returnIntent);
-        */
-        //finish();
-        //overridePendingTransition(0, R.anim.slide_right_out);
+        mROE.setIncludeSpouse(includeSpouse);
+        mROE.setSpouseBirthdate(spouseBirthdate);
+        mROE.setBirthdate(birthdate);
+        mViewModel.update(mROE);
+
+        mViewModel.update(mROE);
+
         dismiss();
     }
+
 
     private String getSpouseBirthdate() {
         FragmentManager fm = getActivity().getSupportFragmentManager();
