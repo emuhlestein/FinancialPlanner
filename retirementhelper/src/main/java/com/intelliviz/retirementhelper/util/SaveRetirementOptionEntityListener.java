@@ -1,6 +1,6 @@
 package com.intelliviz.retirementhelper.util;
 
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 
 /**
  * Created by edm on 12/22/2017.

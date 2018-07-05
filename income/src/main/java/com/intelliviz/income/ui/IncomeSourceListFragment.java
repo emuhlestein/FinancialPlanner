@@ -26,9 +26,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.income.R;
 import com.intelliviz.income.adapter.IncomeSourceAdapter;
-import com.intelliviz.income.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.income.util.SelectIncomeSourceListener;
 import com.intelliviz.income.viewmodel.IncomeSourceListViewModel;
 
@@ -36,14 +36,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
-import static com.intelliviz.income.util.RetirementConstants.INCOME_ACTION_DELETE;
-import static com.intelliviz.income.util.RetirementConstants.INCOME_ACTION_EDIT;
-import static com.intelliviz.income.util.RetirementConstants.INCOME_ACTION_VIEW;
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_INCOME_MENU;
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_YES_NO;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
+import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_DELETE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_EDIT;
+import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_VIEW;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_INCOME_MENU;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_YES_NO;
 
 /**
  * CLass for handling the list of income sources.
@@ -55,7 +55,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     private static final String DIALOG_YESNO = "DialogYesNo";
     private IncomeSource mSelectedIncomeSource;
     private int mIncomeAction;
-    private List<IncomeSourceEntityBase> mIncomeSources = new ArrayList<>();
+    private List<AbstractIncomeSource> mIncomeSources = new ArrayList<>();
     private IncomeSourceListViewModel mViewModel;
 
     private RecyclerView mRecyclerView;
@@ -122,6 +122,17 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
             actionBar.setSubtitle(getString(R.string.income_source_subtitle));
         }
 
+
+        mViewModel = ViewModelProviders.of(getActivity()).get(IncomeSourceListViewModel.class);
+
+        mViewModel.get().observe(this, new Observer< List<AbstractIncomeSource>>() {
+            @Override
+            public void onChanged(@Nullable List<AbstractIncomeSource> incomeSources) {
+                mIncomeSourceAdapter.update(incomeSources);
+            }
+        });
+
+
         return view;
     }
 
@@ -139,14 +150,8 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(IncomeSourceListViewModel.class);
 
-        mViewModel.get().observe(this, new Observer< List<IncomeSourceEntityBase>>() {
-            @Override
-            public void onChanged(@Nullable List<IncomeSourceEntityBase> incomeSources) {
-                mIncomeSourceAdapter.update(incomeSources);
-            }
-        });
+
     }
 
     @Override
@@ -167,7 +172,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     }
 
     @Override
-    public void onSelectIncomeSource(IncomeSourceEntityBase incomeSource, boolean showMenu) {
+    public void onSelectIncomeSource(AbstractIncomeSource incomeSource, boolean showMenu) {
         mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(incomeSource);
         if(showMenu) {
             // show edit/delete menu

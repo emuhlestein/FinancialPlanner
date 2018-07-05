@@ -11,11 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.IncomeData;
+import com.intelliviz.data.IncomeData;
 import com.intelliviz.income.data.MilestoneData;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.RetirementDetailsAdapter;
 import com.intelliviz.retirementhelper.util.BalanceUtils;

@@ -5,15 +5,15 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
-
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.db.AppDatabase;
-import com.intelliviz.income.db.entity.MilestoneAgeEntity;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
-import com.intelliviz.income.util.AgeUtils;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.db.AppDatabase;
+import com.intelliviz.db.entity.MilestoneAgeEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
 
 import java.util.List;
+
+import static com.intelliviz.income.util.uiUtils.updateAppWidget;
 
 
 /**
@@ -127,13 +127,13 @@ public class MilestoneAgeViewModel extends AndroidViewModel {
     private List<MilestoneAgeEntity> addNewAge(AgeData ageData) {
         MilestoneAgeEntity milestoneAgeEntity = new MilestoneAgeEntity(0, ageData);
         mDB.milestoneAgeDao().insert(milestoneAgeEntity);
-        SystemUtils.updateAppWidget(getApplication());
+        updateAppWidget(getApplication());
         return null;
     }
 
     private List<MilestoneAgeEntity> deleteTheAge(MilestoneAgeEntity age) {
         mDB.milestoneAgeDao().delete(age);
-        SystemUtils.updateAppWidget(getApplication());
+        updateAppWidget(getApplication());
         return null;
     }
 }

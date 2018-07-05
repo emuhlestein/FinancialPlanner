@@ -4,18 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 
-import com.intelliviz.income.db.entity.IncomeSourceEntityBase;
+import com.intelliviz.db.entity.AbstractIncomeSource;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 /**
  * Created by edm on 3/13/2018.
  */
 
 public class PensionIncomeSource implements IncomeSource {
-    private IncomeSourceEntityBase mIncomeSourceEntity;
+    private AbstractIncomeSource mIncomeSourceEntity;
 
-    public PensionIncomeSource(IncomeSourceEntityBase incomeSourceEntity) {
+    public PensionIncomeSource(AbstractIncomeSource incomeSourceEntity) {
         mIncomeSourceEntity = incomeSourceEntity;
     }
 
@@ -41,7 +41,7 @@ public class PensionIncomeSource implements IncomeSource {
     }
 
     @Override
-    public IncomeSourceEntityBase getIncomeSourceEntity() {
+    public AbstractIncomeSource getIncomeSourceEntity() {
         return mIncomeSourceEntity;
     }
 

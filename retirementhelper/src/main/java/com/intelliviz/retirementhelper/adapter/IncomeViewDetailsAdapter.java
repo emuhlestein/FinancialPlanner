@@ -8,14 +8,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.intelliviz.income.data.AgeData;
 import com.intelliviz.income.data.MilestoneData;
-import com.intelliviz.income.util.AgeUtils;
 import com.intelliviz.income.util.SelectMilestoneDataListener;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.retirementhelper.R;
 
 import java.util.List;
+
+import static com.intelliviz.lowlevel.util.AgeUtils.getFormattedAge;
+import static com.intelliviz.lowlevel.util.SystemUtils.getFormattedCurrency;
 
 /**
  * Created by edm on 10/16/2017.
@@ -113,16 +114,16 @@ public class IncomeViewDetailsAdapter extends RecyclerView.Adapter<IncomeViewDet
                 }
             }
 
-            String formattedCurrency = SystemUtils.getFormattedCurrency(monthlyBenefit);
+            String formattedCurrency = getFormattedCurrency(monthlyBenefit);
             if(penalty > 0) {
                 double monthlyPenalty = monthlyBenefit * penalty / 100.0;
                 monthlyBenefit = monthlyBenefit - monthlyPenalty;
-                formattedCurrency = SystemUtils.getFormattedCurrency(monthlyBenefit);
+                formattedCurrency = getFormattedCurrency(monthlyBenefit);
                 formattedCurrency = formattedCurrency + "*";
             }
 
             mLine2TextView.setText(formattedCurrency);
-            mLine1TextView.setText(AgeUtils.getFormattedAge(startAge));
+            mLine1TextView.setText(getFormattedAge(startAge));
         }
 
         @Override

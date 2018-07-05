@@ -11,7 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.InputType;
 import android.widget.EditText;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
 
 
 /**

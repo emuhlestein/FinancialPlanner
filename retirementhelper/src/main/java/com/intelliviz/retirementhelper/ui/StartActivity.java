@@ -18,11 +18,11 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.income.ui.BirthdateActivity;
-import com.intelliviz.income.util.AgeUtils;
 import com.intelliviz.income.util.BirthdateDialogAction;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.viewmodel.StartUpViewModel;
 
@@ -33,12 +33,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_BIRTHDATE;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_BIRTHDATE;
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_SIGN_IN;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_LOGIN_RESPONSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SIGN_IN;
 
 
 /**
@@ -56,7 +56,7 @@ public class StartActivity extends AppCompatActivity implements
     private GoogleApiClient mGoogleApiClient;
     private StartUpViewModel mViewModel;
     private boolean mValidBirthdate = false;
-    private RetirementOptionsEntity mROE;
+    private RetirementOptions mROE;
 
     @BindView(R.id.login_button)
     Button mLoginButton;
@@ -97,11 +97,16 @@ public class StartActivity extends AppCompatActivity implements
             mLoginButton.setText(R.string.sign_in);
         }
 
+        StartUpViewModel.Factory factory = new
+                StartUpViewModel.Factory(getApplication());
+        mViewModel = ViewModelProviders.of(this, factory).
+                get(StartUpViewModel.class);
+
         mViewModel = ViewModelProviders.of(this).get(StartUpViewModel.class);
 
-        mViewModel.get().observe(this, new Observer<RetirementOptionsEntity>() {
+        mViewModel.get().observe(this, new Observer<RetirementOptions>() {
             @Override
-            public void onChanged(@Nullable RetirementOptionsEntity roe) {
+            public void onChanged(@Nullable RetirementOptions roe) {
                 mROE = roe;
                 attemptToStartNavigateActivity();
             }

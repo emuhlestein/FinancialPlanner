@@ -19,20 +19,20 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.intelliviz.data.IncomeData;
+import com.intelliviz.data.IncomeDetails;
+import com.intelliviz.data.PensionData;
 import com.intelliviz.income.R;
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.IncomeData;
-import com.intelliviz.income.data.IncomeDetails;
-import com.intelliviz.income.db.entity.PensionIncomeEntity;
-import com.intelliviz.income.util.RetirementConstants;
-import com.intelliviz.income.util.SystemUtils;
 import com.intelliviz.income.viewmodel.PensionIncomeDetailsViewModel;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.income.util.RetirementConstants.INCOME_TYPE_PENSION;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 
 
 public class PensionIncomeDetailsActivity extends AppCompatActivity {
@@ -40,7 +40,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     //private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
     private PensionIncomeDetailsViewModel mViewModel;
-    private PensionIncomeEntity mPIE;
+    private PensionData mPD;
     private long mId;
 
     private Toolbar mToolbar;
@@ -140,10 +140,10 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
             }
         });
 
-        mViewModel.get().observe(this, new Observer<PensionIncomeEntity>() {
+        mViewModel.get().observe(this, new Observer<PensionData>() {
             @Override
-            public void onChanged(@Nullable PensionIncomeEntity pie) {
-                mPIE = pie;
+            public void onChanged(@Nullable PensionData pie) {
+                mPD = pie;
                 updateUI();
             }
         });
@@ -152,7 +152,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        mViewModel.update();
+        //mViewModel.update(mPD);
     }
 
     @Override
@@ -167,27 +167,27 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
             AgeData minAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
             String monthlyBenefit = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_BENEFIT);
 
-            PensionIncomeEntity pie = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name,
-                    minAge, monthlyBenefit);
-            mViewModel.setData(pie);
+            PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name,
+                    minAge, monthlyBenefit, 0);
+            mViewModel.setData(pd);
 
         }
         super.onActivityResult(requestCode, resultCode, intent);
     }
 
     private void updateUI() {
-        if(mPIE == null) {
+        if(mPD == null) {
             return;
         }
 
-        SystemUtils.setToolbarSubtitle(this, "Pension - " + mPIE.getName());
+        SystemUtils.setToolbarSubtitle(this, "Pension - " + mPD.getName());
 
-        mNameTextView.setText(mPIE.getName());
+        mNameTextView.setText(mPD.getName());
 
-        AgeData age = mPIE.getMinAge();
+        AgeData age = mPD.getAge();
         mStartAgeTextView.setText(age.toString());
 
-        String formattedValue = SystemUtils.getFormattedCurrency(mPIE.getMonthlyBenefit());
+        String formattedValue = SystemUtils.getFormattedCurrency(mPD.getBenefit());
         mMonthlyBenefitTextView.setText(formattedValue);
     }
 

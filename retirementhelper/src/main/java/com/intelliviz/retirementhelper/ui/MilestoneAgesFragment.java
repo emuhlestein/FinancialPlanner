@@ -20,13 +20,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.db.entity.MilestoneAgeEntity;
+import com.intelliviz.db.entity.MilestoneAgeEntity;
 import com.intelliviz.income.ui.AgeDialog;
 import com.intelliviz.income.ui.ListMenuActivity;
 import com.intelliviz.income.ui.YesNoDialog;
-import com.intelliviz.income.util.AgeUtils;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAgeAdapter;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
@@ -39,13 +38,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_MONTH;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_YEAR;
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_ACTION_MENU;
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_ADD_AGE;
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_YES_NO;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MONTH;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_YEAR;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_ACTION_MENU;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_ADD_AGE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_YES_NO;
 
 
 /**

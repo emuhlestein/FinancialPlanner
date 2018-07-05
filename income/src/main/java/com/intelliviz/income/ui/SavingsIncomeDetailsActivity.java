@@ -19,26 +19,26 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.intelliviz.data.IncomeDetails;
+import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.adapter.IncomeDetailsAdapter;
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.IncomeDetails;
-import com.intelliviz.income.db.entity.SavingsIncomeEntity;
-import com.intelliviz.income.util.RetirementConstants;
-import com.intelliviz.income.util.SystemUtils;
 import com.intelliviz.income.viewmodel.SavingsIncomeDetailsViewModel;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 public class SavingsIncomeDetailsActivity extends AppCompatActivity {
 
     private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
     private SavingsIncomeDetailsViewModel mViewModel;
-    private SavingsIncomeEntity mSIE;
+    private SavingsData mSIE;
     private long mId;
 
     private Toolbar mToolbar;
@@ -132,9 +132,9 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             }
         });
 
-        mViewModel.get().observe(this, new Observer<SavingsIncomeEntity>() {
+        mViewModel.get().observe(this, new Observer<SavingsData>() {
             @Override
-            public void onChanged(@Nullable SavingsIncomeEntity tdie) {
+            public void onChanged(@Nullable SavingsData tdie) {
                 mSIE = tdie;
                 updateUI();
             }
@@ -165,10 +165,10 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             String annualPercentIncrease = bundle.getString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE);
             int showMonths = bundle.getInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS);
 
-            SavingsIncomeEntity tdid = new SavingsIncomeEntity(mId, mSIE.getType(), name, startAge,
+            SavingsData sdata = new SavingsData(mId, mSIE.getType(), name, startAge,
                     balance, interest, monthlyAddition, stopMonthlyAddtionAge,
                     withdrawAmount, annualPercentIncrease, showMonths);
-            mViewModel.setData(tdid);
+            mViewModel.setData(sdata);
 
         }
         super.onActivityResult(requestCode, resultCode, intent);

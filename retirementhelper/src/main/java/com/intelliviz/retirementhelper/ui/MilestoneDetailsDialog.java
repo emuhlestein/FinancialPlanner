@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.intelliviz.income.data.AgeData;
 import com.intelliviz.income.data.MilestoneData;
-import com.intelliviz.income.util.AgeUtils;
-import com.intelliviz.income.util.RetirementConstants;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.retirementhelper.R;
 
 import butterknife.BindView;

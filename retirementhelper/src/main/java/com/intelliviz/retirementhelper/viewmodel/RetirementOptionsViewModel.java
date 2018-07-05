@@ -6,8 +6,9 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.income.db.AppDatabase;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.AppDatabase;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
+
 
 /**
  * Created by edm on 12/22/2017.

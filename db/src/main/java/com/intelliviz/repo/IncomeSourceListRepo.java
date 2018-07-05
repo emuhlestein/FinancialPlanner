@@ -1,0 +1,170 @@
+package com.intelliviz.repo;
+
+import android.app.Application;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.os.AsyncTask;
+
+import com.intelliviz.db.AppDatabase;
+import com.intelliviz.db.entity.GovPensionEntity;
+import com.intelliviz.db.entity.IncomeSourceEntityBase;
+import com.intelliviz.db.entity.PensionIncomeEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.SavingsIncomeEntity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class IncomeSourceListRepo {
+    private GovEntityRepo mGovRepo;
+    private PensionIncomeEntityRepo mPensionRepo;
+    private SavingsIncomeEntityRepo mSavingsRepo;
+    private RetirementOptionsEntityRepo mRetireRepo;
+    private MutableLiveData<List<IncomeSourceEntityBase>> mIncomeSources = new MutableLiveData<>();
+    private AppDatabase mDB;
+
+    public IncomeSourceListRepo(Application application) {
+        mDB = AppDatabase.getInstance(application);
+        mGovRepo = new GovEntityRepo(application);
+        mPensionRepo = new PensionIncomeEntityRepo(application);
+        mSavingsRepo = new SavingsIncomeEntityRepo(application);
+        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        new GetAllIncomeSourcesAsyncTask().execute();
+    }
+
+    public LiveData<List<IncomeSourceEntityBase>> getIncomeSources() {
+        return mIncomeSources;
+    }
+
+    public void update() {
+        new GetAllIncomeSourcesAsyncTask().execute();
+    }
+
+    private class GetAllIncomeSourcesAsyncTask extends AsyncTask<Void, List<IncomeSourceEntityBase>, List<IncomeSourceEntityBase>> {
+
+        @Override
+        protected List<IncomeSourceEntityBase> doInBackground(Void... params) {
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
+        }
+    }
+
+    private List<IncomeSourceEntityBase> getAllIncomeSources() {
+        List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
+        LiveData<List<GovPensionEntity>> gpeList = mGovRepo.getList();
+        if(gpeList != null) {
+            List<GovPensionEntity> list = gpeList.getValue();
+            if(list != null) {
+                for (GovPensionEntity gpe : gpeList.getValue()) {
+                    incomeSourceList.add(gpe);
+                }
+            }
+        }
+
+        List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
+        if (pieList != null) {
+            for (PensionIncomeEntity pie : pieList) {
+                incomeSourceList.add(pie);
+            }
+        }
+
+        MutableLiveData<List<SavingsIncomeEntity>> savingsList = mSavingsRepo.getList();
+        if(savingsList != null) {
+            List<SavingsIncomeEntity> slist = savingsList.getValue();
+            if(slist != null) {
+                for (SavingsIncomeEntity savings : savingsList.getValue()) {
+                    incomeSourceList.add(savings);
+                }
+            }
+        }
+
+        return incomeSourceList;
+    }
+
+    public void delete(IncomeSourceEntityBase incomeSourceEntity) {
+        if(incomeSourceEntity instanceof GovPensionEntity) {
+            GovPensionEntity entity = (GovPensionEntity)incomeSourceEntity;
+            new DeleteGovPensionAsyncTask().execute(entity);
+        } else if(incomeSourceEntity instanceof PensionIncomeEntity) {
+            PensionIncomeEntity entity = (PensionIncomeEntity)incomeSourceEntity;
+            new DeletePensionAsyncTask().execute(entity);
+        } else if(incomeSourceEntity instanceof SavingsIncomeEntity) {
+            SavingsIncomeEntity source = (SavingsIncomeEntity)incomeSourceEntity;
+            new DeleteSavingsAsyncTask().execute(source);
+        }
+    }
+
+    private class DeleteGovPensionAsyncTask extends AsyncTask<GovPensionEntity, Void, List<IncomeSourceEntityBase>> {
+
+        @Override
+        protected List<IncomeSourceEntityBase> doInBackground(GovPensionEntity... params) {
+            GovPensionEntity gpe = params[0];
+            MutableLiveData<RetirementOptionsEntity> liveRoe = mRetireRepo.get();
+            RetirementOptionsEntity roe = liveRoe.getValue();
+            if(gpe.getSpouse() == 1) {
+                roe.setSpouseBirthdate("0");
+                roe.setIncludeSpouse(0);
+            } else {
+                roe.setBirthdate("0");
+            }
+            mRetireRepo.update(roe);
+
+            mGovRepo.delete(gpe);
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
+        }
+    }
+
+    private class DeletePensionAsyncTask extends AsyncTask<PensionIncomeEntity, Void, List<IncomeSourceEntityBase>> {
+
+        @Override
+        protected List<IncomeSourceEntityBase> doInBackground(PensionIncomeEntity... params) {
+            PensionIncomeEntity pie = params[0];
+            mDB.pensionIncomeDao().delete(pie);
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
+        }
+    }
+
+    private class DeleteSavingsAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeSourceEntityBase>> {
+
+        @Override
+        protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
+            SavingsIncomeEntity sie = params[0];
+            mSavingsRepo.delete(sie);
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
+        }
+    }
+
+    private class DeleteTaxDeferredAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeSourceEntityBase>> {
+
+        @Override
+        protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
+            SavingsIncomeEntity sie = params[0];
+            mSavingsRepo.delete(sie);
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
+        }
+    }
+}

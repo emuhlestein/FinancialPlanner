@@ -1,93 +1,74 @@
 package com.intelliviz.retirementhelper.viewmodel;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.os.AsyncTask;
+import android.arch.lifecycle.Transformations;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.db.AppDatabase;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.data.RetirementOptions;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.repo.RetirementOptionsEntityRepo;
 
 /**
  * Created by edm on 10/7/2017.
  */
 
 public class StartUpViewModel extends AndroidViewModel {
-    public static final int BIRTHDATE_NOTSET  = 0;
+    public static final int BIRTHDATE_NOTSET = 0;
     public static final int BIRTHDATE_INVALID = 1;
-    public static final int BIRTHDATE_VALID   = 2;
+    public static final int BIRTHDATE_VALID = 2;
     private MutableLiveData<AgeData> mCurrentAge = new MutableLiveData<>();
     private MutableLiveData<Integer> mValidBirthdate = new MutableLiveData<>();
-    private MutableLiveData<RetirementOptionsEntity> mROE = new MutableLiveData<>();
-    private AppDatabase mDB;
+    private LiveData<RetirementOptions> mROE = new MutableLiveData<>();
+    private RetirementOptionsEntityRepo mRetireRepo;
 
     public StartUpViewModel(Application application) {
         super(application);
-        mDB = AppDatabase.getInstance(application);
-        new GetRetirementOptionsAsyncTask().execute();
+        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        subscribeToRetireOptionsEntityChanges();
     }
 
-    public MutableLiveData<RetirementOptionsEntity> get() {
+    public static class Factory extends ViewModelProvider.NewInstanceFactory {
+        @NonNull
+        private final Application mApplication;
+
+        public Factory(@NonNull Application application) {
+            mApplication = application;
+        }
+
+        @Override
+        public <T extends ViewModel> T create(Class<T> modelClass) {
+            return (T) new StartUpViewModel(mApplication);
+        }
+    }
+
+    public LiveData<RetirementOptions> get() {
         return mROE;
     }
 
     public void updateBirthdate(String birthdate) {
-        //RetirementOptionsEntity rom = mROE.getValue();
-        //RetirementOptionsEntity newRom = new RetirementOptionsEntity(rom.getId(), rom.getEndAge(), birthdate, includeSpouse, spouseBirthdate);
-        //mROE.setValue(newRom);
-        new UpdateRetirementOptionsAsyncTask().execute(birthdate);
+        mRetireRepo.updateSpouseBirthdate(birthdate);
     }
 
-    private class GetRetirementOptionsAsyncTask extends AsyncTask<Void, Void, RetirementOptionsEntity> {
-
-        @Override
-        protected  RetirementOptionsEntity doInBackground(Void... params) {
-            return mDB.retirementOptionsDao().get();
-        }
-
-        @Override
-        protected void onPostExecute(RetirementOptionsEntity rom) {
-            // TODO if rom is null, one needs to be added
-            mROE.setValue(rom);
-        }
+    public void update(RetirementOptions ro) {
+        RetirementOptionsEntity roe = new RetirementOptionsEntity(ro.getId(), ro.getEndAge(), ro.getBirthdate(), ro.getIncludeSpouse(), ro.getSpouseBirthdate());
+        mRetireRepo.update(roe);
     }
 
-    private class UpdateRetirementOptionsAsyncTask extends android.os.AsyncTask<String, Void, RetirementOptionsEntity> {
-
-        @Override
-        protected RetirementOptionsEntity doInBackground(String... params) {
-            String birthdate = params[0];
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-            roe.setBirthdate(birthdate);
-            mDB.retirementOptionsDao().update(roe);
-            // TODO when ROM is updated, everything should be updated.
-            // SystemUtils.updateAppWidget(getApplication());
-            return roe;
-        }
-
-        @Override
-        protected void onPostExecute(RetirementOptionsEntity roe) {
-            // TODO if rom is null, one needs to be added
-            mROE.setValue(roe);
-        }
-    }
-
-    public static class BirthdateInfo {
-        private String mBirthdate;
-        private int mStatus;
-
-        public BirthdateInfo(String birthdate, int status) {
-            mBirthdate = birthdate;
-            mStatus = status;
-        }
-
-        public String getBirthdate() {
-            return mBirthdate;
-        }
-
-        public int getStatus() {
-            return mStatus;
-        }
+    private void subscribeToRetireOptionsEntityChanges() {
+        MutableLiveData<RetirementOptionsEntity> gpe = mRetireRepo.get();
+        mROE = Transformations.map(gpe,
+                new Function<RetirementOptionsEntity, RetirementOptions>() {
+                    @Override
+                    public RetirementOptions apply(RetirementOptionsEntity roe) {
+                        return new RetirementOptions(roe.getId(), roe.getEndAge(), roe.getBirthdate(), roe.getSpouseBirthdate(), roe.getIncludeSpouse());
+                    }
+                });
     }
 }

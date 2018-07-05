@@ -12,11 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
-import com.intelliviz.income.util.AgeUtils;
-import com.intelliviz.income.util.RetirementConstants;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.viewmodel.RetirementOptionsViewModel;
 

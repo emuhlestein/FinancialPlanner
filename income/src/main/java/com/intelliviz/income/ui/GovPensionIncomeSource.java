@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 
-import com.intelliviz.income.db.entity.IncomeSourceEntityBase;
-import com.intelliviz.income.util.RetirementConstants;
+import com.intelliviz.db.entity.AbstractIncomeSource;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 
 /**
@@ -15,19 +16,27 @@ import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE
  */
 
 public class GovPensionIncomeSource implements IncomeSource {
-    private IncomeSourceEntityBase mIncomeSourceEntity;
-    public GovPensionIncomeSource(IncomeSourceEntityBase incomeSourceEntity) {
+    private AbstractIncomeSource mIncomeSourceEntity;
+    public GovPensionIncomeSource(AbstractIncomeSource incomeSourceEntity) {
         mIncomeSourceEntity = incomeSourceEntity;
     }
 
     @Override
     public void startAddActivity(FragmentActivity activity) {
-        new StartGovPensionEditActivityTask(activity, 0, RetirementConstants.INCOME_ACTION_ADD).execute();
+        Intent intent = new Intent(activity, GovPensionIncomeEditActivity.class);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
+        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION,  RetirementConstants.INCOME_ACTION_ADD);
+        activity.startActivity(intent);
+        //new StartGovPensionEditActivityTask(activity, 0, RetirementConstants.INCOME_ACTION_ADD).execute();
     }
 
     @Override
     public void startEditActivity(FragmentActivity activity) {
-        new StartGovPensionEditActivityTask(activity, mIncomeSourceEntity.getId(), RetirementConstants.INCOME_ACTION_EDIT).execute();
+        Intent intent = new Intent(activity, GovPensionIncomeEditActivity.class);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
+        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
+        activity.startActivity(intent);
+        //new StartGovPensionEditActivityTask(activity, mIncomeSourceEntity.getId(), RetirementConstants.INCOME_ACTION_EDIT).execute();
     }
 
     @Override
@@ -38,7 +47,7 @@ public class GovPensionIncomeSource implements IncomeSource {
     }
 
     @Override
-    public IncomeSourceEntityBase getIncomeSourceEntity() {
+    public AbstractIncomeSource getIncomeSourceEntity() {
         return mIncomeSourceEntity;
     }
 

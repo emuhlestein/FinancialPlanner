@@ -12,11 +12,11 @@ import android.widget.ListView;
 
 import com.intelliviz.income.R;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
-import static com.intelliviz.income.util.RetirementConstants.INCOME_ACTION_DELETE;
-import static com.intelliviz.income.util.RetirementConstants.INCOME_ACTION_EDIT;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_TYPE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_DELETE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_EDIT;
 
 
 /**

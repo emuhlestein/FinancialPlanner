@@ -1,21 +1,32 @@
 package com.intelliviz.income.viewmodel;
 
 import android.app.Application;
-import android.appwidget.AppWidgetManager;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
 
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.Savings401kIncomeRules;
-import com.intelliviz.income.data.SocialSecurityRules;
-import com.intelliviz.income.db.AppDatabase;
-import com.intelliviz.income.db.entity.GovPensionEntity;
-import com.intelliviz.income.db.entity.IncomeSourceEntityBase;
-import com.intelliviz.income.db.entity.PensionIncomeEntity;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
-import com.intelliviz.income.db.entity.SavingsIncomeEntity;
+import com.intelliviz.data.GovPension;
+import com.intelliviz.data.PensionData;
+import com.intelliviz.data.PensionRules;
+import com.intelliviz.data.Savings401kIncomeRules;
+import com.intelliviz.data.SavingsData;
+import com.intelliviz.data.SocialSecurityRules;
+import com.intelliviz.db.AppDatabase;
+import com.intelliviz.db.entity.AbstractIncomeSource;
+import com.intelliviz.db.entity.GovPensionEntity;
+import com.intelliviz.db.entity.GovPensionEntityMapper;
+import com.intelliviz.db.entity.IncomeSourceEntityBase;
+import com.intelliviz.db.entity.PensionDataEntityMapper;
+import com.intelliviz.db.entity.PensionIncomeEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.SavingsDataEntityMapper;
+import com.intelliviz.db.entity.SavingsIncomeEntity;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.repo.IncomeSourceListRepo;
+import com.intelliviz.repo.RetirementOptionsEntityRepo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,133 +36,152 @@ import java.util.List;
  */
 
 public class IncomeSourceListViewModel extends AndroidViewModel {
-    private AppDatabase mDB;
-    private MutableLiveData<List<IncomeSourceEntityBase>> mIncomeSources = new MutableLiveData<>();
+    private IncomeSourceListRepo mIncomeSourceRepo;
+    private RetirementOptionsEntityRepo mRetireRepo;
+    private LiveData<List<AbstractIncomeSource>> mIncomeSources;
+    private LiveData<List<IncomeSourceEntityBase>> mIncomeSourceEntity;
+
 
     public IncomeSourceListViewModel(Application application) {
         super(application);
-        mDB = AppDatabase.getInstance(application);
-        new GetAllIncomeSourcesAsyncTask().execute();
+        mIncomeSourceRepo = new IncomeSourceListRepo(application);
+        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        //mIncomeSourceEntity = mIncomeSourceRepo.getIncomeSources();
+        subscribe();
     }
 
-    public LiveData<List<IncomeSourceEntityBase>> get() {
+    public LiveData<List<AbstractIncomeSource>> get() {
         return mIncomeSources;
     }
 
+    public void subscribe() {
+        LiveData<List<IncomeSourceEntityBase>> incomeSourceEntities = mIncomeSourceRepo.getIncomeSources();
+
+        mIncomeSources =
+                Transformations.switchMap(incomeSourceEntities,
+                        new Function<List<IncomeSourceEntityBase>, LiveData<List<AbstractIncomeSource>>>() {
+                            @Override
+                            public LiveData<List<AbstractIncomeSource>> apply(List<IncomeSourceEntityBase> input) {
+                                return getAllIncomeSources(input);
+                            }
+                        });
+    }
+
     public void update() {
-        new GetAllIncomeSourcesAsyncTask().execute();
+       mIncomeSourceRepo.update();
     }
 
-    public void updateSpouseBirthdate(String birthdate) {
-        new UpdateSpouseBirthdateAsyncTask().execute(birthdate);
-    }
-
-    public void delete(IncomeSourceEntityBase incomeSource) {
-        if(incomeSource instanceof GovPensionEntity) {
-            GovPensionEntity entity = (GovPensionEntity)incomeSource;
-            new DeleteGovPensionAsyncTask().execute(entity);
-        } else if(incomeSource instanceof PensionIncomeEntity) {
-            PensionIncomeEntity entity = (PensionIncomeEntity)incomeSource;
-            new DeletePensionAsyncTask().execute(entity);
-        } else if(incomeSource instanceof SavingsIncomeEntity) {
-            SavingsIncomeEntity entity = (SavingsIncomeEntity)incomeSource;
-            new DeleteSavingsAsyncTask().execute(entity);
-        } else if(incomeSource instanceof SavingsIncomeEntity) {
-            SavingsIncomeEntity entity = (SavingsIncomeEntity)incomeSource;
-            new DeleteTaxDeferredAsyncTask().execute(entity);
+    public void delete(AbstractIncomeSource incomeSource) {
+        if(incomeSource instanceof GovPension) {
+            GovPension source = (GovPension)incomeSource;
+            mIncomeSourceRepo.delete(GovPensionEntityMapper.map(source));
+        } else if(incomeSource instanceof PensionData) {
+            PensionData source = (PensionData)incomeSource;
+            mIncomeSourceRepo.delete(PensionDataEntityMapper.map(source));
+        } else if(incomeSource instanceof SavingsData) {
+            SavingsData source = (SavingsData)incomeSource;
+            mIncomeSourceRepo.delete(SavingsDataEntityMapper.map(source));
         }
     }
 
-    public void updateAppWidget() {
-        new UpdateAppWidgetAsyncTask().execute();
-    }
+//    public void updateAppWidget() {
+//        new UpdateAppWidgetAsyncTask().execute();
+//    }
+//
+//    public void updateMilestones() {
+//        new UpdateSummaryMilestonesAsyncTask().execute();
+//    }
 
-    public void updateMilestones() {
-        new UpdateSummaryMilestonesAsyncTask().execute();
-    }
-
-    private class GetAllIncomeSourcesAsyncTask extends AsyncTask<Void, List<IncomeSourceEntityBase>, List<IncomeSourceEntityBase>> {
+   /* private class GetAllIncomeSourcesAsyncTask extends AsyncTask<Void, List<AbstractIncomeSource>, List<AbstractIncomeSource>> {
 
         @Override
-        protected List<IncomeSourceEntityBase> doInBackground(Void... params) {
+        protected List<AbstractIncomeSource> doInBackground(Void... params) {
             return getAllIncomeSources();
         }
 
         @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+        protected void onPostExecute(List<AbstractIncomeSource> incomeSourceEntityBases) {
             mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
-    private class DeleteGovPensionAsyncTask extends AsyncTask<GovPensionEntity, Void, List<IncomeSourceEntityBase>> {
+    private class DeleteGovPensionAsyncTask extends AsyncTask<GovPension, Void, List<AbstractIncomeSource>> {
 
         @Override
-        protected List<IncomeSourceEntityBase> doInBackground(GovPensionEntity... params) {
-            GovPensionEntity gpe = params[0];
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-            if(gpe.getSpouse() == 1) {
+        protected List<AbstractIncomeSource> doInBackground(GovPension... params) {
+            GovPension gp = params[0];
+            MutableLiveData<RetirementOptionsEntity> liveRoe = mRetireRepo.get();
+            RetirementOptionsEntity roe = liveRoe.getValue();
+            if(gp.isSpouse()) {
                 roe.setSpouseBirthdate("0");
                 roe.setIncludeSpouse(0);
             } else {
                 roe.setBirthdate("0");
             }
-            mDB.retirementOptionsDao().update(roe);
-            mDB.govPensionDao().delete(params[0]);
+            mRetireRepo.update(roe);
+
+            GovPensionEntity gpe = GovPensionEntityMapper.map(params[0]);
+            mGovRepo.delete(gpe);
+            //mDB.retirementOptionsDao().update(roe);
+            //mDB.govPensionDao().delete(params[0]);
             updateAppWidgetSummaryData();
             return getAllIncomeSources();
         }
 
         @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+        protected void onPostExecute(List<AbstractIncomeSource> incomeSourceEntityBases) {
             mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
-    private class DeletePensionAsyncTask extends AsyncTask<PensionIncomeEntity, Void, List<IncomeSourceEntityBase>> {
+    private class DeletePensionAsyncTask extends AsyncTask<PensionData, Void, List<AbstractIncomeSource>> {
 
         @Override
-        protected List<IncomeSourceEntityBase> doInBackground(PensionIncomeEntity... params) {
-            mDB.pensionIncomeDao().delete(params[0]);
+        protected List<AbstractIncomeSource> doInBackground(PensionData... params) {
+            PensionIncomeEntity pie = PensionDataEntityMapper.map(params[0]);
+            mPensionRepo.delete(pie);
             updateAppWidgetSummaryData();
             return getAllIncomeSources();
         }
 
         @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+        protected void onPostExecute(List<AbstractIncomeSource> incomeSourceEntityBases) {
             mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
-    private class DeleteSavingsAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeSourceEntityBase>> {
+    private class DeleteSavingsAsyncTask extends AsyncTask<SavingsData, Void, List<AbstractIncomeSource>> {
 
         @Override
-        protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
-            mDB.savingsIncomeDao().delete(params[0]);
-            //updateAppWidgetSummaryData();
-            return getAllIncomeSources();
-        }
-
-        @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
-            mIncomeSources.setValue(incomeSourceEntityBases);
-        }
-    }
-
-    private class DeleteTaxDeferredAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeSourceEntityBase>> {
-
-        @Override
-        protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
-            mDB.savingsIncomeDao().delete(params[0]);
+        protected List<AbstractIncomeSource> doInBackground(SavingsData... params) {
+            SavingsIncomeEntity sie = SavingsDataEntityMapper.map(params[0]);
+            mSavingsRepo.delete(sie);
             updateAppWidgetSummaryData();
             return getAllIncomeSources();
         }
 
         @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+        protected void onPostExecute(List<AbstractIncomeSource> incomeSourceEntityBases) {
             mIncomeSources.setValue(incomeSourceEntityBases);
         }
     }
 
+    private class DeleteTaxDeferredAsyncTask extends AsyncTask<SavingsData, Void, List<AbstractIncomeSource>> {
+
+        @Override
+        protected List<AbstractIncomeSource> doInBackground(SavingsData... params) {
+            SavingsIncomeEntity sie = SavingsDataEntityMapper.map(params[0]);
+            mSavingsRepo.delete(sie);
+            updateAppWidgetSummaryData();
+            return getAllIncomeSources();
+        }
+
+        @Override
+        protected void onPostExecute(List<AbstractIncomeSource> incomeSourceEntityBases) {
+            mIncomeSources.setValue(incomeSourceEntityBases);
+        }
+    }
+*/
     private class UpdateAppWidgetAsyncTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -160,31 +190,31 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         }
     }
 
-    private class UpdateSummaryMilestonesAsyncTask extends AsyncTask<Void, Void, List<IncomeSourceEntityBase>> {
+   /* private class UpdateSummaryMilestonesAsyncTask extends AsyncTask<Void, Void, List<AbstractIncomeSource>> {
 
         @Override
-        protected List<IncomeSourceEntityBase> doInBackground(Void... params) {
+        protected List<AbstractIncomeSource> doInBackground(Void... params) {
             updateMilestoneSummary();
             return getAllIncomeSources();
         }
 
         @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
+        protected void onPostExecute(List<AbstractIncomeSource> incomeSourceEntityBases) {
             mIncomeSources.setValue(incomeSourceEntityBases);
         }
-    }
+    }*/
 
     private void updateAppWidgetSummaryData() {
-        AppDatabase db = AppDatabase.getInstance(getApplication());
-        updateSummaryData(db);
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplication());
+        //AppDatabase db = AppDatabase.getInstance(getApplication());
+        //updateSummaryData(db);
+        //AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplication());
         //ComponentName appWidget = new ComponentName(getApplication(), WidgetProvider.class);
         //int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
         //appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
     }
 
     private void updateSummaryData(AppDatabase db) {
-        db.summaryDao().deleteAll();
+        //db.summaryDao().deleteAll();
         //List<MilestoneData> milestones = null;
         //for(MilestoneData msd : milestones) {
         //    db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
@@ -194,38 +224,52 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
     private void updateMilestoneSummary() {
     }
 
-    private List<IncomeSourceEntityBase> getAllIncomeSources() {
-        List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
-        List<SavingsIncomeEntity> tdieList = mDB.savingsIncomeDao().get();
-        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+    private LiveData<List<AbstractIncomeSource>> getAllIncomeSources(List<IncomeSourceEntityBase> list) {
+        MutableLiveData<RetirementOptionsEntity> liveRoe = mRetireRepo.get();
+        RetirementOptionsEntity roe = liveRoe.getValue();
+        if(roe == null) {
+            return new MutableLiveData<>();
+        }
         AgeData endAge = roe.getEndAge();
-        for(SavingsIncomeEntity tdie : tdieList) {
-            AgeData startAge = tdie.getStartAge();
-            Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), endAge);
-            tdie.setRules(tdir);
-            incomeSourceList.add(tdie);
-        }
-        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
-        SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
-        for(GovPensionEntity gpie : gpeList) {
-            incomeSourceList.add(gpie);
-        }
-        List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
-        for(PensionIncomeEntity pie : pieList) {
-            incomeSourceList.add(pie);
+
+        List<AbstractIncomeSource> incomeSourceList = new ArrayList<>();
+
+        List<GovPension> gpList = new ArrayList<>();
+        for(IncomeSourceEntityBase entity : list) {
+            if(entity instanceof GovPensionEntity) {
+                GovPension gp = GovPensionEntityMapper.map((GovPensionEntity)entity);
+                gpList.add(gp);
+                incomeSourceList.add(gp);
+            }
+
+            if(entity instanceof PensionIncomeEntity) {
+                PensionData pd = PensionDataEntityMapper.map((PensionIncomeEntity)entity);
+                pd.setRules(new PensionRules(roe.getBirthdate(), pd.getAge(), endAge, pd.getBenefit()));
+                incomeSourceList.add(pd);
+            }
+
+            if(entity instanceof SavingsIncomeEntity) {
+                SavingsData savingsData = SavingsDataEntityMapper.map((SavingsIncomeEntity)entity);
+                savingsData.setRules(new Savings401kIncomeRules(roe.getBirthdate(), endAge));
+                incomeSourceList.add(savingsData);
+            }
         }
 
-        return incomeSourceList;
+        SocialSecurityRules.setRulesOnGovPensionEntities(gpList, roe);
+
+        MutableLiveData<List<AbstractIncomeSource>> incomeSources = new MutableLiveData<>();
+        incomeSources.setValue(incomeSourceList);
+
+        return incomeSources;
     }
-
-    private class UpdateSpouseBirthdateAsyncTask extends android.os.AsyncTask<String, Void, Void> {
+    private class UpdateSpouseBirthdateAsyncTask extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            RetirementOptionsEntity roe = mRetireRepo.get().getValue();
             roe.setIncludeSpouse(1);
             roe.setSpouseBirthdate(params[0]);
-            mDB.retirementOptionsDao().update(roe);
+            mRetireRepo.update(roe);
             return null;
         }
     }

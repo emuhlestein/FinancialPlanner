@@ -6,24 +6,19 @@ import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
+import com.intelliviz.db.AppDatabase;
 import com.intelliviz.income.R;
-import com.intelliviz.income.db.AppDatabase;
-import com.intelliviz.income.db.entity.GovPensionEntity;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
 import com.intelliviz.income.util.BirthdateDialogAction;
-import com.intelliviz.income.util.GovEntityAccessor;
-import com.intelliviz.income.util.SystemUtils;
 import com.intelliviz.income.viewmodel.LiveDataWrapper;
 
-import java.util.List;
-
-import static com.intelliviz.income.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
-import static com.intelliviz.income.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
-import static com.intelliviz.income.util.RetirementConstants.EC_NO_ERROR;
-import static com.intelliviz.income.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
-import static com.intelliviz.income.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.income.util.uiUtils.showDialog;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_ERROR;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
 /**
  * Created by edm on 3/12/2018.
@@ -42,11 +37,12 @@ public class StartGovPensionEditActivityTask extends AsyncTask<Void, Void, LiveD
 
     @Override
     protected LiveDataWrapper doInBackground(Void... voids) {
-        AppDatabase mDB = AppDatabase.getInstance(mActivity);
-        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
-        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-        GovEntityAccessor govEntityAccessor = new GovEntityAccessor(gpeList, roe);
-        return govEntityAccessor.getEntity(mId);
+        //AppDatabase mDB = AppDatabase.getInstance(mActivity);
+        //AppDatabase.getInstance(mActivity).summaryDao();
+       // List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        //RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+        //ovEntityAccessor govEntityAccessor = new GovEntityAccessor(gpeList, roe);
+        return null; //govEntityAccessor.getEntity(mId);
     }
 
     @Override
@@ -70,7 +66,7 @@ public class StartGovPensionEditActivityTask extends AsyncTask<Void, Void, LiveD
         } else if(state == EC_NO_SPOUSE_BIRTHDATE) {
             final long spouseId = id;
             final int newAction = action;
-            SystemUtils.showDialog(mActivity, "01-01-1900", new BirthdateDialogAction() {
+            showDialog(mActivity, "01-01-1900", new BirthdateDialogAction() {
                 @Override
                 public void onGetBirthdate(String birthdate) {
                     new UpdateSpouseBirthdateAsyncTask(mActivity, spouseId, newAction).execute(birthdate);
@@ -86,7 +82,7 @@ public class StartGovPensionEditActivityTask extends AsyncTask<Void, Void, LiveD
         private int mAction;
 
         public UpdateSpouseBirthdateAsyncTask(Context context, long id, int action) {
-            mDB = AppDatabase.getInstance(context.getApplicationContext());
+            //mDB = AppDatabase.getInstance(context.getApplicationContext());
             mContext = context;
             mId = id;
             mAction = action;
@@ -94,10 +90,10 @@ public class StartGovPensionEditActivityTask extends AsyncTask<Void, Void, LiveD
 
         @Override
         protected Void doInBackground(String... params) {
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-            roe.setIncludeSpouse(1);
-            roe.setSpouseBirthdate(params[0]);
-            mDB.retirementOptionsDao().update(roe);
+            //RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            //roe.setIncludeSpouse(1);
+            //roe.setSpouseBirthdate(params[0]);
+            //mDB.retirementOptionsDao().update(roe);
             return null;
         }
 

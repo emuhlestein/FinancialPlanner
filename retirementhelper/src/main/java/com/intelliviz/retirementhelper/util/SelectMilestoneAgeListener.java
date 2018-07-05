@@ -1,6 +1,6 @@
 package com.intelliviz.retirementhelper.util;
 
-import com.intelliviz.income.db.entity.MilestoneAgeEntity;
+import com.intelliviz.db.entity.MilestoneAgeEntity;
 
 /**
  * Listener for milestone age selection.

@@ -3,6 +3,8 @@ package com.intelliviz.income.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.intelliviz.lowlevel.data.AgeData;
+
 /**
  * Class for retirement milestone data.
  * Created by Ed Muhlestein on 5/29/2017.

@@ -18,21 +18,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.db.entity.SavingsIncomeEntity;
-import com.intelliviz.income.util.AgeUtils;
-import com.intelliviz.income.util.RetirementConstants;
-import com.intelliviz.income.util.SystemUtils;
 import com.intelliviz.income.viewmodel.SavingsIncomeEditViewModel;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.SystemUtils;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_TYPE;
+import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_TYPE;
 
 public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
     private static final int START_AGE = 0;
     private static final int STOP_AGE = 1;
-    private SavingsIncomeEntity mSIE;
+    private SavingsData mSD;
     private long mId;
     private int mIncomeType;
     private int mAgeType = STOP_AGE;
@@ -66,7 +67,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         mEditStartAgeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AgeData startAge = mSIE.getStartAge();
+                AgeData startAge = mSD.getStartAge();
                 FragmentManager fm = getSupportFragmentManager();
                 AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
                 dialog.show(fm, "");
@@ -92,7 +93,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
             mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
         }
 
-        mSIE = null;
+        mSD = null;
 
         mBalance.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -151,29 +152,29 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         mViewModel = ViewModelProviders.of(this, factory).
                 get(SavingsIncomeEditViewModel.class);
 
-        mViewModel.getData().observe(this, new Observer<SavingsIncomeEntity>() {
+        mViewModel.getData().observe(this, new Observer<SavingsData>() {
             @Override
-            public void onChanged(@Nullable SavingsIncomeEntity data) {
-                mSIE = data;
+            public void onChanged(@Nullable SavingsData data) {
+                mSD = data;
                 updateUI();
             }
         });
     }
 
     private void updateUI() {
-        if (mSIE == null) {
+        if (mSD == null) {
             return;
         }
 
-        mInitWithdrawPercentTextView.setText(mSIE.getWithdrawPercent()+"%");
+        mInitWithdrawPercentTextView.setText(mSD.getWithdrawPercent()+"%");
 
-        String incomeSourceName = mSIE.getName();
-        int type = mSIE.getType();
-        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, mIncomeType);
+        String incomeSourceName = mSD.getName();
+        int type = mSD.getType();
+        String incomeSourceTypeString = getIncomeSourceTypeString(this, mIncomeType);
         SystemUtils.setToolbarSubtitle(this, incomeSourceTypeString);
 
         String balanceString;
-        balanceString = mSIE.getBalance();
+        balanceString = mSD.getBalance();
         balanceString = SystemUtils.getFormattedCurrency(balanceString);
 
         ActionBar ab = getSupportActionBar();
@@ -183,25 +184,25 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         mIncomeSourceName.setText(incomeSourceName);
         mBalance.setText(balanceString);
 
-        String interest = mSIE.getInterest()+"%";
+        String interest = mSD.getInterest()+"%";
         mAnnualInterest.setText(interest);
 
-        String monthlyAdditionString = SystemUtils.getFormattedCurrency(mSIE.getMonthlyAddition());
+        String monthlyAdditionString = SystemUtils.getFormattedCurrency(mSD.getMonthlyAddition());
         setMonthlyAddition(monthlyAdditionString);
 
         AgeData age;
-        age = mSIE.getStartAge();
+        age = mSD.getStartAge();
         mStartAgeTextView.setText(age.toString());
 
-        age = mSIE.getStopMonthlyAdditionAge();
+        age = mSD.getStopMonthlyAdditionAge();
         if(age != null) {
             setStopMonthlyAdditionAge(age.toString());
         }
 
-        String increase = mSIE.getAnnualPercentIncrease()+"%";
+        String increase = mSD.getAnnualPercentIncrease()+"%";
         setAnnualPercentIncrease(increase);
 
-        setShowMonths(mSIE.getShowMonths() == 1);
+        setShowMonths(mSD.getShowMonths() == 1);
     }
 
     private void updateIncomeSourceData() {
@@ -258,7 +259,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         String name = mIncomeSourceName.getText().toString();
 
         int showMonths = getShowMonths() ? 1 : 0;
-        SavingsIncomeEntity sie = new SavingsIncomeEntity(mId, mIncomeType, name, startAge, balance, interest, monthlyAddition,
+        SavingsData sie = new SavingsData(mId, mIncomeType, name, startAge, balance, interest, monthlyAddition,
                 stopAge, withdrawPercent, annualPercentIncrease, showMonths);
         if(mActivityResult) {
             sendData(mId, name, startAge, balance, interest, monthlyAddition, stopAge,

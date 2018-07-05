@@ -8,25 +8,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.income.R;
-import com.intelliviz.income.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.income.util.SelectIncomeSourceListener;
 
 import java.util.List;
+
 
 /**
  * Adapter for income sources.
  * Created by Ed Muhlestein on 4/12/2017.
  */
 public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapter.IncomeSourceHolder> {
-    private List<IncomeSourceEntityBase> mIncomeSources;
+    private List<AbstractIncomeSource> mIncomeSources;
     private SelectIncomeSourceListener mListener;
     private String[] mIncomeTypeStrings;
 
     /**
      * Default constructor.
      */
-    public IncomeSourceAdapter(List<IncomeSourceEntityBase> incomeSources) {
+    public IncomeSourceAdapter(List<AbstractIncomeSource> incomeSources) {
         mIncomeSources = incomeSources;
     }
 
@@ -40,7 +41,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
 
     @Override
     public void onBindViewHolder(IncomeSourceHolder holder, int position) {
-        IncomeSourceEntityBase incomeSource = mIncomeSources.get(position);
+        AbstractIncomeSource incomeSource = mIncomeSources.get(position);
         holder.bindIncomeSource(incomeSource);
     }
 
@@ -53,7 +54,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
         }
     }
 
-    public void update(List<IncomeSourceEntityBase> incomeSources) {
+    public void update(List<AbstractIncomeSource> incomeSources) {
         if(incomeSources != null) {
             mIncomeSources.clear();
             mIncomeSources.addAll(incomeSources);
@@ -71,7 +72,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
 
     class IncomeSourceHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        private IncomeSourceEntityBase mIncomeSource;
+        private AbstractIncomeSource mIncomeSource;
         private long mId;
         private int mIncomeType;
         private String mIncomeSourceName;
@@ -88,7 +89,7 @@ public class IncomeSourceAdapter extends RecyclerView.Adapter<IncomeSourceAdapte
             itemView.setOnClickListener(this);
         }
 
-        void bindIncomeSource(IncomeSourceEntityBase incomeSource) {
+        void bindIncomeSource(AbstractIncomeSource incomeSource) {
 
             mIncomeSourceName = incomeSource.getName();
             incomeSourceNameTextView.setText(mIncomeSourceName);

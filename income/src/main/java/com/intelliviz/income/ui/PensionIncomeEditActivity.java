@@ -16,21 +16,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.intelliviz.data.PensionData;
 import com.intelliviz.income.R;
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.db.entity.PensionIncomeEntity;
-import com.intelliviz.income.util.AgeUtils;
-import com.intelliviz.income.util.RetirementConstants;
-import com.intelliviz.income.util.SystemUtils;
 import com.intelliviz.income.viewmodel.PensionIncomeEditViewModel;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.SystemUtils;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.income.util.RetirementConstants.INCOME_TYPE_PENSION;
+import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 
 
 public class PensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
-    private PensionIncomeEntity mPIE;
+    private PensionData mPD;
     private long mId;
     private boolean mActivityResult;
     private PensionIncomeEditViewModel mViewModel;
@@ -57,7 +58,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
         mEditMinimumgeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AgeData startAge = mPIE.getMinAge();
+                AgeData startAge = mPD.getAge();
                 FragmentManager fm = getSupportFragmentManager();
                 AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
                 dialog.show(fm, "");
@@ -80,7 +81,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
         }
 
-        mPIE = null;
+        mPD = null;
 
         mMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -102,28 +103,28 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeEditViewModel.class);
 
-        mViewModel.getData().observe(this, new Observer<PensionIncomeEntity>() {
+        mViewModel.getData().observe(this, new Observer<PensionData>() {
             @Override
-            public void onChanged(@Nullable PensionIncomeEntity data) {
-                mPIE = data;
+            public void onChanged(@Nullable PensionData data) {
+                mPD = data;
                 updateUI();
             }
         });
     }
 
     private void updateUI() {
-        if(mPIE == null) {
+        if(mPD == null) {
             return;
         }
-        String name = mPIE.getName();
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPIE.getMonthlyBenefit());
-        AgeData minAge = mPIE.getMinAge();
+        String name = mPD.getName();
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPD.getBenefit());
+        AgeData minAge = mPD.getAge();
 
         mIncomeSourceName.setText(name);
         mMinAge.setText(minAge.toString());
         mMonthlyBenefit.setText(monthlyBenefit);
 
-        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, INCOME_TYPE_PENSION);
+        String incomeSourceTypeString = getIncomeSourceTypeString(this, INCOME_TYPE_PENSION);
         SystemUtils.setToolbarSubtitle(this, incomeSourceTypeString);
     }
 
@@ -147,10 +148,12 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
         }
 
         if(mActivityResult) {
-            sendData(mId, name, benefit, minAge);
+            PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, minAge, benefit, 0);
+            mViewModel.setData(pd);
+            //sendData(mId, name, benefit, minAge);
         } else {
-            PensionIncomeEntity pie = new PensionIncomeEntity(mId, INCOME_TYPE_PENSION, name, minAge, benefit);
-            mViewModel.setData(pie);
+            PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, minAge, benefit, 0);
+            mViewModel.setData(pd);
         }
 
         finish();

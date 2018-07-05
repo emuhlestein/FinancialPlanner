@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.IncomeData;
-import com.intelliviz.income.util.AgeUtils;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.data.IncomeData;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.ui.SelectAmountListener;
 

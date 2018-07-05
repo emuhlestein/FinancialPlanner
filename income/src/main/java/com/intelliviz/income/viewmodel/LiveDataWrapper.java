@@ -2,32 +2,33 @@ package com.intelliviz.income.viewmodel;
 
 /**
  * Created by edm on 2/10/2018.
+ *
  */
 
-public class LiveDataWrapper {
-    private Object obj;
+public class LiveDataWrapper<T> {
+    private T obj;
     private int state;
     private String message;
 
-    public LiveDataWrapper(Object obj) {
+    public LiveDataWrapper(T obj) {
         this(obj, 0);
     }
 
-    public LiveDataWrapper(Object obj, int state) {
+    public LiveDataWrapper(T obj, int state) {
         this(obj, state, "");
     }
 
-    public LiveDataWrapper(Object obj, int state, String message) {
+    public LiveDataWrapper(T obj, int state, String message) {
         this.obj = obj;
         this.state = state;
         this.message = message;
     }
 
-    public Object getObj() {
+    public T getObj() {
         return obj;
     }
 
-    public void setObj(Object obj) {
+    public void setObj(T obj) {
         this.obj = obj;
     }
 

@@ -1,11 +1,10 @@
 package com.intelliviz.retirementhelper.util;
 
+import com.intelliviz.data.IncomeData;
+import com.intelliviz.lowlevel.data.AgeData;
 
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.IncomeData;
-
-import static com.intelliviz.income.util.RetirementConstants.WITHDRAW_MODE_AMOUNT;
-import static com.intelliviz.income.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
+import static com.intelliviz.lowlevel.util.RetirementConstants.WITHDRAW_MODE_AMOUNT;
+import static com.intelliviz.lowlevel.util.RetirementConstants.WITHDRAW_MODE_PERCENT;
 
 /**
  * Created by edm on 10/20/2017.

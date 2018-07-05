@@ -1,12 +1,12 @@
 package com.intelliviz.income.util;
 
 
-import com.intelliviz.income.db.entity.GovPensionEntity;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.data.GovPension;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 
 import java.util.List;
 
-import static com.intelliviz.income.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
 
 
 /**
@@ -14,8 +14,8 @@ import static com.intelliviz.income.util.RetirementConstants.EC_MAX_NUM_SOCIAL_S
  */
 
 public class GovEntityAccessor extends AbstractGovEntityAccessor {
-    public GovEntityAccessor(List<GovPensionEntity> gpeList, RetirementOptionsEntity roe) {
-        super(gpeList, roe);
+    public GovEntityAccessor(List<GovPension> gpList, RetirementOptionsEntity roe) {
+        super(gpList, roe);
     }
 
     @Override

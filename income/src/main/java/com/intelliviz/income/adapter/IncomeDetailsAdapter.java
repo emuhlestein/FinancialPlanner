@@ -9,9 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.intelliviz.income.R;
-import com.intelliviz.income.data.IncomeDetails;
+import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.income.ui.IncomeDetailsSelectListener;
-import com.intelliviz.income.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.List;
 

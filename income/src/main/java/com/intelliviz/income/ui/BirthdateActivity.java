@@ -17,11 +17,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.intelliviz.income.R;
-import com.intelliviz.income.util.AgeUtils;
 import com.intelliviz.income.util.BirthdateDialogAction;
+import com.intelliviz.lowlevel.util.AgeUtils;
 
-import static com.intelliviz.income.util.RetirementConstants.DATE_FORMAT;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.AgeUtils.DATE_FORMAT;
 
 
 public class BirthdateActivity extends DialogFragment {

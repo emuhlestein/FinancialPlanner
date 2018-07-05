@@ -16,18 +16,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.intelliviz.data.IncomeData;
+import com.intelliviz.data.IncomeDetails;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.income.adapter.IncomeDetailsAdapter;
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.IncomeData;
-import com.intelliviz.income.data.IncomeDetails;
 import com.intelliviz.income.data.MilestoneData;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
-import com.intelliviz.income.util.RetirementConstants;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.income.viewmodel.IncomeSummaryViewModel;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.util.UpdateRetirementOptions;
-import com.intelliviz.retirementhelper.viewmodel.IncomeSummaryViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,14 +90,14 @@ public abstract class BaseSummaryFragment extends Fragment implements
 
         mViewModel.getList().observe(this, new Observer<List<IncomeData>>() {
             @Override
-            public void onChanged(@Nullable List<IncomeData> benefitDataList) {
-                if(benefitDataList == null) {
+            public void onChanged(@Nullable List<IncomeData> incomeDataList) {
+                if(incomeDataList == null) {
                     return;
                 }
 
                 List<IncomeDetails> incomeDetails = new ArrayList<>();
 
-                for(IncomeData benefitData : benefitDataList) {
+                for(IncomeData benefitData : incomeDataList) {
                     AgeData age = benefitData.getAge();
                     String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
                     String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
@@ -106,7 +106,7 @@ public abstract class BaseSummaryFragment extends Fragment implements
                     incomeDetails.add(incomeDetail);
                 }
                 mIncomeDetailsAdapter.update(incomeDetails);
-                if (benefitDataList.isEmpty()) {
+                if (incomeDataList.isEmpty()) {
 
                     final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.add_income_source_message, Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction(R.string.dismiss, new View.OnClickListener() {

@@ -1,27 +1,31 @@
 package com.intelliviz.income.util;
 
 
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.SocialSecurityRules;
-import com.intelliviz.income.db.entity.GovPensionEntity;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.data.GovPension;
+import com.intelliviz.data.SocialSecurityRules;
+import com.intelliviz.db.entity.GovPensionEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.income.viewmodel.LiveDataWrapper;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.List;
 
-import static com.intelliviz.income.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
-import static com.intelliviz.income.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
 
 /**
  * Created by edm on 2/24/2018.
+ *
  */
-
+// TODO remove class, it is now obsolete
 public abstract class AbstractGovEntityAccessor implements EntityAccessor {
-    private List<GovPensionEntity> mGpeList;
+    private List<GovPension> mGpList;
     private RetirementOptionsEntity mROE;
 
-    public AbstractGovEntityAccessor(List<GovPensionEntity> gpeList, RetirementOptionsEntity roe) {
-        mGpeList = gpeList;
+    public AbstractGovEntityAccessor(List<GovPension> gpList, RetirementOptionsEntity roe) {
+        mGpList = gpList;
         mROE = roe;
     }
 
@@ -30,19 +34,19 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
             // a new entity is requested. see if one can be created
             return createDefault();
         } else {
-            GovPensionEntity gpe = getEntityById(id);
-            if(gpe == null) {
+            GovPension gp = getEntityById(id);
+            if(gp == null) {
                 return null;
             }
-            if(gpe.getSpouse() == 1) {
-                gpe.setRules(new SocialSecurityRules(mROE.getEndAge(), mROE.getSpouseBirthdate()));
-                return new LiveDataWrapper(gpe);
+            if(gp.isSpouse()) {
+                gp.setRules(new SocialSecurityRules(mROE.getEndAge(), mROE.getSpouseBirthdate()));
+                return new LiveDataWrapper(gp);
             } else {
-                gpe.setRules(new SocialSecurityRules(mROE.getEndAge(), mROE.getBirthdate()));
-                if(mGpeList.size() == 2) {
-                    return new LiveDataWrapper(gpe, EC_PRINCIPLE_SPOUSE);
+                gp.setRules(new SocialSecurityRules(mROE.getEndAge(), mROE.getBirthdate()));
+                if(mGpList.size() == 2) {
+                    return new LiveDataWrapper(gp, EC_PRINCIPLE_SPOUSE);
                 } else {
-                    return new LiveDataWrapper(gpe);
+                    return new LiveDataWrapper(gp);
                 }
             }
         }
@@ -54,14 +58,14 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
 
     private LiveDataWrapper createDefault() {
         int max_num = getMaxEntities();
-        if(mGpeList.size() == max_num) {
+        if(mGpList.size() == max_num) {
             int message = getMaxErrorCode();
             return new LiveDataWrapper(null, getMaxErrorCode());
         } else {
-            if(mGpeList.size() == 0) {
+            if(mGpList.size() == 0) {
                 return createNew(false, false);
             } else {
-                if(mGpeList.get(0).getSpouse() == 0) {
+                if(!mGpList.get(0).isSpouse()) {
                     return createNew(true, false);
                 } else {
                     return createNew(false, true);
@@ -90,7 +94,7 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
 
         GovPensionEntity gpe = new GovPensionEntity(0, RetirementConstants.INCOME_TYPE_GOV_PENSION,
                 "", "0", age, spouse ? 1 : 0);
-        gpe.setRules(new SocialSecurityRules(mROE.getEndAge(), birthdate));
+        //gpe.setRules(new SocialSecurityRules(mROE.getEndAge(), birthdate));
         if(isPrincipleSpouse) {
             return new LiveDataWrapper(gpe, EC_PRINCIPLE_SPOUSE);
         } else {
@@ -98,18 +102,18 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
         }
     }
 
-    private GovPensionEntity getEntityById(long id) {
-        if(mGpeList.size() == 2) {
-            if (mGpeList.get(0).getId() == id) {
-                return mGpeList.get(0);
-            } else if (mGpeList.get(1).getId() == id) {
-                return mGpeList.get(1);
+    private GovPension getEntityById(long id) {
+        if(mGpList.size() == 2) {
+            if (mGpList.get(0).getId() == id) {
+                return mGpList.get(0);
+            } else if (mGpList.get(1).getId() == id) {
+                return mGpList.get(1);
             } else {
                 return null;
             }
-        } else if(mGpeList.size() == 1) {
-            if (mGpeList.get(0).getId() == id) {
-                return mGpeList.get(0);
+        } else if(mGpList.size() == 1) {
+            if (mGpList.get(0).getId() == id) {
+                return mGpList.get(0);
             } else {
                 return null;
             }

@@ -1,25 +1,31 @@
 package com.intelliviz.income.viewmodel;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.IncomeData;
-import com.intelliviz.income.data.IncomeDataAccessor;
-import com.intelliviz.income.data.IncomeDetails;
-import com.intelliviz.income.data.Savings401kIncomeRules;
-import com.intelliviz.income.data.SavingsIncomeRules;
-import com.intelliviz.income.db.AppDatabase;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
-import com.intelliviz.income.db.entity.SavingsIncomeEntity;
-import com.intelliviz.income.util.AgeUtils;
-import com.intelliviz.income.util.RetirementConstants;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.data.IncomeData;
+import com.intelliviz.data.IncomeDataAccessor;
+import com.intelliviz.data.IncomeDetails;
+import com.intelliviz.data.Savings401kIncomeRules;
+import com.intelliviz.data.SavingsData;
+import com.intelliviz.data.SavingsIncomeRules;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.SavingsDataEntityMapper;
+import com.intelliviz.db.entity.SavingsIncomeEntity;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.SystemUtils;
+import com.intelliviz.repo.RetirementOptionsEntityRepo;
+import com.intelliviz.repo.SavingsIncomeEntityRepo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,25 +35,26 @@ import java.util.List;
  */
 
 public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
-    private AppDatabase mDB;
-    private MutableLiveData<SavingsIncomeEntity> mSIE =
+    private LiveData<SavingsData> mSIE =
             new MutableLiveData<>();
     private MutableLiveData<List<IncomeDetails>> mIncomeDetails = new MutableLiveData<List<IncomeDetails>>();
     private long mIncomeId;
+    private SavingsIncomeEntityRepo mRepo;
+    private RetirementOptionsEntityRepo mRetireRepo;
 
     public SavingsIncomeDetailsViewModel(Application application, long incomeId) {
         super(application);
         mIncomeId = incomeId;
-        mDB = AppDatabase.getInstance(application);
-        new GetAsyncTask().execute(incomeId);
-        new GetBenefitDataListByIdAsyncTask().execute(incomeId);
+        mRepo = new SavingsIncomeEntityRepo(application, incomeId);
+        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        subscribeSavingsIncomeEntityChanges();
     }
 
     public MutableLiveData<List<IncomeDetails>> getList() {
         return mIncomeDetails;
     }
 
-    public MutableLiveData<SavingsIncomeEntity> get() {
+    public LiveData<SavingsData> get() {
         return mSIE;
     }
 
@@ -55,10 +62,8 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         new GetBenefitDataListByIdAsyncTask().execute(mIncomeId);
     }
 
-    public void setData(SavingsIncomeEntity sie) {
-        new GetBenefitDataListAsyncTask().execute(sie);
-        mSIE.setValue(sie);
-        new UpdateAsyncTask().execute(sie);
+    public void setData(SavingsData sie) {
+        mRepo.setData(SavingsDataEntityMapper.map(sie));
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -77,20 +82,15 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, SavingsIncomeEntity> {
-
-        public GetAsyncTask() {
-        }
-
-        @Override
-        protected SavingsIncomeEntity doInBackground(Long... params) {
-            return mDB.savingsIncomeDao().get(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(SavingsIncomeEntity tdid) {
-            mSIE.setValue(tdid);
-        }
+    private void subscribeSavingsIncomeEntityChanges() {
+        MutableLiveData<SavingsIncomeEntity> sie = mRepo.get();
+        mSIE = Transformations.map(sie,
+                new Function<SavingsIncomeEntity, SavingsData>() {
+                    @Override
+                    public SavingsData apply(SavingsIncomeEntity sie) {
+                        return SavingsDataEntityMapper.map(sie);
+                    }
+                });
     }
 
     private class GetBenefitDataListByIdAsyncTask extends AsyncTask<Long, Void, List<IncomeDetails>> {
@@ -107,44 +107,9 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetBenefitDataListAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeDetails>> {
-
-        @Override
-        protected List<IncomeDetails> doInBackground(SavingsIncomeEntity... params) {
-            SavingsIncomeEntity sie = params[0];
-            long id = sie.getId();
-            if(id > 0) {
-                return getIncomeDetails(id);
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<IncomeDetails> benefitData) {
-            if(benefitData != null) {
-                mIncomeDetails.setValue(benefitData);
-            }
-        }
-    }
-
-    private class UpdateAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, Integer> {
-
-        @Override
-        protected Integer doInBackground(SavingsIncomeEntity... params) {
-            SavingsIncomeEntity sie = params[0];
-
-            return mDB.savingsIncomeDao().update(sie);
-        }
-
-        @Override
-        protected void onPostExecute(Integer numRowsUpdated) {
-        }
-    }
-
     private List<IncomeDetails> getIncomeDetails(long id) {
-        RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-        SavingsIncomeEntity entity = mDB.savingsIncomeDao().get(id);
+        RetirementOptionsEntity roe = mRetireRepo.get().getValue();
+        SavingsIncomeEntity entity = mRepo.get().getValue();
         String birthdate = roe.getBirthdate();
         AgeData endAge = roe.getEndAge();
         if(entity.getType() == RetirementConstants.INCOME_TYPE_401K) {

@@ -24,10 +24,10 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.income.ui.BirthdateActivity;
-import com.intelliviz.income.util.AgeUtils;
 import com.intelliviz.income.util.BirthdateDialogAction;
+import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.PersonalInfoDialogAction;
 import com.intelliviz.retirementhelper.viewmodel.PersonalInfoViewModel;
@@ -35,10 +35,10 @@ import com.intelliviz.retirementhelper.viewmodel.PersonalInfoViewModel;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.intelliviz.income.util.RetirementConstants.DATE_FORMAT;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_BIRTHDATE;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.AgeUtils.DATE_FORMAT;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
 
 
 /**
@@ -48,7 +48,7 @@ import static com.intelliviz.income.util.RetirementConstants.EXTRA_SPOUSE_BIRTHD
  */
 public class PersonalInfoDialog extends DialogFragment implements AdapterView.OnItemSelectedListener{
     private PersonalInfoViewModel mViewModel;
-    private RetirementOptionsEntity mROE;
+    private RetirementOptions mROE;
     private PersonalInfoDialogAction mPersonalInfoDialogAction;
     private CoordinatorLayout mCoordinatorLayout;
     private TextView mNameTextView;
@@ -154,9 +154,9 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         mViewModel = ViewModelProviders.of(this).
                 get(PersonalInfoViewModel.class);
 
-        mViewModel.get().observe(this, new Observer<RetirementOptionsEntity>() {
+        mViewModel.get().observe(this, new Observer<RetirementOptions>() {
             @Override
-            public void onChanged(@Nullable RetirementOptionsEntity roe) {
+            public void onChanged(@Nullable RetirementOptions roe) {
                 mROE = roe;
                 updateUI(roe);
             }
@@ -207,7 +207,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         ft.commit();
     }
 
-    private void updateUI(RetirementOptionsEntity roe) {
+    private void updateUI(RetirementOptions roe) {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
@@ -281,8 +281,6 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         mROE.setIncludeSpouse(includeSpouse);
         mROE.setSpouseBirthdate(spouseBirthdate);
         mROE.setBirthdate(birthdate);
-        mViewModel.update(mROE);
-
         mViewModel.update(mROE);
 
         dismiss();

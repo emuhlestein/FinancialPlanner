@@ -11,8 +11,8 @@ import android.widget.ListView;
 
 import com.intelliviz.income.R;
 
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
 
 
 /**

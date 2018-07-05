@@ -1,57 +1,83 @@
 package com.intelliviz.income.viewmodel;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.IncomeData;
-import com.intelliviz.income.data.IncomeDetails;
-import com.intelliviz.income.data.SocialSecurityRules;
-import com.intelliviz.income.db.AppDatabase;
-import com.intelliviz.income.db.entity.GovPensionEntity;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.data.GovPension;
+import com.intelliviz.data.IncomeData;
+import com.intelliviz.db.entity.GovPensionEntity;
+import com.intelliviz.db.entity.GovPensionEntityMapper;
+import com.intelliviz.data.IncomeDetails;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.SystemUtils;
+import com.intelliviz.repo.GovEntityRepo;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by Ed Muhlestein on 10/16/2017.
  */
 
 public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
-    private MutableLiveData<GovPensionEntity> mGPE =
-            new MutableLiveData<>();
-    private AppDatabase mDB;
+    private LiveData<GovPension> mGP;
     private long mIncomeId;
-    private MutableLiveData<List<IncomeDetails>> mBenefitDataList = new MutableLiveData<List<IncomeDetails>>();
+    private LiveData<List<IncomeDetails>> mIncomeDetailsList = new MutableLiveData<>();
+    private GovEntityRepo mRepo;
 
     public GovPensionIncomeDetailsViewModel(Application application, long incomeId) {
         super(application);
-        mDB = AppDatabase.getInstance(application);
-        new GetAsyncTask().execute(incomeId);
+        mRepo = new GovEntityRepo(application, incomeId);
         mIncomeId = incomeId;
+        subscribeToGovPensionEntityListChanges();
+        subscribeToGovPensionEntityChanges();
     }
 
-    public MutableLiveData<List<IncomeDetails>> getList() {
-        return mBenefitDataList;
+    public LiveData<List<IncomeDetails>> getList() {
+        return mIncomeDetailsList;
     }
 
-    public MutableLiveData<GovPensionEntity> get() {
-        return mGPE;
+    private void subscribeToGovPensionEntityListChanges() {
+        /*
+        MutableLiveData<List<GovPensionEntity>> gpeList = mRepo.getList();
+        mIncomeDetailsList = Transformations.map(gpeList,
+                new Function<List<GovPensionEntity>, List<IncomeDetails>>() {
+                    @Override
+                    public List<IncomeDetails> apply(List<GovPensionEntity> govPensionEntities) {
+                        return getIncomeDetails(govPensionEntities);
+                    }
+                });
+                */
     }
 
-    public void setData(GovPensionEntity gpe) {
-        new UpdateAsyncTask().execute(gpe);
+    private void subscribeToGovPensionEntityChanges() {
+        MutableLiveData<GovPensionEntity> gpe = mRepo.get();
+        mGP = Transformations.map(gpe,
+                new Function<GovPensionEntity, GovPension>() {
+                    @Override
+                    public GovPension apply(GovPensionEntity gpe) {
+                        return GovPensionEntityMapper.map(gpe);
+                    }
+                });
+    }
+
+    public LiveData<GovPension> get() {
+        return mGP;
+    }
+
+    public void setData(GovPension gp) {
+        mRepo.setData(GovPensionEntityMapper.map(gp));
     }
 
     public void update() {
-        new GetBenefitDataListByIdAsyncTask().execute(mIncomeId);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -70,105 +96,10 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, GovPensionEntity> {
+    private List<IncomeDetails> getIncomeDetails(GovPension gp) {
 
-        @Override
-        protected GovPensionEntity doInBackground(Long... params) {
-            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
-            if(gpeList == null) {
-                return null;
-            }
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-            SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
-            if(gpeList.size() == 1) {
-                return gpeList.get(0);
-            } else {
-                if(gpeList.get(0).getId() == params[0]) {
-                    return gpeList.get(0);
-                } else {
-                    return gpeList.get(1);
-                }
-            }
-        }
-
-        @Override
-        protected void onPostExecute(GovPensionEntity gpe) {
-            mGPE.setValue(gpe);
-        }
-    }
-
-    private class GetBenefitDataListByIdAsyncTask extends AsyncTask<Long, Void, GovPensionEntity> {
-
-        @Override
-        protected GovPensionEntity doInBackground(Long... params) {
-            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
-            if(gpeList == null) {
-                return null;
-            }
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-            SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
-            if(gpeList.size() == 1) {
-                return gpeList.get(0);
-            } else {
-                if(gpeList.get(0).getId() == params[0]) {
-                    return gpeList.get(0);
-                } else {
-                    return gpeList.get(1);
-                }
-            }
-        }
-
-        @Override
-        protected void onPostExecute(GovPensionEntity gpe) {
-            mGPE.setValue(gpe);
-            mBenefitDataList.setValue(getIncomeDetails(gpe));
-        }
-    }
-
-    private class UpdateAsyncTask extends AsyncTask<GovPensionEntity, Void, List<GovPensionEntity>> {
-
-        @Override
-        protected List<GovPensionEntity> doInBackground(GovPensionEntity... params) {
-            GovPensionEntity entity = params[0];
-            mDB.govPensionDao().update(entity);
-
-            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
-            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
-            SocialSecurityRules.setRulesOnGovPensionEntities(gpeList, roe);
-            return gpeList;
-        }
-
-        @Override
-        protected void onPostExecute(List<GovPensionEntity> gpeList) {
-
-            if(gpeList.size() == 1) {
-                mGPE.setValue(gpeList.get(0));
-                List<IncomeData> benefitDataList = gpeList.get(0).getIncomeData();
-                if(benefitDataList != null) {
-                    mBenefitDataList.setValue(getIncomeDetails(gpeList.get(0)));
-                }
-            } else if(gpeList.size() == 2) {
-                GovPensionEntity gpe;
-                if(gpeList.get(0).getId() == mIncomeId) {
-                    gpe = gpeList.get(0);
-                } else {
-                    gpe = gpeList.get(1);
-                }
-
-
-                List<IncomeData> benefitDataList = gpe.getIncomeData();
-                if(benefitDataList != null) {
-                    mBenefitDataList.setValue(getIncomeDetails(gpe));
-                }
-                mGPE.setValue(gpe);
-            }
-        }
-    }
-
-    private List<IncomeDetails> getIncomeDetails(GovPensionEntity gpe) {
-
-        double monthlyBenefit = gpe.getMonthlyBenefit();
-        double fullMonthlyBenefit = Double.parseDouble(gpe.getFullMonthlyBenefit());
+        double monthlyBenefit = gp.getMonthlyBenefit();
+        double fullMonthlyBenefit = Double.parseDouble(gp.getFullMonthlyBenefit());
 
         String message = "";
         boolean addMessage = false;
@@ -177,7 +108,7 @@ public class GovPensionIncomeDetailsViewModel extends AndroidViewModel {
             message = "Spousal benefits apply. Spouse cannot take benefits before principle spouse.";
         }
 
-        List<IncomeData> listIncomeData = gpe.getIncomeData();
+        List<IncomeData> listIncomeData = gp.getIncomeData();
         List<IncomeDetails> incomeDetails = new ArrayList<>();
         for(IncomeData incomeData : listIncomeData) {
             AgeData age = incomeData.getAge();

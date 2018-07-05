@@ -1,58 +1,49 @@
 package com.intelliviz.retirementhelper.viewmodel;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.income.db.AppDatabase;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.data.RetirementOptions;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.RetirementOptionsMapper;
+import com.intelliviz.repo.RetirementOptionsEntityRepo;
 
 /**
  * Created by edm on 2/12/2018.
  */
 
 public class PersonalInfoViewModel extends AndroidViewModel {
-    private MutableLiveData<RetirementOptionsEntity> mROE =
-            new MutableLiveData<>();
-    private AppDatabase mDB;
+    private LiveData<RetirementOptions> mROE = new MutableLiveData<>();
+    private RetirementOptionsEntityRepo mRetireRepo;
 
     public PersonalInfoViewModel(@NonNull Application application) {
         super(application);
-        mDB = AppDatabase.getInstance(application);
+        mRetireRepo = new RetirementOptionsEntityRepo(application);
     }
 
-    public MutableLiveData<RetirementOptionsEntity> get() {
-        return mROE;
+    public LiveData<RetirementOptions> get() {
+        LiveData<RetirementOptionsEntity> roe = mRetireRepo.get();
+
+        LiveData<RetirementOptions> retireOptions =
+                Transformations.switchMap(roe,
+                        new Function<RetirementOptionsEntity, LiveData<RetirementOptions>>() {
+                            @Override
+                            public LiveData<RetirementOptions> apply(RetirementOptionsEntity input) {
+                                RetirementOptions ro = RetirementOptionsMapper.map(input);
+                                MutableLiveData<RetirementOptions> ldata = new MutableLiveData<>();
+                                ldata.setValue(ro);
+                                return ldata;
+                            }
+                        });
+        return retireOptions;
     }
 
-    public void update(RetirementOptionsEntity roe) {
-
-    }
-
-    private class GetAsyncTask extends android.os.AsyncTask<Void, Void, RetirementOptionsEntity> {
-
-        @Override
-        protected RetirementOptionsEntity doInBackground(Void... params) {
-            return mDB.retirementOptionsDao().get();
-        }
-
-        @Override
-        protected void onPostExecute(RetirementOptionsEntity roe) {
-            mROE.setValue(roe);
-        }
-    }
-
-    private class UpdateAsyncTask extends android.os.AsyncTask<RetirementOptionsEntity, Void, Void> {
-
-        @Override
-        protected Void doInBackground(RetirementOptionsEntity... params) {
-            mDB.retirementOptionsDao().update(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-        }
+    public void update(RetirementOptions roe) {
+        mRetireRepo.update(RetirementOptionsMapper.map(roe));
     }
 }

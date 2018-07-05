@@ -23,10 +23,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.income.ui.IncomeSourceListFragment;
-import com.intelliviz.income.util.RetirementConstants;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.PersonalInfoDialogAction;
@@ -35,8 +35,8 @@ import com.intelliviz.retirementhelper.viewmodel.NavigationModelView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_PERSONAL_INFO;
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_PERSONAL_INFO;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_RETIRE_OPTIONS;
 
 
 /**

@@ -1,17 +1,20 @@
 package com.intelliviz.income.viewmodel;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.intelliviz.income.data.PensionRules;
-import com.intelliviz.income.db.AppDatabase;
-import com.intelliviz.income.db.entity.PensionIncomeEntity;
+import com.intelliviz.data.PensionData;
+import com.intelliviz.db.entity.PensionDataEntityMapper;
+import com.intelliviz.db.entity.PensionIncomeEntity;
+import com.intelliviz.repo.PensionIncomeEntityRepo;
+import com.intelliviz.repo.RetirementOptionsEntityRepo;
 
 import java.util.List;
 
@@ -21,35 +24,45 @@ import java.util.List;
  */
 
 public class PensionIncomeEditViewModel extends AndroidViewModel {
-    private MutableLiveData<PensionIncomeEntity> mPID =
+    private LiveData<PensionData> mPD =
             new MutableLiveData<>();
-    private AppDatabase mDB;
+    private PensionIncomeEntityRepo mRepo;
+    private RetirementOptionsEntityRepo mROERepo;
+    private long mIncomeId;
 
     public PensionIncomeEditViewModel(Application application, long incomeId) {
         super(application);
-        mDB = AppDatabase.getInstance(application); //PensionDatabase.getInstance(this.getApplication());
-        new GetAsyncTask().execute(incomeId);
+        mIncomeId = incomeId;
+        mROERepo = new RetirementOptionsEntityRepo(application);
+        mRepo = new PensionIncomeEntityRepo(application, incomeId);
+        subscribeToPensionEntityChanges();
     }
 
-    public LiveData<PensionIncomeEntity> getData() {
-        return mPID;
+    public LiveData<PensionData> getData() {
+        return mPD;
     }
 
     public LiveData<List<PensionIncomeEntity>> getList() {
         return null;
     }
 
-    public void setData(PensionIncomeEntity pid) {
-        mPID.setValue(pid);
-        if(pid.getId() == 0) {
-            new InsertAsyncTask().execute(pid);
-        } else {
-            new UpdateAsyncTask().execute(pid);
-        }
+    public void setData(PensionData pd) {
+        mRepo.setData(PensionDataEntityMapper.map(pd));
     }
 
-    public void delete(PensionIncomeEntity entity) {
-        new DeleteAsyncTask().execute(entity);
+    private void subscribeToPensionEntityChanges() {
+        MutableLiveData<PensionIncomeEntity> pie = mRepo.get();
+        mPD = Transformations.map(pie,
+                new Function<PensionIncomeEntity, PensionData>() {
+                    @Override
+                    public PensionData apply(PensionIncomeEntity pie) {
+                        return PensionDataEntityMapper.map(pie);
+                    }
+                });
+    }
+
+    public void delete(PensionData pd) {
+        mRepo.delete(PensionDataEntityMapper.map(pd));
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -65,58 +78,6 @@ public class PensionIncomeEditViewModel extends AndroidViewModel {
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
             return (T) new PensionIncomeEditViewModel(mApplication, mIncomeId);
-        }
-    }
-
-    private class GetAsyncTask extends AsyncTask<Long, Void, PensionIncomeEntity> {
-
-        @Override
-        protected PensionIncomeEntity doInBackground(Long... params) {
-            long id = params[0];
-            if(id == 0) {
-                // need to create default
-                return new PensionIncomeEntity(0, -1, "", PensionRules.DEFAULT_MIN_AGE, "0");
-            } else {
-                return mDB.pensionIncomeDao().get(params[0]);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(PensionIncomeEntity pid) {
-            mPID.setValue(pid);
-        }
-    }
-
-    private class UpdateAsyncTask extends AsyncTask<PensionIncomeEntity, Void, Integer> {
-
-        @Override
-        protected Integer doInBackground(PensionIncomeEntity... params) {
-            return mDB.pensionIncomeDao().update(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Integer numRowsUpdated) {
-        }
-    }
-
-    private class InsertAsyncTask extends AsyncTask<PensionIncomeEntity, Void, Long> {
-
-        @Override
-        protected Long doInBackground(PensionIncomeEntity... params) {
-            return mDB.pensionIncomeDao().insert(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Long numRowsInserted) {
-        }
-    }
-
-    private class DeleteAsyncTask extends AsyncTask<PensionIncomeEntity, Void, Void> {
-
-        @Override
-        protected Void doInBackground(PensionIncomeEntity... params) {
-            mDB.pensionIncomeDao().delete(params[0]);
-            return null;
         }
     }
 }

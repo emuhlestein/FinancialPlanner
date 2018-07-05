@@ -1,6 +1,6 @@
 package com.intelliviz.income.ui;
 
-import com.intelliviz.income.data.IncomeDetails;
+import com.intelliviz.data.IncomeDetails;
 
 /**
  * Created by edm on 12/7/2017.

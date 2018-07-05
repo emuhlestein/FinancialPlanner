@@ -17,13 +17,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.intelliviz.data.GovPension;
 import com.intelliviz.income.R;
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.data.IncomeDetails;
-import com.intelliviz.income.db.entity.GovPensionEntity;
-import com.intelliviz.income.util.RetirementConstants;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.income.viewmodel.GovPensionIncomeDetailsViewModel;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ import static android.view.View.GONE;
 
 public class GovPensionIncomeDetailsActivity extends AppCompatActivity implements IncomeDetailsSelectListener{
     private GovPensionIncomeDetailsViewModel mViewModel;
-    private GovPensionEntity mGPE;
+    private GovPension mGP;
     private long mId;
 
     private Toolbar mToolbar;
@@ -131,6 +131,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeDetailsViewModel.class);
 
+        /*
         mViewModel.getList().observe(this, new Observer<List<IncomeDetails>>() {
             @Override
             public void onChanged(@Nullable List<IncomeDetails> listIncomeDetails) {
@@ -141,11 +142,12 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
                 //mAdapter.update(listIncomeDetails);
             }
         });
+        */
 
-        mViewModel.get().observe(this, new Observer<GovPensionEntity>() {
+        mViewModel.get().observe(this, new Observer<GovPension>() {
             @Override
-            public void onChanged(@Nullable GovPensionEntity gpe) {
-                mGPE = gpe;
+            public void onChanged(@Nullable GovPension gp) {
+                mGP = gp;
                 updateUI();
             }
         });
@@ -158,20 +160,20 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
     }
 
     private void updateUI() {
-        if(mGPE == null) {
+        if(mGP == null) {
             return;
         }
 
-        SystemUtils.setToolbarSubtitle(this, "Social Security - " + mGPE.getName());
+        SystemUtils.setToolbarSubtitle(this, "Social Security - " + mGP.getName());
 
-        if(mGPE.isPrincipleSpouse()) {
+        if(mGP.isPrincipleSpouse()) {
             mPrincipleSpouseTextView.setVisibility(View.VISIBLE);
         }
 
-        mNameTextView.setText(mGPE.getName());
+        mNameTextView.setText(mGP.getName());
 
-        AgeData age = mGPE.getStartAge();
-        AgeData actualStartAge = mGPE.getActualStartAge();
+        AgeData age = mGP.getStartAge();
+        AgeData actualStartAge = mGP.getActualStartAge();
 
         if(actualStartAge != null) {
             String temp = getResources().getString(R.string.desired_start_age);
@@ -184,13 +186,13 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
             mStartAgeTextView.setText(age.toString());
         }
 
-        age = mGPE.getFullRetirementAge();
+        age = mGP.getFullRetirementAge();
         mFullRetirementAgeTextView.setText(age.toString());
 
-        String formattedValue = SystemUtils.getFormattedCurrency(mGPE.getFullMonthlyBenefit());
+        String formattedValue = SystemUtils.getFormattedCurrency(mGP.getFullMonthlyBenefit());
         mFullMonthlyBenefitTextView.setText(formattedValue);
 
-        formattedValue = SystemUtils.getFormattedCurrency(mGPE.getMonthlyBenefit());
+        formattedValue = SystemUtils.getFormattedCurrency(mGP.getMonthlyBenefit());
         mMonthlyBenefitTextView.setText(formattedValue);
 
         // TODO add multiline text view for info about benefits

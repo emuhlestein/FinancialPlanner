@@ -17,28 +17,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.intelliviz.data.GovPension;
 import com.intelliviz.income.R;
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.db.entity.GovPensionEntity;
-import com.intelliviz.income.util.AgeUtils;
 import com.intelliviz.income.util.BirthdateDialogAction;
-import com.intelliviz.income.util.RetirementConstants;
-import com.intelliviz.income.util.SystemUtils;
 import com.intelliviz.income.viewmodel.GovPensionIncomeEditViewModel;
 import com.intelliviz.income.viewmodel.LiveDataWrapper;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.SystemUtils;
 
-import static com.intelliviz.income.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
-import static com.intelliviz.income.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
-import static com.intelliviz.income.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
-import static com.intelliviz.income.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
-import static com.intelliviz.income.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.income.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
-import static com.intelliviz.income.util.SystemUtils.getFloatValue;
+import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.SystemUtils.getFloatValue;
 
 
 public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
 
-    private GovPensionEntity mGPE;
+    private GovPension mGP;
     private long mId;
     private GovPensionIncomeEditViewModel mViewModel;
     private boolean mIsPrincipleSpouse;
@@ -101,12 +102,15 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
         mViewModel.get().observe(this, new Observer<LiveDataWrapper>() {
             @Override
-            public void onChanged(@Nullable LiveDataWrapper gpe) {
-                mGPE = (GovPensionEntity) gpe.getObj();
+            public void onChanged(@Nullable LiveDataWrapper ldw) {
+                if(ldw == null) {
+                    return;
+                }
+                mGP = (GovPension) ldw.getObj();
                 mIsPrincipleSpouse = false;
-                switch(gpe.getState()) {
+                switch(ldw.getState()) {
                     case EC_MAX_NUM_SOCIAL_SECURITY:
-                        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
+                        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, ldw.getMessage(), Snackbar.LENGTH_INDEFINITE);
                         snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -117,7 +121,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         snackbar.show();
                         break;
                     case EC_MAX_NUM_SOCIAL_SECURITY_FREE:
-                        final Snackbar snackbar1 = Snackbar.make(mCoordinatorLayout, gpe.getMessage(), Snackbar.LENGTH_INDEFINITE);
+                        final Snackbar snackbar1 = Snackbar.make(mCoordinatorLayout, ldw.getMessage(), Snackbar.LENGTH_INDEFINITE);
                         snackbar1.setAction(R.string.dismiss, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -128,12 +132,14 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         snackbar1.show();
                         break;
                     case EC_NO_SPOUSE_BIRTHDATE:
+                        /*
                         showDialog("01-01-1900", new BirthdateDialogAction() {
                             @Override
                             public void onGetBirthdate(String birthdate) {
                                 mViewModel.updateSpouseBirthdate(birthdate);
                             }
                         });
+                        */
                         break;
                     case EC_PRINCIPLE_SPOUSE:
                         mIsPrincipleSpouse = true;
@@ -150,7 +156,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             switch (requestCode) {
                 case REQUEST_SPOUSE_BIRTHDATE:
                     String birthdate = intent.getStringExtra(RetirementConstants.EXTRA_BIRTHDATE);
-                    mViewModel.updateSpouseBirthdate(birthdate);
+                    //mViewModel.updateSpouseBirthdate(birthdate);
                     break;
                 default:
                     super.onActivityResult(requestCode, resultCode, intent);
@@ -159,7 +165,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     }
 
     private void updateUI() {
-        if(mGPE == null) {
+        if(mGP == null) {
             return;
         }
 
@@ -169,19 +175,19 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             mPrincipleSpouseLabel.setVisibility(View.GONE);
         }
 
-        mName.setText(mGPE.getName());
+        mName.setText(mGP.getName());
 
-        AgeData age = mGPE.getFullRetirementAge();
+        AgeData age = mGP.getFullRetirementAge();
         mFullRetirementAge.setText(age.toString());
 
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(mGPE.getFullMonthlyBenefit());
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(mGP.getFullMonthlyBenefit());
         mFullMonthlyBenefit.setText(monthlyBenefit);
 
-        age = mGPE.getStartAge();
+        age = mGP.getStartAge();
         setStartRetirementAge(age.toString());
 
-        int type = mGPE.getType();
-        String incomeSourceTypeString = SystemUtils.getIncomeSourceTypeString(this, type);
+        int type = mGP.getType();
+        String incomeSourceTypeString = getIncomeSourceTypeString(this, type);
         SystemUtils.setToolbarSubtitle(this, incomeSourceTypeString);
     }
 
@@ -197,9 +203,9 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
         AgeData startAge = getStartRetirementAge();
 
-        GovPensionEntity gpe = new GovPensionEntity(mGPE.getId(), mGPE.getType(), name,
-                fullBenefit, startAge, mGPE.getSpouse());
-        mViewModel.setData(gpe);
+        GovPension gp = new GovPension(mGP.getId(), mGP.getType(), name,
+                fullBenefit, startAge, mGP.isSpouse());
+        mViewModel.setData(gp);
 
         finish();
     }
