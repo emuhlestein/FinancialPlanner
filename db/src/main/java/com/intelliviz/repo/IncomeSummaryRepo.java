@@ -43,6 +43,10 @@ public class IncomeSummaryRepo {
         return mIncomeList;
     }
 
+    public void update() {
+        new GetAllIncomeSummariesAsyncTask().execute();
+    }
+
     private class GetAllIncomeSummariesAsyncTask extends AsyncTask<Void, List<IncomeSourceEntityBase>, List<IncomeSourceEntityBase>> {
 
         @Override

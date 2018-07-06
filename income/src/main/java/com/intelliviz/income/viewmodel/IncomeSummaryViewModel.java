@@ -24,7 +24,6 @@ import java.util.List;
  */
 
 public class IncomeSummaryViewModel extends AndroidViewModel {
-    private MutableLiveData<List<IncomeData>> mAmountData = new MutableLiveData<>();
     private GovEntityRepo mGovRepo;
     private PensionIncomeEntityRepo mPensionRepo;
     private SavingsIncomeEntityRepo mSavingsRepo;
@@ -42,16 +41,11 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
         mIncomeRepo = new IncomeSummaryRepo(application);
         subscribe();
-        //new GetAmountDataAsyncTask().execute();
+        mIncomeRepo.update();
     }
-
-    public LiveData<List<IncomeData>> getList() {
-        return mAmountData;
-    }
-
 
     public void update() {
-        // TODO implement
+        mIncomeRepo.update();
     }
 
     public LiveData<List<IncomeData>> get() {

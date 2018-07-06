@@ -80,15 +80,9 @@ public abstract class BaseSummaryFragment extends Fragment implements
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
         //        linearLayoutManager.getOrientation()));
 
-        return view;
-    }
+        mViewModel = ViewModelProviders.of(getActivity()).get(IncomeSummaryViewModel.class);
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(IncomeSummaryViewModel.class);
-
-        mViewModel.getList().observe(this, new Observer<List<IncomeData>>() {
+        mViewModel.get().observe(this, new Observer<List<IncomeData>>() {
             @Override
             public void onChanged(@Nullable List<IncomeData> incomeDataList) {
                 if(incomeDataList == null) {
@@ -119,6 +113,13 @@ public abstract class BaseSummaryFragment extends Fragment implements
                 }
             }
         });
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
