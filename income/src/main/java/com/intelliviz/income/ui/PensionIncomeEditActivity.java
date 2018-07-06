@@ -1,6 +1,5 @@
 package com.intelliviz.income.ui;
 
-import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -18,7 +17,7 @@ import android.widget.TextView;
 
 import com.intelliviz.data.PensionData;
 import com.intelliviz.income.R;
-import com.intelliviz.income.viewmodel.PensionIncomeEditViewModel;
+import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -34,7 +33,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
     private PensionData mPD;
     private long mId;
     private boolean mActivityResult;
-    private PensionIncomeEditViewModel mViewModel;
+    private PensionIncomeViewModel mViewModel;
 
     private CoordinatorLayout mCoordinatorLayout;
     private EditText mIncomeSourceName;
@@ -98,12 +97,12 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             }
         });
 
-        PensionIncomeEditViewModel.Factory factory = new
-                PensionIncomeEditViewModel.Factory(getApplication(), mId);
+        PensionIncomeViewModel.Factory factory = new
+                PensionIncomeViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(PensionIncomeEditViewModel.class);
+                get(PensionIncomeViewModel.class);
 
-        mViewModel.getData().observe(this, new Observer<PensionData>() {
+        mViewModel.get().observe(this, new Observer<PensionData>() {
             @Override
             public void onChanged(@Nullable PensionData data) {
                 mPD = data;
@@ -147,14 +146,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             return;
         }
 
-        if(mActivityResult) {
-            PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, minAge, benefit, 0);
-            mViewModel.setData(pd);
-            //sendData(mId, name, benefit, minAge);
-        } else {
-            PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, minAge, benefit, 0);
-            mViewModel.setData(pd);
-        }
+        PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, minAge, benefit, 0);
+        mViewModel.setData(pd);
 
         finish();
     }
@@ -163,18 +156,5 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
     public void onEditAge(String year, String month) {
         AgeData age = AgeUtils.parseAgeString(year, month);
         mMinAge.setText(age.toString());
-    }
-
-    private void sendData(long id, String name, String monthlyBenefit, AgeData minAge) {
-        Intent returnIntent = new Intent();
-        Bundle bundle = new Bundle();
-
-        bundle.putLong(EXTRA_INCOME_SOURCE_ID, id);
-        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
-        bundle.putParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE, minAge);
-        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_BENEFIT, monthlyBenefit);
-        returnIntent.putExtras(bundle);
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
     }
 }

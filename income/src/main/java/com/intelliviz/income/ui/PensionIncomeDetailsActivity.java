@@ -19,11 +19,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.intelliviz.data.IncomeData;
 import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.data.PensionData;
 import com.intelliviz.income.R;
-import com.intelliviz.income.viewmodel.PensionIncomeDetailsViewModel;
+import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
@@ -36,10 +35,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSI
 
 
 public class PensionIncomeDetailsActivity extends AppCompatActivity {
-
-    //private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
-    private PensionIncomeDetailsViewModel mViewModel;
+    private PensionIncomeViewModel mViewModel;
     private PensionData mPD;
     private long mId;
 
@@ -98,10 +95,8 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         });
 
         mIncomeDetails = new ArrayList<>();
-        //mAdapter = new IncomeDetailsAdapter(this, mIncomeDetails);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        //mRecyclerView.setAdapter(mAdapter);
 
         // The FAB will pop up an activity to allow a new income source to be edited
         mEditPensionFAB.setOnClickListener(new View.OnClickListener() {
@@ -114,31 +109,10 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
             }
         });
 
-
-        // For adding dividing line between views
-        //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
-        //        linearLayoutManager.getOrientation()));
-        PensionIncomeDetailsViewModel.Factory factory = new
-                PensionIncomeDetailsViewModel.Factory(getApplication(), mId);
+        PensionIncomeViewModel.Factory factory = new
+                PensionIncomeViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(PensionIncomeDetailsViewModel.class);
-
-        mViewModel.getList().observe(this, new Observer<List<IncomeData>>() {
-            @Override
-            public void onChanged(@Nullable List<IncomeData> listBenefitData) {
-
-                List<IncomeDetails> incomeDetails = new ArrayList<>();
-                for(IncomeData benefitData : listBenefitData) {
-                    AgeData age = benefitData.getAge();
-                    String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
-                    String line1 = age.toString() + "   " + amount;
-                    IncomeDetails incomeDetail;
-                    incomeDetail = new IncomeDetails(line1, benefitData.getBalanceState(), "");
-                    incomeDetails.add(incomeDetail);
-                }
-                //mAdapter.update(incomeDetails);
-            }
-        });
+                get(PensionIncomeViewModel.class);
 
         mViewModel.get().observe(this, new Observer<PensionData>() {
             @Override
@@ -152,7 +126,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        //mViewModel.update(mPD);
+        mViewModel.update();
     }
 
     @Override

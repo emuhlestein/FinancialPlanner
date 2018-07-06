@@ -39,10 +39,6 @@ public class PensionData extends AbstractIncomeSource {
         mBenefit = benefit;
     }
 
-    public void setBenefitInfo(int benefitInfo) {
-        mBenefitInfo = benefitInfo;
-    }
-
     public AgeData getAge() {
         return mAge;
     }
@@ -72,6 +68,7 @@ public class PensionData extends AbstractIncomeSource {
         }
     }
 
+    @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
         if(mRules != null) {
             return mRules.getIncomeDataAccessor();

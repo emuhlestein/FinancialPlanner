@@ -26,7 +26,7 @@ public class IncomeSourceListRepo {
     public IncomeSourceListRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
         mGovRepo = new GovEntityRepo(application);
-        mPensionRepo = new PensionIncomeEntityRepo(application);
+        mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
         mSavingsRepo = new SavingsIncomeEntityRepo(application);
         mRetireRepo = new RetirementOptionsEntityRepo(application);
         new GetAllIncomeSourcesAsyncTask().execute();
@@ -139,21 +139,6 @@ public class IncomeSourceListRepo {
     }
 
     private class DeleteSavingsAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeSourceEntityBase>> {
-
-        @Override
-        protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
-            SavingsIncomeEntity sie = params[0];
-            mSavingsRepo.delete(sie);
-            return getAllIncomeSources();
-        }
-
-        @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
-            mIncomeSources.setValue(incomeSourceEntityBases);
-        }
-    }
-
-    private class DeleteTaxDeferredAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeSourceEntityBase>> {
 
         @Override
         protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {

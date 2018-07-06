@@ -31,7 +31,7 @@ public class IncomeSummaryRepo {
         mROE = mRetireRepo.get();
         mGovRepo = new GovEntityRepo(application, 0);
         mSavingsRepo = new SavingsIncomeEntityRepo(application, 0);
-        mPensionRepo = new PensionIncomeEntityRepo(application);
+        mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
         new GetAllIncomeSummariesAsyncTask().execute();
     }
 

@@ -4,37 +4,43 @@ import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.intelliviz.data.PensionData;
 import com.intelliviz.data.PensionRules;
 import com.intelliviz.db.AppDatabase;
-import com.intelliviz.db.entity.PensionDataEntityMapper;
 import com.intelliviz.db.entity.PensionIncomeEntity;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.List;
 
 public class PensionIncomeEntityRepo {
+    private volatile static PensionIncomeEntityRepo mINSTANCE;
     private AppDatabase mDB;
     private MutableLiveData<PensionIncomeEntity> mPIE =
             new MutableLiveData<>();
     private MutableLiveData<List<PensionIncomeEntity>> mPensionList =
             new MutableLiveData<>();
-    private long mIncomeId;
 
-    public PensionIncomeEntityRepo(Application application) {
-        mIncomeId = 0;
-        mDB = AppDatabase.getInstance(application);
-        new GetListAsyncTask().execute();
+    public static PensionIncomeEntityRepo getInstance(Application application) {
+        if(mINSTANCE == null) {
+            synchronized (PensionIncomeEntityRepo.class) {
+                if(mINSTANCE == null) {
+                    mINSTANCE = new PensionIncomeEntityRepo(application);
+                }
+            }
+        }
+        return mINSTANCE;
     }
 
-    public PensionIncomeEntityRepo(Application application, long incomeId) {
-        mIncomeId = incomeId;
+    private PensionIncomeEntityRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
-        new GetAsyncTask().execute(mIncomeId);
         new GetListAsyncTask().execute();
     }
 
     public MutableLiveData<PensionIncomeEntity> get() {
+        return mPIE;
+    }
+
+    public MutableLiveData<PensionIncomeEntity> get(long id) {
+        new GetAsyncTask().execute(id);
         return mPIE;
     }
 
@@ -54,8 +60,8 @@ public class PensionIncomeEntityRepo {
         new DeleteAsyncTask().execute(entity);
     }
 
-    public void update(PensionData pd) {
-        new UpdateAsyncTask().execute(PensionDataEntityMapper.map(pd));
+    public void update(PensionIncomeEntity pie) {
+        new UpdateAsyncTask().execute(pie);
     }
 
     private class GetAsyncTask extends AsyncTask<Long, Void, PensionIncomeEntity> {
@@ -92,15 +98,17 @@ public class PensionIncomeEntityRepo {
     }
 
 
-    private class UpdateAsyncTask extends AsyncTask<PensionIncomeEntity, Void, Integer> {
+    private class UpdateAsyncTask extends AsyncTask<PensionIncomeEntity, Void, PensionIncomeEntity> {
 
         @Override
-        protected Integer doInBackground(PensionIncomeEntity... params) {
-            return mDB.pensionIncomeDao().update(params[0]);
+        protected PensionIncomeEntity doInBackground(PensionIncomeEntity... params) {
+            mDB.pensionIncomeDao().update(params[0]);
+            return mDB.pensionIncomeDao().get(params[0].getId());
         }
 
         @Override
-        protected void onPostExecute(Integer numRowsUpdated) {
+        protected void onPostExecute(PensionIncomeEntity entity) {
+            mPIE.setValue(entity);
         }
     }
 

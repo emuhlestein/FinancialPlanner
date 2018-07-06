@@ -14,40 +14,50 @@ import com.intelliviz.data.PensionData;
 import com.intelliviz.db.entity.PensionDataEntityMapper;
 import com.intelliviz.db.entity.PensionIncomeEntity;
 import com.intelliviz.repo.PensionIncomeEntityRepo;
-import com.intelliviz.repo.RetirementOptionsEntityRepo;
-
-import java.util.List;
 
 
 /**
  * Created by edm on 9/30/2017.
  */
 
-public class PensionIncomeEditViewModel extends AndroidViewModel {
-    private LiveData<PensionData> mPD =
-            new MutableLiveData<>();
+public class PensionIncomeViewModel extends AndroidViewModel {
+    private LiveData<PensionData> mPD = new MutableLiveData<>();
     private PensionIncomeEntityRepo mRepo;
-    private RetirementOptionsEntityRepo mROERepo;
-    private long mIncomeId;
 
-    public PensionIncomeEditViewModel(Application application, long incomeId) {
+    public PensionIncomeViewModel(Application application, long incomeId) {
         super(application);
-        mIncomeId = incomeId;
-        mROERepo = new RetirementOptionsEntityRepo(application);
-        mRepo = new PensionIncomeEntityRepo(application, incomeId);
-        subscribeToPensionEntityChanges();
+        mRepo = PensionIncomeEntityRepo.getInstance(application);
+        //subscribeToPensionEntityChanges();
+        subscribe(incomeId);
     }
 
-    public LiveData<PensionData> getData() {
+    public LiveData<PensionData> get() {
         return mPD;
     }
 
-    public LiveData<List<PensionIncomeEntity>> getList() {
-        return null;
+    private void subscribe(long id) {
+        MutableLiveData<PensionIncomeEntity> entity = mRepo.get(id);
+        mPD = Transformations.switchMap(entity,
+                new Function<PensionIncomeEntity, LiveData<PensionData>>() {
+
+                    @Override
+                    public LiveData<PensionData> apply(PensionIncomeEntity input) {
+                        MutableLiveData<PensionData> ldata = new MutableLiveData<>();
+                        ldata.setValue(PensionDataEntityMapper.map(input));
+                        return ldata;
+                    }
+                });
     }
 
     public void setData(PensionData pd) {
         mRepo.setData(PensionDataEntityMapper.map(pd));
+    }
+
+    public void update() {
+//        PensionData pd = mPD.getValue();
+//        if(pd != null) {
+//            mRepo.setData(PensionDataEntityMapper.map(pd));
+//        }
     }
 
     private void subscribeToPensionEntityChanges() {
@@ -59,10 +69,6 @@ public class PensionIncomeEditViewModel extends AndroidViewModel {
                         return PensionDataEntityMapper.map(pie);
                     }
                 });
-    }
-
-    public void delete(PensionData pd) {
-        mRepo.delete(PensionDataEntityMapper.map(pd));
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -77,7 +83,12 @@ public class PensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new PensionIncomeEditViewModel(mApplication, mIncomeId);
+            return (T) new PensionIncomeViewModel(mApplication, mIncomeId);
         }
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
     }
 }

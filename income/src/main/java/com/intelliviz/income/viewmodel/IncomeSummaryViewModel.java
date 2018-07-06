@@ -39,7 +39,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         mROE = mRetireRepo.get();
         mGovRepo = new GovEntityRepo(application, 0);
         mSavingsRepo = new SavingsIncomeEntityRepo(application, 0);
-        mPensionRepo = new PensionIncomeEntityRepo(application);
+        mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
         mIncomeRepo = new IncomeSummaryRepo(application);
         subscribe();
         //new GetAmountDataAsyncTask().execute();
