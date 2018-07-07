@@ -53,6 +53,10 @@ public class StartUpViewModel extends AndroidViewModel {
     }
 
     public void updateBirthdate(String birthdate) {
+        mRetireRepo.updateBirthdate(birthdate);
+    }
+
+    public void updateSpouseBirthdate(String birthdate) {
         mRetireRepo.updateSpouseBirthdate(birthdate);
     }
 

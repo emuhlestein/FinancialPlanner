@@ -57,6 +57,10 @@ public class RetirementOptionsEntityRepo {
         new UpdateSpouseBirthdateAsyncTask().execute(birthdate);
     }
 
+    public void updateBirthdate(String birthdate) {
+        new UpdateBirthdateAsyncTask().execute(birthdate);
+    }
+
     private class GetAsyncTask extends AsyncTask<Void, Void, RetirementOptionsEntity> {
 
         @Override
@@ -86,6 +90,17 @@ public class RetirementOptionsEntityRepo {
             RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
             roe.setIncludeSpouse(1);
             roe.setSpouseBirthdate(params[0]);
+            mDB.retirementOptionsDao().update(roe);
+            return null;
+        }
+    }
+
+    private class UpdateBirthdateAsyncTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            roe.setBirthdate(params[0]);
             mDB.retirementOptionsDao().update(roe);
             return null;
         }
