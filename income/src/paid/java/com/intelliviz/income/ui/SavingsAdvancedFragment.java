@@ -15,9 +15,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.income.R;
-import com.intelliviz.income.data.AgeData;
-import com.intelliviz.income.util.AgeUtils;
-import com.intelliviz.income.util.SystemUtils;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.SystemUtils;
 
 
 /**
