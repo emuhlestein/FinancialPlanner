@@ -1,6 +1,7 @@
 package com.intelliviz.repo;
 
 import android.app.Application;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
@@ -13,17 +14,38 @@ import com.intelliviz.db.entity.RetirementOptionsEntity;
  */
 
 public class RetirementOptionsEntityRepo {
+    private volatile static RetirementOptionsEntityRepo mINSTANCE;
     private AppDatabase mDB;
     private MutableLiveData<RetirementOptionsEntity> mROE =
             new MutableLiveData<>();
 
-    public RetirementOptionsEntityRepo(Application application) {
+    public static RetirementOptionsEntityRepo getInstance(Application application) {
+        if(mINSTANCE == null) {
+            synchronized (RetirementOptionsEntityRepo.class) {
+                if(mINSTANCE == null) {
+                    mINSTANCE = new RetirementOptionsEntityRepo(application);
+                }
+            }
+        }
+        return mINSTANCE;
+    }
+
+    private RetirementOptionsEntityRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
         new GetAsyncTask().execute();
     }
 
-    public MutableLiveData<RetirementOptionsEntity> get() {
+    public LiveData<RetirementOptionsEntity> get() {
+        new GetAsyncTask().execute();
         return mROE;
+    }
+
+    /**
+     * Return the retirement options immediately. This must not be called in the main thread.
+     * @return the retirement options object.
+     */
+    public RetirementOptionsEntity getImmediate() {
+        return mDB.retirementOptionsDao().get();
     }
 
     public void update(RetirementOptionsEntity roe) {
@@ -35,7 +57,7 @@ public class RetirementOptionsEntityRepo {
         new UpdateSpouseBirthdateAsyncTask().execute(birthdate);
     }
 
-    private class GetAsyncTask extends android.os.AsyncTask<Void, Void, RetirementOptionsEntity> {
+    private class GetAsyncTask extends AsyncTask<Void, Void, RetirementOptionsEntity> {
 
         @Override
         protected RetirementOptionsEntity doInBackground(Void... params) {
@@ -57,7 +79,7 @@ public class RetirementOptionsEntityRepo {
         }
     }
 
-    private class UpdateSpouseBirthdateAsyncTask extends android.os.AsyncTask<String, Void, Void> {
+    private class UpdateSpouseBirthdateAsyncTask extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {

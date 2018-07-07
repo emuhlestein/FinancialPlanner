@@ -30,7 +30,7 @@ public class StartUpViewModel extends AndroidViewModel {
 
     public StartUpViewModel(Application application) {
         super(application);
-        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         subscribeToRetireOptionsEntityChanges();
     }
 
@@ -62,7 +62,7 @@ public class StartUpViewModel extends AndroidViewModel {
     }
 
     private void subscribeToRetireOptionsEntityChanges() {
-        MutableLiveData<RetirementOptionsEntity> gpe = mRetireRepo.get();
+        LiveData<RetirementOptionsEntity> gpe = mRetireRepo.get();
         mROE = Transformations.map(gpe,
                 new Function<RetirementOptionsEntity, RetirementOptions>() {
                     @Override

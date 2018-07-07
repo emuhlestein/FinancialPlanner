@@ -16,15 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.intelliviz.data.IncomeData;
 import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.income.adapter.IncomeDetailsAdapter;
 import com.intelliviz.income.data.MilestoneData;
 import com.intelliviz.income.viewmodel.IncomeSummaryViewModel;
-import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
-import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.SummaryMilestoneAdapter;
 import com.intelliviz.retirementhelper.util.UpdateRetirementOptions;
@@ -82,25 +79,15 @@ public abstract class BaseSummaryFragment extends Fragment implements
 
         mViewModel = ViewModelProviders.of(getActivity()).get(IncomeSummaryViewModel.class);
 
-        mViewModel.get().observe(this, new Observer<List<IncomeData>>() {
+        mViewModel.getIncomeSources().observe(this, new Observer<List<IncomeDetails>>() {
             @Override
-            public void onChanged(@Nullable List<IncomeData> incomeDataList) {
-                if(incomeDataList == null) {
+            public void onChanged(@Nullable List<IncomeDetails> incomeDetails) {
+                if(incomeDetails == null) {
                     return;
                 }
 
-                List<IncomeDetails> incomeDetails = new ArrayList<>();
-
-                for(IncomeData benefitData : incomeDataList) {
-                    AgeData age = benefitData.getAge();
-                    String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
-                    String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
-                    String line1 = age.toString() + "   " + amount + "  " + balance;
-                    IncomeDetails incomeDetail = new IncomeDetails(line1, RetirementConstants.BALANCE_STATE_GOOD, "");
-                    incomeDetails.add(incomeDetail);
-                }
                 mIncomeDetailsAdapter.update(incomeDetails);
-                if (incomeDataList.isEmpty()) {
+                if (incomeDetails.isEmpty()) {
 
                     final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.add_income_source_message, Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction(R.string.dismiss, new View.OnClickListener() {

@@ -27,7 +27,7 @@ public class IncomeSummaryRepo {
 
     public IncomeSummaryRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
-        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         mROE = mRetireRepo.get();
         mGovRepo = new GovEntityRepo(application, 0);
         mSavingsRepo = new SavingsIncomeEntityRepo(application, 0);
@@ -41,6 +41,10 @@ public class IncomeSummaryRepo {
 
     public LiveData<List<IncomeSourceEntityBase>> get() {
         return mIncomeList;
+    }
+
+    public List<IncomeSourceEntityBase> getImmediate() {
+        return getAllIncomeSources();
     }
 
     public void update() {

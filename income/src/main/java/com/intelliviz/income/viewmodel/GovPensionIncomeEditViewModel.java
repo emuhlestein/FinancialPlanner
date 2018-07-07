@@ -37,7 +37,7 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
     public GovPensionIncomeEditViewModel(Application application, long incomeId) {
         super(application);
         mRepo = new GovEntityRepo(application, incomeId);
-        mROERepo = new RetirementOptionsEntityRepo(application);
+        mROERepo = RetirementOptionsEntityRepo.getInstance(application);
         mIncomeId = incomeId;
         subscribeToGovPensionEntityChanges();
     }

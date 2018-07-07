@@ -34,7 +34,7 @@ public class SavingsIncomeEditViewModel extends AndroidViewModel {
     public SavingsIncomeEditViewModel(Application application, long incomeId) {
         super(application);
         mRepo = new SavingsIncomeEntityRepo(application, incomeId);
-        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         subscribeSavingsIncomeEntityChanges();
     }
 

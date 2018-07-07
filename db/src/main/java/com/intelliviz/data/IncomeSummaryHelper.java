@@ -20,6 +20,7 @@ import com.intelliviz.repo.GovEntityRepo;
 import com.intelliviz.repo.SavingsIncomeEntityRepo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ import java.util.Map;
  */
 
 public class IncomeSummaryHelper {
-    public static LiveData<List<IncomeData>> getIncomeSummary(List<IncomeSourceEntityBase> incomeSourceList,
+    public static List<IncomeData> getIncomeSummary(List<IncomeSourceEntityBase> incomeSourceList,
                                                               RetirementOptionsEntity roe) {
         List<IncomeData> benefitDataList = new ArrayList<>();
         List<IncomeDataAccessor> accessorList = new ArrayList<>();
@@ -69,7 +70,7 @@ public class IncomeSummaryHelper {
         }
 
         if(accessorList.isEmpty()) {
-            return new MutableLiveData<>();
+            return Collections.emptyList();
         }
 
         int minYear = 999;
@@ -121,9 +122,7 @@ public class IncomeSummaryHelper {
 */
         }
 
-        MutableLiveData<List<IncomeData>> ldata = new MutableLiveData<>();
-        ldata.setValue(benefitDataList);
-        return ldata;
+        return benefitDataList;
     }
 
     // TODO delete

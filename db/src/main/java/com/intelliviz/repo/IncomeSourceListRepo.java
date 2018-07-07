@@ -28,7 +28,7 @@ public class IncomeSourceListRepo {
         mGovRepo = new GovEntityRepo(application);
         mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
         mSavingsRepo = new SavingsIncomeEntityRepo(application);
-        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         new GetAllIncomeSourcesAsyncTask().execute();
     }
 
@@ -103,8 +103,7 @@ public class IncomeSourceListRepo {
         @Override
         protected List<IncomeSourceEntityBase> doInBackground(GovPensionEntity... params) {
             GovPensionEntity gpe = params[0];
-            MutableLiveData<RetirementOptionsEntity> liveRoe = mRetireRepo.get();
-            RetirementOptionsEntity roe = liveRoe.getValue();
+            RetirementOptionsEntity roe = mRetireRepo.getImmediate();
             if(gpe.getSpouse() == 1) {
                 roe.setSpouseBirthdate("0");
                 roe.setIncludeSpouse(0);

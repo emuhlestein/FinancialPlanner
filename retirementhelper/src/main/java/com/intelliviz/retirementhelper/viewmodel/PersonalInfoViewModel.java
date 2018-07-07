@@ -23,7 +23,7 @@ public class PersonalInfoViewModel extends AndroidViewModel {
 
     public PersonalInfoViewModel(@NonNull Application application) {
         super(application);
-        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
     }
 
     public LiveData<RetirementOptions> get() {

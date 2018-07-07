@@ -45,7 +45,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
     public IncomeSourceListViewModel(Application application) {
         super(application);
         mIncomeSourceRepo = new IncomeSourceListRepo(application);
-        mRetireRepo = new RetirementOptionsEntityRepo(application);
+        mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         //mIncomeSourceEntity = mIncomeSourceRepo.getIncomeSources();
         subscribe();
     }
@@ -225,7 +225,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
     }
 
     private LiveData<List<AbstractIncomeSource>> getAllIncomeSources(List<IncomeSourceEntityBase> list) {
-        MutableLiveData<RetirementOptionsEntity> liveRoe = mRetireRepo.get();
+        LiveData<RetirementOptionsEntity> liveRoe = mRetireRepo.get();
         RetirementOptionsEntity roe = liveRoe.getValue();
         if(roe == null) {
             return new MutableLiveData<>();
