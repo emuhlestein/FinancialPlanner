@@ -50,6 +50,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
     private PersonalInfoViewModel mViewModel;
     private RetirementOptions mROE;
     private PersonalInfoDialogAction mPersonalInfoDialogAction;
+    private PersonalInfoAdvancedFragment mFragment;
     private CoordinatorLayout mCoordinatorLayout;
     private TextView mNameTextView;
     private TextView mEmailTextView;
@@ -202,9 +203,16 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         }
 
         FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.personal_info_fragment, new PersonalInfoAdvancedFragment(), "PersonalInfoTag");
-        ft.commit();
+        Fragment fragment = fm.findFragmentByTag("PersonalInfoTag");
+        if(fragment == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            mFragment = new PersonalInfoAdvancedFragment();
+            ft.replace(R.id.personal_info_fragment, mFragment, "PersonalInfoTag");
+            ft.commit();
+        } else {
+            mFragment = (PersonalInfoAdvancedFragment)fragment;
+        }
+
     }
 
     private void updateUI(RetirementOptions roe) {
@@ -288,46 +296,36 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
 
 
     private String getSpouseBirthdate() {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
-        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
-            return ((PersonalInfoAdvancedFragment)fragment).getSpouseBirthdate();
+        if(mFragment != null) {
+            return mFragment.getSpouseBirthdate();
         } else {
             return "";
         }
     }
 
     private void setSpouseBirthdate(String spouseBirthdate) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
-        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
-            ((PersonalInfoAdvancedFragment)fragment).setSpouseBirthdate(spouseBirthdate);
+        if(mFragment != null) {
+            mFragment.setSpouseBirthdate(spouseBirthdate);
         }
     }
 
     private boolean getIncludeSpouse() {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
-        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
-            return ((PersonalInfoAdvancedFragment)fragment).getIncludeSpouse();
+        if(mFragment != null) {
+            return mFragment.getIncludeSpouse();
         } else {
             return false;
         }
     }
 
     private void setIncludeSpouse(boolean includeSpouse) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
-        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
-            ((PersonalInfoAdvancedFragment)fragment).setIncludeSpouse(includeSpouse);
+        if(mFragment != null) {
+            mFragment.setIncludeSpouse(includeSpouse);
         }
     }
 
     private void setCoordinatorLayout(CoordinatorLayout coordinatorLayout) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.personal_info_fragment);
-        if(fragment != null && fragment instanceof PersonalInfoAdvancedFragment) {
-            ((PersonalInfoAdvancedFragment)fragment).setCoordinatorLayout(coordinatorLayout);
+        if(mFragment != null) {
+            mFragment.setCoordinatorLayout(coordinatorLayout);
         }
     }
 

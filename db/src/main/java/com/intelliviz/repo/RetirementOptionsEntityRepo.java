@@ -32,7 +32,7 @@ public class RetirementOptionsEntityRepo {
 
     private RetirementOptionsEntityRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
-        new GetAsyncTask().execute();
+        //new GetAsyncTask().execute();
     }
 
     public LiveData<RetirementOptionsEntity> get() {

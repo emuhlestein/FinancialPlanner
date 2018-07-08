@@ -24,13 +24,17 @@ public class PersonalInfoViewModel extends AndroidViewModel {
     public PersonalInfoViewModel(@NonNull Application application) {
         super(application);
         mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
+        subscribe();
     }
 
     public LiveData<RetirementOptions> get() {
+        return mROE;
+    }
+
+    private void subscribe() {
         LiveData<RetirementOptionsEntity> roe = mRetireRepo.get();
 
-        LiveData<RetirementOptions> retireOptions =
-                Transformations.switchMap(roe,
+        mROE = Transformations.switchMap(roe,
                         new Function<RetirementOptionsEntity, LiveData<RetirementOptions>>() {
                             @Override
                             public LiveData<RetirementOptions> apply(RetirementOptionsEntity input) {
@@ -40,7 +44,6 @@ public class PersonalInfoViewModel extends AndroidViewModel {
                                 return ldata;
                             }
                         });
-        return retireOptions;
     }
 
     public void update(RetirementOptions roe) {
