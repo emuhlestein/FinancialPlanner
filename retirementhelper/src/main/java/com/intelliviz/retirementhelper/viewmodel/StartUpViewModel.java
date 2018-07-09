@@ -61,7 +61,7 @@ public class StartUpViewModel extends AndroidViewModel {
     }
 
     public void update(RetirementOptions ro) {
-        RetirementOptionsEntity roe = new RetirementOptionsEntity(ro.getId(), ro.getEndAge(), ro.getBirthdate(), ro.getIncludeSpouse(), ro.getSpouseBirthdate());
+        RetirementOptionsEntity roe = new RetirementOptionsEntity(ro.getId(), ro.getEndAge(), ro.getBirthdate(), ro.getIncludeSpouse(), ro.getSpouseBirthdate(), ro.getCountryCode());
         mRetireRepo.update(roe);
     }
 
@@ -71,7 +71,7 @@ public class StartUpViewModel extends AndroidViewModel {
                 new Function<RetirementOptionsEntity, RetirementOptions>() {
                     @Override
                     public RetirementOptions apply(RetirementOptionsEntity roe) {
-                        return new RetirementOptions(roe.getId(), roe.getEndAge(), roe.getBirthdate(), roe.getSpouseBirthdate(), roe.getIncludeSpouse());
+                        return new RetirementOptions(roe.getId(), roe.getEndAge(), roe.getBirthdate(), roe.getSpouseBirthdate(), roe.getIncludeSpouse(), roe.getCountryCode());
                     }
                 });
     }

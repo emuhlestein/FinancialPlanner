@@ -249,6 +249,12 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         mBirthDateViewText.setText(roe.getBirthdate());
         //mSpouseBirthdateTextView.setText(roe.getSpouseBirthdate());
 
+        String countryCode = roe.getCountryCode();
+        if(countryCode.equals("US")) {
+            mCountrySpinner.setSelection(0);
+        } else {
+            mCountrySpinner.setSelection(1);
+        }
     }
 
     private void saveData() {
@@ -284,7 +290,11 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         int i = mCountrySpinner.getSelectedItemPosition();
         String[] countries = getResources().getStringArray(R.array.country_array);
         Log.d("PeronsalInfoDialog", countries[i] + " is selected");
-
+        if(i == 0) {
+            mROE.setCountryCode("US");
+        } else {
+            mROE.setCountryCode(countries[1]);
+        }
 
         mROE.setIncludeSpouse(includeSpouse);
         mROE.setSpouseBirthdate(spouseBirthdate);

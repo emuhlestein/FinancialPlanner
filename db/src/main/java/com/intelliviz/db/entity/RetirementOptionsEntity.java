@@ -20,6 +20,7 @@ public class RetirementOptionsEntity {
     public static final String BIRTHDATE_FIELD = "birthdate";
     public static final String INCLUDE_SPOUSE_FIELD = "include_spouse";
     public static final String SPOUSE_BIRTHDATE_FIELD = "spouse_birthdate";
+    public static final String COUNTRY_CODE_FIELD = "country_code";
 
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -32,13 +33,16 @@ public class RetirementOptionsEntity {
     private String mSpouseBirthdate;
     @ColumnInfo(name = INCLUDE_SPOUSE_FIELD)
     private int mIncludeSpouse;
+    @ColumnInfo(name = COUNTRY_CODE_FIELD)
+    private String mCountryCode;
 
-    public RetirementOptionsEntity(long id, AgeData endAge, String birthdate, int includeSpouse, String spouseBirthdate) {
+    public RetirementOptionsEntity(long id, AgeData endAge, String birthdate, int includeSpouse, String spouseBirthdate, String countryCode) {
         this.id = id;
         mEndAge = endAge;
         mBirthdate = birthdate;
         mIncludeSpouse = includeSpouse;
         mSpouseBirthdate = spouseBirthdate;
+        mCountryCode = countryCode;
     }
 
     public long getId() {
@@ -79,5 +83,13 @@ public class RetirementOptionsEntity {
 
     public void setIncludeSpouse(int includeSpouse) {
         mIncludeSpouse = includeSpouse;
+    }
+
+    public String getCountryCode() {
+        return mCountryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        mCountryCode = countryCode;
     }
 }

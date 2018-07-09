@@ -8,13 +8,15 @@ public class RetirementOptions {
     private String mBirthdate;
     private String mSpouseBirthdate;
     private int mIncludeSpouse;
+    private String mCountryCode;
 
-    public RetirementOptions(long id, AgeData endAge, String birthdate, String spouseBirthdate, int includeSpouse) {
+    public RetirementOptions(long id, AgeData endAge, String birthdate, String spouseBirthdate, int includeSpouse, String countryCode) {
         this.id = id;
         mEndAge = endAge;
         mBirthdate = birthdate;
         mSpouseBirthdate = spouseBirthdate;
         mIncludeSpouse = includeSpouse;
+        mCountryCode = countryCode;
     }
 
     public long getId() {
@@ -55,5 +57,13 @@ public class RetirementOptions {
 
     public void setIncludeSpouse(int includeSpouse) {
         mIncludeSpouse = includeSpouse;
+    }
+
+    public String getCountryCode() {
+        return mCountryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        mCountryCode = countryCode;
     }
 }
