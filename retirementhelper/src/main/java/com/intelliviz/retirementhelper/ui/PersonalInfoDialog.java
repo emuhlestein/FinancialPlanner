@@ -179,7 +179,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
 
         String[] countries = getResources().getStringArray(R.array.country_array);
         List<String> countryList = Arrays.asList(countries);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, countryList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_layout, countryList);
         mCountrySpinner.setAdapter(adapter);
         mCountrySpinner.setOnItemSelectedListener(this);
 
