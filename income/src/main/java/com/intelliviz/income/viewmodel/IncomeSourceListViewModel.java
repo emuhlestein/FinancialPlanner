@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import com.intelliviz.data.GovPension;
 import com.intelliviz.data.PensionData;
 import com.intelliviz.data.PensionRules;
+import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.data.Savings401kIncomeRules;
 import com.intelliviz.data.SavingsData;
 import com.intelliviz.data.SocialSecurityRules;
@@ -225,8 +226,8 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
     }
 
     private LiveData<List<AbstractIncomeSource>> getAllIncomeSources(List<IncomeSourceEntityBase> list) {
-        LiveData<RetirementOptionsEntity> liveRoe = mRetireRepo.get();
-        RetirementOptionsEntity roe = liveRoe.getValue();
+        LiveData<RetirementOptions> liveRoe = mRetireRepo.get();
+        RetirementOptions roe = liveRoe.getValue();
         if(roe == null) {
             return new MutableLiveData<>();
         }
@@ -266,7 +267,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
 
         @Override
         protected Void doInBackground(String... params) {
-            RetirementOptionsEntity roe = mRetireRepo.get().getValue();
+            RetirementOptions roe = mRetireRepo.get().getValue();
             roe.setIncludeSpouse(1);
             roe.setSpouseBirthdate(params[0]);
             mRetireRepo.update(roe);

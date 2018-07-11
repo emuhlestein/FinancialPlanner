@@ -11,8 +11,10 @@ import android.os.AsyncTask;
 import com.intelliviz.data.IncomeData;
 import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.data.IncomeSummaryHelper;
+import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
@@ -72,11 +74,11 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
     }
 
     private List<IncomeData> getAllIncomeSources(List<IncomeSourceEntityBase> incomeSourceList) {
-        RetirementOptionsEntity roe = mRetireRepo.get().getValue();
+        RetirementOptions roe = mRetireRepo.get().getValue();
         return IncomeSummaryHelper.getIncomeSummary(incomeSourceList, roe);
     }
 
-    private List<IncomeDetails> getIncomeDetailsList(List<IncomeSourceEntityBase> incomeSourceList, RetirementOptionsEntity roe) {
+    private List<IncomeDetails> getIncomeDetailsList(List<IncomeSourceEntityBase> incomeSourceList, RetirementOptions roe) {
         List<IncomeData> incomeDataList = IncomeSummaryHelper.getIncomeSummary(incomeSourceList, roe);
         if(incomeDataList == null) {
             return Collections.emptyList();
@@ -102,7 +104,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
         protected List<IncomeDetails> doInBackground(Void... voids) {
             RetirementOptionsEntity roe = mRetireRepo.getImmediate();
             List<IncomeSourceEntityBase> incomeSourceList = mIncomeRepo.getImmediate();
-            List<IncomeDetails> detailsList = getIncomeDetailsList(incomeSourceList, roe);
+            List<IncomeDetails> detailsList = getIncomeDetailsList(incomeSourceList, RetirementOptionsMapper.map(roe));
             return detailsList;
         }
 

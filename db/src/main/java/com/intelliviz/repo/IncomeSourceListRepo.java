@@ -10,6 +10,7 @@ import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.db.entity.PensionIncomeEntity;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public class IncomeSourceListRepo {
             } else {
                 roe.setBirthdate("0");
             }
-            mRetireRepo.update(roe);
+            mRetireRepo.update(RetirementOptionsMapper.map(roe));
 
             mGovRepo.delete(gpe);
             return getAllIncomeSources();

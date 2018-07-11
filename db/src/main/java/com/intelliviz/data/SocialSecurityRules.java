@@ -2,7 +2,6 @@ package com.intelliviz.data;
 
 import android.os.Bundle;
 
-import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -181,7 +180,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         }
     }
 
-    public static void setRulesOnGovPensionEntities(List<GovPension> gpList, RetirementOptionsEntity roe) {
+    public static void setRulesOnGovPensionEntities(List<GovPension> gpList, RetirementOptions roe) {
         if(gpList == null || gpList.isEmpty()) {
             return;
         }

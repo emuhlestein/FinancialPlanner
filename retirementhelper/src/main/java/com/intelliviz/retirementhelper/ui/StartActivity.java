@@ -102,8 +102,6 @@ public class StartActivity extends AppCompatActivity implements
         mViewModel = ViewModelProviders.of(this, factory).
                 get(StartUpViewModel.class);
 
-        mViewModel = ViewModelProviders.of(this).get(StartUpViewModel.class);
-
         mViewModel.get().observe(this, new Observer<RetirementOptions>() {
             @Override
             public void onChanged(@Nullable RetirementOptions roe) {

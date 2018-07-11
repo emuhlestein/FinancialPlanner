@@ -14,10 +14,10 @@ import android.support.annotation.NonNull;
 import com.intelliviz.data.IncomeData;
 import com.intelliviz.data.IncomeDataAccessor;
 import com.intelliviz.data.IncomeDetails;
+import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.data.Savings401kIncomeRules;
 import com.intelliviz.data.SavingsData;
 import com.intelliviz.data.SavingsIncomeRules;
-import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.db.entity.SavingsDataEntityMapper;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 import com.intelliviz.lowlevel.data.AgeData;
@@ -108,7 +108,7 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
     }
 
     private List<IncomeDetails> getIncomeDetails(long id) {
-        RetirementOptionsEntity roe = mRetireRepo.get().getValue();
+        RetirementOptions roe = mRetireRepo.get().getValue();
         SavingsIncomeEntity entity = mRepo.get().getValue();
         String birthdate = roe.getBirthdate();
         AgeData endAge = roe.getEndAge();

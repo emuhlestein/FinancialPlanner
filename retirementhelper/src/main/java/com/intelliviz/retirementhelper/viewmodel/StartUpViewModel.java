@@ -1,11 +1,9 @@
 package com.intelliviz.retirementhelper.viewmodel;
 
 import android.app.Application;
-import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
@@ -31,6 +29,7 @@ public class StartUpViewModel extends AndroidViewModel {
     public StartUpViewModel(Application application) {
         super(application);
         mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
+        mROE = mRetireRepo.get();
         subscribeToRetireOptionsEntityChanges();
     }
 
@@ -62,11 +61,13 @@ public class StartUpViewModel extends AndroidViewModel {
 
     public void update(RetirementOptions ro) {
         RetirementOptionsEntity roe = new RetirementOptionsEntity(ro.getId(), ro.getEndAge(), ro.getBirthdate(), ro.getIncludeSpouse(), ro.getSpouseBirthdate(), ro.getCountryCode());
-        mRetireRepo.update(roe);
+        mRetireRepo.update(ro);
     }
 
     private void subscribeToRetireOptionsEntityChanges() {
-        LiveData<RetirementOptionsEntity> gpe = mRetireRepo.get();
+//        LiveData<RetirementOptions> ldata = mRetireRepo.get();
+//        ((MutableLiveData)mROE).setValue(ldata.getValue());
+        /*
         mROE = Transformations.map(gpe,
                 new Function<RetirementOptionsEntity, RetirementOptions>() {
                     @Override
@@ -74,5 +75,6 @@ public class StartUpViewModel extends AndroidViewModel {
                         return new RetirementOptions(roe.getId(), roe.getEndAge(), roe.getBirthdate(), roe.getSpouseBirthdate(), roe.getIncludeSpouse(), roe.getCountryCode());
                     }
                 });
+                */
     }
 }

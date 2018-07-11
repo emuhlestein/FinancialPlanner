@@ -85,7 +85,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         setCancelable(false);
 
         mCoordinatorLayout = view.findViewById(R.id.coordinatorLayout);
-        setCoordinatorLayout((mCoordinatorLayout));
+
 
         mNameTextView = view.findViewById(R.id.name_edit_text);
         mEmailTextView = view.findViewById(R.id.email_edit_text);
@@ -213,6 +213,8 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
             mFragment = (PersonalInfoAdvancedFragment)fragment;
         }
 
+        setCoordinatorLayout(mCoordinatorLayout);
+
     }
 
     private void updateUI(RetirementOptions roe) {
@@ -254,6 +256,12 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
             mCountrySpinner.setSelection(0);
         } else {
             mCountrySpinner.setSelection(1);
+        }
+
+        if(mROE.isCountryAvailable()) {
+            mCountrySpinner.setEnabled(true);
+        } else {
+            mCountrySpinner.setEnabled(false);
         }
     }
 
@@ -347,7 +355,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+        Log.d("PersonalInfoDialog", "Here");
     }
 
     @Override

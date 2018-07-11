@@ -9,6 +9,7 @@ public class RetirementOptions {
     private String mSpouseBirthdate;
     private int mIncludeSpouse;
     private String mCountryCode;
+    private boolean mCountryAvailable;
 
     public RetirementOptions(long id, AgeData endAge, String birthdate, String spouseBirthdate, int includeSpouse, String countryCode) {
         this.id = id;
@@ -17,6 +18,7 @@ public class RetirementOptions {
         mSpouseBirthdate = spouseBirthdate;
         mIncludeSpouse = includeSpouse;
         mCountryCode = countryCode;
+        mCountryAvailable = true;
     }
 
     public long getId() {
@@ -65,5 +67,13 @@ public class RetirementOptions {
 
     public void setCountryCode(String countryCode) {
         mCountryCode = countryCode;
+    }
+
+    public void setCountryAvailable(boolean countryAvailable) {
+        mCountryAvailable = countryAvailable;
+    }
+
+    public boolean isCountryAvailable() {
+        return mCountryAvailable;
     }
 }

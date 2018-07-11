@@ -15,11 +15,23 @@ import java.util.List;
 
 public class GovEntityRepo {
     private AppDatabase mDB;
+    private volatile static GovEntityRepo mINSTANCE;
     private MutableLiveData<GovPensionEntity> mGPE =
             new MutableLiveData<>();
     private MutableLiveData<List<GovPensionEntity>> mGpeList =
             new MutableLiveData<>();
     private long mIncomeId;
+
+    public static GovEntityRepo getInstance(Application application) {
+        if(mINSTANCE == null) {
+            synchronized (GovEntityRepo.class) {
+                if(mINSTANCE == null) {
+                    mINSTANCE = new GovEntityRepo(application);
+                }
+            }
+        }
+        return mINSTANCE;
+    }
 
     public GovEntityRepo(Application application) {
         mIncomeId = 0;
@@ -40,6 +52,10 @@ public class GovEntityRepo {
 
     public MutableLiveData<List<GovPensionEntity>> getList() {
         return mGpeList;
+    }
+
+    public List<GovPensionEntity> getImmediate() {
+        return mDB.govPensionDao().get();
     }
 
     public void setData(GovPensionEntity gpe) {
