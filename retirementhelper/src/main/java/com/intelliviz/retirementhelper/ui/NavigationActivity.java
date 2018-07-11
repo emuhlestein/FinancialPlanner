@@ -214,10 +214,11 @@ public class NavigationActivity extends AppCompatActivity {
                 break;
             case REQUEST_PERSONAL_INFO:
                 if (resultCode == RESULT_OK) {
-                    //String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+                    String endAge = intent.getStringExtra(RetirementConstants.EXTRA_RETIREMENT_INCOME_SUMMARY_AGE);
                     //int includeSpouse = intent.getIntExtra(EXTRA_INCLUDE_SPOUSE, 0);
                     //String spouseBirthdate = intent.getStringExtra(EXTRA_SPOUSE_BIRTHDATE);
                     //mViewModel.updateBirthdate(birthdate, includeSpouse, spouseBirthdate);
+                    Log.d(TAG, "HERE");
                 }
                 break;
         }

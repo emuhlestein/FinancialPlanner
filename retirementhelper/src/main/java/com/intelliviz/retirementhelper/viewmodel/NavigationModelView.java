@@ -64,7 +64,7 @@ public class NavigationModelView extends AndroidViewModel {
             roe1.setBirthdate(roe.getBirthdate());
             roe1.setSpouseBirthdate(roe.getSpouseBirthdate());
             roe1.setIncludeSpouse(roe.getIncludeSpouse());
-            mDB.retirementOptionsDao().update(roe1);
+            mDB.retirementOptionsDao().update(roe);
             // TODO when ROM is updated, everything should be updated.
             // SystemUtils.updateAppWidget(getApplication());
             return roe1;
