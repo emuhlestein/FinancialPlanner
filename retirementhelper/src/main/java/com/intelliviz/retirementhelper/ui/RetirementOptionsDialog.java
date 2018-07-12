@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.income.ui.AgeDialog;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -28,23 +30,27 @@ import butterknife.OnClick;
  * Created by Ed Muhlestein on 5/15/2017.
  */
 
-public class RetirementOptionsDialog extends AppCompatActivity {
+public class RetirementOptionsDialog extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
     private RetirementOptionsEntity mROE;
 
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
 
-    @BindView(R.id.income_summary_layout)
-    LinearLayout mIncomeSummaryLayout;
-
-    @BindView(R.id.end_age_edit_text)
-    EditText mEndAgeEditText;
+    @BindView(R.id.end_age_text_view)
+    TextView mEndAgeTextVIew;
 
     @BindView(R.id.retirement_parms_ok)
     Button mOk;
 
     @BindView(R.id.retirement_parms_cancel)
     Button mCancel;
+
+    @OnClick(R.id.edit_end_age_button) void onEditEndAge() {
+        AgeData startAge = mROE.getEndAge();
+        FragmentManager fm = getSupportFragmentManager();
+        AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
+        dialog.show(fm, "");
+    }
 
     @OnClick(R.id.retirement_parms_ok) void onClickOk() {
         sendData();
@@ -77,7 +83,7 @@ public class RetirementOptionsDialog extends AppCompatActivity {
     }
 
     private void updateUI(RetirementOptionsEntity roe) {
-        mEndAgeEditText.setText(roe.getEndAge().toString());
+        mEndAgeTextVIew.setText(roe.getEndAge().toString());
     }
 
     private void sendData() {
@@ -85,7 +91,7 @@ public class RetirementOptionsDialog extends AppCompatActivity {
         Intent returnIntent = new Intent();
         String value;
 
-        value = mEndAgeEditText.getText().toString();
+        value = mEndAgeTextVIew.getText().toString();
         value = AgeUtils.trimAge(value);
         AgeData endAge = AgeUtils.parseAgeString(value);
         if (endAge == null) {
@@ -98,5 +104,11 @@ public class RetirementOptionsDialog extends AppCompatActivity {
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
         overridePendingTransition(0, R.anim.slide_right_out);
+    }
+
+    @Override
+    public void onEditAge(String year, String month) {
+        AgeData age = AgeUtils.parseAgeString(year, month);
+        mEndAgeTextVIew.setText(age.toString());
     }
 }
