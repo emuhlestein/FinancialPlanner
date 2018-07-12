@@ -27,7 +27,6 @@ public class PensionIncomeViewModel extends AndroidViewModel {
     public PensionIncomeViewModel(Application application, long incomeId) {
         super(application);
         mRepo = PensionIncomeEntityRepo.getInstance(application);
-        //subscribeToPensionEntityChanges();
         subscribe(incomeId);
     }
 
@@ -36,7 +35,7 @@ public class PensionIncomeViewModel extends AndroidViewModel {
     }
 
     private void subscribe(long id) {
-        MutableLiveData<PensionIncomeEntity> entity = mRepo.get();
+        LiveData<PensionIncomeEntity> entity = mRepo.get(id);
         mPD = Transformations.switchMap(entity,
                 new Function<PensionIncomeEntity, LiveData<PensionData>>() {
 

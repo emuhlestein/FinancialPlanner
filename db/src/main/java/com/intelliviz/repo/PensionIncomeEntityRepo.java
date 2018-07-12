@@ -1,6 +1,7 @@
 package com.intelliviz.repo;
 
 import android.app.Application;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
@@ -39,7 +40,7 @@ public class PensionIncomeEntityRepo {
         return mPIE;
     }
 
-    public MutableLiveData<PensionIncomeEntity> get(long id) {
+    public LiveData<PensionIncomeEntity> get(long id) {
         new GetAsyncTask().execute(id);
         return mPIE;
     }
