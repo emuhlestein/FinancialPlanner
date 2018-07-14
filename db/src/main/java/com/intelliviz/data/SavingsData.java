@@ -17,7 +17,7 @@ public class SavingsData extends AbstractIncomeSource {
     private String mWithdrawPercent;
     private String mAnnualPercentIncrease;
     private int mShowMonths;
-    private SavingsIncomeRules mRules;
+    private BaseSavingsIncomeRules mRules;
 
     public SavingsData(long id, int type) {
         super(id, type, "");
@@ -119,8 +119,19 @@ public class SavingsData extends AbstractIncomeSource {
             bundle.putParcelable(RetirementConstants.EXTRA_INCOME_STOP_AGE, mStopMonthlyAdditionAge);
             bundle.putInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS, mShowMonths);
             mRules.setValues(bundle);
-        } else {
-            mRules = null;
+        } else if (rules instanceof Savings401kIncomeRules) {
+            mRules = (Savings401kIncomeRules)rules;
+
+            Bundle bundle = new Bundle();
+            bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, Double.parseDouble(mBalance));
+            bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, Double.parseDouble(mInterest));
+            bundle.putDouble(RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION, Double.parseDouble(mMonthlyAddition));
+            bundle.putDouble(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT, Double.parseDouble(mWithdrawPercent));
+            bundle.putDouble(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE, Double.parseDouble(mAnnualPercentIncrease));
+            bundle.putParcelable(RetirementConstants.EXTRA_INCOME_START_AGE, mStartAge);
+            bundle.putParcelable(RetirementConstants.EXTRA_INCOME_STOP_AGE, mStopMonthlyAdditionAge);
+            bundle.putInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS, mShowMonths);
+            mRules.setValues(bundle);
         }
     }
 
