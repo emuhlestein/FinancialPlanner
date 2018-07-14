@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.repo.GovEntityRepo;
 import com.intelliviz.repo.RetirementOptionsEntityRepo;
 
@@ -37,7 +38,7 @@ public class PersonalInfoViewModel extends AndroidViewModel {
     }
 
     private void subscribe() {
-        mRO = mRetireRepo.get();
+        //mRO = mRetireRepo.get();
         /*
 
         mRO = Transformations.switchMap(roe,
@@ -54,7 +55,7 @@ public class PersonalInfoViewModel extends AndroidViewModel {
     }
 
     public void update(RetirementOptions roe) {
-        mRetireRepo.update(roe);
+        mRetireRepo.update(RetirementOptionsMapper.map(roe));
     }
 
     private class GetAsyncTask extends AsyncTask<Void, Void, RetirementOptions> {

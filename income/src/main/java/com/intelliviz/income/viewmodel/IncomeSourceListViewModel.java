@@ -23,6 +23,7 @@ import com.intelliviz.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.db.entity.PensionDataEntityMapper;
 import com.intelliviz.db.entity.PensionIncomeEntity;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.db.entity.SavingsDataEntityMapper;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 import com.intelliviz.lowlevel.data.AgeData;
@@ -226,8 +227,8 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
     }
 
     private LiveData<List<AbstractIncomeSource>> getAllIncomeSources(List<IncomeSourceEntityBase> list) {
-        LiveData<RetirementOptions> liveRoe = mRetireRepo.get();
-        RetirementOptions roe = liveRoe.getValue();
+        LiveData<RetirementOptionsEntity> liveRoe = mRetireRepo.get();
+        RetirementOptions roe = RetirementOptionsMapper.map(liveRoe.getValue());
         if(roe == null) {
             return new MutableLiveData<>();
         }
@@ -267,7 +268,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
 
         @Override
         protected Void doInBackground(String... params) {
-            RetirementOptions roe = mRetireRepo.get().getValue();
+            RetirementOptionsEntity roe = mRetireRepo.get().getValue();
             roe.setIncludeSpouse(1);
             roe.setSpouseBirthdate(params[0]);
             mRetireRepo.update(roe);

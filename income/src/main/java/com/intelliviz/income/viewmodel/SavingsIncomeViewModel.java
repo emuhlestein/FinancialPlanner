@@ -18,6 +18,7 @@ import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.data.Savings401kIncomeRules;
 import com.intelliviz.data.SavingsData;
 import com.intelliviz.data.SavingsIncomeRules;
+import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.db.entity.SavingsDataEntityMapper;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 import com.intelliviz.lowlevel.data.AgeData;
@@ -127,7 +128,7 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
     }
 
     private List<IncomeDetails> getIncomeDetails(long id) {
-        RetirementOptions roe = mRetireRepo.get().getValue();
+        RetirementOptions roe = RetirementOptionsMapper.map(mRetireRepo.get().getValue());
         SavingsIncomeEntity entity = mRepo.get().getValue();
         String birthdate = roe.getBirthdate();
         AgeData endAge = roe.getEndAge();

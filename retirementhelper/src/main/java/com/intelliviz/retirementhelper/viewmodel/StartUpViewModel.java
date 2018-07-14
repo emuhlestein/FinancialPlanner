@@ -1,15 +1,18 @@
 package com.intelliviz.retirementhelper.viewmodel;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
+import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.repo.RetirementOptionsEntityRepo;
 
@@ -23,13 +26,13 @@ public class StartUpViewModel extends AndroidViewModel {
     public static final int BIRTHDATE_VALID = 2;
     private MutableLiveData<AgeData> mCurrentAge = new MutableLiveData<>();
     private MutableLiveData<Integer> mValidBirthdate = new MutableLiveData<>();
-    private LiveData<RetirementOptions> mROE = new MutableLiveData<>();
+    private LiveData<RetirementOptions> mRO = new MutableLiveData<>();
     private RetirementOptionsEntityRepo mRetireRepo;
 
     public StartUpViewModel(Application application) {
         super(application);
         mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
-        mROE = mRetireRepo.get();
+        subscribe();
         subscribeToRetireOptionsEntityChanges();
     }
 
@@ -47,8 +50,22 @@ public class StartUpViewModel extends AndroidViewModel {
         }
     }
 
+    private void subscribe() {
+        LiveData<RetirementOptionsEntity> roe = mRetireRepo.get();
+        mRO = Transformations.switchMap(roe,
+                new Function<RetirementOptionsEntity, LiveData<RetirementOptions>>() {
+                    @Override
+                    public LiveData<RetirementOptions> apply(RetirementOptionsEntity input) {
+                        MutableLiveData<RetirementOptions> ldata = new MutableLiveData();
+                        RetirementOptions ro = RetirementOptionsMapper.map(input);
+                        ldata.setValue(ro);
+                        return ldata;
+                    }
+                });
+    }
+
     public LiveData<RetirementOptions> get() {
-        return mROE;
+        return mRO;
     }
 
     public void updateBirthdate(String birthdate) {
@@ -61,7 +78,7 @@ public class StartUpViewModel extends AndroidViewModel {
 
     public void update(RetirementOptions ro) {
         RetirementOptionsEntity roe = new RetirementOptionsEntity(ro.getId(), ro.getEndAge(), ro.getBirthdate(), ro.getIncludeSpouse(), ro.getSpouseBirthdate(), ro.getCountryCode());
-        mRetireRepo.update(ro);
+        mRetireRepo.update(RetirementOptionsMapper.map(ro));
     }
 
     private void subscribeToRetireOptionsEntityChanges() {

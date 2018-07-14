@@ -18,6 +18,8 @@ public class GovPension extends AbstractIncomeSource {
     private String mFullMonthlyBenefit;
     private AgeData mStartAge;
     private boolean mSpouse;
+    private int mState;
+    private String mMessage;
 
     public GovPension(long id, int type) {
         this(id, type, "");
@@ -81,6 +83,22 @@ public class GovPension extends AbstractIncomeSource {
         }else {
             return 0;
         }
+    }
+
+    public int getState() {
+        return mState;
+    }
+
+    public void setState(int state) {
+        mState = state;
+    }
+
+    public String getMessage() {
+        return mMessage;
+    }
+
+    public void setMessage(String message) {
+        mMessage = message;
     }
 
     public AgeData getActualStartAge() {

@@ -1,11 +1,14 @@
 package com.intelliviz.repo;
 
 import android.app.Application;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
+import com.intelliviz.data.GovPensionEx;
 import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.GovPensionEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 
 import java.util.List;
 
@@ -20,7 +23,7 @@ public class GovEntityRepo {
             new MutableLiveData<>();
     private MutableLiveData<List<GovPensionEntity>> mGpeList =
             new MutableLiveData<>();
-    private long mIncomeId;
+    private MutableLiveData<GovPensionEx> mGpeEx = new MutableLiveData<>();
 
     public static GovEntityRepo getInstance(Application application) {
         if(mINSTANCE == null) {
@@ -33,24 +36,22 @@ public class GovEntityRepo {
         return mINSTANCE;
     }
 
-    public GovEntityRepo(Application application) {
-        mIncomeId = 0;
+    GovEntityRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
         new GetListAsyncTask().execute();
     }
 
-    public GovEntityRepo(Application application, long incomeId) {
-        mIncomeId = incomeId;
-        mDB = AppDatabase.getInstance(application);
-        new GetAsyncTask().execute(mIncomeId);
-        new GetListAsyncTask().execute();
-    }
-
-    public MutableLiveData<GovPensionEntity> get() {
+    public MutableLiveData<GovPensionEntity> get(long id) {
+        new GetAsyncTask().execute(id);
         return mGPE;
     }
 
-    public MutableLiveData<List<GovPensionEntity>> getList() {
+    public LiveData<GovPensionEx> getEx() {
+        new GetExAsyncTask().execute();
+        return mGpeEx;
+    }
+
+    public LiveData<List<GovPensionEntity>> getList() {
         return mGpeList;
     }
 
@@ -78,7 +79,7 @@ public class GovEntityRepo {
 
         @Override
         protected GovPensionEntity doInBackground(Long... params) {
-            return mDB.govPensionDao().get(mIncomeId);
+            return mDB.govPensionDao().get(params[0]);
             /*
             if(gpeList == null || gpeList.isEmpty()) {
                 return null;
@@ -137,6 +138,21 @@ public class GovEntityRepo {
         @Override
         protected void onPostExecute(List<GovPensionEntity> gpeList) {
             mGpeList.setValue(gpeList);
+        }
+    }
+
+    private class GetExAsyncTask extends AsyncTask<Void, Void, GovPensionEx> {
+
+        @Override
+        protected GovPensionEx doInBackground(Void... params) {
+            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            return new GovPensionEx(gpeList, roe);
+        }
+
+        @Override
+        protected void onPostExecute(GovPensionEx gpeEx) {
+            mGpeEx.setValue(gpeEx);
         }
     }
 

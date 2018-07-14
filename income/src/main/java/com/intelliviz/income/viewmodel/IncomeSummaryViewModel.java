@@ -74,7 +74,7 @@ public class IncomeSummaryViewModel extends AndroidViewModel {
     }
 
     private List<IncomeData> getAllIncomeSources(List<IncomeSourceEntityBase> incomeSourceList) {
-        RetirementOptions roe = mRetireRepo.get().getValue();
+        RetirementOptions roe = RetirementOptionsMapper.map(mRetireRepo.get().getValue());
         return IncomeSummaryHelper.getIncomeSummary(incomeSourceList, roe);
     }
 

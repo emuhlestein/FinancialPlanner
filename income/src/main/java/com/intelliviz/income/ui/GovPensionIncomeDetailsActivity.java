@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.intelliviz.data.GovPension;
 import com.intelliviz.income.R;
 import com.intelliviz.data.IncomeDetails;
-import com.intelliviz.income.viewmodel.GovPensionIncomeDetailsViewModel;
+import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
@@ -31,7 +31,7 @@ import java.util.List;
 import static android.view.View.GONE;
 
 public class GovPensionIncomeDetailsActivity extends AppCompatActivity implements IncomeDetailsSelectListener{
-    private GovPensionIncomeDetailsViewModel mViewModel;
+    private GovPensionIncomeViewModel mViewModel;
     private GovPension mGP;
     private long mId;
 
@@ -126,10 +126,10 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         // For adding dividing line between views
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
         //        linearLayoutManager.getOrientation()));
-        GovPensionIncomeDetailsViewModel.Factory factory = new
-                GovPensionIncomeDetailsViewModel.Factory(getApplication(), mId);
+        GovPensionIncomeViewModel.Factory factory = new
+                GovPensionIncomeViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(GovPensionIncomeDetailsViewModel.class);
+                get(GovPensionIncomeViewModel.class);
 
         /*
         mViewModel.getList().observe(this, new Observer<List<IncomeDetails>>() {

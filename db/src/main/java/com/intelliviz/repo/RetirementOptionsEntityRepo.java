@@ -5,10 +5,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
-import com.intelliviz.db.entity.RetirementOptionsMapper;
 
 /**
  * Created by Ed Muhlestein on 6/21/2018.
@@ -18,9 +16,7 @@ import com.intelliviz.db.entity.RetirementOptionsMapper;
 public class RetirementOptionsEntityRepo {
     private volatile static RetirementOptionsEntityRepo mINSTANCE;
     private AppDatabase mDB;
-    private MutableLiveData<RetirementOptions> mROE =
-            new MutableLiveData<>();
-    private MutableLiveData<RetirementOptions> mRO =
+    private MutableLiveData<RetirementOptionsEntity> mROE =
             new MutableLiveData<>();
 
     public static RetirementOptionsEntityRepo getInstance(Application application) {
@@ -39,9 +35,9 @@ public class RetirementOptionsEntityRepo {
         new GetAsyncTask().execute();
     }
 
-    public LiveData<RetirementOptions> get() {
-        //new GetAsyncTask().execute();
-        return mRO;
+    public LiveData<RetirementOptionsEntity> get() {
+        new GetAsyncTask().execute();
+        return mROE;
     }
 
     /**
@@ -52,9 +48,7 @@ public class RetirementOptionsEntityRepo {
         return mDB.retirementOptionsDao().get();
     }
 
-    public void update(RetirementOptions ro) {
-        RetirementOptionsEntity roe = RetirementOptionsMapper.map(ro);
-        mROE.setValue(ro);
+    public void update(RetirementOptionsEntity roe) {
         new UpdateAsyncTask().execute(roe);
     }
 
@@ -66,16 +60,16 @@ public class RetirementOptionsEntityRepo {
         new UpdateBirthdateAsyncTask().execute(birthdate);
     }
 
-    private class GetAsyncTask extends AsyncTask<Void, Void, RetirementOptions> {
+    private class GetAsyncTask extends AsyncTask<Void, Void, RetirementOptionsEntity> {
 
         @Override
-        protected RetirementOptions doInBackground(Void... params) {
-            return RetirementOptionsMapper.map(mDB.retirementOptionsDao().get());
+        protected RetirementOptionsEntity doInBackground(Void... params) {
+            return mDB.retirementOptionsDao().get();
         }
 
         @Override
-        protected void onPostExecute(RetirementOptions roe) {
-            mRO.setValue(roe);
+        protected void onPostExecute(RetirementOptionsEntity roe) {
+            mROE.setValue(roe);
         }
     }
 

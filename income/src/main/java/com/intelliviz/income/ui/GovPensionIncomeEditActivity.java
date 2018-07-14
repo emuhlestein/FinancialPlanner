@@ -20,8 +20,7 @@ import android.widget.TextView;
 import com.intelliviz.data.GovPension;
 import com.intelliviz.income.R;
 import com.intelliviz.income.util.BirthdateDialogAction;
-import com.intelliviz.income.viewmodel.GovPensionIncomeEditViewModel;
-import com.intelliviz.income.viewmodel.LiveDataWrapper;
+import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -41,7 +40,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
     private GovPension mGP;
     private long mId;
-    private GovPensionIncomeEditViewModel mViewModel;
+    private GovPensionIncomeViewModel mViewModel;
     private boolean mIsPrincipleSpouse;
 
     private CoordinatorLayout mCoordinatorLayout;
@@ -95,22 +94,22 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             }
         });
 
-        GovPensionIncomeEditViewModel.Factory factory = new
-                GovPensionIncomeEditViewModel.Factory(getApplication(), mId);
+        GovPensionIncomeViewModel.Factory factory = new
+                GovPensionIncomeViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(GovPensionIncomeEditViewModel.class);
+                get(GovPensionIncomeViewModel.class);
 
-        mViewModel.get().observe(this, new Observer<LiveDataWrapper>() {
+        mViewModel.get().observe(this, new Observer<GovPension>() {
             @Override
-            public void onChanged(@Nullable LiveDataWrapper ldw) {
-                if(ldw == null) {
+            public void onChanged(@Nullable GovPension gp) {
+                if(gp == null) {
                     return;
                 }
-                mGP = (GovPension) ldw.getObj();
+                mGP = gp;
                 mIsPrincipleSpouse = false;
-                switch(ldw.getState()) {
+                switch(gp.getState()) {
                     case EC_MAX_NUM_SOCIAL_SECURITY:
-                        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, ldw.getMessage(), Snackbar.LENGTH_INDEFINITE);
+                        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gp.getMessage(), Snackbar.LENGTH_INDEFINITE);
                         snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -121,7 +120,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         snackbar.show();
                         break;
                     case EC_MAX_NUM_SOCIAL_SECURITY_FREE:
-                        final Snackbar snackbar1 = Snackbar.make(mCoordinatorLayout, ldw.getMessage(), Snackbar.LENGTH_INDEFINITE);
+                        final Snackbar snackbar1 = Snackbar.make(mCoordinatorLayout, gp.getMessage(), Snackbar.LENGTH_INDEFINITE);
                         snackbar1.setAction(R.string.dismiss, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

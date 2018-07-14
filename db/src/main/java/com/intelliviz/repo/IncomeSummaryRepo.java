@@ -5,11 +5,11 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.db.entity.PensionIncomeEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class IncomeSummaryRepo {
     private PensionIncomeEntityRepo mPensionRepo;
     private SavingsIncomeEntityRepo mSavingsRepo;
     private RetirementOptionsEntityRepo mRetireRepo;
-    private LiveData<RetirementOptions> mROE;
+    private LiveData<RetirementOptionsEntity> mROE;
     private MutableLiveData<List<IncomeSourceEntityBase>> mIncomeList =
             new MutableLiveData<>();
     private AppDatabase mDB;
@@ -29,15 +29,15 @@ public class IncomeSummaryRepo {
         mDB = AppDatabase.getInstance(application);
         mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         mROE = mRetireRepo.get();
-        mGovRepo = new GovEntityRepo(application, 0);
+        mGovRepo = GovEntityRepo.getInstance(application);
         mSavingsRepo = SavingsIncomeEntityRepo.getInstance(application);
         mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
         new GetAllIncomeSummariesAsyncTask().execute();
     }
 
-    public LiveData<RetirementOptions> getRetireOptionsEntity() {
-        return mROE;
-    }
+//    public LiveData<RetirementOptions> getRetireOptionsEntity() {
+//        return mROE;
+//    }
 
     public LiveData<List<IncomeSourceEntityBase>> get() {
         return mIncomeList;
