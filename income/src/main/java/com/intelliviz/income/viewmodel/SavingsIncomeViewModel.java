@@ -43,21 +43,25 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
 
     public SavingsIncomeViewModel(Application application, long incomeId, int incomeType) {
         super(application);
-        mRepo = SavingsIncomeEntityRepo.getInstance(application, incomeType);
+        mRepo = SavingsIncomeEntityRepo.getInstance(application);
         mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         //subscribeSavingsIncomeEntityChanges();
         subscribe(incomeId, incomeType);
     }
 
-    private void subscribe(long id, int incomeType) {
+    private void subscribe(final long id, final int incomeType) {
         LiveData<SavingsIncomeEntity> entity = mRepo.get(id);
         mSIE = Transformations.switchMap(entity,
                 new Function<SavingsIncomeEntity, LiveData<SavingsData>>() {
-
                     @Override
                     public LiveData<SavingsData> apply(SavingsIncomeEntity input) {
                         MutableLiveData<SavingsData> ldata = new MutableLiveData<>();
-                        ldata.setValue(SavingsDataEntityMapper.map(input));
+                        if(id == 0) {
+                            SavingsIncomeEntity sie = new SavingsIncomeEntity(0, incomeType);
+                            ldata.setValue(SavingsDataEntityMapper.map(sie));
+                        } else {
+                            ldata.setValue(SavingsDataEntityMapper.map(input));
+                        }
                         return ldata;
                     }
                 });

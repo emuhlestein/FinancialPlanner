@@ -28,7 +28,7 @@ public class IncomeSourceListRepo {
         mDB = AppDatabase.getInstance(application);
         mGovRepo = new GovEntityRepo(application);
         mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
-        mSavingsRepo = SavingsIncomeEntityRepo.getInstance(application, 0);
+        mSavingsRepo = SavingsIncomeEntityRepo.getInstance(application);
         mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         new GetAllIncomeSourcesAsyncTask().execute();
     }
