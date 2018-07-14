@@ -22,6 +22,7 @@ import com.intelliviz.db.entity.GovPensionEntityMapper;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.GovEntityRepo;
 import com.intelliviz.repo.RetirementOptionsEntityRepo;
@@ -101,6 +102,12 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
                             GovPension gp = GovPensionEntityMapper.map(gpe);
                             gpList.add(gp);
                         }
+
+                        if(id == 0 && gpList.size() < 2) {
+                            GovPension gp = new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "",
+                                    "0", new AgeData(65, 0), false);
+                            gpList.add(gp);
+                        }
                         SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro);
                         GovPension gp = getGovPension(gpList, id);
                         MutableLiveData<GovPension> ldata = new MutableLiveData();
@@ -172,7 +179,7 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
     }
 
     private GovPension getGovPension(List<GovPension> gpList, long id) {
-        if(gpList == null || gpList.isEmpty() || id == 0) {
+        if(gpList == null || gpList.isEmpty()) {
             return null;
         }
 
