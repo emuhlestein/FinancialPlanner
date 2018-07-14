@@ -23,7 +23,7 @@ import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.adapter.IncomeDetailsAdapter;
-import com.intelliviz.income.viewmodel.SavingsIncomeDetailsViewModel;
+import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
@@ -37,7 +37,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
 
     private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
-    private SavingsIncomeDetailsViewModel mViewModel;
+    private SavingsIncomeViewModel mViewModel;
     private SavingsData mSIE;
     private long mId;
 
@@ -120,10 +120,10 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             }
         });
 
-        SavingsIncomeDetailsViewModel.Factory factory = new
-                SavingsIncomeDetailsViewModel.Factory(getApplication(), mId);
+        SavingsIncomeViewModel.Factory factory = new
+                SavingsIncomeViewModel.Factory(getApplication(), mId, 0);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(SavingsIncomeDetailsViewModel.class);
+                get(SavingsIncomeViewModel.class);
 
         mViewModel.getList().observe(this, new Observer<List<IncomeDetails>>() {
             @Override

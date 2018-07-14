@@ -10,39 +10,41 @@ import com.intelliviz.db.entity.SavingsIncomeEntity;
 import java.util.List;
 
 public class SavingsIncomeEntityRepo {
+    private volatile static SavingsIncomeEntityRepo mINSTANCE;
     private AppDatabase mDB;
+    private int mIncomeType;
     private MutableLiveData<SavingsIncomeEntity> mSIE =
             new MutableLiveData<>();
     private MutableLiveData<List<SavingsIncomeEntity>> mSieList = new MutableLiveData<List<SavingsIncomeEntity>>();
-    private long mIncomeId;
 
-    public SavingsIncomeEntityRepo(Application application) {
-        mIncomeId = 0;
-        mDB = AppDatabase.getInstance(application);
-        new GetListAsyncTask().execute();
+    public static SavingsIncomeEntityRepo getInstance(Application application, int incomeType) {
+        if(mINSTANCE == null) {
+            synchronized (SavingsIncomeEntityRepo.class) {
+                if(mINSTANCE == null) {
+                    mINSTANCE = new SavingsIncomeEntityRepo(application, incomeType);
+                }
+            }
+        }
+        return mINSTANCE;
     }
 
-    public SavingsIncomeEntityRepo(Application application, long incomeId) {
-        mIncomeId = incomeId;
+    private SavingsIncomeEntityRepo(Application application, int incomeType) {
         mDB = AppDatabase.getInstance(application);
-        new GetAsyncTask().execute(incomeId);
+        mIncomeType = incomeType;
         new GetListAsyncTask().execute();
-    }
-
-    public MutableLiveData<List<SavingsIncomeEntity>> getList() {
-        return mSieList;
     }
 
     public MutableLiveData<SavingsIncomeEntity> get() {
         return mSIE;
     }
 
-    public void delete(SavingsIncomeEntity entity) {
-        new DeleteAsyncTask().execute(entity);
+    public MutableLiveData<SavingsIncomeEntity> get(long id) {
+        new GetAsyncTask().execute(id);
+        return mSIE;
     }
 
-    public void update() {
-        new GetListAsyncTask().execute();
+    public MutableLiveData<List<SavingsIncomeEntity>> getList() {
+        return mSieList;
     }
 
     public void setData(SavingsIncomeEntity sie) {
@@ -53,6 +55,14 @@ public class SavingsIncomeEntityRepo {
         }
     }
 
+    public void delete(SavingsIncomeEntity entity) {
+        new DeleteAsyncTask().execute(entity);
+    }
+
+    public void update() {
+        new GetListAsyncTask().execute();
+    }
+
     private class GetAsyncTask extends AsyncTask<Long, Void, SavingsIncomeEntity> {
 
         public GetAsyncTask() {
@@ -60,7 +70,12 @@ public class SavingsIncomeEntityRepo {
 
         @Override
         protected SavingsIncomeEntity doInBackground(Long... params) {
-            return mDB.savingsIncomeDao().get(params[0]);
+            long id = params[0];
+            if(id == 0) {
+                return new SavingsIncomeEntity(0, mIncomeType);
+            } else {
+                return mDB.savingsIncomeDao().get(params[0]);
+            }
         }
 
         @Override

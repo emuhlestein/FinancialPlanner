@@ -34,20 +34,33 @@ import java.util.List;
  * Created by edm on 10/23/2017.
  */
 
-public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
+public class SavingsIncomeViewModel extends AndroidViewModel {
     private LiveData<SavingsData> mSIE =
             new MutableLiveData<>();
     private MutableLiveData<List<IncomeDetails>> mIncomeDetails = new MutableLiveData<List<IncomeDetails>>();
-    private long mIncomeId;
     private SavingsIncomeEntityRepo mRepo;
     private RetirementOptionsEntityRepo mRetireRepo;
 
-    public SavingsIncomeDetailsViewModel(Application application, long incomeId) {
+    public SavingsIncomeViewModel(Application application, long incomeId, int incomeType) {
         super(application);
-        mIncomeId = incomeId;
-        mRepo = new SavingsIncomeEntityRepo(application, incomeId);
+        mRepo = SavingsIncomeEntityRepo.getInstance(application, incomeType);
         mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
-        subscribeSavingsIncomeEntityChanges();
+        //subscribeSavingsIncomeEntityChanges();
+        subscribe(incomeId, incomeType);
+    }
+
+    private void subscribe(long id, int incomeType) {
+        LiveData<SavingsIncomeEntity> entity = mRepo.get(id);
+        mSIE = Transformations.switchMap(entity,
+                new Function<SavingsIncomeEntity, LiveData<SavingsData>>() {
+
+                    @Override
+                    public LiveData<SavingsData> apply(SavingsIncomeEntity input) {
+                        MutableLiveData<SavingsData> ldata = new MutableLiveData<>();
+                        ldata.setValue(SavingsDataEntityMapper.map(input));
+                        return ldata;
+                    }
+                });
     }
 
     public MutableLiveData<List<IncomeDetails>> getList() {
@@ -59,7 +72,7 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
     }
 
     public void update() {
-        new GetBenefitDataListByIdAsyncTask().execute(mIncomeId);
+        //new GetBenefitDataListByIdAsyncTask().execute(mIncomeId);
     }
 
     public void setData(SavingsData sie) {
@@ -70,15 +83,17 @@ public class SavingsIncomeDetailsViewModel extends AndroidViewModel {
         @NonNull
         private final Application mApplication;
         private long mIncomeId;
+        private int mIncomeType;
 
-        public Factory(@NonNull Application application, long incomeId) {
+        public Factory(@NonNull Application application, long incomeId, int incomeType) {
             mApplication = application;
             mIncomeId = incomeId;
+            mIncomeType = incomeType;
         }
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new SavingsIncomeDetailsViewModel(mApplication, mIncomeId);
+            return (T) new SavingsIncomeViewModel(mApplication, mIncomeId, mIncomeType);
         }
     }
 

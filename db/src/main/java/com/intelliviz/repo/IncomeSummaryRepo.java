@@ -30,7 +30,7 @@ public class IncomeSummaryRepo {
         mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         mROE = mRetireRepo.get();
         mGovRepo = new GovEntityRepo(application, 0);
-        mSavingsRepo = new SavingsIncomeEntityRepo(application, 0);
+        mSavingsRepo = SavingsIncomeEntityRepo.getInstance(application, 0);
         mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
         new GetAllIncomeSummariesAsyncTask().execute();
     }

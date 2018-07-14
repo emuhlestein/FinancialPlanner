@@ -28,7 +28,7 @@ public class IncomeSourceListRepo {
         mDB = AppDatabase.getInstance(application);
         mGovRepo = new GovEntityRepo(application);
         mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
-        mSavingsRepo = new SavingsIncomeEntityRepo(application);
+        mSavingsRepo = SavingsIncomeEntityRepo.getInstance(application, 0);
         mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         new GetAllIncomeSourcesAsyncTask().execute();
     }
@@ -73,13 +73,10 @@ public class IncomeSourceListRepo {
             }
         }
 
-        MutableLiveData<List<SavingsIncomeEntity>> savingsList = mSavingsRepo.getList();
-        if(savingsList != null) {
-            List<SavingsIncomeEntity> slist = savingsList.getValue();
-            if(slist != null) {
-                for (SavingsIncomeEntity savings : savingsList.getValue()) {
-                    incomeSourceList.add(savings);
-                }
+        List<SavingsIncomeEntity> savingsList = mDB.savingsIncomeDao().get();
+        if (savingsList != null) {
+            for (SavingsIncomeEntity savings : savingsList) {
+                incomeSourceList.add(savings);
             }
         }
 

@@ -64,11 +64,11 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     @Ignore
     public SavingsIncomeEntity(long id, int type) {
         super(id, type, "");
-        mStartAge = new AgeData(0);
+        mStartAge = new AgeData(65, 0); // TODO need to create const
         mBalance = "0";
         mInterest = "0";
         mMonthlyAddition = "0";
-        mStopMonthlyAdditionAge = new AgeData(0);
+        mStopMonthlyAdditionAge = new AgeData(65, 0); // TODO need to create consst
         mWithdrawPercent = "0";
         mAnnualPercentIncrease = "0";
         mShowMonths = 0;

@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
-import com.intelliviz.income.viewmodel.SavingsIncomeEditViewModel;
+import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -38,7 +38,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
     private int mIncomeType;
     private int mAgeType = STOP_AGE;
     private boolean mActivityResult;
-    private SavingsIncomeEditViewModel mViewModel;
+    private SavingsIncomeViewModel mViewModel;
 
     private Toolbar mToolbar;
     private CoordinatorLayout mCoordinatorLayout;
@@ -145,14 +145,12 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
             }
         });
 
-
-
-        SavingsIncomeEditViewModel.Factory factory = new
-                SavingsIncomeEditViewModel.Factory(getApplication(), mId);
+        SavingsIncomeViewModel.Factory factory = new
+                SavingsIncomeViewModel.Factory(getApplication(), mId, mIncomeType);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(SavingsIncomeEditViewModel.class);
+                get(SavingsIncomeViewModel.class);
 
-        mViewModel.getData().observe(this, new Observer<SavingsData>() {
+        mViewModel.get().observe(this, new Observer<SavingsData>() {
             @Override
             public void onChanged(@Nullable SavingsData data) {
                 mSD = data;
@@ -259,14 +257,17 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         String name = mIncomeSourceName.getText().toString();
 
         int showMonths = getShowMonths() ? 1 : 0;
-        SavingsData sie = new SavingsData(mId, mIncomeType, name, startAge, balance, interest, monthlyAddition,
+        SavingsData sie = new SavingsData(mId, mSD.getType(), name, startAge, balance, interest, monthlyAddition,
                 stopAge, withdrawPercent, annualPercentIncrease, showMonths);
+        mViewModel.setData(sie);
+        /*
         if(mActivityResult) {
             sendData(mId, name, startAge, balance, interest, monthlyAddition, stopAge,
                     withdrawPercent, annualPercentIncrease, showMonths);
         } else {
             mViewModel.setData(sie);
         }
+        */
 
         finish();
     }
