@@ -20,12 +20,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.intelliviz.db.entity.MilestoneAgeEntity;
 import com.intelliviz.income.ui.AgeDialog;
 import com.intelliviz.income.ui.ListMenuActivity;
 import com.intelliviz.income.ui.YesNoDialog;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.adapter.MilestoneAgeAdapter;
 import com.intelliviz.retirementhelper.util.SelectMilestoneAgeListener;
@@ -194,8 +194,8 @@ public class MilestoneAgesFragment extends Fragment implements SelectMilestoneAg
             return;
         }
 
-        mNewAge = AgeUtils.parseAgeString(year + " " + month);
-        if(mNewAge == null) {
+        mNewAge = new AgeData(year, month);
+        if(!mNewAge.isValid()) {
             return;
         }
 

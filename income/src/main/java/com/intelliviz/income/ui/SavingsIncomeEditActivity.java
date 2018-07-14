@@ -22,7 +22,6 @@ import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
@@ -247,12 +246,12 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         }
 
         String age = mStartAgeTextView.getText().toString();
-        String age2 = AgeUtils.trimAge(age);
-        AgeData startAge = AgeUtils.parseAgeString(age2);
+        AgeData startAge = new AgeData(age);
+        // TODO need to check for valid age
 
         age = getStopMonthlyAdditionAge();
-        age2 = AgeUtils.trimAge(age);
-        AgeData stopAge = AgeUtils.parseAgeString(age2);
+        AgeData stopAge = new AgeData(age);
+        // TODO need to check for valid age
 
         String name = mIncomeSourceName.getText().toString();
 
@@ -274,7 +273,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = AgeUtils.parseAgeString(year, month);
+        AgeData age = new AgeData(year, month);
+        // TODO need to check for valid age
         if(mAgeType == START_AGE) {
             mStartAgeTextView.setText(age.toString());
         }

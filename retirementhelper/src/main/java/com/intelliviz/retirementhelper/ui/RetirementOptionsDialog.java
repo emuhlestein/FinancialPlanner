@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.income.ui.AgeDialog;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.viewmodel.RetirementOptionsViewModel;
@@ -92,9 +91,8 @@ public class RetirementOptionsDialog extends AppCompatActivity implements AgeDia
         String value;
 
         value = mEndAgeTextVIew.getText().toString();
-        value = AgeUtils.trimAge(value);
-        AgeData endAge = AgeUtils.parseAgeString(value);
-        if (endAge == null) {
+        AgeData endAge = new AgeData(value);
+        if (!endAge.isValid()) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
@@ -108,7 +106,7 @@ public class RetirementOptionsDialog extends AppCompatActivity implements AgeDia
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = AgeUtils.parseAgeString(year, month);
+        AgeData age = new AgeData(year, month);
         mEndAgeTextVIew.setText(age.toString());
     }
 }

@@ -3,12 +3,17 @@ package com.intelliviz.lowlevel.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import static java.lang.Integer.parseInt;
+
 /**
  * Class to handle ages.
  * Created by Ed Muhlestein on 5/23/2017.
  */
 
 public class AgeData implements Parcelable {
+    private static final int INVALID_AGE = -1;
+    private static final int MIN_VALID_AGE = 0;
+    private static final int MAX_VALID_AGE = 200*12;
     private int mNumMonths;
 
     /**
@@ -18,6 +23,15 @@ public class AgeData implements Parcelable {
         mNumMonths = 0;
     }
 
+    public AgeData(String age) {
+        parseAge(age);
+    }
+
+    public AgeData(String year, String month) {
+        String age = year + " " + month;
+        parseAge(age);
+    }
+
     /**
      * Constructor.
      *
@@ -25,7 +39,7 @@ public class AgeData implements Parcelable {
      * @param month The month.
      */
     public AgeData(int year, int month) {
-        mNumMonths = year * 12 + month;
+        setMonths(year, month);
     }
 
     /**
@@ -34,7 +48,7 @@ public class AgeData implements Parcelable {
      * @param numMonths The number of months.
      */
     public AgeData(int numMonths) {
-        mNumMonths = numMonths;
+        setMonths(0, numMonths);
     }
 
     /**
@@ -58,7 +72,7 @@ public class AgeData implements Parcelable {
         if(numMonths <= 0) {
             return;
         }
-        mNumMonths += numMonths;
+        setMonths(0, mNumMonths + numMonths);
     }
 
     /**
@@ -115,6 +129,10 @@ public class AgeData implements Parcelable {
         return mNumMonths % 12;
     }
 
+    public boolean isValid() {
+        return (mNumMonths != INVALID_AGE);
+    }
+
     /**
      * Constuctor used by parcelable.
      * @param in THe input parcel from which to extract the values.
@@ -134,6 +152,51 @@ public class AgeData implements Parcelable {
      */
     public String getUnformattedString() {
         return Integer.toString(getYear()) + " " + Integer.toString(getMonth());
+    }
+
+    private void setMonths(int year, int month) {
+        int numMonths = year * 12 + month;
+        if(numMonths < MIN_VALID_AGE || numMonths > MAX_VALID_AGE) {
+            mNumMonths = INVALID_AGE;
+        } else {
+            mNumMonths = numMonths;
+        }
+    }
+
+    private void parseAge(String age) {
+        if(age == null || age.isEmpty()) {
+            mNumMonths = INVALID_AGE;
+        }
+
+        String trimmedAge = trimAge(age);
+
+        String[] tokens = trimmedAge.split(" ");
+        int year;
+        int month = 0;
+        if(tokens.length == 1) {
+            try {
+                year = parseInt(tokens[0]);
+                setMonths(year, month);
+            } catch (NumberFormatException e) {
+                mNumMonths = INVALID_AGE;
+            }
+        } else if(tokens.length == 2) {
+            try {
+                year = parseInt(tokens[0]);
+                month = parseInt(tokens[1]);
+                setMonths(year, month);
+            } catch (NumberFormatException e) {
+                mNumMonths = INVALID_AGE;
+            }
+        } else {
+            mNumMonths = INVALID_AGE;
+        }
+    }
+
+    private String trimAge(String age) {
+        age = age.replace("y", "");
+        age = age.replace("m", "");
+        return age;
     }
 
     @Override

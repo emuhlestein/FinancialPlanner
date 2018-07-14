@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.intelliviz.income.R;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
 
@@ -51,8 +50,7 @@ public class SavingsAdvancedFragment extends Fragment implements AgeDialog.OnAge
             public void onClick(View view) {
                 AgeData stopAge;
                 String age = mStopMonthlyAdditionAgeTextView.getText().toString();
-                String trimmedAge = AgeUtils.trimAge(age);
-                stopAge = AgeUtils.parseAgeString(trimmedAge);
+                stopAge = new AgeData(age);
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 AgeDialog dialog = AgeDialog.newInstance(""+stopAge.getYear(), ""+stopAge.getMonth());
                 dialog.show(fm, "");
@@ -138,7 +136,7 @@ public class SavingsAdvancedFragment extends Fragment implements AgeDialog.OnAge
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = AgeUtils.parseAgeString(year, month);
+        AgeData age = new AgeData(year, month);
         mStopMonthlyAdditionAgeTextView.setText(age.toString());
     }
 }

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.intelliviz.income.R;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
 
 
 /**
@@ -38,8 +37,7 @@ public class GovPensionAdvancedFragment extends Fragment {
             public void onClick(View view) {
                 AgeData startAge;
                 String age = mStartRetirementAge.getText().toString();
-                String trimmedAge = AgeUtils.trimAge(age);
-                startAge = AgeUtils.parseAgeString(trimmedAge);
+                startAge = new AgeData(age);
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
                 dialog.show(fm, "");

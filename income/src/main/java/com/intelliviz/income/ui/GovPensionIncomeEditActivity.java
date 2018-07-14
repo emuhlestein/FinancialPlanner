@@ -22,7 +22,6 @@ import com.intelliviz.income.R;
 import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
@@ -211,7 +210,8 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = AgeUtils.parseAgeString(year, month);
+        // TODO should check to make sure it's valid
+        AgeData age = new AgeData(year, month);
         setStartRetirementAge(age.toString());
     }
 
@@ -235,12 +235,11 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         Fragment fragment = fm.findFragmentById(R.id.gov_pension_advanced_fragment);
         if(fragment != null && fragment instanceof GovPensionAdvancedFragment) {
             String age = ((GovPensionAdvancedFragment)fragment).getStartRetirementAge();
-            String trimmedAge = AgeUtils.trimAge(age);
-            AgeData startAge = AgeUtils.parseAgeString(trimmedAge);
-            if(startAge != null) {
+            AgeData startAge = new AgeData(age);
+            if(startAge.isValid()) {
                 return startAge;
             }
         }
-        return new AgeData(0);
+        return new AgeData();
     }
 }

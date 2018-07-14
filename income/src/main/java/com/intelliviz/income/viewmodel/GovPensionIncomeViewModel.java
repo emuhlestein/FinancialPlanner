@@ -104,9 +104,19 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
                         }
 
                         if(id == 0 && gpList.size() < 2) {
-                            GovPension gp = new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "",
-                                    "0", new AgeData(65, 0), false);
-                            gpList.add(gp);
+                            if(gpList.isEmpty()) {
+                                GovPension gp = new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "",
+                                        "0", new AgeData(65, 0), false);
+                                gpList.add(gp);
+                            } else if(gpList.size() == 1) {
+                                if(ro.getSpouseBirthdate().equals("0")) {
+
+                                } else {
+
+                                }
+                            } else {
+
+                            }
                         }
                         SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro);
                         GovPension gp = getGovPension(gpList, id);

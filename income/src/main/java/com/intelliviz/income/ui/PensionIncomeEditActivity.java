@@ -19,7 +19,6 @@ import com.intelliviz.data.PensionData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
@@ -138,9 +137,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
             return;
         }
 
-        age = AgeUtils.trimAge(age);
-        AgeData minAge = AgeUtils.parseAgeString(age);
-        if(minAge == null) {
+        AgeData minAge = new AgeData(age);
+        if(!minAge.isValid()) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.age_not_valid) + " " + value, Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
@@ -154,7 +152,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
 
     @Override
     public void onEditAge(String year, String month) {
-        AgeData age = AgeUtils.parseAgeString(year, month);
+        // TODO check to see if age is valid
+        AgeData age = new AgeData(year, month);
         mMinAge.setText(age.toString());
     }
 }

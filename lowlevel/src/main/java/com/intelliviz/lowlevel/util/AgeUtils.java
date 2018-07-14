@@ -72,7 +72,6 @@ public class AgeUtils {
         return new AgeData(years, months);
     }
 
-
     /**
      * The format for age is "Y M", where Y is an integer that is the year, and M
      * is an integer that is the month.
@@ -81,6 +80,7 @@ public class AgeUtils {
      * @return The AgeData;
      */
     // TODO make sure all callers check for invalid age
+    /*
     public static AgeData parseAgeString(String age) {
         if(age == null || age.isEmpty()) {
             return null;
@@ -115,12 +115,13 @@ public class AgeUtils {
         sb.append(month);
         return parseAgeString(sb.toString());
     }
+    */
 
-    public static String trimAge(String age) {
-        age = age.replace("y", "");
-        age = age.replace("m", "");
-        return age;
-    }
+//    public static String trimAge(String age) {
+//        age = age.replace("y", "");
+//        age = age.replace("m", "");
+//        return age;
+//    }
 
 
     public static boolean validateBirthday(String birthdate) {
@@ -219,7 +220,6 @@ public class AgeUtils {
             return age.add(numMonths);
         }
     }
-
 
     /**
      * Get the age for the spouse, given the other spouse's age.
