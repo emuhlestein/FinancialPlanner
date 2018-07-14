@@ -5,10 +5,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.intelliviz.data.PensionRules;
 import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.PensionIncomeEntity;
-import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.List;
 
@@ -69,13 +67,15 @@ public class PensionIncomeEntityRepo {
 
         @Override
         protected PensionIncomeEntity doInBackground(Long... params) {
-            long id = params[0];
-            if(id == 0) {
-                // need to create default
-                return new PensionIncomeEntity(0, RetirementConstants.INCOME_TYPE_PENSION, "", PensionRules.DEFAULT_MIN_AGE, "0");
-            } else {
-                return mDB.pensionIncomeDao().get(params[0]);
-            }
+            PensionIncomeEntity pie = mDB.pensionIncomeDao().get(params[0]);
+            return pie;
+//            long id = params[0];
+//            if(id == 0) {
+//                // need to create default
+//                return new PensionIncomeEntity(0, RetirementConstants.INCOME_TYPE_PENSION, "", PensionRules.DEFAULT_MIN_AGE, "0");
+//            } else {
+//                return mDB.pensionIncomeDao().get(params[0]);
+//            }
         }
 
         @Override

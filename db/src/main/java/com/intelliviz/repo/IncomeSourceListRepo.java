@@ -124,8 +124,7 @@ public class IncomeSourceListRepo {
 
         @Override
         protected List<IncomeSourceEntityBase> doInBackground(PensionIncomeEntity... params) {
-            PensionIncomeEntity pie = params[0];
-            mDB.pensionIncomeDao().delete(pie);
+            mDB.pensionIncomeDao().delete(params[0]);
             return getAllIncomeSources();
         }
 
@@ -139,8 +138,7 @@ public class IncomeSourceListRepo {
 
         @Override
         protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
-            SavingsIncomeEntity sie = params[0];
-            mSavingsRepo.delete(sie);
+            mDB.savingsIncomeDao().delete(params[0]);
             return getAllIncomeSources();
         }
 

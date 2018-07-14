@@ -11,8 +11,10 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.data.PensionData;
+import com.intelliviz.data.PensionRules;
 import com.intelliviz.db.entity.PensionDataEntityMapper;
 import com.intelliviz.db.entity.PensionIncomeEntity;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.repo.PensionIncomeEntityRepo;
 
 
@@ -34,7 +36,7 @@ public class PensionIncomeViewModel extends AndroidViewModel {
         return mPD;
     }
 
-    private void subscribe(long id) {
+    private void subscribe(final long id) {
         LiveData<PensionIncomeEntity> entity = mRepo.get(id);
         mPD = Transformations.switchMap(entity,
                 new Function<PensionIncomeEntity, LiveData<PensionData>>() {
@@ -42,7 +44,13 @@ public class PensionIncomeViewModel extends AndroidViewModel {
                     @Override
                     public LiveData<PensionData> apply(PensionIncomeEntity input) {
                         MutableLiveData<PensionData> ldata = new MutableLiveData<>();
-                        ldata.setValue(PensionDataEntityMapper.map(input));
+                        if(id == 0) {
+                            // create default pension income source
+                            PensionIncomeEntity pie = new PensionIncomeEntity(0, RetirementConstants.INCOME_TYPE_PENSION, "", PensionRules.DEFAULT_MIN_AGE, "0");
+                            ldata.setValue(PensionDataEntityMapper.map(pie));
+                        } else {
+                            ldata.setValue(PensionDataEntityMapper.map(input));
+                        }
                         return ldata;
                     }
                 });
