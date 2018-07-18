@@ -5,7 +5,7 @@ import com.intelliviz.data.GovPension;
 import com.intelliviz.data.SocialSecurityRules;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
-import com.intelliviz.income.viewmodel.LiveDataWrapper;
+import com.intelliviz.income.viewmodel.ViewData;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -29,7 +29,7 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
         mROE = roe;
     }
 
-    public LiveDataWrapper getEntity(long id) {
+    public ViewData getEntity(long id) {
         if(id == 0) {
             // a new entity is requested. see if one can be created
             return createDefault();
@@ -40,13 +40,13 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
             }
             if(gp.isSpouse()) {
                 gp.setRules(new SocialSecurityRules(mROE.getEndAge(), mROE.getSpouseBirthdate()));
-                return new LiveDataWrapper(gp);
+                return new ViewData(gp);
             } else {
                 gp.setRules(new SocialSecurityRules(mROE.getEndAge(), mROE.getBirthdate()));
                 if(mGpList.size() == 2) {
-                    return new LiveDataWrapper(gp, EC_PRINCIPLE_SPOUSE);
+                    return new ViewData(gp, EC_PRINCIPLE_SPOUSE);
                 } else {
-                    return new LiveDataWrapper(gp);
+                    return new ViewData(gp);
                 }
             }
         }
@@ -56,11 +56,11 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
 
     public abstract int getMaxErrorCode();
 
-    private LiveDataWrapper createDefault() {
+    private ViewData createDefault() {
         int max_num = getMaxEntities();
         if(mGpList.size() == max_num) {
             int message = getMaxErrorCode();
-            return new LiveDataWrapper(null, getMaxErrorCode());
+            return new ViewData(null, getMaxErrorCode());
         } else {
             if(mGpList.size() == 0) {
                 return createNew(false, false);
@@ -74,13 +74,13 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
         }
     }
 
-    private LiveDataWrapper createNew(boolean spouse, boolean isPrincipleSpouse) {
+    private ViewData createNew(boolean spouse, boolean isPrincipleSpouse) {
         int year;
         AgeData age;
         String birthdate;
         if(spouse) {
             if(!AgeUtils.validateBirthday(mROE.getSpouseBirthdate())) {
-                return new LiveDataWrapper(null, EC_NO_SPOUSE_BIRTHDATE);
+                return new ViewData(null, EC_NO_SPOUSE_BIRTHDATE);
             } else {
                 birthdate = mROE.getSpouseBirthdate();
                 year = AgeUtils.getBirthYear(birthdate);
@@ -96,9 +96,9 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
                 "", "0", age, spouse ? 1 : 0);
         //gpe.setRules(new SocialSecurityRules(mROE.getEndAge(), birthdate));
         if(isPrincipleSpouse) {
-            return new LiveDataWrapper(gpe, EC_PRINCIPLE_SPOUSE);
+            return new ViewData(gpe, EC_PRINCIPLE_SPOUSE);
         } else {
-            return new LiveDataWrapper(gpe);
+            return new ViewData(gpe);
         }
     }
 

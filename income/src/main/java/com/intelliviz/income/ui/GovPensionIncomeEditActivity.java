@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.intelliviz.data.GovPension;
 import com.intelliviz.income.R;
+import com.intelliviz.income.data.GovPensionViewData;
 import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
@@ -98,17 +99,17 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeViewModel.class);
 
-        mViewModel.get().observe(this, new Observer<GovPension>() {
+        mViewModel.get().observe(this, new Observer<GovPensionViewData>() {
             @Override
-            public void onChanged(@Nullable GovPension gp) {
-                if(gp == null) {
+            public void onChanged(@Nullable GovPensionViewData viewData) {
+                if(viewData == null) {
                     return;
                 }
-                mGP = gp;
+                mGP = viewData.getGovPension();
                 mIsPrincipleSpouse = false;
-                switch(gp.getState()) {
+                switch(viewData.getStatus()) {
                     case EC_MAX_NUM_SOCIAL_SECURITY:
-                        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, gp.getMessage(), Snackbar.LENGTH_INDEFINITE);
+                        final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, viewData.getMessage(), Snackbar.LENGTH_INDEFINITE);
                         snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -119,7 +120,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         snackbar.show();
                         break;
                     case EC_MAX_NUM_SOCIAL_SECURITY_FREE:
-                        final Snackbar snackbar1 = Snackbar.make(mCoordinatorLayout, gp.getMessage(), Snackbar.LENGTH_INDEFINITE);
+                        final Snackbar snackbar1 = Snackbar.make(mCoordinatorLayout, viewData.getMessage(), Snackbar.LENGTH_INDEFINITE);
                         snackbar1.setAction(R.string.dismiss, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -130,14 +131,12 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         snackbar1.show();
                         break;
                     case EC_NO_SPOUSE_BIRTHDATE:
-                        /*
                         showDialog("01-01-1900", new BirthdateDialogAction() {
                             @Override
                             public void onGetBirthdate(String birthdate) {
-                                mViewModel.updateSpouseBirthdate(birthdate);
+                                //mViewModel.updateSpouseBirthdate(birthdate);
                             }
                         });
-                        */
                         break;
                     case EC_PRINCIPLE_SPOUSE:
                         mIsPrincipleSpouse = true;

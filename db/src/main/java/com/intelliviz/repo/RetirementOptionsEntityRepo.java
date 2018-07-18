@@ -36,7 +36,6 @@ public class RetirementOptionsEntityRepo {
     }
 
     public LiveData<RetirementOptionsEntity> get() {
-        new GetAsyncTask().execute();
         return mROE;
     }
 

@@ -18,8 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.intelliviz.data.GovPension;
-import com.intelliviz.income.R;
 import com.intelliviz.data.IncomeDetails;
+import com.intelliviz.income.R;
+import com.intelliviz.income.data.GovPensionViewData;
 import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -144,10 +145,10 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         });
         */
 
-        mViewModel.get().observe(this, new Observer<GovPension>() {
+        mViewModel.get().observe(this, new Observer<GovPensionViewData>() {
             @Override
-            public void onChanged(@Nullable GovPension gp) {
-                mGP = gp;
+            public void onChanged(@Nullable GovPensionViewData gp) {
+                mGP = gp.getGovPension();
                 updateUI();
             }
         });

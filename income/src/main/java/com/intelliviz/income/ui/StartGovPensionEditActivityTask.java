@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentManager;
 import com.intelliviz.db.AppDatabase;
 import com.intelliviz.income.R;
 import com.intelliviz.income.util.BirthdateDialogAction;
-import com.intelliviz.income.viewmodel.LiveDataWrapper;
+import com.intelliviz.income.viewmodel.ViewData;
 
 import static com.intelliviz.income.util.uiUtils.showDialog;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
@@ -24,7 +24,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOUR
  * Created by edm on 3/12/2018.
  */
 
-public class StartGovPensionEditActivityTask extends AsyncTask<Void, Void, LiveDataWrapper> {
+public class StartGovPensionEditActivityTask extends AsyncTask<Void, Void, ViewData> {
     private FragmentActivity mActivity;
     private long mId;
     private int mAction;
@@ -36,7 +36,7 @@ public class StartGovPensionEditActivityTask extends AsyncTask<Void, Void, LiveD
     }
 
     @Override
-    protected LiveDataWrapper doInBackground(Void... voids) {
+    protected ViewData doInBackground(Void... voids) {
         //AppDatabase mDB = AppDatabase.getInstance(mActivity);
         //AppDatabase.getInstance(mActivity).summaryDao();
        // List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
@@ -46,11 +46,11 @@ public class StartGovPensionEditActivityTask extends AsyncTask<Void, Void, LiveD
     }
 
     @Override
-    protected void onPostExecute(LiveDataWrapper liveDataWrapper) {
+    protected void onPostExecute(ViewData liveDataWrapper) {
         tryToStartGovPensionActivity(liveDataWrapper, mId, mAction);
     }
 
-    private void tryToStartGovPensionActivity(LiveDataWrapper liveDataWrapper, long id, int action) {
+    private void tryToStartGovPensionActivity(ViewData liveDataWrapper, long id, int action) {
         int state = liveDataWrapper.getState();
         if(state == EC_NO_ERROR || state == EC_PRINCIPLE_SPOUSE) {
             Intent intent = new Intent(mActivity, GovPensionIncomeEditActivity.class);
