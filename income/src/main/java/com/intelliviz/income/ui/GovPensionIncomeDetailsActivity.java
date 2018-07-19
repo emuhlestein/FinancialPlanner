@@ -25,6 +25,7 @@ import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
+import com.intelliviz.repo.GovEntityRepo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +129,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
         //        linearLayoutManager.getOrientation()));
         GovPensionIncomeViewModel.Factory factory = new
-                GovPensionIncomeViewModel.Factory(getApplication(), mId);
+                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeViewModel.class);
 

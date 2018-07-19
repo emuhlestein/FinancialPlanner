@@ -55,13 +55,10 @@ public class IncomeSourceListRepo {
 
     private List<IncomeSourceEntityBase> getAllIncomeSources() {
         List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
-        LiveData<List<GovPensionEntity>> gpeList = mGovRepo.getList();
-        if(gpeList != null) {
-            List<GovPensionEntity> list = gpeList.getValue();
-            if(list != null) {
-                for (GovPensionEntity gpe : gpeList.getValue()) {
-                    incomeSourceList.add(gpe);
-                }
+        List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+        if (gpeList != null) {
+            for (GovPensionEntity gpe : gpeList) {
+                incomeSourceList.add(gpe);
             }
         }
 

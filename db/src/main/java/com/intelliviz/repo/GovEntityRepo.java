@@ -23,6 +23,8 @@ public class GovEntityRepo {
             new MutableLiveData<>();
     private MutableLiveData<List<GovPensionEntity>> mGpeList =
             new MutableLiveData<>();
+    private MutableLiveData<RetirementOptionsEntity> mROE =
+            new MutableLiveData<>();
     private MutableLiveData<GovPensionEx> mGpeEx = new MutableLiveData<>();
 
     public static GovEntityRepo getInstance(Application application) {
@@ -38,16 +40,21 @@ public class GovEntityRepo {
 
     GovEntityRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
-        new GetListAsyncTask().execute();
     }
 
-    public MutableLiveData<GovPensionEntity> get(long id) {
-        new GetAsyncTask().execute(id);
-        return mGPE;
+    public void load() {
+        new GetExAsyncTask().execute();
+    }
+
+    public LiveData<List<GovPensionEntity>> get() {
+        return mGpeList;
+    }
+
+    public LiveData<RetirementOptionsEntity> getRetirementOptions() {
+        return mROE;
     }
 
     public LiveData<GovPensionEx> getEx() {
-        new GetExAsyncTask().execute();
         return mGpeEx;
     }
 
@@ -152,6 +159,8 @@ public class GovEntityRepo {
 
         @Override
         protected void onPostExecute(GovPensionEx gpeEx) {
+            //mROE.setValue(gpeEx.getROE());
+            //mGpeList.setValue(gpeEx.getGpeList());
             mGpeEx.setValue(gpeEx);
         }
     }

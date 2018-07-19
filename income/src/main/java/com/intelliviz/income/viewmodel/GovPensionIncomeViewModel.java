@@ -4,7 +4,6 @@ import android.app.Application;
 import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
@@ -38,25 +37,29 @@ import java.util.List;
  */
 
 public class GovPensionIncomeViewModel extends AndroidViewModel {
-    private LiveData<GovPensionViewData> mViewData;
+    private LiveData<GovPensionViewData> mViewData = new MutableLiveData<>();
     private LiveData<List<IncomeDetails>> mIncomeDetailsList = new MutableLiveData<>();
     private GovEntityRepo mRepo;
     private RetirementOptionsEntityRepo mRetireOptionsRepo;
     private LiveData<RetirementOptions> mRO;
     private LiveData<List<GovPension>> mGpeList;
-    private MediatorLiveData mLiveDataMerger = new MediatorLiveData<>();
     private static String EC_NO_SPOUSE_BIRTHDATE;
     private static String EC_ONLY_TWO_SUPPORTED;
+    private static long mIncomeId;
 
-    public GovPensionIncomeViewModel(Application application, long incomeId) {
+    public GovPensionIncomeViewModel(Application application,
+                                     GovEntityRepo govRepo,
+                                     long incomeId) {
         super(application);
-        mRetireOptionsRepo = RetirementOptionsEntityRepo.getInstance(application);
+        mRepo = govRepo;
         //subscribeRetirementOptions();
         //subscribeToGovPensionEntityListChanges();
-        mRepo = GovEntityRepo.getInstance(application);
         subscribe(incomeId);
         EC_NO_SPOUSE_BIRTHDATE = application.getResources().getString(R.string.ec_no_spouse_birthdate);
         EC_ONLY_TWO_SUPPORTED = application.getResources().getString(R.string.ec_only_two_social_security_allowed);
+        mIncomeId = incomeId;
+
+        mRepo.load();
     }
 
 //    public LiveData<List<IncomeDetails>> getList() {
@@ -64,25 +67,25 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
 //    }
 
     private void subscribeToGovPensionEntityListChanges() {
-        LiveData<List<GovPensionEntity>> gpeList = mRepo.getList();
-        mGpeList = Transformations.switchMap(gpeList,
-                new Function<List<GovPensionEntity>, LiveData<List<GovPension>>>() {
+        LiveData<List<GovPensionEntity>> gpeList = mRepo.get();
+        mViewData = Transformations.switchMap(gpeList,
+                new Function<List<GovPensionEntity>, LiveData<GovPensionViewData>>() {
                     @Override
-                    public LiveData<List<GovPension>> apply(List<GovPensionEntity> govPensionEntities) {
+                    public LiveData<GovPensionViewData> apply(List<GovPensionEntity> govPensionEntities) {
                         List<GovPension> gpList = new ArrayList<>();
                         for(GovPensionEntity gpe : govPensionEntities) {
                             GovPension gp = GovPensionEntityMapper.map(gpe);
                             gpList.add(gp);
                         }
-                        MutableLiveData<List<GovPension>> ldata = new MutableLiveData();
-                        ldata.setValue(gpList);
+                        MutableLiveData<GovPensionViewData> ldata = new MutableLiveData();
+                        ldata.setValue(new GovPensionViewData(null, 0, ""));
                         return ldata;
                     }
                 });
     }
 
     private void subscribeRetirementOptions() {
-        LiveData<RetirementOptionsEntity> roe = mRetireOptionsRepo.get();
+        LiveData<RetirementOptionsEntity> roe = mRepo.getRetirementOptions();
         mRO = Transformations.switchMap(roe,
                 new Function<RetirementOptionsEntity, LiveData<RetirementOptions>>() {
                     @Override
@@ -125,15 +128,17 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
         @NonNull
         private final Application mApplication;
         private long mIncomeId;
+        private GovEntityRepo mRepo;
 
-        public Factory(@NonNull Application application, long incomeId) {
+        public Factory(@NonNull Application application, GovEntityRepo repo, long incomeId) {
             mApplication = application;
+            mRepo = repo;
             mIncomeId = incomeId;
         }
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new GovPensionIncomeViewModel(mApplication, mIncomeId);
+            return (T) new GovPensionIncomeViewModel(mApplication, mRepo, mIncomeId);
         }
     }
 
