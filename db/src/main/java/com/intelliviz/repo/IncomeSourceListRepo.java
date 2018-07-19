@@ -106,7 +106,7 @@ public class IncomeSourceListRepo {
             }
             mRetireRepo.update(roe);
 
-            mGovRepo.delete(gpe);
+            mDB.govPensionDao().delete(gpe);
             return getAllIncomeSources();
         }
 
