@@ -49,10 +49,6 @@ public class GovPension extends AbstractIncomeSource {
         mIsPrincipleSpouse = principleSpouse;
     }
 
-    public void setRules(SocialSecurityRules rules) {
-        mRules = rules;
-    }
-
     public void setFullMonthlyBenefit(String fullMonthlyBenefit) {
         mFullMonthlyBenefit = fullMonthlyBenefit;
     }
