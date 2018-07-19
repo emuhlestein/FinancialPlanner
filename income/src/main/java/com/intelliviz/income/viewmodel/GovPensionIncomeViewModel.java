@@ -122,6 +122,7 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
     }
 
     public void update() {
+        mRepo.load();
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
