@@ -9,7 +9,6 @@ import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.db.entity.PensionIncomeEntity;
-import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 
 import java.util.ArrayList;
@@ -96,17 +95,7 @@ public class IncomeSourceListRepo {
 
         @Override
         protected List<IncomeSourceEntityBase> doInBackground(GovPensionEntity... params) {
-            GovPensionEntity gpe = params[0];
-            RetirementOptionsEntity roe = mRetireRepo.getImmediate();
-            if(gpe.getSpouse() == 1) {
-                roe.setSpouseBirthdate("0");
-                roe.setIncludeSpouse(0);
-            } else {
-                roe.setBirthdate("0");
-            }
-            mRetireRepo.update(roe);
-
-            mDB.govPensionDao().delete(gpe);
+            mDB.govPensionDao().delete(params[0]);
             return getAllIncomeSources();
         }
 
