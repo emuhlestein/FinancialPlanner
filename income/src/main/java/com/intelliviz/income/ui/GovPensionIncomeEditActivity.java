@@ -1,5 +1,6 @@
 package com.intelliviz.income.ui;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -9,7 +10,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -23,6 +23,8 @@ import com.intelliviz.income.data.GovPensionViewData;
 import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.ui.MessageDialog;
+import com.intelliviz.lowlevel.ui.SimpleTextDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.GovEntityRepo;
@@ -37,7 +39,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SPOUSE_BI
 import static com.intelliviz.lowlevel.util.SystemUtils.getFloatValue;
 
 
-public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
+public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener, SimpleTextDialog.DialogResponse {
 
     private GovPension mGP;
     private long mId;
@@ -132,12 +134,15 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         snackbar1.show();
                         break;
                     case EC_NO_SPOUSE_BIRTHDATE:
-                        showDialog("01-01-1900", new BirthdateDialogAction() {
+                        FragmentManager fm = getSupportFragmentManager();
+                        MessageDialog dialog = MessageDialog.newInstance("Social Security", "Adding a second social security income source is for a spouse. In order to do this, the spouse's birth date must be added.");
+                        dialog.show(fm, "message");
+                        /*showDialog("01-01-1900", new BirthdateDialogAction() {
                             @Override
                             public void onGetBirthdate(String birthdate) {
                                 //mViewModel.updateSpouseBirthdate(birthdate);
                             }
-                        });
+                        });*/
                         break;
                     case EC_PRINCIPLE_SPOUSE:
                         mIsPrincipleSpouse = true;
@@ -217,7 +222,6 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
     private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
         FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
         BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
         birthdateDialog.show(fm, "birthdate");
     }
@@ -241,5 +245,15 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
             }
         }
         return new AgeData();
+    }
+
+    @Override
+    public void onGetResponse(int response) {
+        if(response == Activity.RESULT_OK) {
+            // Launch add birthdate diadlog
+        } else {
+            // terminate activity
+            finish();
+        }
     }
 }

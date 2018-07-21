@@ -1,4 +1,4 @@
-package com.intelliviz.retirementhelper.ui;
+package com.intelliviz.lowlevel.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,6 +24,10 @@ public class SimpleTextDialog extends DialogFragment {
     private static final String ARG_INPUT = "input";
     private EditText mInputText;
 
+    public interface DialogResponse {
+        void onGetResponse(int response);
+    }
+
     public static SimpleTextDialog newInstance(String message, String inputText) {
         Bundle args = new Bundle();
         args.putString(ARG_MESSAGE, message);
@@ -40,10 +44,15 @@ public class SimpleTextDialog extends DialogFragment {
         String inputText = getArguments().getString(ARG_INPUT);
 
         setCancelable(false);
-        mInputText = new EditText(getContext());
-        mInputText.setEms(9);
-        mInputText.setText(inputText);
-        mInputText.setInputType(InputType.TYPE_CLASS_DATETIME);
+
+        if(inputText != null) {
+            mInputText = new EditText(getContext());
+            mInputText.setText(inputText);
+            mInputText.setSingleLine(false);
+            mInputText.setInputType(InputType.TYPE_CLASS_DATETIME);
+        } else {
+            mInputText = null;
+        }
 
         return new AlertDialog.Builder(getActivity())
                 .setMessage(message)
@@ -53,7 +62,7 @@ public class SimpleTextDialog extends DialogFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                sendResult();
+                                sendResult(true);
                             }
                         })
                 .setNegativeButton(android.R.string.cancel,
@@ -61,18 +70,27 @@ public class SimpleTextDialog extends DialogFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
+                                sendResult(false);
                             }
                         })
                 .create();
     }
 
-    private void sendResult() {
-        if(getTargetFragment() == null) {
-            return;
-        }
+    private void sendResult(boolean isOk) {
         String enteredText = mInputText.getText().toString();
+        int resultCode = Activity.RESULT_OK;
+        if(!isOk) {
+            resultCode = Activity.RESULT_CANCELED;
+        }
+
         Intent intent = new Intent();
         intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, enteredText);
-        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+
+        if(getTargetFragment() != null) {
+            getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+        } else {
+            DialogResponse response = (DialogResponse) getActivity();
+            response.onGetResponse(resultCode);
+        }
     }
 }

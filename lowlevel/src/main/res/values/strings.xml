@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">lowlevel</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 </resources>
