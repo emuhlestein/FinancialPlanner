@@ -325,7 +325,8 @@ public class SocialSecurityRules implements IncomeTypeRules {
         AgeData startAge;
         if(spouseAge.isBefore(mSpouseStartAge)) {
             // invalid start age--need to determine valid start age or the actual start age.
-            mActualStartAge = mSpouseStartAge.subtract(diffAge.getNumberOfMonths());
+            diffAge = mSpouseStartAge.subtract(spouseAge);
+            mActualStartAge = mStartAge.add(diffAge.getNumberOfMonths());
             startAge = mActualStartAge;
         } else {
             startAge = mStartAge;
