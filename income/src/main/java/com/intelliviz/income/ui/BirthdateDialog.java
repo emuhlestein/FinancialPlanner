@@ -24,7 +24,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_BIRTHDATE;
 import static com.intelliviz.lowlevel.util.AgeUtils.DATE_FORMAT;
 
 
-public class BirthdateActivity extends DialogFragment {
+public class BirthdateDialog extends DialogFragment {
     private BirthdateDialogAction mBirthdateDialogAction;
 
     CoordinatorLayout mCoordinatorLayout;
@@ -34,8 +34,8 @@ public class BirthdateActivity extends DialogFragment {
     Button mSaveBirthdateButton;
     Button mCancelBirthdateButton;
 
-    public static BirthdateActivity getInstance(String birthdate, BirthdateDialogAction birthdateDialogAction) {
-        BirthdateActivity fragment = new BirthdateActivity();
+    public static BirthdateDialog getInstance(String birthdate, BirthdateDialogAction birthdateDialogAction) {
+        BirthdateDialog fragment = new BirthdateDialog();
         fragment.mBirthdateDialogAction = birthdateDialogAction;
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_BIRTHDATE, birthdate);
@@ -43,7 +43,7 @@ public class BirthdateActivity extends DialogFragment {
         return fragment;
     }
 
-    public BirthdateActivity() {
+    public BirthdateDialog() {
     }
 
     @Override

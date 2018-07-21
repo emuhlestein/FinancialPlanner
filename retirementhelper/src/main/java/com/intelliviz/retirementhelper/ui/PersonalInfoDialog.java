@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.intelliviz.data.RetirementOptions;
-import com.intelliviz.income.ui.BirthdateActivity;
+import com.intelliviz.income.ui.BirthdateDialog;
 import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.retirementhelper.R;
@@ -349,7 +349,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
 
     private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
         birthdateDialog.show(fm, "birhtdate");
     }
 

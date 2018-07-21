@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.intelliviz.income.R;
-import com.intelliviz.income.ui.BirthdateActivity;
+import com.intelliviz.income.ui.BirthdateDialog;
 
 /**
  * Created by edm on 6/16/2018.
@@ -27,7 +27,7 @@ public class uiUtils {
     public static void showDialog(FragmentActivity activity, String birthdate, BirthdateDialogAction birthdateDialogAction) {
         FragmentManager fm = activity.getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
         birthdateDialog.show(fm, "birhtdate");
     }
 

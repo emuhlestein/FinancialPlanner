@@ -19,7 +19,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.data.RetirementOptions;
-import com.intelliviz.income.ui.BirthdateActivity;
+import com.intelliviz.income.ui.BirthdateDialog;
 import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.SystemUtils;
@@ -139,7 +139,7 @@ public class StartActivity extends AppCompatActivity implements
                         queryHandler.startUpdate(0, null, RetirementContract.RetirementParmsEntry.CONTENT_URI, values, null, null);
                         */
                     } else {
-                        //Intent newIntent = new Intent(this, BirthdateActivity.class);
+                        //Intent newIntent = new Intent(this, BirthdateDialog.class);
                         //startActivityForResult(newIntent, REQUEST_BIRTHDATE);
                         showDialog("01-01-1900", new BirthdateDialogAction() {
                             @Override
@@ -210,7 +210,7 @@ public class StartActivity extends AppCompatActivity implements
 
     @Override
     public void onStartBirthdateActivity(String birthdate) {
-        //Intent newIntent = new Intent(this, BirthdateActivity.class);
+        //Intent newIntent = new Intent(this, BirthdateDialog.class);
         //newIntent.putExtra(EXTRA_BIRTHDATE, birthdate);
         //startActivityForResult(newIntent, REQUEST_BIRTHDATE);
         showDialog("01-01-1900", new BirthdateDialogAction() {
@@ -225,7 +225,7 @@ public class StartActivity extends AppCompatActivity implements
     private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
         birthdateDialog.show(fm, "birhtdate");
     }
 

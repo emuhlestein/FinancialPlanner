@@ -16,7 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.intelliviz.income.ui.BirthdateActivity;
+import com.intelliviz.income.ui.BirthdateDialog;
 import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.retirementhelper.R;
@@ -128,7 +128,7 @@ public class PersonalInfoAdvancedFragment extends Fragment {
     private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
         birthdateDialog.show(fm, "birhtdate");
     }
 }

@@ -135,14 +135,9 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
                         break;
                     case EC_NO_SPOUSE_BIRTHDATE:
                         FragmentManager fm = getSupportFragmentManager();
-                        MessageDialog dialog = MessageDialog.newInstance("Social Security", "Adding a second social security income source is for a spouse. In order to do this, the spouse's birth date must be added.");
+                        MessageDialog dialog = MessageDialog.newInstance("Social Security", "Adding a second social security income source is for a spouse." +
+                                " In order to do this, the spouse's birth date must be added.\n\nClick Ok to add birth date.");
                         dialog.show(fm, "message");
-                        /*showDialog("01-01-1900", new BirthdateDialogAction() {
-                            @Override
-                            public void onGetBirthdate(String birthdate) {
-                                //mViewModel.updateSpouseBirthdate(birthdate);
-                            }
-                        });*/
                         break;
                     case EC_PRINCIPLE_SPOUSE:
                         mIsPrincipleSpouse = true;
@@ -222,7 +217,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
 
     private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
         FragmentManager fm = getSupportFragmentManager();
-        BirthdateActivity birthdateDialog = BirthdateActivity.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
         birthdateDialog.show(fm, "birthdate");
     }
 
@@ -251,6 +246,12 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     public void onGetResponse(int response) {
         if(response == Activity.RESULT_OK) {
             // Launch add birthdate diadlog
+             showDialog("01-01-1900", new BirthdateDialogAction() {
+                            @Override
+                            public void onGetBirthdate(String birthdate) {
+                                //mViewModel.updateSpouseBirthdate(birthdate);
+                            }
+                        });
         } else {
             // terminate activity
             finish();
