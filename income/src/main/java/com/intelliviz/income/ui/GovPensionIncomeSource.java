@@ -27,7 +27,6 @@ public class GovPensionIncomeSource implements IncomeSource {
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION,  RetirementConstants.INCOME_ACTION_ADD);
         activity.startActivity(intent);
-        //new StartGovPensionEditActivityTask(activity, 0, RetirementConstants.INCOME_ACTION_ADD).execute();
     }
 
     @Override
@@ -36,7 +35,6 @@ public class GovPensionIncomeSource implements IncomeSource {
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
         activity.startActivity(intent);
-        //new StartGovPensionEditActivityTask(activity, mIncomeSourceEntity.getId(), RetirementConstants.INCOME_ACTION_EDIT).execute();
     }
 
     @Override

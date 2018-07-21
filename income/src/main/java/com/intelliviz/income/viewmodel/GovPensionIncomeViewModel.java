@@ -12,19 +12,16 @@ import android.support.annotation.NonNull;
 
 import com.intelliviz.data.GovPension;
 import com.intelliviz.data.GovPensionEx;
-import com.intelliviz.data.IncomeData;
 import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.data.SocialSecurityRules;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.GovPensionEntityMapper;
-import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.income.R;
 import com.intelliviz.income.data.GovPensionViewData;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
-import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.GovEntityRepo;
 import com.intelliviz.repo.RetirementOptionsEntityRepo;
 
@@ -52,49 +49,12 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
                                      long incomeId) {
         super(application);
         mRepo = govRepo;
-        //subscribeRetirementOptions();
-        //subscribeToGovPensionEntityListChanges();
         subscribe(incomeId);
         EC_NO_SPOUSE_BIRTHDATE = application.getResources().getString(R.string.ec_no_spouse_birthdate);
         EC_ONLY_TWO_SUPPORTED = application.getResources().getString(R.string.ec_only_two_social_security_allowed);
         mIncomeId = incomeId;
 
         mRepo.load();
-    }
-
-//    public LiveData<List<IncomeDetails>> getList() {
-//        return mIncomeDetailsList;
-//    }
-
-    private void subscribeToGovPensionEntityListChanges() {
-        LiveData<List<GovPensionEntity>> gpeList = mRepo.get();
-        mViewData = Transformations.switchMap(gpeList,
-                new Function<List<GovPensionEntity>, LiveData<GovPensionViewData>>() {
-                    @Override
-                    public LiveData<GovPensionViewData> apply(List<GovPensionEntity> govPensionEntities) {
-                        List<GovPension> gpList = new ArrayList<>();
-                        for(GovPensionEntity gpe : govPensionEntities) {
-                            GovPension gp = GovPensionEntityMapper.map(gpe);
-                            gpList.add(gp);
-                        }
-                        MutableLiveData<GovPensionViewData> ldata = new MutableLiveData();
-                        ldata.setValue(new GovPensionViewData(null, 0, ""));
-                        return ldata;
-                    }
-                });
-    }
-
-    private void subscribeRetirementOptions() {
-        LiveData<RetirementOptionsEntity> roe = mRepo.getRetirementOptions();
-        mRO = Transformations.switchMap(roe,
-                new Function<RetirementOptionsEntity, LiveData<RetirementOptions>>() {
-                    @Override
-                    public LiveData<RetirementOptions> apply(RetirementOptionsEntity input) {
-                        MutableLiveData<RetirementOptions> ldata = new MutableLiveData<>();
-                        ldata.setValue(RetirementOptionsMapper.map(input));
-                        return ldata;
-                    }
-                });
     }
 
     private void subscribe(final long id) {
@@ -141,40 +101,6 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
         public <T extends ViewModel> T create(Class<T> modelClass) {
             return (T) new GovPensionIncomeViewModel(mApplication, mRepo, mIncomeId);
         }
-    }
-
-    private List<IncomeDetails> getIncomeDetails(GovPension gp) {
-
-        double monthlyBenefit = gp.getMonthlyBenefit();
-        double fullMonthlyBenefit = Double.parseDouble(gp.getFullMonthlyBenefit());
-
-        String message = "";
-        boolean addMessage = false;
-        if(monthlyBenefit > fullMonthlyBenefit) {
-            addMessage = true;
-            message = "Spousal benefits apply. Spouse cannot take benefits before principle spouse.";
-        }
-
-        List<IncomeData> listIncomeData = gp.getIncomeData();
-        List<IncomeDetails> incomeDetails = new ArrayList<>();
-        for(IncomeData incomeData : listIncomeData) {
-            AgeData age = incomeData.getAge();
-            String amount = SystemUtils.getFormattedCurrency(incomeData.getMonthlyAmount());
-            String line1 = age.toString() + "   " + amount;
-            IncomeDetails incomeDetail;
-
-            if(addMessage) {
-                incomeDetail = new IncomeDetails(line1, incomeData.getBalanceState(), message);
-                incomeDetail.setAcceptClick(true);
-                addMessage = false;
-            } else {
-                incomeDetail = new IncomeDetails(line1, incomeData.getBalanceState(), "");
-            }
-
-            incomeDetails.add(incomeDetail);
-        }
-
-        return incomeDetails;
     }
 
     // TODO needs to be renamed and a version needs to be created for free version

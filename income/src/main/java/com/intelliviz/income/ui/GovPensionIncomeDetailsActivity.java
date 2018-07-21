@@ -11,7 +11,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,9 +25,6 @@ import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.GovEntityRepo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static android.view.View.GONE;
 
@@ -80,39 +76,6 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
             mId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, 0);
         }
 
-        /*
-        mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
-
-        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = false;
-            int scrollRange = -1;
-
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    isShow = true;
-                    mExpandedTextLayout.setVisibility(View.GONE);
-                    mCollapsingToolbarLayout.setTitle(getApplicationName(GovPensionIncomeDetailsActivity.this));
-                } else {
-                    isShow = false;
-                    mExpandedTextLayout.setVisibility(View.VISIBLE);
-                    mCollapsingToolbarLayout.setTitle("");
-                }
-            }
-        });
-        */
-
-        List<IncomeDetails> incomeDetails = new ArrayList<>();
-        //mAdapter = new IncomeDetailsAdapter(this, incomeDetails);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        //mRecyclerView.setLayoutManager(linearLayoutManager);
-        //mRecyclerView.setAdapter(mAdapter);
-
-        //mAdapter.setIncomeDetailsSelectListener(this);
-
         // The FAB will pop up an activity to allow a new income source to be edited
         mEditPensionFAB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,19 +95,6 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
                 GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeViewModel.class);
-
-        /*
-        mViewModel.getList().observe(this, new Observer<List<IncomeDetails>>() {
-            @Override
-            public void onChanged(@Nullable List<IncomeDetails> listIncomeDetails) {
-
-                if(listIncomeDetails == null) {
-                    return;
-                }
-                //mAdapter.update(listIncomeDetails);
-            }
-        });
-        */
 
         mViewModel.get().observe(this, new Observer<GovPensionViewData>() {
             @Override
