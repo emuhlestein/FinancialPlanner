@@ -8,10 +8,8 @@ import android.support.v4.app.FragmentManager;
 
 import com.intelliviz.db.AppDatabase;
 import com.intelliviz.income.R;
-import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.income.viewmodel.ViewData;
 
-import static com.intelliviz.income.util.uiUtils.showDialog;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_ERROR;
@@ -66,12 +64,12 @@ public class StartGovPensionEditActivityTask extends AsyncTask<Void, Void, ViewD
         } else if(state == EC_NO_SPOUSE_BIRTHDATE) {
             final long spouseId = id;
             final int newAction = action;
-            showDialog(mActivity, "01-01-1900", new BirthdateDialogAction() {
+            /*showBirthdateDialog(mActivity, "01-01-1900", new BirthdateDialogAction() {
                 @Override
                 public void onGetBirthdate(String birthdate) {
                     new UpdateSpouseBirthdateAsyncTask(mActivity, spouseId, newAction).execute(birthdate);
                 }
-            });
+            });*/
         }
     }
 

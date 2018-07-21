@@ -24,10 +24,10 @@ public class uiUtils {
         //appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.collection_widget_list_view);
     }
 
-    public static void showDialog(FragmentActivity activity, String birthdate, BirthdateDialogAction birthdateDialogAction) {
+    public static void showBirthdateDialog(FragmentActivity activity, String birthdate) {
         FragmentManager fm = activity.getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate);
         birthdateDialog.show(fm, "birhtdate");
     }
 

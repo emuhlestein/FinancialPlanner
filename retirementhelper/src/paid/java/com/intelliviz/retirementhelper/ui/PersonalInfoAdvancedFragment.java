@@ -17,7 +17,6 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.intelliviz.income.ui.BirthdateDialog;
-import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.retirementhelper.R;
 
@@ -31,7 +30,7 @@ import static com.intelliviz.lowlevel.util.AgeUtils.DATE_FORMAT;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PersonalInfoAdvancedFragment extends Fragment {
+public class PersonalInfoAdvancedFragment extends Fragment implements BirthdateDialog.BirthdateDialogListener {
     private CoordinatorLayout mCoordinatorLayout;
 
     @BindView(R.id.include_spouse_check_box)
@@ -48,20 +47,7 @@ public class PersonalInfoAdvancedFragment extends Fragment {
 
         String birthdate = mSpouseBirthdateTextView.getText().toString();
 
-        showDialog(birthdate, new BirthdateDialogAction() {
-            @Override
-            public void onGetBirthdate(String birthdate) {
-                if (AgeUtils.validateBirthday(birthdate)) {
-                    mSpouseBirthdateTextView.setText(birthdate);
-                } else {
-                    String message;
-                    String errMsg = getResources().getString(R.string.birthdate_not_valid);
-                    message = errMsg + " (" + DATE_FORMAT + ").";
-                    Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
-                    snackbar.show();
-                }
-            }
-        });
+        showBirthdateDialog(birthdate);
     }
 
     @BindView(R.id.spouse_birthdate_text_view)
@@ -125,10 +111,23 @@ public class PersonalInfoAdvancedFragment extends Fragment {
         return mSpouseBirthdateTextView.getText().toString();
     }
 
-    private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
+    private void showBirthdateDialog(String birthdate) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate);
         birthdateDialog.show(fm, "birhtdate");
+    }
+
+    @Override
+    public void onGetBirthdate(String birthdate) {
+        if (AgeUtils.validateBirthday(birthdate)) {
+            mSpouseBirthdateTextView.setText(birthdate);
+        } else {
+            String message;
+            String errMsg = getResources().getString(R.string.birthdate_not_valid);
+            message = errMsg + " (" + DATE_FORMAT + ").";
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
     }
 }

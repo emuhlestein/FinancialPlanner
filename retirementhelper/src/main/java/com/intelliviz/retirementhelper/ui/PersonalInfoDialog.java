@@ -26,7 +26,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.income.ui.BirthdateDialog;
-import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.util.PersonalInfoDialogAction;
@@ -46,7 +45,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SPOUSE_BIRT
  *
  * @author Ed Muhlestein
  */
-public class PersonalInfoDialog extends DialogFragment implements AdapterView.OnItemSelectedListener{
+public class PersonalInfoDialog extends DialogFragment implements
+        AdapterView.OnItemSelectedListener, BirthdateDialog.BirthdateDialogListener{
     private PersonalInfoViewModel mViewModel;
     private RetirementOptions mROE;
     private PersonalInfoDialogAction mPersonalInfoDialogAction;
@@ -113,20 +113,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
             @Override
             public void onClick(View view) {
                 String birthdate = mBirthDateViewText.getText().toString();
-                showDialog(birthdate, new BirthdateDialogAction() {
-                    @Override
-                    public void onGetBirthdate(String birthdate) {
-                        if (AgeUtils.validateBirthday(birthdate)) {
-                            mBirthDateViewText.setText(birthdate);
-                        } else {
-                            String message;
-                            String errMsg = getResources().getString(R.string.birthdate_not_valid);
-                            message = errMsg + " (" + DATE_FORMAT + ").";
-                            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
-                            snackbar.show();
-                        }
-                    }
-                });
+                showBirthdateDialog(birthdate);
             }
         });
 /*
@@ -134,7 +121,7 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
             @Override
             public void onClick(View view) {
                 String birthdate = mSpouseBirthdateTextView.getText().toString();
-                showDialog(birthdate, new BirthdateDialogAction() {
+                showBirthdateDialog(birthdate, new BirthdateDialogAction() {
                     @Override
                     public void onGetBirthdate(String birthdate) {
                         if (AgeUtils.validateBirthday(birthdate)) {
@@ -347,9 +334,9 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
         }
     }
 
-    private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
+    private void showBirthdateDialog(String birthdate) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate);
         birthdateDialog.show(fm, "birhtdate");
     }
 
@@ -361,5 +348,18 @@ public class PersonalInfoDialog extends DialogFragment implements AdapterView.On
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    @Override
+    public void onGetBirthdate(String birthdate) {
+        if (AgeUtils.validateBirthday(birthdate)) {
+            mBirthDateViewText.setText(birthdate);
+        } else {
+            String message;
+            String errMsg = getResources().getString(R.string.birthdate_not_valid);
+            message = errMsg + " (" + DATE_FORMAT + ").";
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
     }
 }

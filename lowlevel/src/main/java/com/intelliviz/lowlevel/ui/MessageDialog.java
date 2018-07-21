@@ -79,5 +79,7 @@ public class MessageDialog extends DialogFragment {
             SimpleTextDialog.DialogResponse response = (SimpleTextDialog.DialogResponse) getActivity();
             response.onGetResponse(resultCode);
         }
+
+        dismiss();
     }
 }

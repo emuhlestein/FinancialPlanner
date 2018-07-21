@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.intelliviz.data.GovPension;
 import com.intelliviz.income.R;
 import com.intelliviz.income.data.GovPensionViewData;
-import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
@@ -39,7 +38,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SPOUSE_BI
 import static com.intelliviz.lowlevel.util.SystemUtils.getFloatValue;
 
 
-public class GovPensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener, SimpleTextDialog.DialogResponse {
+public class GovPensionIncomeEditActivity extends AppCompatActivity implements
+        AgeDialog.OnAgeEditListener, SimpleTextDialog.DialogResponse, BirthdateDialog.BirthdateDialogListener {
 
     private GovPension mGP;
     private long mId;
@@ -215,9 +215,9 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
         setStartRetirementAge(age.toString());
     }
 
-    private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
+    private void showBirthdateDialog(String birthdate) {
         FragmentManager fm = getSupportFragmentManager();
-        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate);
         birthdateDialog.show(fm, "birthdate");
     }
 
@@ -246,15 +246,15 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements A
     public void onGetResponse(int response) {
         if(response == Activity.RESULT_OK) {
             // Launch add birthdate diadlog
-             showDialog("01-01-1900", new BirthdateDialogAction() {
-                            @Override
-                            public void onGetBirthdate(String birthdate) {
-                                //mViewModel.updateSpouseBirthdate(birthdate);
-                            }
-                        });
+             showBirthdateDialog("01-01-1900");
         } else {
             // terminate activity
             finish();
         }
+    }
+
+    @Override
+    public void onGetBirthdate(String birthdate) {
+        //mViewModel.updateSpouseBirthdate(birthdate);
     }
 }

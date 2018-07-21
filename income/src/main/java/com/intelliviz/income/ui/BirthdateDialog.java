@@ -1,6 +1,8 @@
 package com.intelliviz.income.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,15 +19,18 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.intelliviz.income.R;
-import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.lowlevel.util.AgeUtils;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_BIRTHDATE;
 import static com.intelliviz.lowlevel.util.AgeUtils.DATE_FORMAT;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
 
 
 public class BirthdateDialog extends DialogFragment {
-    private BirthdateDialogAction mBirthdateDialogAction;
+
+    public interface BirthdateDialogListener {
+        void onGetBirthdate(String birthdate);
+    }
 
     CoordinatorLayout mCoordinatorLayout;
     EditText mEditTextDay;
@@ -34,9 +39,8 @@ public class BirthdateDialog extends DialogFragment {
     Button mSaveBirthdateButton;
     Button mCancelBirthdateButton;
 
-    public static BirthdateDialog getInstance(String birthdate, BirthdateDialogAction birthdateDialogAction) {
+    public static BirthdateDialog getInstance(String birthdate) {
         BirthdateDialog fragment = new BirthdateDialog();
-        fragment.mBirthdateDialogAction = birthdateDialogAction;
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_BIRTHDATE, birthdate);
         fragment.setArguments(bundle);
@@ -124,9 +128,7 @@ public class BirthdateDialog extends DialogFragment {
                     snackbar.show();
                     return;
                 }
-                if(mBirthdateDialogAction != null) {
-                    mBirthdateDialogAction.onGetBirthdate(birthdate);
-                }
+                sendResult(birthdate);
                 dismiss();
             }
         });
@@ -155,6 +157,17 @@ public class BirthdateDialog extends DialogFragment {
             mEditTextDay.setText("");
             mEditTextMonth.setText("");
             mEditTextYear.setText("");
+        }
+    }
+
+    private void sendResult(String birthdate) {
+        if(getTargetFragment() != null) {
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, EXTRA_BIRTHDATE);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent());
+        } else {
+            BirthdateDialog.BirthdateDialogListener response = (BirthdateDialog.BirthdateDialogListener) getActivity();
+            response.onGetBirthdate(birthdate);
         }
     }
 }

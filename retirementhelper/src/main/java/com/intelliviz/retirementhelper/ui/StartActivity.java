@@ -20,7 +20,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.income.ui.BirthdateDialog;
-import com.intelliviz.income.util.BirthdateDialogAction;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.retirementhelper.R;
@@ -46,7 +45,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SIGN_IN;
  * @author Ed Muhlestein
  */
 public class StartActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener, QueryCompleteListener {
+        GoogleApiClient.OnConnectionFailedListener, QueryCompleteListener,
+        BirthdateDialog.BirthdateDialogListener {
     private static final String TAG = StartActivity.class.getSimpleName();
     private static final String FIREBASE_TOS_URL = "https://firebase.google.com/terms/";
     private static final String FIREBASE_PRIVACY_POLICY_URL = "https://firebase.google.com/terms/analytics/#7_privacy";
@@ -141,12 +141,7 @@ public class StartActivity extends AppCompatActivity implements
                     } else {
                         //Intent newIntent = new Intent(this, BirthdateDialog.class);
                         //startActivityForResult(newIntent, REQUEST_BIRTHDATE);
-                        showDialog("01-01-1900", new BirthdateDialogAction() {
-                            @Override
-                            public void onGetBirthdate(String birthdate) {
-                                mViewModel.updateBirthdate(birthdate);
-                            }
-                        });
+                        showDialog("01-01-1900");
                     }
                     break;
             }
@@ -213,19 +208,13 @@ public class StartActivity extends AppCompatActivity implements
         //Intent newIntent = new Intent(this, BirthdateDialog.class);
         //newIntent.putExtra(EXTRA_BIRTHDATE, birthdate);
         //startActivityForResult(newIntent, REQUEST_BIRTHDATE);
-        showDialog("01-01-1900", new BirthdateDialogAction() {
-            @Override
-            public void onGetBirthdate(String birthdate) {
-                mViewModel.updateBirthdate(birthdate);
-                onStartNavigationActivity();
-            }
-        });
+        showDialog("01-01-1900");
     }
 
-    private void showDialog(String birthdate, BirthdateDialogAction birthdateDialogAction) {
+    private void showDialog(String birthdate) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate, birthdateDialogAction);
+        BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate);
         birthdateDialog.show(fm, "birhtdate");
     }
 
@@ -235,5 +224,11 @@ public class StartActivity extends AppCompatActivity implements
         } else {
             onStartBirthdateActivity(mROE.getBirthdate());
         }
+    }
+
+    @Override
+    public void onGetBirthdate(String birthdate) {
+        mViewModel.updateBirthdate(birthdate);
+        onStartNavigationActivity();
     }
 }
