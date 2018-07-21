@@ -23,7 +23,6 @@ import com.intelliviz.income.data.GovPensionViewData;
 import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
-import com.intelliviz.lowlevel.ui.SimpleTextDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.GovEntityRepo;
@@ -32,6 +31,7 @@ import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_TWO_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
@@ -39,7 +39,7 @@ import static com.intelliviz.lowlevel.util.SystemUtils.getFloatValue;
 
 
 public class GovPensionIncomeEditActivity extends AppCompatActivity implements
-        AgeDialog.OnAgeEditListener, SimpleTextDialog.DialogResponse, BirthdateDialog.BirthdateDialogListener {
+        AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse, BirthdateDialog.BirthdateDialogListener {
 
     private GovPension mGP;
     private long mId;
@@ -136,11 +136,16 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                     case EC_NO_SPOUSE_BIRTHDATE:
                         FragmentManager fm = getSupportFragmentManager();
                         MessageDialog dialog = MessageDialog.newInstance("Social Security", "Adding a second social security income source is for a spouse." +
-                                " In order to do this, the spouse's birth date must be added.\n\nClick Ok to add birth date.");
+                                " In order to do this, the spouse's birth date must be added.\n\nClick Ok to add birth date.", EC_NO_SPOUSE_BIRTHDATE, false);
                         dialog.show(fm, "message");
                         break;
                     case EC_PRINCIPLE_SPOUSE:
                         mIsPrincipleSpouse = true;
+                        break;
+                    case EC_ONLY_TWO_SUPPORTED:
+                        fm = getSupportFragmentManager();
+                        dialog = MessageDialog.newInstance("Social Security", viewData.getMessage(), EC_ONLY_TWO_SUPPORTED, true);
+                        dialog.show(fm, "message");
                         break;
                 }
                 updateUI();
@@ -243,10 +248,17 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onGetResponse(int response) {
-        if(response == Activity.RESULT_OK) {
-            // Launch add birthdate diadlog
-             showBirthdateDialog("01-01-1900");
+    public void onGetResponse(int response, int id) {
+        if (response == Activity.RESULT_OK) {
+            switch (id) {
+                case EC_NO_SPOUSE_BIRTHDATE:
+                    // Launch add birthdate diadlog
+                    showBirthdateDialog("01-01-1900");
+                    break;
+                case EC_ONLY_TWO_SUPPORTED:
+                    finish();
+                    break;
+            }
         } else {
             // terminate activity
             finish();

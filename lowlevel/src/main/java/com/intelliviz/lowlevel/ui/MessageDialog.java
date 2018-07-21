@@ -16,19 +16,24 @@ import com.intelliviz.lowlevel.R;
 public class MessageDialog extends DialogFragment {
     private static final String ARG_TITLE = "title";
     private static final String ARG_MESSAGE = "message";
+    private static final String ARG_ID = "id";
+    private static final String ARG_OK_ONLY = "ok";
     private TextView mMessage;
     private TextView mTitle;
     private Button mOk;
     private Button mCancel;
+    private int mId;
 
     public interface DialogResponse {
-        void onGetResponse(int response);
+        void onGetResponse(int response, int id);
     }
 
-    public static MessageDialog newInstance(String title, String message) {
+    public static MessageDialog newInstance(String title, String message, int id, boolean okOnly) {
         Bundle args = new Bundle();
         args.putString(ARG_MESSAGE, message);
         args.putString(ARG_TITLE, title);
+        args.putInt(ARG_ID, id);
+        args.putBoolean(ARG_OK_ONLY, okOnly);
         MessageDialog fragment = new MessageDialog();
         fragment.setArguments(args);
         return fragment;
@@ -40,24 +45,32 @@ public class MessageDialog extends DialogFragment {
 
         String title = getArguments().getString(ARG_TITLE);
         String message = getArguments().getString(ARG_MESSAGE);
-        View view = inflater.inflate(R.layout.message_dialog_layout, null);
+        boolean okOnly = getArguments().getBoolean(ARG_OK_ONLY);
+        mId = getArguments().getInt(ARG_ID);
+
+        View view;
+        if(okOnly) {
+            view = inflater.inflate(R.layout.message_dialog_one_button_layout, container, false);
+        } else {
+            view = inflater.inflate(R.layout.message_dialog_layout, container, false);
+            mCancel = view.findViewById(R.id.cancel_button);
+            mCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sendResult(false);
+                }
+            });
+        }
 
        mTitle = view.findViewById(R.id.title_view);
        mMessage = view.findViewById(R.id.message_view);
        mOk = view.findViewById(R.id.ok_button);
-       mCancel = view.findViewById(R.id.cancel_button);
+
 
        mOk.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
                sendResult(true);
-           }
-       });
-
-       mCancel.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-                sendResult(false);
            }
        });
 
@@ -76,8 +89,8 @@ public class MessageDialog extends DialogFragment {
         if(getTargetFragment() != null) {
             getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, new Intent());
         } else {
-            SimpleTextDialog.DialogResponse response = (SimpleTextDialog.DialogResponse) getActivity();
-            response.onGetResponse(resultCode);
+            MessageDialog.DialogResponse response = (MessageDialog.DialogResponse) getActivity();
+            response.onGetResponse(resultCode, mId);
         }
 
         dismiss();
