@@ -64,7 +64,8 @@ public class BirthdateDialog extends DialogFragment {
         mCancelBirthdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dismiss();
+                sendResult(null); // TODO probably need to let caller know if dialog was cancelled
+                dismiss();        // to allow the options of doing something. For now, just pass them a null
             }
         });
 

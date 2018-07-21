@@ -85,6 +85,10 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
         mRepo.load();
     }
 
+    public void updateSpouseBirthdate(String birthdate) {
+        mRepo.updateSpouseBirthdate(birthdate);
+    }
+
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         @NonNull
         private final Application mApplication;

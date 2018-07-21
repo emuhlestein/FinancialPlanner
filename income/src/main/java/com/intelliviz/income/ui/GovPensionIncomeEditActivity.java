@@ -255,6 +255,10 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
 
     @Override
     public void onGetBirthdate(String birthdate) {
-        //mViewModel.updateSpouseBirthdate(birthdate);
+        if(birthdate == null) {
+            finish();
+        } else {
+            mViewModel.updateSpouseBirthdate(birthdate);
+        }
     }
 }

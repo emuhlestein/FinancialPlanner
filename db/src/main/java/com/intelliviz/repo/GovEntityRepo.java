@@ -62,6 +62,10 @@ public class GovEntityRepo {
         return mDB.govPensionDao().get();
     }
 
+    public void updateSpouseBirthdate(String birthdate) {
+        new UpdateSpouseBirthdateAsyncTask().execute(birthdate);
+    }
+
     public void setData(GovPensionEntity gpe) {
         if(gpe.getId() == 0) {
             new InsertAsyncTask().execute(gpe);
@@ -136,7 +140,7 @@ public class GovEntityRepo {
         }
     }
 
-    private class DeleteAsyncTask extends AsyncTask<GovPensionEntity, Void, Void> {
+    private class DeleteAsyncTask extends android.os.AsyncTask<GovPensionEntity, Void, Void> {
 
         @Override
         protected Void doInBackground(GovPensionEntity... params) {
@@ -146,6 +150,23 @@ public class GovEntityRepo {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+        }
+    }
+
+    private class UpdateSpouseBirthdateAsyncTask extends AsyncTask<String, Void, GovPensionEx> {
+
+        @Override
+        protected GovPensionEx doInBackground(String... params) {
+            List<GovPensionEntity> gpeList = mDB.govPensionDao().get();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            roe.setSpouseBirthdate(params[0]);
+            mDB.retirementOptionsDao().update(roe);
+            return new GovPensionEx(gpeList, roe);
+        }
+
+        @Override
+        protected void onPostExecute(GovPensionEx gpeEx) {
+            mGpeEx.setValue(gpeEx);
         }
     }
 }
