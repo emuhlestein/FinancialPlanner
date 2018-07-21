@@ -45,6 +45,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
     private TextView mMonthlyBenefitTextView;
     private TextView mFullRetirementAgeTextView;
     private LinearLayout mExpandedTextLayout;
+    private TextView mDetailsTextView;
     private FloatingActionButton mEditPensionFAB;
     private CoordinatorLayout mCoordinatorLayout;
 
@@ -67,6 +68,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         mExpandedTextLayout = findViewById(R.id.expanded_text_layout);
         mEditPensionFAB = findViewById(R.id.editPensionFAB);
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
+        mDetailsTextView = findViewById(R.id.details_text);
 
         mPrincipleSpouseTextView.setVisibility(GONE);
 

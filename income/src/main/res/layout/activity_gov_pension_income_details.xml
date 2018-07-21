@@ -158,11 +158,16 @@
                         android:textSize="22sp"/>
                 </LinearLayout>
             </LinearLayout>
+            <TextView
+                android:id="@+id/details_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/income_source_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="?android:attr/actionBarSize"
                 app:layout_collapseMode="pin"/>
 
     </android.support.design.widget.AppBarLayout>

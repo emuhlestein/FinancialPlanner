@@ -70,4 +70,5 @@
     <string name="edit_start_age_desc">Start Age</string>
     <string name="edit_min_age">Edit minimum age</string>
     <string name="monthly_benefit">Monthly Benefit:</string>
+    <string name="start_age">Start Age</string>
 </resources>
