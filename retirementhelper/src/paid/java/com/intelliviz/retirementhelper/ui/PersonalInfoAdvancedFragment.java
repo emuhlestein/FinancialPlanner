@@ -1,12 +1,12 @@
 package com.intelliviz.retirementhelper.ui;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +24,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.lowlevel.util.AgeUtils.DATE_FORMAT;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
 
 
 /**
@@ -47,7 +50,7 @@ public class PersonalInfoAdvancedFragment extends Fragment implements BirthdateD
 
         String birthdate = mSpouseBirthdateTextView.getText().toString();
 
-        showBirthdateDialog(birthdate);
+        showSpouseBirthdateDialog(birthdate);
     }
 
     @BindView(R.id.spouse_birthdate_text_view)
@@ -111,10 +114,10 @@ public class PersonalInfoAdvancedFragment extends Fragment implements BirthdateD
         return mSpouseBirthdateTextView.getText().toString();
     }
 
-    private void showBirthdateDialog(String birthdate) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
+    private void showSpouseBirthdateDialog(String birthdate) {
+        FragmentManager fm = this.getFragmentManager();
         BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate);
+        birthdateDialog.setTargetFragment(this, REQUEST_SPOUSE_BIRTHDATE);
         birthdateDialog.show(fm, "birhtdate");
     }
 
@@ -128,6 +131,20 @@ public class PersonalInfoAdvancedFragment extends Fragment implements BirthdateD
             message = errMsg + " (" + DATE_FORMAT + ").";
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG);
             snackbar.show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_SPOUSE_BIRTHDATE:
+                    String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+                    mSpouseBirthdateTextView.setText(birthdate);
+                    break;
+                default:
+                    super.onActivityResult(requestCode, resultCode, intent);
+            }
         }
     }
 }

@@ -23,7 +23,6 @@ import com.intelliviz.lowlevel.util.AgeUtils;
 
 import static com.intelliviz.lowlevel.util.AgeUtils.DATE_FORMAT;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_BIRTHDATE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
 
 
 public class BirthdateDialog extends DialogFragment {
@@ -164,8 +163,8 @@ public class BirthdateDialog extends DialogFragment {
     private void sendResult(String birthdate) {
         if(getTargetFragment() != null) {
             Intent intent = new Intent();
-            intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, EXTRA_BIRTHDATE);
-            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent());
+            intent.putExtra(EXTRA_BIRTHDATE, birthdate);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
         } else {
             BirthdateDialog.BirthdateDialogListener response = (BirthdateDialog.BirthdateDialogListener) getActivity();
             response.onGetBirthdate(birthdate);
