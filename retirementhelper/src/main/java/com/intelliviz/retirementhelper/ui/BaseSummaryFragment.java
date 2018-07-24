@@ -79,7 +79,7 @@ public abstract class BaseSummaryFragment extends Fragment implements
 
         mViewModel = ViewModelProviders.of(getActivity()).get(IncomeSummaryViewModel.class);
 
-        mViewModel.getIncomeSources().observe(this, new Observer<List<IncomeDetails>>() {
+        mViewModel.get().observe(this, new Observer<List<IncomeDetails>>() {
             @Override
             public void onChanged(@Nullable List<IncomeDetails> incomeDetails) {
                 if(incomeDetails == null) {

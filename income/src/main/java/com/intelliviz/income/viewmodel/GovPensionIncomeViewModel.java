@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 
 import com.intelliviz.data.GovPension;
 import com.intelliviz.data.GovPensionEx;
-import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.data.SocialSecurityRules;
 import com.intelliviz.db.entity.GovPensionEntity;
@@ -23,7 +22,6 @@ import com.intelliviz.income.data.GovPensionViewData;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.repo.GovEntityRepo;
-import com.intelliviz.repo.RetirementOptionsEntityRepo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +33,7 @@ import java.util.List;
 
 public class GovPensionIncomeViewModel extends AndroidViewModel {
     private LiveData<GovPensionViewData> mViewData = new MutableLiveData<>();
-    private LiveData<List<IncomeDetails>> mIncomeDetailsList = new MutableLiveData<>();
     private GovEntityRepo mRepo;
-    private RetirementOptionsEntityRepo mRetireOptionsRepo;
-    private LiveData<RetirementOptions> mRO;
-    private LiveData<List<GovPension>> mGpeList;
     private static String EC_NO_SPOUSE_BIRTHDATE;
     private static String EC_ONLY_TWO_SUPPORTED;
     private static long mIncomeId;
