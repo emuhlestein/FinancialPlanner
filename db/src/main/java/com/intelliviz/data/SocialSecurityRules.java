@@ -133,7 +133,12 @@ public class SocialSecurityRules implements IncomeTypeRules {
         if(mActualStartAge != null) {
             age = mActualStartAge;
         }
-        return new SocialSecurityIncomeDataAccessor(age, mMonthlyBenefit.doubleValue());
+
+        if(mIsSpouseEntity) {
+            return new SocialSecurityIncomeDataAccessor(age, mMonthlyBenefit.doubleValue(), mBirthdate, mIsSpouseEntity, mSpouseBirthdate);
+        } else {
+            return new SocialSecurityIncomeDataAccessor(age, mMonthlyBenefit.doubleValue(), mBirthdate, mIsSpouseEntity, mSpouseBirthdate);
+        }
     }
 
     public double getMonthlyBenefit() {
