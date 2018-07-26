@@ -13,17 +13,12 @@ import android.support.annotation.NonNull;
 import com.intelliviz.data.GovPension;
 import com.intelliviz.data.GovPensionEx;
 import com.intelliviz.data.RetirementOptions;
-import com.intelliviz.data.SocialSecurityRules;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.GovPensionEntityMapper;
 import com.intelliviz.db.entity.RetirementOptionsMapper;
-import com.intelliviz.income.R;
 import com.intelliviz.income.data.GovPensionViewData;
-import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.repo.GovEntityRepo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,8 +29,7 @@ import java.util.List;
 public class GovPensionIncomeViewModel extends AndroidViewModel {
     private LiveData<GovPensionViewData> mViewData = new MutableLiveData<>();
     private GovEntityRepo mRepo;
-    private static String EC_NO_SPOUSE_BIRTHDATE;
-    private static String EC_ONLY_TWO_SUPPORTED;
+
     private static long mIncomeId;
 
     public GovPensionIncomeViewModel(Application application,
@@ -44,10 +38,7 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
         super(application);
         mRepo = govRepo;
         subscribe(incomeId);
-        EC_NO_SPOUSE_BIRTHDATE = application.getResources().getString(R.string.ec_no_spouse_birthdate);
-        EC_ONLY_TWO_SUPPORTED = application.getResources().getString(R.string.ec_only_two_social_security_allowed);
         mIncomeId = incomeId;
-
         mRepo.load();
     }
 
@@ -59,7 +50,7 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
                     public LiveData<GovPensionViewData> apply(GovPensionEx input) {
                         List<GovPensionEntity> gpeList = input.getGpeList();
                         RetirementOptions ro = RetirementOptionsMapper.map(input.getROE());
-                        GovPensionHelperPaid helper = new GovPensionHelperPaid(gpeList, ro);
+                        GovPensionHelper helper = new GovPensionHelper(getApplication(), gpeList, ro);
                         MutableLiveData<GovPensionViewData> ldata = new MutableLiveData();
                         ldata.setValue(helper.get(id));
                         return ldata;
@@ -98,73 +89,6 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
             return (T) new GovPensionIncomeViewModel(mApplication, mRepo, mIncomeId);
-        }
-    }
-
-    // TODO needs to be renamed and a version needs to be created for free version
-    private static class GovPensionHelperPaid {
-        private static final int MAX_GOV_PENSION = 2;
-        private List<GovPensionEntity> mGpeList;
-        private RetirementOptions mRO;
-        public GovPensionHelperPaid(List<GovPensionEntity> gpeList, RetirementOptions ro) {
-            mGpeList = gpeList;
-            mRO = ro;
-        }
-
-        public GovPensionViewData get(long id) {
-
-            List<GovPension> gpList = new ArrayList<>();
-            for(GovPensionEntity gpe : mGpeList) {
-                GovPension gp = GovPensionEntityMapper.map(gpe);
-                gpList.add(gp);
-            }
-
-            // if id is 0, we're adding a new default record
-            if(id == 0) {
-                if (gpList.isEmpty()) {
-                    GovPension gp = createDefault();
-                    gpList.add(gp);
-                    SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
-                    return new GovPensionViewData(gp, RetirementConstants.EC_NO_ERROR, "");
-                } else if(gpList.size() < MAX_GOV_PENSION) {
-                    // second one is a spouse
-                    if(mRO.getSpouseBirthdate().equals("0")) {
-                        return new GovPensionViewData(null, RetirementConstants.EC_NO_SPOUSE_BIRTHDATE, EC_NO_SPOUSE_BIRTHDATE);
-                    } else {
-                        GovPension gp = createDefault();
-                        gpList.add(gp);
-                        SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
-                        return new GovPensionViewData(gp, RetirementConstants.EC_NO_ERROR, "");
-                    }
-                } else {
-                    return new GovPensionViewData(null, RetirementConstants.EC_ONLY_TWO_SUPPORTED, EC_ONLY_TWO_SUPPORTED);
-                }
-            } else {
-                SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
-                GovPension gp = getGovPension(gpList, id);
-                return new GovPensionViewData(gp, RetirementConstants.EC_NO_ERROR, "");
-            }
-        }
-
-        private GovPension getGovPension(List<GovPension> gpList, long id) {
-            if(gpList == null || gpList.isEmpty()) {
-                return null;
-            }
-
-            if(gpList.size() == 1) {
-                return gpList.get(0);
-            } else {
-                if(gpList.get(0).getId() == id) {
-                    return gpList.get(0);
-                } else {
-                    return gpList.get(1);
-                }
-            }
-        }
-
-        private GovPension createDefault() {
-            return new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "",
-                    "0", new AgeData(65, 0), false);
         }
     }
 }
