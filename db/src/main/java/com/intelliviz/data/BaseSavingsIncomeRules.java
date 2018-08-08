@@ -31,7 +31,7 @@ public abstract class BaseSavingsIncomeRules {
     private double mBalance; // balance
     private double mInterest; // annual interest (APR)
     private double mMonthlyDeposit; // amount that is deposited each month
-    private double mWithdrawPercent; // The percentage of balance for initial withdraw.
+    private double mInitialWithdrawPercent; // The percentage of balance for initial withdraw.
     private double mAnnualPercentIncrease; // percent to increase withdraw
     private boolean mShowMonths;
 
@@ -53,7 +53,7 @@ public abstract class BaseSavingsIncomeRules {
         mBalance = bundle.getDouble(EXTRA_INCOME_SOURCE_BALANCE);
         mInterest = bundle.getDouble(EXTRA_INCOME_SOURCE_INTEREST);
         mMonthlyDeposit = bundle.getDouble(EXTRA_INCOME_MONTHLY_ADDITION);
-        mWithdrawPercent = bundle.getDouble(EXTRA_INCOME_WITHDRAW_PERCENT);
+        mInitialWithdrawPercent = bundle.getDouble(EXTRA_INCOME_WITHDRAW_PERCENT);
         mAnnualPercentIncrease = bundle.getDouble(EXTRA_ANNUAL_PERCENT_INCREASE);
         mStartAge = bundle.getParcelable(EXTRA_INCOME_START_AGE);
         mStopAge = bundle.getParcelable(EXTRA_INCOME_STOP_AGE);
@@ -69,10 +69,11 @@ public abstract class BaseSavingsIncomeRules {
         }
     }
 
-    public List<IncomeData> getIncomeDataNew() {
+    public List<IncomeData> getIncomeData() {
         double monthlyWithdraw = 0;
         double balance = mBalance;
         double monthlyDeposit = mMonthlyDeposit;
+        double initWithdrawPercent = mInitialWithdrawPercent / 100;
 
         List<IncomeData> listAmountDate = new ArrayList<>();
 
@@ -81,7 +82,11 @@ public abstract class BaseSavingsIncomeRules {
             if(age.isOnOrAfter(mStartAge)) {
                 // monthly withdrawals apply
                 if(age.equals(mStartAge)) {
-                    monthlyWithdraw = mBalance * 0.04 / 12;
+                    monthlyWithdraw = mBalance * initWithdrawPercent / 12;
+                } else {
+                    if(age.getMonth() == 0) {
+                        monthlyWithdraw = monthlyWithdraw + (monthlyWithdraw * mAnnualPercentIncrease / 100);
+                    }
                 }
             } else {
                 monthlyWithdraw = 0;
@@ -102,10 +107,10 @@ public abstract class BaseSavingsIncomeRules {
         return listAmountDate;
     }
 
-    public List<IncomeData> getIncomeData() {
+    public List<IncomeData> getIncomeDataOld() {
 
         int numMonths = 12;
-        List<IncomeData> listAmountDate = getIncomeDataNew();
+        List<IncomeData> listAmountDate = getIncomeData();
         if(!listAmountDate.isEmpty()) {
             return listAmountDate;
         }
@@ -225,6 +230,6 @@ public abstract class BaseSavingsIncomeRules {
     }
 
     private double getInitMonthlyWithdrawAmount(double balance) {
-        return balance * mWithdrawPercent / 1200;
+        return balance * mInitialWithdrawPercent / 1200;
     }
 }
