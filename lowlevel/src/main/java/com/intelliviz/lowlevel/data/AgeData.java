@@ -43,6 +43,14 @@ public class AgeData implements Parcelable {
     }
 
     /**
+     * Copy Constructor
+     * @param ageData The age.
+     */
+    public AgeData(AgeData ageData) {
+        this(ageData.getNumberOfMonths());
+    }
+
+    /**
      * Constructor
      *
      * @param numMonths The number of months.

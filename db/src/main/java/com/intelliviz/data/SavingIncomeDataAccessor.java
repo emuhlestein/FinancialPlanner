@@ -19,13 +19,13 @@ public class SavingIncomeDataAccessor implements IncomeDataAccessor {
 
         mIncomeDataMap = new HashMap<>();
         for(IncomeData bData : mIncomeData) {
-            int year = bData.getAge().getYear();
-            mIncomeDataMap.put(year, bData);
+            int month = bData.getAge().getNumberOfMonths();
+            mIncomeDataMap.put(month, bData);
         }
     }
 
     @Override
     public IncomeData getIncomeData(AgeData age) {
-        return mIncomeDataMap.get(age.getYear());
+        return mIncomeDataMap.get(age.getNumberOfMonths());
     }
 }

@@ -1,6 +1,7 @@
 package com.intelliviz.lowlevel;
 
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
 
 import org.junit.Test;
 
@@ -50,5 +51,13 @@ public class AgeDataTest {
 
         assertTrue(ageData.getYear() == 68);
         assertTrue(ageData.getMonth() == 0);
+    }
+
+    @Test
+    public void testAgeUtils() {
+        String birthDate = "01-01-1960";
+        AgeData age = AgeUtils.getAge(birthDate);
+        assertTrue(age.getYear() == 58);
+        assertTrue(age.getMonth() == 7);
     }
 }
