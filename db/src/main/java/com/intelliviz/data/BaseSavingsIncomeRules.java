@@ -77,6 +77,7 @@ public abstract class BaseSavingsIncomeRules {
         double balance = mBalance;
         double monthlyDeposit = mMonthlyDeposit;
         double initWithdrawPercent = mInitialWithdrawPercent / 100;
+        double monthlyInterest = mInterest / 1200;
 
         List<IncomeData> listAmountDate = new ArrayList<>();
 
@@ -108,8 +109,7 @@ public abstract class BaseSavingsIncomeRules {
             }
             balance += monthlyDeposit;
 
-            double interest = mInterest / 1200;
-            double amount = balance * interest;
+            double amount = balance * monthlyInterest;
             balance += amount;
         }
 

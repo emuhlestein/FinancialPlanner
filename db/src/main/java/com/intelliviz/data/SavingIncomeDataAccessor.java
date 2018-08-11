@@ -11,14 +11,11 @@ import java.util.Map;
  */
 
 public class SavingIncomeDataAccessor implements IncomeDataAccessor {
-    private List<IncomeData> mIncomeData;
-    Map<Integer, IncomeData> mIncomeDataMap;
+    private Map<Integer, IncomeData> mIncomeDataMap;
 
     public SavingIncomeDataAccessor(List<IncomeData> incomeData) {
-        mIncomeData = incomeData;
-
         mIncomeDataMap = new HashMap<>();
-        for(IncomeData bData : mIncomeData) {
+        for(IncomeData bData : incomeData) {
             int month = bData.getAge().getNumberOfMonths();
             mIncomeDataMap.put(month, bData);
         }
