@@ -292,7 +292,7 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void showDialog(String birthdate, int includeSpouse, String spouseBirthdate, PersonalInfoDialogAction personalInfoDialogAction) {
         FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentByTag("birhtdate");
+        Fragment fragment = fm.findFragmentByTag("personalInfoDialog");
         if(fragment != null) {
             FragmentTransaction ft = fm.beginTransaction();
             ft.remove(fragment);
@@ -301,7 +301,7 @@ public class NavigationActivity extends AppCompatActivity {
 
         PersonalInfoDialog personalInfoDialog = PersonalInfoDialog.getInstance(birthdate,
                 includeSpouse, spouseBirthdate, personalInfoDialogAction);
-        personalInfoDialog.show(fm, "birhtdate");
+        personalInfoDialog.show(fm, "personalInfoDialog");
     }
 }
 

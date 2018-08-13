@@ -1,8 +1,10 @@
 package com.intelliviz.retirementhelper.ui;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -57,11 +59,9 @@ public class PersonalInfoDialog extends DialogFragment implements
     private TextView mBirthDateViewText;
     private Button mBirthdateButton;
     private Spinner mCountrySpinner;
-    //private TextView mSpouseBirthdateTextView;
-    //private Button mSpouseBirthdateButton;
-    //private CheckBox mIncludeSpouseCheckBox;
     private Button mOk;
     private Button mCancel;
+    private static final int REQUEST_BIRTHDATE = 1;
 
     public static PersonalInfoDialog getInstance(String birthdate, int includeSpouse, String spouseBirhtdate, PersonalInfoDialogAction personalInfoDialogAction) {
         PersonalInfoDialog fragment = new PersonalInfoDialog();
@@ -204,6 +204,15 @@ public class PersonalInfoDialog extends DialogFragment implements
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if(requestCode == REQUEST_BIRTHDATE && resultCode == Activity.RESULT_OK) {
+            String birthdate = intent.getStringExtra(EXTRA_BIRTHDATE);
+            mBirthDateViewText.setText(birthdate);
+        }
+        super.onActivityResult(requestCode, resultCode, intent);
+    }
+
     private void updateUI(RetirementOptions roe) {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -337,7 +346,8 @@ public class PersonalInfoDialog extends DialogFragment implements
     private void showBirthdateDialog(String birthdate) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate);
-        birthdateDialog.show(fm, "birhtdate");
+        birthdateDialog.setTargetFragment(this, REQUEST_BIRTHDATE);
+        birthdateDialog.show(fm, "birthdate");
     }
 
     @Override
