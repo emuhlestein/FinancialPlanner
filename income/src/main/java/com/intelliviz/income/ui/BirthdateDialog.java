@@ -162,9 +162,11 @@ public class BirthdateDialog extends DialogFragment {
 
     private void sendResult(String birthdate) {
         if(getTargetFragment() != null) {
-            Intent intent = new Intent();
-            intent.putExtra(EXTRA_BIRTHDATE, birthdate);
-            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            if(birthdate != null) {
+                Intent intent = new Intent();
+                intent.putExtra(EXTRA_BIRTHDATE, birthdate);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            }
         } else {
             BirthdateDialog.BirthdateDialogListener response = (BirthdateDialog.BirthdateDialogListener) getActivity();
             response.onGetBirthdate(birthdate);
