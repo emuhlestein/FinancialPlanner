@@ -12,6 +12,11 @@
         android:title="@string/retirement_options"
         app:showAsAction="never" />
     <item
+        android:id="@+id/fra_item"
+        android:orderInCategory="200"
+        android:title="@string/fra"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/sign_out_item"
         android:orderInCategory="200"
         android:title="@string/sign_out"

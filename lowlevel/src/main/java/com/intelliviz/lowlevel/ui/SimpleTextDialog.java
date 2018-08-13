@@ -25,7 +25,7 @@ public class SimpleTextDialog extends DialogFragment {
     private EditText mInputText;
 
     public interface DialogResponse {
-        void onGetResponse(int response);
+        void onGetResponse(int response, String message);
     }
 
     public static SimpleTextDialog newInstance(String message, String inputText) {
@@ -90,7 +90,7 @@ public class SimpleTextDialog extends DialogFragment {
             getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
         } else {
             DialogResponse response = (DialogResponse) getActivity();
-            response.onGetResponse(resultCode);
+            response.onGetResponse(resultCode, enteredText);
         }
     }
 }

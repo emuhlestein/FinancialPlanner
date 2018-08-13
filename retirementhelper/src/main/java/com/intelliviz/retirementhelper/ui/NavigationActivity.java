@@ -23,9 +23,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
+import com.intelliviz.data.SocialSecurityRules;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.income.ui.IncomeSourceListFragment;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.ui.MessageDialog;
+import com.intelliviz.lowlevel.ui.SimpleTextDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.retirementhelper.R;
 import com.intelliviz.retirementhelper.data.RetirementOptionsData;
@@ -43,7 +46,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_RETIRE_OP
  * The summary activity.
  * @author Ed Muhlestein
  */
-public class NavigationActivity extends AppCompatActivity {
+public class NavigationActivity extends AppCompatActivity implements
+        SimpleTextDialog.DialogResponse, MessageDialog.DialogResponse{
     private static final String TAG = NavigationActivity.class.getSimpleName();
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";
@@ -136,6 +140,11 @@ public class NavigationActivity extends AppCompatActivity {
                 //intent.putExtra(EXTRA_INCLUDE_SPOUSE, mROE.getIncludeSpouse());
                 //startActivity(intent); //, REQUEST_PERSONAL_INFO);
                 //overridePendingTransition(R.anim.slide_right_in, 0);
+                break;
+            case R.id.fra_item:
+                SimpleTextDialog dialog = SimpleTextDialog.newInstance("Enter birth year", "");
+                FragmentManager fm = getSupportFragmentManager();
+                dialog.show(fm, "year");
                 break;
             case R.id.sign_out_item:
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
@@ -302,6 +311,20 @@ public class NavigationActivity extends AppCompatActivity {
         PersonalInfoDialog personalInfoDialog = PersonalInfoDialog.getInstance(birthdate,
                 includeSpouse, spouseBirthdate, personalInfoDialogAction);
         personalInfoDialog.show(fm, "personalInfoDialog");
+    }
+
+    @Override
+    public void onGetResponse(int response, String message) {
+        int year = Integer.parseInt(message);
+        AgeData age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
+        MessageDialog dialog = MessageDialog.newInstance("FRA", age.toString(), 0, true);
+        FragmentManager fm = getSupportFragmentManager();
+        dialog.show(fm, "year");
+    }
+
+    @Override
+    public void onGetResponse(int response, int id) {
+
     }
 }
 
