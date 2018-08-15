@@ -85,7 +85,7 @@ public abstract class BaseSavingsIncomeRules {
             AgeData age = new AgeData(month);
             if (age.isOnOrAfter(mStartAge)) {
                 if (age.equals(mStartAge)) {
-                    monthlyWithdraw = balance * initWithdrawPercent;
+                    monthlyWithdraw = balance * initWithdrawPercent / 12;
                 } else {
                     if (age.getMonth() == 0) {
                         monthlyWithdraw = monthlyWithdraw + (monthlyWithdraw * mAnnualPercentIncrease / 100);
