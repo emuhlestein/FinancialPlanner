@@ -16,17 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractGovPensionHelper {
-    private static final int MAX_GOV_PENSION = 2;
     private List<GovPensionEntity> mGpeList;
     private RetirementOptions mRO;
     private static String EC_NO_SPOUSE_BIRTHDATE;
-    private static String EC_ONLY_TWO_SUPPORTED;
 
     public AbstractGovPensionHelper(Application application, List<GovPensionEntity> gpeList, RetirementOptions ro) {
         mGpeList = gpeList;
         mRO = ro;
         EC_NO_SPOUSE_BIRTHDATE = application.getResources().getString(R.string.ec_no_spouse_birthdate);
-        EC_ONLY_TWO_SUPPORTED = application.getResources().getString(R.string.ec_only_two_social_security_allowed);
     }
 
     public abstract int getMaxGovPensions();
