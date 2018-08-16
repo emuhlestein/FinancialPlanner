@@ -31,7 +31,7 @@ import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_TWO_SUPPORTED;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_NOT_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
@@ -142,9 +142,9 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                     case EC_PRINCIPLE_SPOUSE:
                         mIsPrincipleSpouse = true;
                         break;
-                    case EC_ONLY_TWO_SUPPORTED:
+                    case EC_SPOUSE_NOT_SUPPORTED:
                         fm = getSupportFragmentManager();
-                        dialog = MessageDialog.newInstance("Social Security", viewData.getMessage(), EC_ONLY_TWO_SUPPORTED, true);
+                        dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_SPOUSE_NOT_SUPPORTED, true);
                         dialog.show(fm, "message");
                         break;
                 }
@@ -255,7 +255,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                     // Launch add birthdate diadlog
                     showBirthdateDialog("01-01-1900");
                     break;
-                case EC_ONLY_TWO_SUPPORTED:
+                case EC_SPOUSE_NOT_SUPPORTED:
                     finish();
                     break;
             }

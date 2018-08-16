@@ -15,19 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IncomeSourceListRepo {
-    private GovEntityRepo mGovRepo;
-    private PensionIncomeEntityRepo mPensionRepo;
-    private SavingsIncomeEntityRepo mSavingsRepo;
-    private RetirementOptionsEntityRepo mRetireRepo;
     private MutableLiveData<List<IncomeSourceEntityBase>> mIncomeSources = new MutableLiveData<>();
     private AppDatabase mDB;
 
     public IncomeSourceListRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
-        mGovRepo = new GovEntityRepo(application);
-        mPensionRepo = PensionIncomeEntityRepo.getInstance(application);
-        mSavingsRepo = SavingsIncomeEntityRepo.getInstance(application);
-        mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
         new GetAllIncomeSourcesAsyncTask().execute();
     }
 
