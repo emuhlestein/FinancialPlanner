@@ -1,4 +1,4 @@
-# Capstone-Project - Retirement Helper
+# Retirement Helper
 ## Description
 The app is intended to help people plan for their retirements. It will help them track their monthly expenses and the amount of income they can expect to receive in retirement. These will be tracked over time and the user can extrapolate out in the future to see when they can retire, that is when their projected retirement income will be more than their expenses. The user can set milestones. These are important ages. This will allow the user to see how much retire income they can receive at various ages. This will help them identify the age at which they can reasonably retire.
 
