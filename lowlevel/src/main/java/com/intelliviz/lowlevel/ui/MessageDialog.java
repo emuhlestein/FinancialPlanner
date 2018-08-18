@@ -89,6 +89,7 @@ public class MessageDialog extends DialogFragment {
         if(getTargetFragment() != null) {
             getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, new Intent());
         } else {
+            Activity activity =  getActivity();
             MessageDialog.DialogResponse response = (MessageDialog.DialogResponse) getActivity();
             response.onGetResponse(resultCode, mId);
         }

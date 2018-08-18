@@ -107,4 +107,5 @@ public class RetirementConstants {
     public static final int EC_NO_SPOUSE_BIRTHDATE = 3;
     public static final int EC_PRINCIPLE_SPOUSE = 4;
     public static final int EC_SPOUSE_NOT_SUPPORTED = 5;
+    public static final int EC_ONLY_ONE_SUPPORTED = 6;
 }

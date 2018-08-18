@@ -1,7 +1,5 @@
 package com.intelliviz.income.viewmodel;
 
-import android.app.Application;
-
 import com.intelliviz.data.PensionData;
 import com.intelliviz.data.PensionRules;
 import com.intelliviz.data.RetirementOptions;
@@ -13,13 +11,15 @@ public abstract class AbstractPensionIncomeHelper {
     private PensionData mPD;
     private RetirementOptions mRO;
 
-    public AbstractPensionIncomeHelper(Application application, PensionData pd, RetirementOptions ro) {
+
+    public AbstractPensionIncomeHelper(PensionData pd, RetirementOptions ro) {
         mPD = pd;
         mRO = ro;
-        //EC_NO_SPOUSE_BIRTHDATE = application.getResources().getString(R.string.ec_no_spouse_birthdate);
     }
 
     public abstract boolean canCreateNewIncomeSource();
+    public abstract int getOnlyOneSupportedErrorCode();
+    public abstract String getOnlyOneSupportedErrorMessage();
 
     public PensionViewData get(long id) {
         if (id == 0) {
@@ -27,7 +27,7 @@ public abstract class AbstractPensionIncomeHelper {
                 // create default pension income source
                 return createDefault();
             } else {
-                return new PensionViewData(null, RetirementConstants.EC_NO_ERROR, "");
+                return new PensionViewData(null, getOnlyOneSupportedErrorCode(), getOnlyOneSupportedErrorMessage());
             }
         } else {
             PensionRules pr = new PensionRules(mRO.getBirthdate(), mPD.getAge(), mRO.getEndAge(), mPD.getBenefit());

@@ -96,7 +96,7 @@ dependencies {
     freeImplementation 'com.google.firebase:firebase-ads:11.6.0'
     implementation project(':income')
     implementation project(':lowlevel')
-    implementation project(':db')
+    implementation project(':data')
 }
 
 apply plugin: 'com.google.gms.google-services'

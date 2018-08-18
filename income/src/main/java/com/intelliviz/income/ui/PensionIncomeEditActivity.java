@@ -1,5 +1,6 @@
 package com.intelliviz.income.ui;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -20,15 +21,18 @@ import com.intelliviz.income.R;
 import com.intelliviz.income.data.PensionViewData;
 import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.ui.MessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 
 
-public class PensionIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
+public class PensionIncomeEditActivity extends AppCompatActivity implements
+        AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse {
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
     private PensionData mPD;
     private long mId;
@@ -104,8 +108,16 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
 
         mViewModel.get().observe(this, new Observer<PensionViewData>() {
             @Override
-            public void onChanged(@Nullable PensionViewData data) {
-                mPD = data.getPensionData();
+            public void onChanged(@Nullable PensionViewData viewData) {
+                FragmentManager fm = getSupportFragmentManager();
+                mPD = viewData.getPensionData();
+                switch(viewData.getStatus()) {
+                    case EC_ONLY_ONE_SUPPORTED:
+                        fm = getSupportFragmentManager();
+                        MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_ONLY_ONE_SUPPORTED, true);
+                        dialog.show(fm, "message");
+                        break;
+                }
                 updateUI();
             }
         });
@@ -156,5 +168,19 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
         // TODO check to see if age is valid
         AgeData age = new AgeData(year, month);
         mMinAge.setText(age.toString());
+    }
+
+    @Override
+    public void onGetResponse(int response, int id) {
+        if (response == Activity.RESULT_OK) {
+            switch (id) {
+                case EC_ONLY_ONE_SUPPORTED:
+                    finish();
+                    break;
+            }
+        } else {
+            // terminate activity
+            finish();
+        }
     }
 }

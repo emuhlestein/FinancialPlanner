@@ -27,6 +27,7 @@
     <string name="ec_no_spouse_birthdate">Need to add birthdate for spouse before adding social security income source.</string>
     <string name="ec_only_two_social_security_allowed">Can only have two Social Security income sources.</string>
     <string name="ec_only_one_social_security_allowed">Can only have one Social Security income source with free version.</string>
+    <string name="ec_only_one_pension_allowed">Can only have one Pension income source with free version.</string>
     <string name="ec_principle_spouse">Principle Spouse</string>
     <string-array name="error_codes">
         <item>@string/ec_no_error</item>
