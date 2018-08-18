@@ -5,8 +5,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
+import com.intelliviz.data.PensionDataEx;
 import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.PensionIncomeEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ public class PensionIncomeEntityRepo {
             new MutableLiveData<>();
     private MutableLiveData<List<PensionIncomeEntity>> mPensionList =
             new MutableLiveData<>();
+    private MutableLiveData<PensionDataEx> mPdEx = new MutableLiveData<>();
 
     public static PensionIncomeEntityRepo getInstance(Application application) {
         if(mINSTANCE == null) {
@@ -34,13 +37,16 @@ public class PensionIncomeEntityRepo {
         new GetListAsyncTask().execute();
     }
 
+    public void load(long id) {
+        new GetExAsyncTask().execute(id);
+    }
+
     public MutableLiveData<PensionIncomeEntity> get() {
         return mPIE;
     }
 
-    public LiveData<PensionIncomeEntity> get(long id) {
-        new GetAsyncTask().execute(id);
-        return mPIE;
+    public LiveData<PensionDataEx> getEx() {
+        return mPdEx;
     }
 
     public MutableLiveData<List<PensionIncomeEntity>> getList() {
@@ -69,18 +75,27 @@ public class PensionIncomeEntityRepo {
         protected PensionIncomeEntity doInBackground(Long... params) {
             PensionIncomeEntity pie = mDB.pensionIncomeDao().get(params[0]);
             return pie;
-//            long id = params[0];
-//            if(id == 0) {
-//                // need to create default
-//                return new PensionIncomeEntity(0, RetirementConstants.INCOME_TYPE_PENSION, "", PensionRules.DEFAULT_MIN_AGE, "0");
-//            } else {
-//                return mDB.pensionIncomeDao().get(params[0]);
-//            }
         }
 
         @Override
         protected void onPostExecute(PensionIncomeEntity pid) {
             mPIE.setValue(pid);
+        }
+    }
+
+    private class GetExAsyncTask extends AsyncTask<Long, Void, PensionDataEx> {
+
+        @Override
+        protected PensionDataEx doInBackground(Long... params) {
+            PensionIncomeEntity pie = mDB.pensionIncomeDao().get(params[0]);
+            List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            return new PensionDataEx(pie, pieList.size(), roe);
+        }
+
+        @Override
+        protected void onPostExecute(PensionDataEx pdEx) {
+            mPdEx.setValue(pdEx);
         }
     }
 
@@ -97,7 +112,6 @@ public class PensionIncomeEntityRepo {
             mPensionList.setValue(gpeList);
         }
     }
-
 
     private class UpdateAsyncTask extends AsyncTask<PensionIncomeEntity, Void, PensionIncomeEntity> {
 

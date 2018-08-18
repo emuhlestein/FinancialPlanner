@@ -11,10 +11,11 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
 import com.intelliviz.data.PensionData;
-import com.intelliviz.data.PensionRules;
+import com.intelliviz.data.PensionDataEx;
+import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.db.entity.PensionDataEntityMapper;
-import com.intelliviz.db.entity.PensionIncomeEntity;
-import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.db.entity.RetirementOptionsMapper;
+import com.intelliviz.income.data.PensionViewData;
 import com.intelliviz.repo.PensionIncomeEntityRepo;
 
 
@@ -23,34 +24,35 @@ import com.intelliviz.repo.PensionIncomeEntityRepo;
  */
 
 public class PensionIncomeViewModel extends AndroidViewModel {
-    private LiveData<PensionData> mPD = new MutableLiveData<>();
+    private LiveData<PensionViewData> mViewData = new MutableLiveData<>();
     private PensionIncomeEntityRepo mRepo;
 
     public PensionIncomeViewModel(Application application, long incomeId) {
         super(application);
         mRepo = PensionIncomeEntityRepo.getInstance(application);
         subscribe(incomeId);
+        mRepo.load(incomeId);
     }
 
-    public LiveData<PensionData> get() {
-        return mPD;
+    public LiveData<PensionViewData> get() {
+        return mViewData;
     }
 
     private void subscribe(final long id) {
-        LiveData<PensionIncomeEntity> entity = mRepo.get(id);
-        mPD = Transformations.switchMap(entity,
-                new Function<PensionIncomeEntity, LiveData<PensionData>>() {
-
+        LiveData<PensionDataEx> entity = mRepo.getEx();
+        mViewData = Transformations.switchMap(entity,
+                new Function<PensionDataEx, LiveData<PensionViewData>>() {
                     @Override
-                    public LiveData<PensionData> apply(PensionIncomeEntity input) {
-                        MutableLiveData<PensionData> ldata = new MutableLiveData<>();
-                        if(id == 0) {
-                            // create default pension income source
-                            PensionIncomeEntity pie = new PensionIncomeEntity(0, RetirementConstants.INCOME_TYPE_PENSION, "", PensionRules.DEFAULT_MIN_AGE, "0");
-                            ldata.setValue(PensionDataEntityMapper.map(pie));
-                        } else {
-                            ldata.setValue(PensionDataEntityMapper.map(input));
+                    public LiveData<PensionViewData> apply(PensionDataEx input) {
+                        RetirementOptions ro = RetirementOptionsMapper.map(input.getROE());
+
+                        PensionData pd = null;
+                        if(input.getPie() != null) {
+                            pd = PensionDataEntityMapper.map(input.getPie());
                         }
+                        PensionIncomeHelper helper = new PensionIncomeHelper(getApplication(), pd, ro, input.getNumRecords());
+                        MutableLiveData<PensionViewData> ldata = new MutableLiveData();
+                        ldata.setValue(helper.get(id));
                         return ldata;
                     }
                 });
@@ -65,17 +67,6 @@ public class PensionIncomeViewModel extends AndroidViewModel {
 //        if(pd != null) {
 //            mRepo.setData(PensionDataEntityMapper.map(pd));
 //        }
-    }
-
-    private void subscribeToPensionEntityChanges() {
-        MutableLiveData<PensionIncomeEntity> pie = mRepo.get();
-        mPD = Transformations.map(pie,
-                new Function<PensionIncomeEntity, PensionData>() {
-                    @Override
-                    public PensionData apply(PensionIncomeEntity pie) {
-                        return PensionDataEntityMapper.map(pie);
-                    }
-                });
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.intelliviz.data.PensionData;
 import com.intelliviz.income.R;
+import com.intelliviz.income.data.PensionViewData;
 import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -101,10 +102,10 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements AgeD
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeViewModel.class);
 
-        mViewModel.get().observe(this, new Observer<PensionData>() {
+        mViewModel.get().observe(this, new Observer<PensionViewData>() {
             @Override
-            public void onChanged(@Nullable PensionData data) {
-                mPD = data;
+            public void onChanged(@Nullable PensionViewData data) {
+                mPD = data.getPensionData();
                 updateUI();
             }
         });
