@@ -163,7 +163,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
                         fm = getSupportFragmentManager();
                         Fragment fragment = fm.findFragmentByTag("message");
                         if(fragment != null) {
-                            return;
+                            //return;
                         }
                         MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), viewData.getStatus(), true);
                         dialog.show(fm, "message");

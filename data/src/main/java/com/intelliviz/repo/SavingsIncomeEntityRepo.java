@@ -68,6 +68,13 @@ public class SavingsIncomeEntityRepo {
         }
     }
 
+    public MutableLiveData<SavingsDataEx> getSavingsDataEx(long id) {
+        MutableLiveData<SavingsDataEx> savingsDataEx = new MutableLiveData<>();
+        mSdEx = savingsDataEx;
+        load(id);
+        return savingsDataEx;
+    }
+
     public void delete(SavingsIncomeEntity entity) {
         new DeleteAsyncTask().execute(entity);
     }

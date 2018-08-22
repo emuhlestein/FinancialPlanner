@@ -38,20 +38,19 @@ import java.util.List;
 
 public class SavingsIncomeViewModel extends AndroidViewModel {
     private LiveData<SavingsViewData> mViewData = new MutableLiveData<>();
+    private LiveData<SavingsDataEx> mSource;
     private SavingsIncomeEntityRepo mRepo;
     private LiveData<List<IncomeDetails>> mIncomeDetailsList = new MutableLiveData<>();
 
     public SavingsIncomeViewModel(Application application, long incomeId, int incomeType) {
         super(application);
         mRepo = SavingsIncomeEntityRepo.getInstance(application);
-       // subscribe();
+        mSource = mRepo.getSavingsDataEx(incomeId);
         subscribe(incomeId, incomeType);
-        mRepo.load(incomeId);
     }
 
     private void subscribe(final long id, final int incomeType) {
-        LiveData<SavingsDataEx> entity = mRepo.getEx();
-        mViewData = Transformations.switchMap(entity,
+        mViewData = Transformations.switchMap(mSource,
                 new Function<SavingsDataEx, LiveData<SavingsViewData>>() {
                     @Override
                     public LiveData<SavingsViewData> apply(SavingsDataEx input) {
@@ -142,5 +141,4 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
 
         return incomeDetails;
     }
-
 }
