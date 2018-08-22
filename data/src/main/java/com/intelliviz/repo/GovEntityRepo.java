@@ -42,6 +42,13 @@ public class GovEntityRepo {
         mDB = AppDatabase.getInstance(application);
     }
 
+    public MutableLiveData<GovPensionEx> getGovPensionDataEx() {
+        MutableLiveData<GovPensionEx> govPensionEx = new MutableLiveData<>();
+        mGpeEx = govPensionEx;
+        load();
+        return govPensionEx;
+    }
+
     public void load() {
         new GetExAsyncTask().execute();
     }

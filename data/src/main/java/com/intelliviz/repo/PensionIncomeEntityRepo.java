@@ -37,7 +37,7 @@ public class PensionIncomeEntityRepo {
         new GetListAsyncTask().execute();
     }
 
-    public MutableLiveData<PensionDataEx> getSavingsDataEx(long id) {
+    public MutableLiveData<PensionDataEx> getPensionDataEx(long id) {
         MutableLiveData<PensionDataEx> pensionDataEx = new MutableLiveData<>();
         mPdEx = pensionDataEx;
         load(id);

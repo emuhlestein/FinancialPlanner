@@ -29,6 +29,7 @@ import java.util.List;
 public class GovPensionIncomeViewModel extends AndroidViewModel {
     private LiveData<GovPensionViewData> mViewData = new MutableLiveData<>();
     private GovEntityRepo mRepo;
+    private LiveData<GovPensionEx> mSource;
 
     private static long mIncomeId;
 
@@ -37,14 +38,15 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
                                      long incomeId) {
         super(application);
         mRepo = govRepo;
+        mSource = mRepo.getGovPensionDataEx();
         subscribe(incomeId);
         mIncomeId = incomeId;
-        mRepo.load();
+        //mRepo.load();
     }
 
     private void subscribe(final long id) {
-        LiveData<GovPensionEx> gpe = mRepo.getEx();
-        mViewData = Transformations.switchMap(gpe,
+        //LiveData<GovPensionEx> gpe = mRepo.getEx();
+        mViewData = Transformations.switchMap(mSource,
                 new Function<GovPensionEx, LiveData<GovPensionViewData>>() {
                     @Override
                     public LiveData<GovPensionViewData> apply(GovPensionEx input) {
