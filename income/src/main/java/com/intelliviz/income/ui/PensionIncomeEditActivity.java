@@ -109,7 +109,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         mViewModel.get().observe(this, new Observer<PensionViewData>() {
             @Override
             public void onChanged(@Nullable PensionViewData viewData) {
-                FragmentManager fm = getSupportFragmentManager();
+                FragmentManager fm ;
                 mPD = viewData.getPensionData();
                 switch(viewData.getStatus()) {
                     case EC_ONLY_ONE_SUPPORTED:

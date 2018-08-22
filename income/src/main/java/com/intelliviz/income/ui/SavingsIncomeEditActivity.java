@@ -20,16 +20,20 @@ import android.widget.TextView;
 
 import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
+import com.intelliviz.income.data.SavingsViewData;
 import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.ui.MessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_TWO_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_TYPE;
 
-public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeDialog.OnAgeEditListener {
+public class SavingsIncomeEditActivity extends AppCompatActivity implements
+        AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse {
     private static final int START_AGE = 0;
     private static final int STOP_AGE = 1;
     private SavingsData mSD;
@@ -149,10 +153,22 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
         mViewModel = ViewModelProviders.of(this, factory).
                 get(SavingsIncomeViewModel.class);
 
-        mViewModel.get().observe(this, new Observer<SavingsData>() {
+        mViewModel.get().observe(this, new Observer<SavingsViewData>() {
             @Override
-            public void onChanged(@Nullable SavingsData data) {
-                mSD = data;
+            public void onChanged(@Nullable SavingsViewData viewData) {
+                FragmentManager fm ;
+                mSD = viewData.getSavingsData();
+                switch(viewData.getStatus()) {
+                    case EC_ONLY_TWO_SUPPORTED:
+                        fm = getSupportFragmentManager();
+                        Fragment fragment = fm.findFragmentByTag("message");
+                        if(fragment != null) {
+                            return;
+                        }
+                        MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), viewData.getStatus(), true);
+                        dialog.show(fm, "message");
+                        break;
+                }
                 updateUI();
             }
         });
@@ -368,5 +384,19 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements AgeD
             return ((SavingsAdvancedFragment)fragment).getShowMonths();
         }
         return false;
+    }
+
+    @Override
+    public void onGetResponse(int response, int id) {
+        if (response == Activity.RESULT_OK) {
+            switch (id) {
+                case EC_ONLY_TWO_SUPPORTED:
+                    finish();
+                    break;
+            }
+        } else {
+            // terminate activity
+            finish();
+        }
     }
 }

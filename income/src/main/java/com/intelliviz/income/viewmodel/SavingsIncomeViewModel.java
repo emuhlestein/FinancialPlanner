@@ -8,72 +8,92 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.intelliviz.data.IncomeData;
-import com.intelliviz.data.IncomeDataAccessor;
 import com.intelliviz.data.IncomeDetails;
+import com.intelliviz.data.IncomeSummaryEx;
+import com.intelliviz.data.IncomeSummaryHelper;
 import com.intelliviz.data.RetirementOptions;
-import com.intelliviz.data.Savings401kIncomeRules;
 import com.intelliviz.data.SavingsData;
-import com.intelliviz.data.SavingsIncomeRules;
+import com.intelliviz.data.SavingsDataEx;
+import com.intelliviz.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.db.entity.SavingsDataEntityMapper;
-import com.intelliviz.db.entity.SavingsIncomeEntity;
+import com.intelliviz.income.data.SavingsViewData;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
-import com.intelliviz.repo.RetirementOptionsEntityRepo;
 import com.intelliviz.repo.SavingsIncomeEntityRepo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
 
 /**
  * Created by edm on 10/23/2017.
  */
 
 public class SavingsIncomeViewModel extends AndroidViewModel {
-    private LiveData<SavingsData> mSIE =
-            new MutableLiveData<>();
-    private MutableLiveData<List<IncomeDetails>> mIncomeDetails = new MutableLiveData<List<IncomeDetails>>();
+    private LiveData<SavingsViewData> mViewData = new MutableLiveData<>();
     private SavingsIncomeEntityRepo mRepo;
-    private RetirementOptionsEntityRepo mRetireRepo;
+    private LiveData<List<IncomeDetails>> mIncomeDetailsList = new MutableLiveData<>();
 
     public SavingsIncomeViewModel(Application application, long incomeId, int incomeType) {
         super(application);
         mRepo = SavingsIncomeEntityRepo.getInstance(application);
-        mRetireRepo = RetirementOptionsEntityRepo.getInstance(application);
-        //subscribeSavingsIncomeEntityChanges();
+       // subscribe();
         subscribe(incomeId, incomeType);
+        mRepo.load(incomeId);
     }
 
     private void subscribe(final long id, final int incomeType) {
-        LiveData<SavingsIncomeEntity> entity = mRepo.get(id);
-        mSIE = Transformations.switchMap(entity,
-                new Function<SavingsIncomeEntity, LiveData<SavingsData>>() {
+        LiveData<SavingsDataEx> entity = mRepo.getEx();
+        mViewData = Transformations.switchMap(entity,
+                new Function<SavingsDataEx, LiveData<SavingsViewData>>() {
                     @Override
-                    public LiveData<SavingsData> apply(SavingsIncomeEntity input) {
-                        MutableLiveData<SavingsData> ldata = new MutableLiveData<>();
-                        if(id == 0) {
-                            SavingsIncomeEntity sie = new SavingsIncomeEntity(0, incomeType);
-                            ldata.setValue(SavingsDataEntityMapper.map(sie));
-                        } else {
-                            ldata.setValue(SavingsDataEntityMapper.map(input));
+                    public LiveData<SavingsViewData> apply(SavingsDataEx input) {
+                        RetirementOptions ro = RetirementOptionsMapper.map(input.getROE());
+                        SavingsData sd = null;
+                        if(input.getSie() != null) {
+                            sd = SavingsDataEntityMapper.map(input.getSie());
                         }
+
+                        if(sd == null) {
+                            Log.d("SavingsIncomeViewModel", "HERE");
+                        }
+                        SavingsIncomeHelper helper = new SavingsIncomeHelper(getApplication(), sd, ro, input.getNumRecords());
+                        MutableLiveData<SavingsViewData> ldata = new MutableLiveData();
+                        ldata.setValue(helper.get(id, incomeType));
                         return ldata;
                     }
                 });
     }
 
-    public MutableLiveData<List<IncomeDetails>> getList() {
-        return mIncomeDetails;
+    private void subscribe() {
+        LiveData<IncomeSummaryEx> incomeSummaryEx = mRepo.getList();
+
+        mIncomeDetailsList =
+                Transformations.switchMap(incomeSummaryEx,
+                        new Function<IncomeSummaryEx, LiveData<List<IncomeDetails>>>() {
+                            @Override
+                            public LiveData<List<IncomeDetails>> apply(IncomeSummaryEx input) {
+                                MutableLiveData<List<IncomeDetails>> ldata = new MutableLiveData<>();
+                                RetirementOptions ro = RetirementOptionsMapper.map(input.getROE());
+                                ldata.setValue(getIncomeDetailsList(input.getIncomeSourceList(), ro));
+                                return ldata;
+                            }
+                        });
     }
 
-    public LiveData<SavingsData> get() {
-        return mSIE;
+    public LiveData<SavingsViewData> get() {
+        return mViewData;
+    }
+
+    public LiveData<List<IncomeDetails>> getList() {
+        return mIncomeDetailsList;
     }
 
     public void update() {
@@ -102,73 +122,25 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
         }
     }
 
-    private void subscribeSavingsIncomeEntityChanges() {
-        MutableLiveData<SavingsIncomeEntity> sie = mRepo.get();
-        mSIE = Transformations.map(sie,
-                new Function<SavingsIncomeEntity, SavingsData>() {
-                    @Override
-                    public SavingsData apply(SavingsIncomeEntity sie) {
-                        return SavingsDataEntityMapper.map(sie);
-                    }
-                });
-    }
-
-    private class GetBenefitDataListByIdAsyncTask extends AsyncTask<Long, Void, List<IncomeDetails>> {
-
-        @Override
-        protected List<IncomeDetails> doInBackground(Long... params) {
-            long id = params[0];
-            return getIncomeDetails(id);
+    // TODO make utils method
+    private List<IncomeDetails> getIncomeDetailsList(List<IncomeSourceEntityBase> incomeSourceList, RetirementOptions ro) {
+        List<IncomeData> incomeDataList = IncomeSummaryHelper.getIncomeSummary(incomeSourceList, ro);
+        if(incomeDataList == null) {
+            return Collections.emptyList();
         }
 
-        @Override
-        protected void onPostExecute(List<IncomeDetails> incomeDetails) {
-            mIncomeDetails.setValue(incomeDetails);
-        }
-    }
-
-    private List<IncomeDetails> getIncomeDetails(long id) {
-        RetirementOptions roe = RetirementOptionsMapper.map(mRetireRepo.get().getValue());
-        SavingsIncomeEntity entity = mRepo.get().getValue();
-        String birthdate = roe.getBirthdate();
-        AgeData endAge = roe.getEndAge();
-        if(entity.getType() == RetirementConstants.INCOME_TYPE_401K) {
-            Savings401kIncomeRules s4ir = new Savings401kIncomeRules(birthdate, endAge);
-            entity.setRules(s4ir);
-        } else {
-            SavingsIncomeRules sir = new SavingsIncomeRules(birthdate, endAge);
-            entity.setRules(sir);
-
-        }
-
-        AgeData startAge = AgeUtils.getAge(roe.getBirthdate());
-        endAge = roe.getEndAge();
-        IncomeDataAccessor accessor = entity.getIncomeDataAccessor();
         List<IncomeDetails> incomeDetails = new ArrayList<>();
-        for(int year = startAge.getYear(); year <= endAge.getYear(); year++) {
-            AgeData age = new AgeData(year, 0);
-            IncomeData benefitData = accessor.getIncomeData(age);
-            String line1;
-            int status;
-            String balance;
-            String amount;
-            if(benefitData == null) {
-                balance = "0.0";
-                amount = "0.0";
-                status = 0;
-            } else {
-                balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
-                amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
-                status = benefitData.getBalanceState();
-                if (benefitData.isPenalty()) {
-                    //status = 0;
-                }
-            }
-            line1 = age.toString() + "   " + amount + "  " + balance;
-            IncomeDetails incomeDetail = new IncomeDetails(line1, status, "");
+
+        for (IncomeData benefitData : incomeDataList) {
+            AgeData age = benefitData.getAge();
+            String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
+            String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
+            String line1 = age.toString() + "   " + amount + "  " + balance;
+            IncomeDetails incomeDetail = new IncomeDetails(line1, RetirementConstants.BALANCE_STATE_GOOD, "");
             incomeDetails.add(incomeDetail);
         }
 
         return incomeDetails;
     }
+
 }

@@ -23,6 +23,7 @@ import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.adapter.IncomeDetailsAdapter;
+import com.intelliviz.income.data.SavingsViewData;
 import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -132,10 +133,10 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             }
         });
 
-        mViewModel.get().observe(this, new Observer<SavingsData>() {
+        mViewModel.get().observe(this, new Observer<SavingsViewData>() {
             @Override
-            public void onChanged(@Nullable SavingsData tdie) {
-                mSIE = tdie;
+            public void onChanged(@Nullable SavingsViewData svd) {
+                mSIE = svd.getSavingsData();
                 updateUI();
             }
         });

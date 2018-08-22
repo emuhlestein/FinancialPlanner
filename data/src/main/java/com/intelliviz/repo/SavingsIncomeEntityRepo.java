@@ -1,12 +1,19 @@
 package com.intelliviz.repo;
 
 import android.app.Application;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import com.intelliviz.data.IncomeSummaryEx;
+import com.intelliviz.data.SavingsDataEx;
 import com.intelliviz.db.AppDatabase;
+import com.intelliviz.db.entity.IncomeSourceEntityBase;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SavingsIncomeEntityRepo {
@@ -14,7 +21,8 @@ public class SavingsIncomeEntityRepo {
     private AppDatabase mDB;
     private MutableLiveData<SavingsIncomeEntity> mSIE =
             new MutableLiveData<>();
-    private MutableLiveData<List<SavingsIncomeEntity>> mSieList = new MutableLiveData<List<SavingsIncomeEntity>>();
+    private MutableLiveData<IncomeSummaryEx> mSieList = new MutableLiveData<>();
+    private MutableLiveData<SavingsDataEx> mSdEx = new MutableLiveData<>();
 
     public static SavingsIncomeEntityRepo getInstance(Application application) {
         if(mINSTANCE == null) {
@@ -32,16 +40,23 @@ public class SavingsIncomeEntityRepo {
         new GetListAsyncTask().execute();
     }
 
+    public void load(long id) {
+        new GetExAsyncTask().execute(id);
+    }
+
+    public LiveData<SavingsDataEx> getEx() {
+        return mSdEx;
+    }
+
     public MutableLiveData<SavingsIncomeEntity> get() {
         return mSIE;
     }
 
     public MutableLiveData<SavingsIncomeEntity> get(long id) {
-        new GetAsyncTask().execute(id);
         return mSIE;
     }
 
-    public MutableLiveData<List<SavingsIncomeEntity>> getList() {
+    public MutableLiveData<IncomeSummaryEx> getList() {
         return mSieList;
     }
 
@@ -61,32 +76,22 @@ public class SavingsIncomeEntityRepo {
         new GetListAsyncTask().execute();
     }
 
-    private class GetAsyncTask extends AsyncTask<Long, Void, SavingsIncomeEntity> {
+    private class GetListAsyncTask extends AsyncTask<Void, Void, IncomeSummaryEx> {
 
-        GetAsyncTask() {
+        @Override
+        protected IncomeSummaryEx doInBackground(Void... params) {
+            List<IncomeSourceEntityBase> incomeSourceList = new ArrayList<>();
+            List<SavingsIncomeEntity> list = mDB.savingsIncomeDao().get();
+            for(SavingsIncomeEntity sie : list) {
+                incomeSourceList.add(sie);
+            }
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            return new IncomeSummaryEx(roe, incomeSourceList);
         }
 
         @Override
-        protected SavingsIncomeEntity doInBackground(Long... params) {
-            return mDB.savingsIncomeDao().get(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(SavingsIncomeEntity tdid) {
-            mSIE.setValue(tdid);
-        }
-    }
-
-    private class GetListAsyncTask extends AsyncTask<Void, Void, List<SavingsIncomeEntity>> {
-
-        @Override
-        protected List<SavingsIncomeEntity> doInBackground(Void... params) {
-           return mDB.savingsIncomeDao().get();
-        }
-
-        @Override
-        protected void onPostExecute(List<SavingsIncomeEntity> sie) {
-            mSieList.setValue(sie);
+        protected void onPostExecute(IncomeSummaryEx incomeSummaryEx) {
+            mSieList.setValue(incomeSummaryEx);
         }
     }
 
@@ -118,6 +123,26 @@ public class SavingsIncomeEntityRepo {
 
         @Override
         protected void onPostExecute(Integer numRowsInserted) {
+        }
+    }
+
+    private class GetExAsyncTask extends AsyncTask<Long, Void, SavingsDataEx> {
+
+        public GetExAsyncTask() {
+            Log.d("TAG", "HERE B");
+        }
+
+        @Override
+        protected SavingsDataEx doInBackground(Long... params) {
+            SavingsIncomeEntity sie = mDB.savingsIncomeDao().get(params[0]);
+            List<SavingsIncomeEntity> sieList = mDB.savingsIncomeDao().get();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            return new SavingsDataEx(sie, sieList.size(), roe);
+        }
+
+        @Override
+        protected void onPostExecute(SavingsDataEx sdEx) {
+            mSdEx.setValue(sdEx);
         }
     }
 }
