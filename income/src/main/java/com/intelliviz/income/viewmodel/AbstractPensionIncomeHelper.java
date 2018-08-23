@@ -11,7 +11,6 @@ public abstract class AbstractPensionIncomeHelper {
     private PensionData mPD;
     private RetirementOptions mRO;
 
-
     public AbstractPensionIncomeHelper(PensionData pd, RetirementOptions ro) {
         mPD = pd;
         mRO = ro;

@@ -2,20 +2,20 @@ package com.intelliviz.income.viewmodel;
 
 import android.app.Application;
 
-import com.intelliviz.data.PensionData;
 import com.intelliviz.data.RetirementOptions;
+import com.intelliviz.data.SavingsData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
-public class PensionIncomeHelper extends AbstractPensionIncomeHelper {
-    public PensionIncomeHelper(Application application, PensionData pd, RetirementOptions ro, int numRecords) {
-        super(pd, ro);
+public class SavingsIncomeHelper extends AbstractSavingsIncomeHelper {
+
+    public SavingsIncomeHelper(Application application, SavingsData sd, RetirementOptions ro, int numRecords) {
+        super(sd, ro);
     }
 
     @Override
     public boolean canCreateNewIncomeSource() {
         return true;
     }
-
 
     @Override
     public int getOnlyOneSupportedErrorCode() {
