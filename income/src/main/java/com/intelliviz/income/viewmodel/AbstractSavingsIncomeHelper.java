@@ -43,7 +43,7 @@ public abstract class AbstractSavingsIncomeHelper {
     }
 
     private SavingsViewData createDefault(final int incomeType) {
-        SavingsData sd = new SavingsData(0, incomeType, "",
+        SavingsData sd = new SavingsData(0, incomeType, "", 1,
                 new AgeData(65, 0), "0", "0", "0", new AgeData(65, 0), "0", "0", 0);
         IncomeTypeRules sr;
         if(incomeType == RetirementConstants.INCOME_TYPE_401K) {

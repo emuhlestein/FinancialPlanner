@@ -317,13 +317,13 @@ public class NavigationActivity extends AppCompatActivity implements
     public void onGetResponse(int response, String message) {
         int year = Integer.parseInt(message);
         AgeData age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
-        MessageDialog dialog = MessageDialog.newInstance("FRA", age.toString(), 0, true);
+        MessageDialog dialog = MessageDialog.newInstance("FRA", age.toString(), 0, true, null, null);
         FragmentManager fm = getSupportFragmentManager();
         dialog.show(fm, "year");
     }
 
     @Override
-    public void onGetResponse(int response, int id) {
+    public void onGetResponse(int response, int id, boolean isOk) {
 
     }
 }

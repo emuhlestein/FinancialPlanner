@@ -26,6 +26,8 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_ERROR;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
@@ -114,7 +116,12 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                 switch(viewData.getStatus()) {
                     case EC_ONLY_ONE_SUPPORTED:
                         fm = getSupportFragmentManager();
-                        MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_ONLY_ONE_SUPPORTED, true);
+                        MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_ONLY_ONE_SUPPORTED, true, null, null);
+                        dialog.show(fm, "message");
+                        break;
+                    case EC_NO_ERROR:
+                        fm = getSupportFragmentManager();
+                        dialog = MessageDialog.newInstance("Query", "Is this income source for spouse or self?", EC_FOR_SPOUSE, false, "Spouse", "Self");
                         dialog.show(fm, "message");
                         break;
                 }
@@ -157,7 +164,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             return;
         }
 
-        PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, minAge, benefit, 0);
+        PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getSelf(), minAge, benefit, 0);
         mViewModel.setData(pd);
 
         finish();
@@ -171,11 +178,18 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onGetResponse(int response, int id) {
+    public void onGetResponse(int response, int id, boolean isOk) {
         if (response == Activity.RESULT_OK) {
             switch (id) {
                 case EC_ONLY_ONE_SUPPORTED:
                     finish();
+                    break;
+                case EC_FOR_SPOUSE:
+                    if(isOk) {
+                        // self
+                    } else {
+                        // spouse
+                    }
                     break;
             }
         } else {

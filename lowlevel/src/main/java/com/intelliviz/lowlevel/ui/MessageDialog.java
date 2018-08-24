@@ -18,6 +18,8 @@ public class MessageDialog extends DialogFragment {
     private static final String ARG_MESSAGE = "message";
     private static final String ARG_ID = "id";
     private static final String ARG_OK_ONLY = "ok";
+    private static final String ARG_NO_LABEL = "no";
+    private static final String ARG_YES_LABEL = "yes";
     private TextView mMessage;
     private TextView mTitle;
     private Button mOk;
@@ -25,15 +27,17 @@ public class MessageDialog extends DialogFragment {
     private int mId;
 
     public interface DialogResponse {
-        void onGetResponse(int response, int id);
+        void onGetResponse(int response, int id, boolean isOk);
     }
 
-    public static MessageDialog newInstance(String title, String message, int id, boolean okOnly) {
+    public static MessageDialog newInstance(String title, String message, int id, boolean okOnly, String noLabel, String yesLabel) {
         Bundle args = new Bundle();
         args.putString(ARG_MESSAGE, message);
         args.putString(ARG_TITLE, title);
         args.putInt(ARG_ID, id);
         args.putBoolean(ARG_OK_ONLY, okOnly);
+        args.putString(ARG_NO_LABEL, noLabel);
+        args.putString(ARG_YES_LABEL, yesLabel);
         MessageDialog fragment = new MessageDialog();
         fragment.setArguments(args);
         return fragment;
@@ -45,8 +49,10 @@ public class MessageDialog extends DialogFragment {
 
         String title = getArguments().getString(ARG_TITLE);
         String message = getArguments().getString(ARG_MESSAGE);
-        boolean okOnly = getArguments().getBoolean(ARG_OK_ONLY);
+        final boolean okOnly = getArguments().getBoolean(ARG_OK_ONLY);
         mId = getArguments().getInt(ARG_ID);
+        final String noLabel = getArguments().getString(ARG_NO_LABEL);
+        final String yesLabel = getArguments().getString(ARG_YES_LABEL);
 
         View view;
         if(okOnly) {
@@ -54,10 +60,17 @@ public class MessageDialog extends DialogFragment {
         } else {
             view = inflater.inflate(R.layout.message_dialog_layout, container, false);
             mCancel = view.findViewById(R.id.cancel_button);
+            if(noLabel != null) {
+                mCancel.setText(noLabel);
+            }
             mCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    sendResult(false);
+                    if(okOnly) {
+                        sendResult(false, Activity.RESULT_CANCELED);
+                    } else {
+                        sendResult(false, Activity.RESULT_OK);
+                    }
                 }
             });
         }
@@ -66,11 +79,15 @@ public class MessageDialog extends DialogFragment {
        mMessage = view.findViewById(R.id.message_view);
        mOk = view.findViewById(R.id.ok_button);
 
+       if(yesLabel != null) {
+            mOk.setText(yesLabel);
+       }
+
 
        mOk.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               sendResult(true);
+               sendResult(true, Activity.RESULT_OK);
            }
        });
 
@@ -80,18 +97,12 @@ public class MessageDialog extends DialogFragment {
        return view;
     }
 
-    private void sendResult(boolean isOk) {
-        int resultCode = Activity.RESULT_OK;
-        if(!isOk) {
-            resultCode = Activity.RESULT_CANCELED;
-        }
-
+    private void sendResult(boolean isOk, int resultCode) {
         if(getTargetFragment() != null) {
             getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, new Intent());
         } else {
-            Activity activity =  getActivity();
             MessageDialog.DialogResponse response = (MessageDialog.DialogResponse) getActivity();
-            response.onGetResponse(resultCode, mId);
+            response.onGetResponse(resultCode, mId, isOk);
         }
 
         dismiss();

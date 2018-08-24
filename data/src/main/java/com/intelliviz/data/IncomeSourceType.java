@@ -11,4 +11,6 @@ public interface IncomeSourceType {
     void setType(int type);
     String getName();
     void setName(String name);
+    int getSelf();
+    void setSelf(int self);
 }

@@ -136,7 +136,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                     case EC_NO_SPOUSE_BIRTHDATE:
                         FragmentManager fm = getSupportFragmentManager();
                         MessageDialog dialog = MessageDialog.newInstance("Social Security", "Adding a second social security income source is for a spouse." +
-                                " In order to do this, the spouse's birth date must be added.\n\nClick Ok to add birth date.", EC_NO_SPOUSE_BIRTHDATE, false);
+                                " In order to do this, the spouse's birth date must be added.\n\nClick Ok to add birth date.", EC_NO_SPOUSE_BIRTHDATE, false, null, null);
                         dialog.show(fm, "message");
                         break;
                     case EC_PRINCIPLE_SPOUSE:
@@ -144,7 +144,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                         break;
                     case EC_SPOUSE_NOT_SUPPORTED:
                         fm = getSupportFragmentManager();
-                        dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_SPOUSE_NOT_SUPPORTED, true);
+                        dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_SPOUSE_NOT_SUPPORTED, true, null, null);
                         dialog.show(fm, "message");
                         break;
                 }
@@ -206,7 +206,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
 
         AgeData startAge = getStartRetirementAge();
 
-        GovPension gp = new GovPension(mGP.getId(), mGP.getType(), name,
+        GovPension gp = new GovPension(mGP.getId(), mGP.getType(), name, mGP.getSelf(),
                 fullBenefit, startAge, mGP.isSpouse());
         mViewModel.setData(gp);
 
@@ -248,7 +248,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onGetResponse(int response, int id) {
+    public void onGetResponse(int response, int id, boolean isOk) {
         if (response == Activity.RESULT_OK) {
             switch (id) {
                 case EC_NO_SPOUSE_BIRTHDATE:

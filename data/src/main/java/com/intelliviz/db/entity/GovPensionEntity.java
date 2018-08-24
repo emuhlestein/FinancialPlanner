@@ -33,7 +33,7 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
     @Ignore
     public GovPensionEntity(long id, int type) {
-        super(id, type, "");
+        super(id, type, "", 1);
         mFullMonthlyBenefit = "0";
         mStartAge = new AgeData(0);
         mSpouse = 0;
@@ -48,8 +48,8 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
      * @param startAge The age at which to start receiving benefits.
      * @param spouse 1 if this is a spouse. 0 otherwise.
      */
-    public GovPensionEntity(long id, int type, String name, String fullMonthlyBenefit, AgeData startAge, int spouse) {
-        super(id, type, name);
+    public GovPensionEntity(long id, int type, String name, int self, String fullMonthlyBenefit, AgeData startAge, int spouse) {
+        super(id, type, name, self);
         mFullMonthlyBenefit = fullMonthlyBenefit;
         mStartAge = startAge;
         mSpouse = spouse;

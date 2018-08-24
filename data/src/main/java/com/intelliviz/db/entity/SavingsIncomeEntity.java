@@ -63,7 +63,7 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
 
     @Ignore
     public SavingsIncomeEntity(long id, int type) {
-        super(id, type, "");
+        super(id, type, "", 1);
         mStartAge = new AgeData(65, 0); // TODO need to create const
         mBalance = "0";
         mInterest = "0";
@@ -74,10 +74,10 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mShowMonths = 0;
     }
 
-    public SavingsIncomeEntity(long id, int type, String name, AgeData startAge, String balance, String interest,
+    public SavingsIncomeEntity(long id, int type, String name, int self, AgeData startAge, String balance, String interest,
                                String monthlyAddition, AgeData stopMonthlyAdditionAge,
                                String withdrawPercent, String annualPercentIncrease, int showMonths) {
-        super(id, type, name);
+        super(id, type, name, self);
         mStartAge = startAge;
         mBalance = balance;
         mInterest = interest;

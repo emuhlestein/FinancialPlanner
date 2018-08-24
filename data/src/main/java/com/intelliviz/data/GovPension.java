@@ -22,16 +22,16 @@ public class GovPension extends AbstractIncomeSource {
     private String mMessage;
 
     public GovPension(long id, int type) {
-        this(id, type, "");
+        this(id, type, "", 1);
     }
 
-    public GovPension(long id, int type, String name) {
-        super(id, type, name);
+    public GovPension(long id, int type, String name, int self) {
+        super(id, type, name, self);
     }
 
-    public GovPension(long id, int type, String name,
+    public GovPension(long id, int type, String name, int self,
         String fullBenefit, AgeData startAge, boolean isSpouse) {
-        this(id, type, name);
+        this(id, type, name, self);
         mFullMonthlyBenefit = fullBenefit;
         mStartAge = startAge;
         mSpouse = isSpouse;

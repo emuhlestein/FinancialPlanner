@@ -10,11 +10,13 @@ public abstract class AbstractIncomeSource implements IncomeSourceType {
     private long mId;
     private int mType;
     private String mName;
+    private int mSelf;
 
-    public AbstractIncomeSource(long id, int type, String name) {
+    public AbstractIncomeSource(long id, int type, String name, int self) {
         mId = id;
         mType = type;
         mName = name;
+        mSelf = self;
     }
 
     @Override
@@ -45,6 +47,16 @@ public abstract class AbstractIncomeSource implements IncomeSourceType {
     @Override
     public void setName(String name) {
         mName = name;
+    }
+
+    @Override
+    public int getSelf() {
+        return mSelf;
+    }
+
+    @Override
+    public void setSelf(int self) {
+        mSelf = self;
     }
 
     public abstract List<IncomeData> getIncomeData();

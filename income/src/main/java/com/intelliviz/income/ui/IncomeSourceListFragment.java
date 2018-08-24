@@ -122,7 +122,6 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
             actionBar.setSubtitle(getString(R.string.income_source_subtitle));
         }
 
-
         mViewModel = ViewModelProviders.of(getActivity()).get(IncomeSourceListViewModel.class);
 
         mViewModel.get().observe(this, new Observer< List<AbstractIncomeSource>>() {
@@ -131,7 +130,6 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
                 mIncomeSourceAdapter.update(incomeSources);
             }
         });
-
 
         return view;
     }
@@ -150,8 +148,6 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-
     }
 
     @Override
@@ -192,7 +188,6 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
 
     // Add new income source
     private void onHandleIncomeSourceSelection(Intent resultIntent) {
-
         int item = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
         mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(item);
         if(mSelectedIncomeSource != null) {
@@ -228,7 +223,6 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
             //mViewModel.updateAppWidget();
         }
     }
-
 
     public static class MyAlertDialog extends DialogFragment {
         public static MyAlertDialog newInstance(String title, String message) {

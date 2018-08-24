@@ -93,7 +93,7 @@ public abstract class AbstractGovEntityAccessor implements EntityAccessor {
         }
 
         GovPensionEntity gpe = new GovPensionEntity(0, RetirementConstants.INCOME_TYPE_GOV_PENSION,
-                "", "0", age, spouse ? 1 : 0);
+                "", 1, "0", age, spouse ? 1 : 0);
         //gpe.setRules(new SocialSecurityRules(mROE.getEndAge(), birthdate));
         if(isPrincipleSpouse) {
             return new ViewData(gpe, EC_PRINCIPLE_SPOUSE);

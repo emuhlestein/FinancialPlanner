@@ -166,7 +166,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             String annualPercentIncrease = bundle.getString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE);
             int showMonths = bundle.getInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS);
 
-            SavingsData sdata = new SavingsData(mId, mSIE.getType(), name, startAge,
+            SavingsData sdata = new SavingsData(mId, mSIE.getType(), name, mSIE.getSelf(), startAge,
                     balance, interest, monthlyAddition, stopMonthlyAddtionAge,
                     withdrawAmount, annualPercentIncrease, showMonths);
             mViewModel.setData(sdata);

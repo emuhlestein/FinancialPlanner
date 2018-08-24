@@ -165,7 +165,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
                         if(fragment != null) {
                             //return;
                         }
-                        MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), viewData.getStatus(), true);
+                        MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), viewData.getStatus(), true, null, null);
                         dialog.show(fm, "message");
                         break;
                 }
@@ -272,7 +272,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         String name = mIncomeSourceName.getText().toString();
 
         int showMonths = getShowMonths() ? 1 : 0;
-        SavingsData sie = new SavingsData(mId, mSD.getType(), name, startAge, balance, interest, monthlyAddition,
+        SavingsData sie = new SavingsData(mId, mSD.getType(), name, mSD.getSelf(),
+                startAge, balance, interest, monthlyAddition,
                 stopAge, withdrawPercent, annualPercentIncrease, showMonths);
         mViewModel.setData(sie);
         /*
@@ -387,7 +388,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onGetResponse(int response, int id) {
+    public void onGetResponse(int response, int id, boolean isOk) {
         if (response == Activity.RESULT_OK) {
             switch (id) {
                 case EC_ONLY_TWO_SUPPORTED:
