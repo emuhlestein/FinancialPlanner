@@ -26,7 +26,7 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_ERROR;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
@@ -121,7 +121,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                         break;
                     case EC_NO_ERROR:
                         fm = getSupportFragmentManager();
-                        dialog = MessageDialog.newInstance("Query", "Is this income source for spouse or self?", EC_FOR_SPOUSE, false, "Spouse", "Self");
+                        dialog = MessageDialog.newInstance("Query", "Is this income source for spouse or self?", EC_FOR_SELF_OR_SPOUSE, false, "Spouse", "Self");
                         dialog.show(fm, "message");
                         break;
                 }
@@ -184,11 +184,11 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                 case EC_ONLY_ONE_SUPPORTED:
                     finish();
                     break;
-                case EC_FOR_SPOUSE:
+                case EC_FOR_SELF_OR_SPOUSE:
                     if(isOk) {
-                        // self
+                        mPD.setSelf(1);
                     } else {
-                        // spouse
+                        mPD.setSelf(0);
                     }
                     break;
             }

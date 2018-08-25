@@ -110,5 +110,5 @@ public class RetirementConstants {
     public static final int EC_SPOUSE_NOT_SUPPORTED = 5;
     public static final int EC_ONLY_ONE_SUPPORTED = 6;
     public static final int EC_ONLY_TWO_SUPPORTED = 7;
-    public static final int EC_FOR_SPOUSE = 8;
+    public static final int EC_FOR_SELF_OR_SPOUSE = 8;
 }

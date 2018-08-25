@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.income.R;
 import com.intelliviz.income.adapter.IncomeSourceAdapter;
+import com.intelliviz.income.data.IncomeSourceViewData;
 import com.intelliviz.income.util.SelectIncomeSourceListener;
 import com.intelliviz.income.viewmodel.IncomeSourceListViewModel;
 
@@ -124,10 +125,10 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
 
         mViewModel = ViewModelProviders.of(getActivity()).get(IncomeSourceListViewModel.class);
 
-        mViewModel.get().observe(this, new Observer< List<AbstractIncomeSource>>() {
+        mViewModel.get().observe(this, new Observer<IncomeSourceViewData>() {
             @Override
-            public void onChanged(@Nullable List<AbstractIncomeSource> incomeSources) {
-                mIncomeSourceAdapter.update(incomeSources);
+            public void onChanged(@Nullable IncomeSourceViewData incomeSourceData) {
+                mIncomeSourceAdapter.update(incomeSourceData.getData());
             }
         });
 

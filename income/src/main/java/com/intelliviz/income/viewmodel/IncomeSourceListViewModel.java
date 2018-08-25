@@ -9,6 +9,7 @@ import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
 
 import com.intelliviz.data.GovPension;
+import com.intelliviz.data.IncomeSourceDataEx;
 import com.intelliviz.data.PensionData;
 import com.intelliviz.data.PensionRules;
 import com.intelliviz.data.RetirementOptions;
@@ -26,6 +27,7 @@ import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.db.entity.SavingsDataEntityMapper;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
+import com.intelliviz.income.data.IncomeSourceViewData;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.repo.IncomeSourceListRepo;
 import com.intelliviz.repo.RetirementOptionsEntityRepo;
@@ -42,6 +44,8 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
     private RetirementOptionsEntityRepo mRetireRepo;
     private LiveData<List<AbstractIncomeSource>> mIncomeSources;
     private LiveData<List<IncomeSourceEntityBase>> mIncomeSourceEntity;
+    private LiveData<IncomeSourceViewData> mViewData;
+    private LiveData<IncomeSourceDataEx> mSource;
 
 
     public IncomeSourceListViewModel(Application application) {
@@ -52,19 +56,21 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         subscribe();
     }
 
-    public LiveData<List<AbstractIncomeSource>> get() {
-        return mIncomeSources;
+    public LiveData<IncomeSourceViewData> get() {
+        return mViewData;
     }
 
     public void subscribe() {
-        LiveData<List<IncomeSourceEntityBase>> incomeSourceEntities = mIncomeSourceRepo.getIncomeSources();
+        LiveData<IncomeSourceDataEx> mSource = mIncomeSourceRepo.getIncomeSourceDataEx();
 
-        mIncomeSources =
-                Transformations.switchMap(incomeSourceEntities,
-                        new Function<List<IncomeSourceEntityBase>, LiveData<List<AbstractIncomeSource>>>() {
+        mViewData =
+                Transformations.switchMap(mSource,
+                        new Function<IncomeSourceDataEx, LiveData<IncomeSourceViewData>>() {
                             @Override
-                            public LiveData<List<AbstractIncomeSource>> apply(List<IncomeSourceEntityBase> input) {
-                                return getAllIncomeSources(input);
+                            public LiveData<IncomeSourceViewData> apply(IncomeSourceDataEx input) {
+                                RetirementOptions ro = RetirementOptionsMapper.map(input.getROE());
+                                IncomeSourceHelper helper = new IncomeSourceHelper(input.getList(), ro);
+                                return helper.get();
                             }
                         });
     }

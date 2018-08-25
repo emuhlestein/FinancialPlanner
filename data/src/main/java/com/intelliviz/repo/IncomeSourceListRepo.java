@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
+import com.intelliviz.data.IncomeSourceDataEx;
 import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.IncomeSourceEntityBase;
@@ -17,10 +18,15 @@ import java.util.List;
 public class IncomeSourceListRepo {
     private MutableLiveData<List<IncomeSourceEntityBase>> mIncomeSources = new MutableLiveData<>();
     private AppDatabase mDB;
+    private MutableLiveData<IncomeSourceDataEx> mDataEx = new MutableLiveData<>();
 
     public IncomeSourceListRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
         new GetAllIncomeSourcesAsyncTask().execute();
+    }
+
+    public LiveData<IncomeSourceDataEx> getIncomeSourceDataEx() {
+        return mDataEx;
     }
 
     public LiveData<List<IncomeSourceEntityBase>> getIncomeSources() {
