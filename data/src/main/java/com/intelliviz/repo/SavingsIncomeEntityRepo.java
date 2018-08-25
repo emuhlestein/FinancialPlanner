@@ -119,7 +119,6 @@ public class SavingsIncomeEntityRepo {
         }
     }
 
-
     private class DeleteAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, Integer> {
 
         @Override

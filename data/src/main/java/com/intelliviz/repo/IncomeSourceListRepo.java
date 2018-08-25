@@ -10,6 +10,7 @@ import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.db.entity.PensionIncomeEntity;
+import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class IncomeSourceListRepo {
     }
 
     public LiveData<IncomeSourceDataEx> getIncomeSourceDataEx() {
+        MutableLiveData<IncomeSourceDataEx> incomeSourceDataEx = new MutableLiveData<>();
+        mDataEx = incomeSourceDataEx;
+        load();
         return mDataEx;
     }
 
@@ -34,7 +38,24 @@ public class IncomeSourceListRepo {
     }
 
     public void update() {
-        new GetAllIncomeSourcesAsyncTask().execute();
+        load();
+    }
+
+    public void load() {
+        new GetExAsyncTask().execute();
+    }
+
+    private class GetExAsyncTask extends AsyncTask<Void, IncomeSourceDataEx, IncomeSourceDataEx> {
+        @Override
+        protected IncomeSourceDataEx doInBackground(Void... params) {
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            return new IncomeSourceDataEx(getAllIncomeSources(), roe);
+        }
+
+        @Override
+        protected void onPostExecute(IncomeSourceDataEx incomeSourceDataEx) {
+            mDataEx.setValue(incomeSourceDataEx);
+        }
     }
 
     private class GetAllIncomeSourcesAsyncTask extends AsyncTask<Void, List<IncomeSourceEntityBase>, List<IncomeSourceEntityBase>> {
