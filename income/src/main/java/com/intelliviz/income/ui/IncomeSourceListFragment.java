@@ -42,6 +42,7 @@ import java.util.List;
 import static android.app.Activity.RESULT_OK;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_DIALOG_RESPONSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
@@ -176,6 +177,19 @@ public class IncomeSourceListFragment extends Fragment implements
                 case REQUEST_YES_NO:
                     onHandleYesNo();
                     break;
+                case EC_FOR_SELF_OR_SPOUSE:
+                    boolean isOk = intent.getBooleanExtra(EXTRA_DIALOG_RESPONSE, true);
+                    int self;
+                    if(isOk) {
+                        self = OWNER_SELF;
+                    } else {
+                        self = OWNER_SPOUSE;
+                    }
+                    mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(mIncomeSourceType, self);
+                    if (mSelectedIncomeSource != null) {
+                        mSelectedIncomeSource.startAddActivity(getActivity());
+                    }
+                    break;
             }
         }
     }
@@ -205,6 +219,7 @@ public class IncomeSourceListFragment extends Fragment implements
         if(mStatus == RetirementConstants.EC_SPOUSE_INCLUDED) {
             FragmentManager fm = getFragmentManager();
             MessageDialog dialog = MessageDialog.newInstance("Query", "Is this income source for spouse or self?", EC_FOR_SELF_OR_SPOUSE, false, "Spouse", "Self");
+            dialog.setTargetFragment(this, EC_FOR_SELF_OR_SPOUSE);
             dialog.show(fm, "message");
         } else {
             mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(mIncomeSourceType, OWNER_SELF_ONLY);
@@ -277,17 +292,6 @@ public class IncomeSourceListFragment extends Fragment implements
             int self;
             switch (id) {
                 case EC_ONLY_ONE_SUPPORTED:
-                    break;
-                case EC_FOR_SELF_OR_SPOUSE:
-                    if(isOk) {
-                        self = OWNER_SELF;
-                    } else {
-                        self = OWNER_SPOUSE;
-                    }
-                    mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(mIncomeSourceType, self);
-                    if (mSelectedIncomeSource != null) {
-                        mSelectedIncomeSource.startAddActivity(getActivity());
-                    }
                     break;
             }
         } else {

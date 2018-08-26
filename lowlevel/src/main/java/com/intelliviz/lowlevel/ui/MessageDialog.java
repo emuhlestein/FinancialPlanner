@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.intelliviz.lowlevel.R;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_DIALOG_RESPONSE;
+
 public class MessageDialog extends DialogFragment {
     private static final String ARG_TITLE = "title";
     private static final String ARG_MESSAGE = "message";
@@ -99,7 +101,9 @@ public class MessageDialog extends DialogFragment {
 
     private void sendResult(boolean isOk, int resultCode) {
         if(getTargetFragment() != null) {
-            getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, new Intent());
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_DIALOG_RESPONSE, isOk);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
         } else {
             MessageDialog.DialogResponse response = (MessageDialog.DialogResponse) getActivity();
             response.onGetResponse(resultCode, mId, isOk);
