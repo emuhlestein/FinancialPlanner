@@ -20,6 +20,7 @@ import com.intelliviz.db.entity.SavingsDataEntityMapper;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 import com.intelliviz.income.data.IncomeSourceViewData;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +34,20 @@ public class IncomeSourceHelper {
         mRO = ro;
     }
 
+    // TODO this needs to be abstract so free version won't include spouse
+    // TODO hence th is calss needs to be abstract
+    public boolean isSpouseIncluded() {
+        return(mRO.getIncludeSpouse() == 1);
+    }
+
     public LiveData<IncomeSourceViewData> get() {
+        int status = 0;
+        if(isSpouseIncluded()) {
+            status = RetirementConstants.EC_SPOUSE_INCLUDED;
+        }
         List<AbstractIncomeSource> allSources = getAllIncomeSources(mIncomeList);
         MutableLiveData<IncomeSourceViewData> ldata = new MutableLiveData<>();
-        ldata.setValue(new IncomeSourceViewData(allSources, 0, ""));
+        ldata.setValue(new IncomeSourceViewData(allSources, status, ""));
         return ldata;
     }
 

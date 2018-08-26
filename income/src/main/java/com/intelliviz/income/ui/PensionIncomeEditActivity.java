@@ -27,10 +27,11 @@ import com.intelliviz.lowlevel.util.SystemUtils;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_ERROR;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
 public class PensionIncomeEditActivity extends AppCompatActivity implements
@@ -48,6 +49,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private Button mAddIncomeSourceButton;
     private EditText mMonthlyBenefit;
     private Toolbar mToolbar;
+    private int mOwner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +85,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
             int rc = intent.getIntExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, 0);
+            mOwner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SELF, 1);
             mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
         }
 
@@ -119,11 +122,11 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                         MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_ONLY_ONE_SUPPORTED, true, null, null);
                         dialog.show(fm, "message");
                         break;
-                    case EC_NO_ERROR:
-                        fm = getSupportFragmentManager();
-                        dialog = MessageDialog.newInstance("Query", "Is this income source for spouse or self?", EC_FOR_SELF_OR_SPOUSE, false, "Spouse", "Self");
-                        dialog.show(fm, "message");
-                        break;
+//                    case EC_NO_ERROR:
+//                        fm = getSupportFragmentManager();
+//                        dialog = MessageDialog.newInstance("Query", "Is this income source for spouse or self?", EC_FOR_SELF_OR_SPOUSE, false, "Spouse", "Self");
+//                        dialog.show(fm, "message");
+//                        break;
                 }
                 updateUI();
             }
@@ -135,6 +138,11 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             return;
         }
         String name = mPD.getName();
+        if(mOwner == OWNER_SELF) {
+            name = name + "(self)";
+        } else if(mOwner == OWNER_SPOUSE) {
+            name = name + "spouse";
+        }
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mPD.getBenefit());
         AgeData minAge = mPD.getAge();
 

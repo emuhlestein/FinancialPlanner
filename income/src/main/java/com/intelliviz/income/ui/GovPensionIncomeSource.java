@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SELF;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 
@@ -25,7 +26,8 @@ public class GovPensionIncomeSource implements IncomeSource {
     public void startAddActivity(FragmentActivity activity) {
         Intent intent = new Intent(activity, GovPensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
-        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION,  RetirementConstants.INCOME_ACTION_ADD);
+        intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
+        intent.putExtra(EXTRA_INCOME_SELF, mIncomeSourceEntity.getSelf());
         activity.startActivity(intent);
     }
 

@@ -23,8 +23,6 @@ public class RetirementConstants {
     public static final int INCOME_ACTION_GET = 5;
     public static final int ACTIVITY_RESULT = 99;
 
-
-
     public static final String RETIREMENT_MODE = "retirement mode";
     public static final String EXTRA_RETIREMENT_REACH_AMOUNT = "retirement reach mount";
     public static final String EXTRA_RETIREMENT_REACH_INCOME_PERCENT = "retirement reach income percent";
@@ -72,8 +70,6 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SHOW_MONTHS = "show months";
     public static final String EXTRA_INCOME_SPOUSE_START_AGE = "spouse start age";
 
-
-
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
     public static final String EXTRA_BIRTHDATE = "birthdate";
     public static final String EXTRA_INCLUDE_SPOUSE = "include_spouse";
@@ -111,4 +107,10 @@ public class RetirementConstants {
     public static final int EC_ONLY_ONE_SUPPORTED = 6;
     public static final int EC_ONLY_TWO_SUPPORTED = 7;
     public static final int EC_FOR_SELF_OR_SPOUSE = 8;
+    public static final int EC_SPOUSE_INCLUDED = 9;
+
+    // self
+    public static final int OWNER_SELF_ONLY = 0; // no annotation
+    public static final int OWNER_SPOUSE = 1;    // annotation is spouse
+    public static final int OWNER_SELF = 2;      // annotation is self
 }

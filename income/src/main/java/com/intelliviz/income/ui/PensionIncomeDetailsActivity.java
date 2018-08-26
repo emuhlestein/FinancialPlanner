@@ -33,6 +33,8 @@ import java.util.List;
 
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
 public class PensionIncomeDetailsActivity extends AppCompatActivity {
@@ -40,6 +42,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     private PensionIncomeViewModel mViewModel;
     private PensionData mPD;
     private long mId;
+    private int mOwner;
 
     private Toolbar mToolbar;
     private android.support.design.widget.AppBarLayout mAppBarLayout;
@@ -70,6 +73,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         mId = 0;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
+            mOwner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SELF, 1);
         }
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
@@ -157,7 +161,14 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
 
         SystemUtils.setToolbarSubtitle(this, "Pension - " + mPD.getName());
 
-        mNameTextView.setText(mPD.getName());
+        String name = mPD.getName();
+        if(mOwner == OWNER_SELF) {
+            name = name + " (self)";
+        } else if(mOwner == OWNER_SPOUSE) {
+            name = name + " (spouse)";
+        }
+
+        mNameTextView.setText(name);
 
         AgeData age = mPD.getAge();
         mStartAgeTextView.setText(age.toString());

@@ -1,6 +1,7 @@
 package com.intelliviz.income.ui;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -32,24 +33,32 @@ import com.intelliviz.income.adapter.IncomeSourceAdapter;
 import com.intelliviz.income.data.IncomeSourceViewData;
 import com.intelliviz.income.util.SelectIncomeSourceListener;
 import com.intelliviz.income.viewmodel.IncomeSourceListViewModel;
+import com.intelliviz.lowlevel.ui.MessageDialog;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_EDIT;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_VIEW;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_INCOME_MENU;
 import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_YES_NO;
 
 /**
  * CLass for handling the list of income sources.
  */
-public class IncomeSourceListFragment extends Fragment implements SelectIncomeSourceListener {
+public class IncomeSourceListFragment extends Fragment implements
+        SelectIncomeSourceListener, MessageDialog.DialogResponse {
     public static final String TAG = IncomeSourceListFragment.class.getSimpleName();
     private static final int REQUEST_INCOME_SOURCE_MENU = 20;
     private IncomeSourceAdapter mIncomeSourceAdapter;
@@ -63,6 +72,8 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
     private TextView mEmptyView;
     private CoordinatorLayout mCoordinatorLayout;
     private FloatingActionButton mAddIncomeSourceFAB;
+    private int mStatus;
+    private int mIncomeSourceType;
 
     /**
      * Default constructor.
@@ -128,6 +139,7 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
         mViewModel.get().observe(this, new Observer<IncomeSourceViewData>() {
             @Override
             public void onChanged(@Nullable IncomeSourceViewData incomeSourceData) {
+                mStatus = incomeSourceData.getStatus();
                 mIncomeSourceAdapter.update(incomeSourceData.getData());
             }
         });
@@ -189,10 +201,16 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
 
     // Add new income source
     private void onHandleIncomeSourceSelection(Intent resultIntent) {
-        int item = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
-        mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(item);
-        if(mSelectedIncomeSource != null) {
-            mSelectedIncomeSource.startAddActivity(getActivity());
+        mIncomeSourceType = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
+        if(mStatus == RetirementConstants.EC_SPOUSE_INCLUDED) {
+            FragmentManager fm = getFragmentManager();
+            MessageDialog dialog = MessageDialog.newInstance("Query", "Is this income source for spouse or self?", EC_FOR_SELF_OR_SPOUSE, false, "Spouse", "Self");
+            dialog.show(fm, "message");
+        } else {
+            mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(mIncomeSourceType, OWNER_SELF_ONLY);
+            if (mSelectedIncomeSource != null) {
+                mSelectedIncomeSource.startAddActivity(getActivity());
+            }
         }
     }
 
@@ -250,6 +268,30 @@ public class IncomeSourceListFragment extends Fragment implements SelectIncomeSo
             });
 
             return alertDialogBuilder.create();
+        }
+    }
+
+    @Override
+    public void onGetResponse(int response, int id, boolean isOk) {
+        if (response == Activity.RESULT_OK) {
+            int self;
+            switch (id) {
+                case EC_ONLY_ONE_SUPPORTED:
+                    break;
+                case EC_FOR_SELF_OR_SPOUSE:
+                    if(isOk) {
+                        self = OWNER_SELF;
+                    } else {
+                        self = OWNER_SPOUSE;
+                    }
+                    mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(mIncomeSourceType, self);
+                    if (mSelectedIncomeSource != null) {
+                        mSelectedIncomeSource.startAddActivity(getActivity());
+                    }
+                    break;
+            }
+        } else {
+
         }
     }
 }
