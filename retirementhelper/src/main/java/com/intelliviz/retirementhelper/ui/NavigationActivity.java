@@ -134,7 +134,7 @@ public class NavigationActivity extends AppCompatActivity implements
                         mViewModel.updateBirthdate(birthdate, includeSpouse, spouseBirthdate);
                     }
                 });
-                //intent = new Intent(this, PersonalInfoDialog.class);
+                //intent = new Intent(this, PersonalInfoActivity.class);
                 //intent.putExtra(EXTRA_BIRTHDATE, mROE.getBirthdate());
                 //intent.putExtra(EXTRA_SPOUSE_BIRTHDATE, mROE.getSpouseBirthdate());
                 //intent.putExtra(EXTRA_INCLUDE_SPOUSE, mROE.getIncludeSpouse());
@@ -154,7 +154,7 @@ public class NavigationActivity extends AppCompatActivity implements
                                 FirebaseAuth  auth = FirebaseAuth.getInstance();
                                 auth.signOut();
                                 mGoogleApiClient.disconnect();
-                                Intent intent = new Intent(NavigationActivity.this, StartActivity.class);
+                                Intent intent = new Intent(NavigationActivity.this, StartUpActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
@@ -168,7 +168,7 @@ public class NavigationActivity extends AppCompatActivity implements
                                 FirebaseAuth  auth = FirebaseAuth.getInstance();
                                 auth.signOut();
                                 mGoogleApiClient.disconnect();
-                                Intent intent = new Intent(NavigationActivity.this, StartActivity.class);
+                                Intent intent = new Intent(NavigationActivity.this, StartUpActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
@@ -300,17 +300,20 @@ public class NavigationActivity extends AppCompatActivity implements
     }
 
     private void showDialog(String birthdate, int includeSpouse, String spouseBirthdate, PersonalInfoDialogAction personalInfoDialogAction) {
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentByTag("personalInfoDialog");
-        if(fragment != null) {
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.remove(fragment);
-            ft.commit();
-        }
+//        FragmentManager fm = getSupportFragmentManager();
+//        Fragment fragment = fm.findFragmentByTag("personalInfoDialog");
+//        if(fragment != null) {
+//            FragmentTransaction ft = fm.beginTransaction();
+//            ft.remove(fragment);
+//            ft.commit();
+//        }
+//
+//        PersonalInfoActivity personalInfoDialog = PersonalInfoActivity.getInstance(birthdate,
+//                includeSpouse, spouseBirthdate, personalInfoDialogAction);
+//        personalInfoDialog.show(fm, "personalInfoDialog");
 
-        PersonalInfoDialog personalInfoDialog = PersonalInfoDialog.getInstance(birthdate,
-                includeSpouse, spouseBirthdate, personalInfoDialogAction);
-        personalInfoDialog.show(fm, "personalInfoDialog");
+        Intent intent = new Intent(this, PersonalInfoActivity.class);
+        startActivity(intent);
     }
 
     @Override

@@ -3,21 +3,17 @@ package com.intelliviz.retirementhelper.ui;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,8 +34,6 @@ import java.util.List;
 
 import static com.intelliviz.lowlevel.util.AgeUtils.DATE_FORMAT;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_BIRTHDATE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCLUDE_SPOUSE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SPOUSE_BIRTHDATE;
 
 
 /**
@@ -47,7 +41,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SPOUSE_BIRT
  *
  * @author Ed Muhlestein
  */
-public class PersonalInfoDialog extends DialogFragment implements
+public class PersonalInfoActivity extends AppCompatActivity implements
         AdapterView.OnItemSelectedListener, BirthdateDialog.BirthdateDialogListener{
     private PersonalInfoViewModel mViewModel;
     private RetirementOptions mROE;
@@ -63,37 +57,35 @@ public class PersonalInfoDialog extends DialogFragment implements
     private Button mCancel;
     private static final int REQUEST_BIRTHDATE = 1;
 
-    public static PersonalInfoDialog getInstance(String birthdate, int includeSpouse, String spouseBirhtdate, PersonalInfoDialogAction personalInfoDialogAction) {
-        PersonalInfoDialog fragment = new PersonalInfoDialog();
-        fragment.mPersonalInfoDialogAction = personalInfoDialogAction;
-        Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_BIRTHDATE, birthdate);
-        bundle.putString(EXTRA_SPOUSE_BIRTHDATE, spouseBirhtdate);
-        bundle.putInt(EXTRA_INCLUDE_SPOUSE, includeSpouse);
-        fragment.setArguments(bundle);
-        return fragment;
+//    public static PersonalInfoActivity getInstance(String birthdate, int includeSpouse, String spouseBirhtdate, PersonalInfoDialogAction personalInfoDialogAction) {
+//        PersonalInfoActivity fragment = new PersonalInfoActivity();
+//        fragment.mPersonalInfoDialogAction = personalInfoDialogAction;
+//        Bundle bundle = new Bundle();
+//        bundle.putString(EXTRA_BIRTHDATE, birthdate);
+//        bundle.putString(EXTRA_SPOUSE_BIRTHDATE, spouseBirhtdate);
+//        bundle.putInt(EXTRA_INCLUDE_SPOUSE, includeSpouse);
+//        fragment.setArguments(bundle);
+//        return fragment;
+//    }
+
+    public PersonalInfoActivity() {
     }
 
-    public PersonalInfoDialog() {
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_personal_info_dialog, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_personal_info_dialog);
 
-        setCancelable(false);
-
-        mCoordinatorLayout = view.findViewById(R.id.coordinatorLayout);
+        mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
 
 
-        mNameTextView = view.findViewById(R.id.name_edit_text);
-        mEmailTextView = view.findViewById(R.id.email_edit_text);
-        mBirthDateViewText = view.findViewById(R.id.birthdate_text_view);
-        mBirthdateButton = view.findViewById(R.id.birthdate_button);
-        mCountrySpinner = view.findViewById(R.id.country_spinner);
-        mOk = view.findViewById(R.id.personal_info_ok);
-        mCancel = view.findViewById(R.id.personal_info_cancel);
+        mNameTextView = findViewById(R.id.name_edit_text);
+        mEmailTextView = findViewById(R.id.email_edit_text);
+        mBirthDateViewText = findViewById(R.id.birthdate_text_view);
+        mBirthdateButton = findViewById(R.id.birthdate_button);
+        mCountrySpinner = findViewById(R.id.country_spinner);
+        mOk = findViewById(R.id.personal_info_ok);
+        mCancel = findViewById(R.id.personal_info_cancel);
 
         mOk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,8 +97,8 @@ public class PersonalInfoDialog extends DialogFragment implements
         mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //overridePendingTransition(0, R.anim.slide_right_out);
-                dismiss();
+                overridePendingTransition(0, R.anim.slide_right_out);
+                finish();
             }
         });
         mBirthdateButton.setOnClickListener(new View.OnClickListener() {
@@ -166,30 +158,11 @@ public class PersonalInfoDialog extends DialogFragment implements
 
         String[] countries = getResources().getStringArray(R.array.country_array);
         List<String> countryList = Arrays.asList(countries);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_layout, countryList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item_layout, countryList);
         mCountrySpinner.setAdapter(adapter);
         mCountrySpinner.setOnItemSelectedListener(this);
 
-        return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Bundle bundle = getArguments();
-        if(bundle != null) {
-            //String birthdate = bundle.getString(EXTRA_BIRTHDATE);
-            //String spouseBirthdate = bundle.getString(EXTRA_SPOUSE_BIRTHDATE);
-            //int includeSpouse = bundle.getInt(EXTRA_INCLUDE_SPOUSE, 0);
-            //updateUI(birthdate, includeSpouse, spouseBirthdate);
-        }
-
-        FragmentManager fm = getChildFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentByTag("PersonalInfoTag");
         if(fragment == null) {
             FragmentTransaction ft = fm.beginTransaction();
@@ -201,7 +174,6 @@ public class PersonalInfoDialog extends DialogFragment implements
         }
 
         setCoordinatorLayout(mCoordinatorLayout);
-
     }
 
     @Override
@@ -305,9 +277,8 @@ public class PersonalInfoDialog extends DialogFragment implements
         mROE.setBirthdate(birthdate);
         mViewModel.update(mROE);
 
-        dismiss();
+        finish();
     }
-
 
     private String getSpouseBirthdate() {
         if(mFragment != null) {
@@ -344,15 +315,14 @@ public class PersonalInfoDialog extends DialogFragment implements
     }
 
     private void showBirthdateDialog(String birthdate) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         BirthdateDialog birthdateDialog = BirthdateDialog.getInstance(birthdate);
-        birthdateDialog.setTargetFragment(this, REQUEST_BIRTHDATE);
         birthdateDialog.show(fm, "birthdate");
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        Log.d("PersonalInfoDialog", "Here");
+        Log.d("PersonalInfoActivity", "Here");
     }
 
     @Override

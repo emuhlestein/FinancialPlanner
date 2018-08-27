@@ -44,10 +44,10 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SIGN_IN;
  * The start activity
  * @author Ed Muhlestein
  */
-public class StartActivity extends AppCompatActivity implements
+public class StartUpActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, QueryCompleteListener,
         BirthdateDialog.BirthdateDialogListener {
-    private static final String TAG = StartActivity.class.getSimpleName();
+    private static final String TAG = StartUpActivity.class.getSimpleName();
     private static final String FIREBASE_TOS_URL = "https://firebase.google.com/terms/";
     private static final String FIREBASE_PRIVACY_POLICY_URL = "https://firebase.google.com/terms/analytics/#7_privacy";
     //private static final int REQUEST_SIGN_IN = 1;
@@ -112,7 +112,7 @@ public class StartActivity extends AppCompatActivity implements
 
         String country = getResources().getConfiguration().locale.getCountry();
         String isoCountry = getResources().getConfiguration().locale.getISO3Country();
-        Log.i("StartActivity", country);
+        Log.i("StartUpActivity", country);
     }
 
     @Override
