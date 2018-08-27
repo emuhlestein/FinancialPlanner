@@ -31,6 +31,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPO
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
@@ -50,11 +51,14 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private EditText mMonthlyBenefit;
     private Toolbar mToolbar;
     private int mOwner;
+    private TextView mOwnerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_pension_income);
+
+        mOwnerTextView = findViewById(R.id.owner_text);
 
         mToolbar = findViewById(R.id.income_source_toolbar);
         mMonthlyBenefit = findViewById(R.id.monthly_benefit_text);
@@ -138,10 +142,12 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             return;
         }
         String name = mPD.getName();
-        if(mOwner == OWNER_SELF) {
-            name = name + "(self)";
+        if(mOwner == OWNER_SELF_ONLY) {
+            mOwnerTextView.setVisibility(View.GONE);
+        } else if(mOwner == OWNER_SELF) {
+            mOwnerTextView.setText("self");
         } else if(mOwner == OWNER_SPOUSE) {
-            name = name + "spouse";
+            mOwnerTextView.setText("spouse");
         }
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mPD.getBenefit());
         AgeData minAge = mPD.getAge();
