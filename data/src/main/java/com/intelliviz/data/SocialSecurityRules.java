@@ -123,11 +123,6 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     @Override
-    public IncomeData getIncomeData(IncomeData incomeData) {
-        return null;
-    }
-
-    @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
         AgeData age = mStartAge;
         if(mActualStartAge != null) {

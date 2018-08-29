@@ -6,6 +6,7 @@ import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -70,14 +71,9 @@ public class PensionData extends AbstractIncomeSource {
     @Override
     public List<IncomeData> getIncomeData() {
         if(mRules != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(RetirementConstants.EXTRA_INCOME_FULL_BENEFIT, mMonthlyBenefit);
-            bundle.putParcelable(RetirementConstants.EXTRA_INCOME_START_AGE, mStartAge);
-            bundle.putInt(RetirementConstants.EXTRA_INCOME_OWNER, getSelf());
-            mRules.setValues(bundle);
             return mRules.getIncomeData();
         } else {
-            return null;
+            return Collections.EMPTY_LIST;
         }
     }
 

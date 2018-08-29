@@ -6,6 +6,7 @@ import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
+import java.util.Collections;
 import java.util.List;
 
 public class SavingsData extends AbstractIncomeSource {
@@ -109,21 +110,13 @@ public class SavingsData extends AbstractIncomeSource {
     public void setRules(IncomeTypeRules rules) {
         if(rules instanceof SavingsIncomeRules) {
             mRules = (SavingsIncomeRules)rules;
-
-            Bundle bundle = new Bundle();
-            bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, Double.parseDouble(mBalance));
-            bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, Double.parseDouble(mInterest));
-            bundle.putDouble(RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION, Double.parseDouble(mMonthlyAddition));
-            bundle.putDouble(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT, Double.parseDouble(mWithdrawPercent));
-            bundle.putDouble(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE, Double.parseDouble(mAnnualPercentIncrease));
-            bundle.putParcelable(RetirementConstants.EXTRA_INCOME_START_AGE, mStartAge);
-            bundle.putParcelable(RetirementConstants.EXTRA_INCOME_STOP_AGE, mStopMonthlyAdditionAge);
-            bundle.putInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS, mShowMonths);
-            mRules.setValues(bundle);
         } else if (rules instanceof Savings401kIncomeRules) {
             mRules = (Savings401kIncomeRules)rules;
+        }
 
+        if(mRules != null) {
             Bundle bundle = new Bundle();
+            bundle.putInt(RetirementConstants.EXTRA_INCOME_OWNER, getSelf());
             bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, Double.parseDouble(mBalance));
             bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, Double.parseDouble(mInterest));
             bundle.putDouble(RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION, Double.parseDouble(mMonthlyAddition));
@@ -136,12 +129,11 @@ public class SavingsData extends AbstractIncomeSource {
         }
     }
 
-
     public List<IncomeData> getIncomeData() {
         if(mRules != null) {
             return mRules.getIncomeData();
         } else {
-            return null;
+            return Collections.EMPTY_LIST;
         }
     }
 

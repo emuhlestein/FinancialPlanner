@@ -8,8 +8,8 @@ import com.intelliviz.lowlevel.data.AgeData;
 
 public class SavingsIncomeRules extends BaseSavingsIncomeRules implements IncomeTypeRules {
 
-    public SavingsIncomeRules(String birthDate,  AgeData endAge) {
-        super(birthDate, endAge);
+    public SavingsIncomeRules(String ownerBirthDate, AgeData endAge, String otherBirthdate) {
+        super(ownerBirthDate, endAge, otherBirthdate);
     }
 
     @Override

@@ -76,11 +76,6 @@ public class PensionRules implements IncomeTypeRules {
     }
 
     @Override
-    public IncomeData getIncomeData(IncomeData incomeData) {
-        return null;
-    }
-
-    @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
         return new PensionIncomeDataAccessor(mOwner, mStartAge, mMonthlyAmount, mOwnerBirthdate, mOtherBirthdate);
     }

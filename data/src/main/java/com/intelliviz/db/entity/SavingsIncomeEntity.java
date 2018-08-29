@@ -182,12 +182,4 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
             return null;
         }
     }
-
-    public IncomeData getIncomeData(IncomeData incomeData) {
-        if(mRules != null) {
-            return mRules.getIncomeData(incomeData);
-        } else {
-            return null;
-        }
-    }
 }

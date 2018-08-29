@@ -11,6 +11,5 @@ import java.util.List;
 public interface IncomeTypeRules {
     void setValues(Bundle bundle);
     List<IncomeData> getIncomeData();
-    IncomeData getIncomeData(IncomeData incomeData);
     IncomeDataAccessor getIncomeDataAccessor();
 }

@@ -33,9 +33,9 @@ public abstract class AbstractSavingsIncomeHelper {
         } else {
             IncomeTypeRules sr;
             if(incomeType == RetirementConstants.INCOME_TYPE_401K) {
-                sr = new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge());
+                sr = new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
             } else {
-                sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge());
+                sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
             }
             mSD.setRules(sr);
             return new SavingsViewData(mSD, RetirementConstants.EC_NO_ERROR, "");
@@ -47,9 +47,9 @@ public abstract class AbstractSavingsIncomeHelper {
                 new AgeData(65, 0), "0", "0", "0", new AgeData(65, 0), "0", "0", 0);
         IncomeTypeRules sr;
         if(incomeType == RetirementConstants.INCOME_TYPE_401K) {
-            sr = new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge());
+            sr = new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
         } else {
-            sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge());
+            sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
         }
         sd.setRules(sr);
         return new SavingsViewData(sd, RetirementConstants.EC_NO_ERROR, "");

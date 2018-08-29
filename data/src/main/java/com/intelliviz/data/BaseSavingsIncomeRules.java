@@ -24,7 +24,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_WITH
  */
 
 public abstract class BaseSavingsIncomeRules {
-    private AgeData mCurrentAge;
+    private String mOwnerBirthdate;
+    private String mOtherBirthdate;
     private AgeData mStartAge; // age at which withdraws begin
     private AgeData mEndAge; // end of life
     private AgeData mStopAge; // age at which monthly deposits stop
@@ -38,12 +39,13 @@ public abstract class BaseSavingsIncomeRules {
     /**
      * Constructor
      *
-     * @param birthDate The birthdate.
+     * @param ownerBirthDate The birthdate.
      * @param endAge    The end retirement age.
      */
-    public BaseSavingsIncomeRules(String birthDate, AgeData endAge) {
-        mCurrentAge = AgeUtils.getAge(birthDate);
+    public BaseSavingsIncomeRules(String ownerBirthDate, AgeData endAge, String otherBirthdate) {
+        mOwnerBirthdate = ownerBirthDate;
         mEndAge = endAge;
+        mOtherBirthdate = otherBirthdate;
     }
 
     protected abstract double getPenaltyAmount(AgeData age, double amount);
@@ -62,13 +64,15 @@ public abstract class BaseSavingsIncomeRules {
         mStopAge = bundle.getParcelable(EXTRA_INCOME_STOP_AGE);
         mShowMonths = bundle.getInt(EXTRA_INCOME_SHOW_MONTHS) == 1;
 
+        AgeData currentAge = AgeUtils.getAge(mOwnerBirthdate);
+
         // no age can be before current age.
-        if (mStartAge.isBefore(mCurrentAge)) {
-            mStartAge = new AgeData(mCurrentAge.getNumberOfMonths());
+        if (mStartAge.isBefore(currentAge)) {
+            mStartAge = new AgeData(currentAge.getNumberOfMonths());
         }
 
-        if (mStopAge.isBefore(mCurrentAge)) {
-            mStopAge = new AgeData(mCurrentAge.getNumberOfMonths());
+        if (mStopAge.isBefore(currentAge)) {
+            mStopAge = new AgeData(currentAge.getNumberOfMonths());
         }
     }
 
@@ -78,10 +82,11 @@ public abstract class BaseSavingsIncomeRules {
         double monthlyDeposit = mMonthlyDeposit;
         double initWithdrawPercent = mInitialWithdrawPercent / 100;
         double monthlyInterest = mInterest / 1200;
+        AgeData currentAge = AgeUtils.getAge(mOwnerBirthdate);
 
         List<IncomeData> listAmountDate = new ArrayList<>();
 
-        for (int month = mCurrentAge.getNumberOfMonths(); month <= mEndAge.getNumberOfMonths(); month++) {
+        for (int month = currentAge.getNumberOfMonths(); month <= mEndAge.getNumberOfMonths(); month++) {
             AgeData age = new AgeData(month);
             if (age.isOnOrAfter(mStartAge)) {
                 if (age.equals(mStartAge)) {
@@ -123,7 +128,7 @@ public abstract class BaseSavingsIncomeRules {
     IncomeData getBenefitDataForNextYear(IncomeData benefitData) {
         int numMonths = 1;
         if (benefitData == null) {
-            return getInitBenefitDataForNextMonth(new AgeData(mCurrentAge.getYear(), 0));
+            return null; //getInitBenefitDataForNextMonth(new AgeData(mCurrentAge.getYear(), 0));
         } else {
             IncomeData bd = benefitData;
             for (int month = 0; month < numMonths; month++) {

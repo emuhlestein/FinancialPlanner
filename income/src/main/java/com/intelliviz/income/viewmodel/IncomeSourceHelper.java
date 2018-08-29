@@ -70,7 +70,7 @@ public class IncomeSourceHelper {
 
             if(entity instanceof SavingsIncomeEntity) {
                 SavingsData savingsData = SavingsDataEntityMapper.map((SavingsIncomeEntity)entity);
-                savingsData.setRules(new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge()));
+                savingsData.setRules(new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate()));
                 incomeSourceList.add(savingsData);
             }
         }

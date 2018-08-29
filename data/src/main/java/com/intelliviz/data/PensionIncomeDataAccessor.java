@@ -3,6 +3,8 @@ package com.intelliviz.data;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
+
 /**
  * Created by edm on 6/5/2018.
  */
@@ -25,7 +27,7 @@ public class PensionIncomeDataAccessor implements IncomeDataAccessor {
     @Override
     public IncomeData getIncomeData(AgeData principleAge) {
         AgeData age = principleAge;
-        if(mOwner == 0) {
+        if(mOwner == OWNER_SPOUSE) {
             age = AgeUtils.getOtherAge(mOtherBirthdate, mBirthDate, principleAge);
         }
 
