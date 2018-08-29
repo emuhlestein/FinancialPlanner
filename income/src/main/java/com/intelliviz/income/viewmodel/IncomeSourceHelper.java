@@ -19,7 +19,6 @@ import com.intelliviz.db.entity.PensionIncomeEntity;
 import com.intelliviz.db.entity.SavingsDataEntityMapper;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 import com.intelliviz.income.data.IncomeSourceViewData;
-import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.ArrayList;
@@ -52,8 +51,6 @@ public class IncomeSourceHelper {
     }
 
     private List<AbstractIncomeSource> getAllIncomeSources(List<IncomeSourceEntityBase> list) {
-        AgeData endAge = mRO.getEndAge();
-
         List<AbstractIncomeSource> incomeSourceList = new ArrayList<>();
 
         List<GovPension> gpList = new ArrayList<>();
@@ -66,13 +63,14 @@ public class IncomeSourceHelper {
 
             if(entity instanceof PensionIncomeEntity) {
                 PensionData pd = PensionDataEntityMapper.map((PensionIncomeEntity)entity);
-                pd.setRules(new PensionRules(mRO.getBirthdate(), pd.getAge(), endAge, pd.getBenefit()));
+
+                pd.setRules(new PensionRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate()));
                 incomeSourceList.add(pd);
             }
 
             if(entity instanceof SavingsIncomeEntity) {
                 SavingsData savingsData = SavingsDataEntityMapper.map((SavingsIncomeEntity)entity);
-                savingsData.setRules(new Savings401kIncomeRules(mRO.getBirthdate(), endAge));
+                savingsData.setRules(new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge()));
                 incomeSourceList.add(savingsData);
             }
         }

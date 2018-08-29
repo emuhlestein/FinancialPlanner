@@ -36,8 +36,8 @@ public class IncomeSummaryHelper {
             } else if(entity instanceof PensionIncomeEntity) {
                 PensionIncomeEntity pie = (PensionIncomeEntity)entity;
                 PensionData pd = PensionDataEntityMapper.map(pie);
-                AgeData minAge = pd.getAge();
-                PensionRules pr = new PensionRules(roe.getBirthdate(), minAge, roe.getEndAge(), pie.getMonthlyBenefit());
+                PensionRules pr = new PensionRules(roe.getBirthdate(), roe.getEndAge(),
+                        roe.getBirthdate());
                 pd.setRules(pr);
                 accessorList.add(pd.getIncomeDataAccessor());
             } else if(entity instanceof SavingsIncomeEntity) {

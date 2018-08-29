@@ -207,7 +207,7 @@ public class AgeUtils {
      * @param age The age of the principle spouse.
      * @return The spouse start age.
      */
-    public static AgeData getSpouseAge(String birthdate, String spouseBirthdate, AgeData age) {
+    public static AgeData getOtherAge(String birthdate, String spouseBirthdate, AgeData age) {
         AgeData currentAge = AgeUtils.getAge(birthdate);
         AgeData spouseAge =  AgeUtils.getAge(spouseBirthdate);
         int numMonths = currentAge.diff(spouseAge);

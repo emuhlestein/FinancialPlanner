@@ -69,6 +69,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_STOP_AGE = "stop age";
     public static final String EXTRA_INCOME_SHOW_MONTHS = "show months";
     public static final String EXTRA_INCOME_SPOUSE_START_AGE = "spouse start age";
+    public static final String EXTRA_INCOME_OWNER = "owner";
 
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
     public static final String EXTRA_BIRTHDATE = "birthdate";

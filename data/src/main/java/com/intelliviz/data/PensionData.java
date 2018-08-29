@@ -1,7 +1,10 @@
 package com.intelliviz.data;
 
+import android.os.Bundle;
+
 import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.List;
 
@@ -10,8 +13,8 @@ import java.util.List;
  */
 
 public class PensionData extends AbstractIncomeSource {
-    private AgeData mAge;
-    private String mBenefit;
+    private AgeData mStartAge;
+    private String mMonthlyBenefit;
     private int mBenefitInfo;
     private PensionRules mRules;
 
@@ -24,27 +27,27 @@ public class PensionData extends AbstractIncomeSource {
     }
 
     public PensionData(long id, int type, String name, int self,
-                       AgeData age, String benefit, int benefitInfo) {
+                       AgeData age, String monthlyBenefit, int benefitInfo) {
         this(id, type, name, self);
-        mAge = age;
-        mBenefit = benefit;
+        mStartAge = age;
+        mMonthlyBenefit = monthlyBenefit;
         mBenefitInfo = benefitInfo;
     }
 
-    public void setAge(AgeData age) {
-        mAge = age;
+    public void setStartAge(AgeData startAge) {
+        mStartAge = startAge;
     }
 
-    public void setBenefit(String benefit) {
-        mBenefit = benefit;
+    public void setMonthlyBenefit(String monthlyBenefit) {
+        mMonthlyBenefit = monthlyBenefit;
     }
 
-    public AgeData getAge() {
-        return mAge;
+    public AgeData getStartAge() {
+        return mStartAge;
     }
 
-    public String getBenefit() {
-        return mBenefit;
+    public String getMonthlyBenefit() {
+        return mMonthlyBenefit;
     }
 
     public int getBenefitInfo() {
@@ -54,6 +57,11 @@ public class PensionData extends AbstractIncomeSource {
     public void setRules(IncomeTypeRules rules) {
         if(rules instanceof PensionRules) {
             mRules = (PensionRules)rules;
+            Bundle bundle = new Bundle();
+            bundle.putInt(RetirementConstants.EXTRA_INCOME_OWNER, getSelf());
+            bundle.putString(RetirementConstants.EXTRA_INCOME_FULL_BENEFIT, mMonthlyBenefit);
+            bundle.putParcelable(RetirementConstants.EXTRA_INCOME_START_AGE, mStartAge);
+            mRules.setValues(bundle);
         } else {
             mRules = null;
         }
@@ -62,6 +70,11 @@ public class PensionData extends AbstractIncomeSource {
     @Override
     public List<IncomeData> getIncomeData() {
         if(mRules != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(RetirementConstants.EXTRA_INCOME_FULL_BENEFIT, mMonthlyBenefit);
+            bundle.putParcelable(RetirementConstants.EXTRA_INCOME_START_AGE, mStartAge);
+            bundle.putInt(RetirementConstants.EXTRA_INCOME_OWNER, getSelf());
+            mRules.setValues(bundle);
             return mRules.getIncomeData();
         } else {
             return null;

@@ -19,7 +19,7 @@
     </string-array>
 
     <string name="birthdate_not_valid">Birthdate is not valid</string>
-    <string name="monthly_benefit_not_valid">Spouse monthly benefit value is not valid</string>
+    <string name="monthly_benefit_not_valid">Spouse monthly monthlyBenefit value is not valid</string>
 
 
 

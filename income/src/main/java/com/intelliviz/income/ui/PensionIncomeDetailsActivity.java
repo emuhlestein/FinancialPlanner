@@ -170,10 +170,10 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
 
         mNameTextView.setText(name);
 
-        AgeData age = mPD.getAge();
+        AgeData age = mPD.getStartAge();
         mStartAgeTextView.setText(age.toString());
 
-        String formattedValue = SystemUtils.getFormattedCurrency(mPD.getBenefit());
+        String formattedValue = SystemUtils.getFormattedCurrency(mPD.getMonthlyBenefit());
         mMonthlyBenefitTextView.setText(formattedValue);
     }
 

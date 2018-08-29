@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,26 +14,42 @@ import java.util.List;
  */
 
 public class PensionRules implements IncomeTypeRules {
-    public static final AgeData DEFAULT_MIN_AGE = new AgeData(65, 0);
-    private AgeData mCurrentAge;
-    private AgeData mMinAge;
+    private int mOwner;
+    private String mOwnerBirthdate;
+    private AgeData mStartAge;
     private AgeData mEndAge;
     private double mMonthlyAmount;
+    private String mOtherBirthdate;
 
-    public PensionRules(String birthDate, AgeData minAge, AgeData endAge, String monthlyAmount) {
-        mCurrentAge = AgeUtils.getAge(birthDate);
-        mMinAge = minAge;
+    /**
+     * Constructor
+     * NOTE: These parameters should come from retirement options.
+     *
+     * @param ownerBirthDate The owner's birth date.
+     * @param endAge The end age.
+     * @param otherBirthdate The other's birth date.
+     */
+    public PensionRules(String ownerBirthDate, AgeData endAge, String otherBirthdate) {
+        mOwnerBirthdate = ownerBirthDate;
         mEndAge = endAge;
-        mMonthlyAmount = Double.parseDouble(monthlyAmount);
+        mOtherBirthdate = otherBirthdate;
     }
 
+    /**
+     * These parameters should come from PensionData.
+     * @param bundle
+     */
     @Override
     public void setValues(Bundle bundle) {
+        String value = bundle.getString(RetirementConstants.EXTRA_INCOME_FULL_BENEFIT);
+        mMonthlyAmount = Double.parseDouble(value);
+        mStartAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_START_AGE);
+        mOwner = bundle.getInt(RetirementConstants.EXTRA_INCOME_OWNER);
     }
 
     @Override
     public List<IncomeData> getIncomeData() {
-        AgeData age = mCurrentAge;
+        AgeData age = AgeUtils.getAge(mOwnerBirthdate);
         List<IncomeData> listAmountDate = new ArrayList<>();
 
         IncomeData benefitData;
@@ -41,7 +58,7 @@ public class PensionRules implements IncomeTypeRules {
 
             age = new AgeData(age.getYear(), 0);
 
-            if(age.isBefore(mMinAge)) {
+            if(age.isBefore(mStartAge)) {
                 benefitData = new IncomeData(age, 0, 0, 0, false);
             } else {
                 benefitData = new IncomeData(age, mMonthlyAmount, 0, 0, false);
@@ -65,17 +82,6 @@ public class PensionRules implements IncomeTypeRules {
 
     @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
-        return new PensionIncomeDataAccessor(mMinAge, mMonthlyAmount);
-    }
-
-    public PensionData getMonthlyBenefitForAge(AgeData startAge) {
-        /*
-        if(startAge.isBefore(mMinAge)) {
-            return new PensionData(startAge, 0, 0);
-        } else {
-            return new PensionData(startAge, mMonthlyAmount, 2);
-        }
-        */
-        return null;
+        return new PensionIncomeDataAccessor(mOwner, mStartAge, mMonthlyAmount, mOwnerBirthdate, mOtherBirthdate);
     }
 }

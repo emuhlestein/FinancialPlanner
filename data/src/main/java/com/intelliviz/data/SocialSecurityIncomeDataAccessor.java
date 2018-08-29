@@ -26,7 +26,7 @@ public class SocialSecurityIncomeDataAccessor implements IncomeDataAccessor {
     public IncomeData getIncomeData(AgeData principleAge) {
         AgeData age = principleAge;
         if(mIsSpouse) {
-            age = AgeUtils.getSpouseAge(mSpouseBirthdate, mBirthDate, principleAge);
+            age = AgeUtils.getOtherAge(mSpouseBirthdate, mBirthDate, principleAge);
         }
 
         if(age.isOnOrAfter(mStartAge)) {

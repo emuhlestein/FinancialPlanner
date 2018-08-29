@@ -32,7 +32,7 @@ public class SavingsIncomeTest {
         String initWithdrawPercent = "0";
         String annualPercentIncrease = "0";
 
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
 
         SavingsIncomeRules rules = new SavingsIncomeRules(birthDate, endAge);
@@ -60,7 +60,7 @@ public class SavingsIncomeTest {
         age = new AgeData(currentAge.getNumberOfMonths());
         monthlyAddition = "100";
         startAge = age.add(1);
-        savingsData = new SavingsData(0, 0, "SAVINGS", startAge, startBalance, interest, monthlyAddition,
+        savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         accessor = savingsData.getIncomeDataAccessor();
@@ -101,7 +101,7 @@ public class SavingsIncomeTest {
         String annualPercentIncrease = "0";
 
         SavingsIncomeRules rules = new SavingsIncomeRules(birthDate, endAge);
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         IncomeDataAccessor accessor = savingsData.getIncomeDataAccessor();
@@ -114,7 +114,7 @@ public class SavingsIncomeTest {
         assertEquals(incomeData.getMonthlyAmount(), 0.0, 0);
 
         startAge = age.add(1);
-        savingsData = new SavingsData(0, 0, "SAVINGS", startAge, startBalance, interest, monthlyAddition,
+        savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         accessor = savingsData.getIncomeDataAccessor();
@@ -168,7 +168,7 @@ public class SavingsIncomeTest {
         String annualPercentIncrease = "0";
 
         SavingsIncomeRules rules = new SavingsIncomeRules(birthDate, endAge);
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         IncomeDataAccessor accessor = savingsData.getIncomeDataAccessor();
@@ -186,7 +186,7 @@ public class SavingsIncomeTest {
         assertEquals(incomeData.getMonthlyAmount(), 0.0, 0);
 
         interest = "3";
-        savingsData = new SavingsData(0, 0, "SAVINGS", startAge, startBalance, interest, monthlyAddition,
+        savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         accessor = savingsData.getIncomeDataAccessor();
@@ -208,7 +208,7 @@ public class SavingsIncomeTest {
         initWithdrawPercent = "0";
         monthlyAddition = "0";
         annualPercentIncrease = "0";
-        savingsData = new SavingsData(0, 0, "SAVINGS", startAge, startBalance, interest, monthlyAddition,
+        savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         accessor = savingsData.getIncomeDataAccessor();
@@ -249,7 +249,7 @@ public class SavingsIncomeTest {
         String annualPercentIncrease = "0";
 
         SavingsIncomeRules rules = new SavingsIncomeRules(birthDate, endAge);
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         IncomeDataAccessor accessor = savingsData.getIncomeDataAccessor();

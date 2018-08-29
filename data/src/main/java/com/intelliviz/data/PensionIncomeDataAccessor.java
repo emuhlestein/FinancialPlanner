@@ -1,22 +1,34 @@
 package com.intelliviz.data;
 
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
 
 /**
  * Created by edm on 6/5/2018.
  */
 
 public class PensionIncomeDataAccessor implements IncomeDataAccessor {
+    private int mOwner;
     private AgeData mStartAge;
     private double mMonthlyAmount;
+    private String mBirthDate;
+    private String mOtherBirthdate;
 
-    public PensionIncomeDataAccessor(AgeData startAge, double monthlyAmount) {
+    public PensionIncomeDataAccessor(int owner, AgeData startAge, double monthlyAmount, String birthDate, String otherBirthdate) {
+        mOwner = owner;
         mStartAge = startAge;
         mMonthlyAmount = monthlyAmount;
+        mBirthDate = birthDate;
+        mOtherBirthdate = otherBirthdate;
     }
 
     @Override
-    public IncomeData getIncomeData(AgeData age) {
+    public IncomeData getIncomeData(AgeData principleAge) {
+        AgeData age = principleAge;
+        if(mOwner == 0) {
+            age = AgeUtils.getOtherAge(mOtherBirthdate, mBirthDate, principleAge);
+        }
+
         if(age.isOnOrAfter(mStartAge)) {
             return new IncomeData(age, mMonthlyAmount, 0, 0, false);
         } else {

@@ -93,7 +93,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         AgeData age;
         if(mIsSpouseEntity) {
             // need to convert age to be in terms of principle spouse age.
-            age = AgeUtils.getSpouseAge(mSpouseBirthdate, mBirthdate, mSpouseStartAge);
+            age = AgeUtils.getOtherAge(mSpouseBirthdate, mBirthdate, mSpouseStartAge);
         } else {
             age = mStartAge;
         }
@@ -173,7 +173,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         AgeData age;
         if(mIsSpouseEntity) {
             // need to convert age to be in terms of principle spouse age.
-            age = AgeUtils.getSpouseAge(mSpouseBirthdate, mBirthdate, principleSpouseAge);
+            age = AgeUtils.getOtherAge(mSpouseBirthdate, mBirthdate, principleSpouseAge);
         } else {
             age = principleSpouseAge;
         }
@@ -323,7 +323,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         AgeData diffAge = currentSpouseAge.subtract(currentAge);
 
         // calculate the spouse age at start age.
-        AgeData spouseAge = AgeUtils.getSpouseAge(mBirthdate, mSpouseBirthdate, mStartAge);
+        AgeData spouseAge = AgeUtils.getOtherAge(mBirthdate, mSpouseBirthdate, mStartAge);
 
         AgeData startAge;
         if(spouseAge.isBefore(mSpouseStartAge)) {

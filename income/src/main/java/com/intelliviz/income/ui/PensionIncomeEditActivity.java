@@ -69,7 +69,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         mEditMinimumgeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AgeData startAge = mPD.getAge();
+                AgeData startAge = mPD.getStartAge();
                 FragmentManager fm = getSupportFragmentManager();
                 AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
                 dialog.show(fm, "");
@@ -149,8 +149,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         } else if(mOwner == OWNER_SPOUSE) {
             mOwnerTextView.setText("spouse");
         }
-        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPD.getBenefit());
-        AgeData minAge = mPD.getAge();
+        String monthlyBenefit = SystemUtils.getFormattedCurrency(mPD.getMonthlyBenefit());
+        AgeData minAge = mPD.getStartAge();
 
         mIncomeSourceName.setText(name);
         mMinAge.setText(minAge.toString());
