@@ -110,17 +110,20 @@ public class IncomeSourceListRepo {
         }
     }
 
-    private class DeleteGovPensionAsyncTask extends AsyncTask<GovPensionEntity, Void, List<IncomeSourceEntityBase>> {
+    private class DeleteGovPensionAsyncTask extends AsyncTask<GovPensionEntity, Void, IncomeSourceDataEx> {
 
         @Override
-        protected List<IncomeSourceEntityBase> doInBackground(GovPensionEntity... params) {
+        protected IncomeSourceDataEx doInBackground(GovPensionEntity... params) {
             mDB.govPensionDao().delete(params[0]);
-            return getAllIncomeSources();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            List<IncomeSourceEntityBase> list = getAllIncomeSources();
+            IncomeSourceDataEx incomeSourceDataEx = new IncomeSourceDataEx(list, roe);
+            return incomeSourceDataEx;
         }
 
         @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
-            mIncomeSources.setValue(incomeSourceEntityBases);
+        protected void onPostExecute(IncomeSourceDataEx incomeSourceEntityBases) {
+            mDataEx.setValue(incomeSourceEntityBases);
         }
     }
 

@@ -20,11 +20,11 @@ public abstract class AbstractPensionIncomeHelper {
     public abstract int getOnlyOneSupportedErrorCode();
     public abstract String getOnlyOneSupportedErrorMessage();
 
-    public PensionViewData get(long id) {
+    public PensionViewData get(long id, int owner) {
         if (id == 0) {
             if (canCreateNewIncomeSource()) {
                 // create default pension income source
-                return createDefault();
+                return createDefault(owner);
             } else {
                 return new PensionViewData(null, getOnlyOneSupportedErrorCode(), getOnlyOneSupportedErrorMessage());
             }
@@ -35,8 +35,8 @@ public abstract class AbstractPensionIncomeHelper {
         }
     }
 
-    private PensionViewData createDefault() {
-        PensionData pd = new PensionData(0, RetirementConstants.INCOME_TYPE_PENSION, "", 1,
+    private PensionViewData createDefault(int owner) {
+        PensionData pd = new PensionData(0, RetirementConstants.INCOME_TYPE_PENSION, "", owner,
                 new AgeData(65, 0), "0", 0);
         PensionRules pr = new PensionRules(mRO.getBirthdate(),  mRO.getEndAge(), mRO.getSpouseBirthdate());
         pd.setRules(pr);

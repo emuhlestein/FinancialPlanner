@@ -34,6 +34,7 @@ import java.util.List;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
@@ -53,6 +54,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private FloatingActionButton mEditPensionFAB;
     private RecyclerView mRecyclerView;
+    private TextView mOwnerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +62,15 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pension_income_details);
 
         mToolbar = findViewById(R.id.income_source_toolbar);
-        android.support.design.widget.AppBarLayout mAppBarLayout = findViewById(R.id.appbar);;
-        mNameTextView = findViewById(R.id.name_text_view);;
-        mStartAgeTextView = findViewById(R.id.min_age_text_view);;
-        mMonthlyBenefitTextView = findViewById(R.id.monthly_benefit_text_view);;
-        mExpandedTextLayout = findViewById(R.id.expanded_text_layout);;
-        mCollapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);;
-        mEditPensionFAB = findViewById(R.id.editPensionFAB);;
-        mRecyclerView = findViewById(R.id.recyclerview);;
+        android.support.design.widget.AppBarLayout mAppBarLayout = findViewById(R.id.appbar);
+        mNameTextView = findViewById(R.id.name_text_view);
+        mStartAgeTextView = findViewById(R.id.min_age_text_view);
+        mMonthlyBenefitTextView = findViewById(R.id.monthly_benefit_text_view);
+        mExpandedTextLayout = findViewById(R.id.expanded_text_layout);
+        mCollapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
+        mEditPensionFAB = findViewById(R.id.editPensionFAB);
+        mRecyclerView = findViewById(R.id.recyclerview);
+        mOwnerTextView = findViewById(R.id.owner_text);
 
         Intent intent = getIntent();
         mId = 0;
@@ -115,7 +118,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         });
 
         PensionIncomeViewModel.Factory factory = new
-                PensionIncomeViewModel.Factory(getApplication(), mId);
+                PensionIncomeViewModel.Factory(getApplication(), mId, mOwner);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeViewModel.class);
 
@@ -162,10 +165,12 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         SystemUtils.setToolbarSubtitle(this, "Pension - " + mPD.getName());
 
         String name = mPD.getName();
-        if(mOwner == OWNER_SELF) {
-            name = name + " (self)";
-        } else if(mOwner == OWNER_SPOUSE) {
-            name = name + " (spouse)";
+        if(mPD.getSelf() == OWNER_SELF_ONLY) {
+            mOwnerTextView.setVisibility(View.GONE);
+        } else if(mPD.getSelf() == OWNER_SELF) {
+            mOwnerTextView.setText("Self");
+        } else if(mPD.getSelf() == OWNER_SPOUSE) {
+            mOwnerTextView.setText("Spouse");
         }
 
         mNameTextView.setText(name);

@@ -51,7 +51,7 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
     }
 
     public PensionIncomeEntity(long id, int type, String name, int self, AgeData minAge, String monthlyBenefit) {
-        super(id, type, name, 1);
+        super(id, type, name, self);
         this.minAge = minAge;
         this.monthlyBenefit = monthlyBenefit;
     }

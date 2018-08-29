@@ -89,7 +89,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
             int rc = intent.getIntExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, 0);
-            mOwner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SELF, 1);
+            mOwner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, 1);
             mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
         }
 
@@ -111,7 +111,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         });
 
         PensionIncomeViewModel.Factory factory = new
-                PensionIncomeViewModel.Factory(getApplication(), mId);
+                PensionIncomeViewModel.Factory(getApplication(), mId, mOwner);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeViewModel.class);
 
@@ -142,12 +142,12 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             return;
         }
         String name = mPD.getName();
-        if(mOwner == OWNER_SELF_ONLY) {
+        if(mPD.getSelf() == OWNER_SELF_ONLY) {
             mOwnerTextView.setVisibility(View.GONE);
-        } else if(mOwner == OWNER_SELF) {
-            mOwnerTextView.setText("self");
-        } else if(mOwner == OWNER_SPOUSE) {
-            mOwnerTextView.setText("spouse");
+        } else if(mPD.getSelf() == OWNER_SELF) {
+            mOwnerTextView.setText("Self");
+        } else if(mPD.getSelf() == OWNER_SPOUSE) {
+            mOwnerTextView.setText("Spouse");
         }
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mPD.getMonthlyBenefit());
         AgeData minAge = mPD.getStartAge();
