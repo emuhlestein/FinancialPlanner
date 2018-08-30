@@ -127,31 +127,37 @@ public class IncomeSourceListRepo {
         }
     }
 
-    private class DeletePensionAsyncTask extends AsyncTask<PensionIncomeEntity, Void, List<IncomeSourceEntityBase>> {
+    private class DeletePensionAsyncTask extends AsyncTask<PensionIncomeEntity, Void, IncomeSourceDataEx> {
 
         @Override
-        protected List<IncomeSourceEntityBase> doInBackground(PensionIncomeEntity... params) {
+        protected IncomeSourceDataEx doInBackground(PensionIncomeEntity... params) {
             mDB.pensionIncomeDao().delete(params[0]);
-            return getAllIncomeSources();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            List<IncomeSourceEntityBase> list = getAllIncomeSources();
+            IncomeSourceDataEx incomeSourceDataEx = new IncomeSourceDataEx(list, roe);
+            return incomeSourceDataEx;
         }
 
         @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
-            mIncomeSources.setValue(incomeSourceEntityBases);
+        protected void onPostExecute(IncomeSourceDataEx incomeSourceDataEx) {
+            mDataEx.setValue(incomeSourceDataEx);
         }
     }
 
-    private class DeleteSavingsAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, List<IncomeSourceEntityBase>> {
+    private class DeleteSavingsAsyncTask extends AsyncTask<SavingsIncomeEntity, Void, IncomeSourceDataEx> {
 
         @Override
-        protected List<IncomeSourceEntityBase> doInBackground(SavingsIncomeEntity... params) {
+        protected IncomeSourceDataEx doInBackground(SavingsIncomeEntity... params) {
             mDB.savingsIncomeDao().delete(params[0]);
-            return getAllIncomeSources();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            List<IncomeSourceEntityBase> list = getAllIncomeSources();
+            IncomeSourceDataEx incomeSourceDataEx = new IncomeSourceDataEx(list, roe);
+            return incomeSourceDataEx;
         }
 
         @Override
-        protected void onPostExecute(List<IncomeSourceEntityBase> incomeSourceEntityBases) {
-            mIncomeSources.setValue(incomeSourceEntityBases);
+        protected void onPostExecute(IncomeSourceDataEx incomeSourceDataEx) {
+            mDataEx.setValue(incomeSourceDataEx);
         }
     }
 }
