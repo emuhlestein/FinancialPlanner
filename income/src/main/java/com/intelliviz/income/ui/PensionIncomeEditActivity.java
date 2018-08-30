@@ -40,7 +40,6 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
     private PensionData mPD;
     private long mId;
-    private boolean mActivityResult;
     private PensionIncomeViewModel mViewModel;
 
     private CoordinatorLayout mCoordinatorLayout;
@@ -50,7 +49,6 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private Button mAddIncomeSourceButton;
     private EditText mMonthlyBenefit;
     private Toolbar mToolbar;
-    private int mOwner;
     private TextView mOwnerTextView;
 
     @Override
@@ -86,11 +84,10 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         mId = 0;
+        int owner = RetirementConstants.OWNER_SELF_ONLY;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
-            int rc = intent.getIntExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, 0);
-            mOwner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, 1);
-            mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
+            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF_ONLY);
         }
 
         mPD = null;
@@ -111,7 +108,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         });
 
         PensionIncomeViewModel.Factory factory = new
-                PensionIncomeViewModel.Factory(getApplication(), mId, mOwner);
+                PensionIncomeViewModel.Factory(getApplication(), mId, owner);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeViewModel.class);
 
@@ -119,6 +116,10 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             @Override
             public void onChanged(@Nullable PensionViewData viewData) {
                 FragmentManager fm ;
+
+                if(viewData == null) {
+                    return;
+                }
                 mPD = viewData.getPensionData();
                 switch(viewData.getStatus()) {
                     case EC_ONLY_ONE_SUPPORTED:
@@ -142,11 +143,11 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             return;
         }
         String name = mPD.getName();
-        if(mPD.getSelf() == OWNER_SELF_ONLY) {
+        if(mPD.getOwner() == OWNER_SELF_ONLY) {
             mOwnerTextView.setVisibility(View.GONE);
-        } else if(mPD.getSelf() == OWNER_SELF) {
+        } else if(mPD.getOwner() == OWNER_SELF) {
             mOwnerTextView.setText("Self");
-        } else if(mPD.getSelf() == OWNER_SPOUSE) {
+        } else if(mPD.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");
         }
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mPD.getMonthlyBenefit());
@@ -178,7 +179,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             return;
         }
 
-        PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getSelf(), minAge, benefit, 0);
+        PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(), minAge, benefit, 0);
         mViewModel.setData(pd);
 
         finish();
@@ -200,9 +201,9 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                     break;
                 case EC_FOR_SELF_OR_SPOUSE:
                     if(isOk) {
-                        mPD.setSelf(1);
+                        mPD.setOwner(1);
                     } else {
-                        mPD.setSelf(0);
+                        mPD.setOwner(0);
                     }
                     break;
             }

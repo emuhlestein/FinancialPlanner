@@ -18,13 +18,13 @@ public abstract class IncomeSourceEntityBase implements IncomeSourceType {
 
     private String name;
 
-    private int self;
+    private int owner;
 
-    public IncomeSourceEntityBase(long id, int type, String name, int self) {
+    public IncomeSourceEntityBase(long id, int type, String name, int owner) {
         this.id = id;
         this.type = type;
         this.name = name;
-        this.self = self;
+        this.owner = owner;
     }
 
     @Override
@@ -58,12 +58,12 @@ public abstract class IncomeSourceEntityBase implements IncomeSourceType {
     }
 
     @Override
-    public int getSelf() {
-        return self;
+    public int getOwner() {
+        return owner;
     }
 
     @Override
-    public void setSelf(int self) {
-        this.self = self;
+    public void setOwner(int owner) {
+        this.owner = owner;
     }
 }

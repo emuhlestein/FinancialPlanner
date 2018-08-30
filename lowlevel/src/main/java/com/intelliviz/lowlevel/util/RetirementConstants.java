@@ -59,7 +59,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_WITHDRAW_PERCENT = "withdraw percent";
     public static final String EXTRA_ANNUAL_PERCENT_INCREASE = "annual percent increase";
     public static final String EXTRA_INCOME_MONTHLY_ADDITION = "monthly addition";
-    public static final String EXTRA_INCOME_SELF = "income source self";
+    //public static final String EXTRA_INCOME_SELF = "income source self";
 
     public static final String EXTRA_INCOME_IS_SPOUSE_ENTITY = "include spouse";
     public static final String EXTRA_INCOME_SPOUSE_BENEFIT = "spouse benefit";

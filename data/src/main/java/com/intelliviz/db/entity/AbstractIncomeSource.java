@@ -10,13 +10,13 @@ public abstract class AbstractIncomeSource implements IncomeSourceType {
     private long mId;
     private int mType;
     private String mName;
-    private int mSelf;
+    private int mOwner;
 
-    public AbstractIncomeSource(long id, int type, String name, int self) {
+    public AbstractIncomeSource(long id, int type, String name, int owner) {
         mId = id;
         mType = type;
         mName = name;
-        mSelf = self;
+        mOwner = owner;
     }
 
     @Override
@@ -50,13 +50,13 @@ public abstract class AbstractIncomeSource implements IncomeSourceType {
     }
 
     @Override
-    public int getSelf() {
-        return mSelf;
+    public int getOwner() {
+        return mOwner;
     }
 
     @Override
-    public void setSelf(int self) {
-        mSelf = self;
+    public void setOwner(int owner) {
+        mOwner = owner;
     }
 
     public abstract List<IncomeData> getIncomeData();

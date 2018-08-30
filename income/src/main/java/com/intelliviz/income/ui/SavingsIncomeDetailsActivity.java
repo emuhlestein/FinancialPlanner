@@ -32,14 +32,18 @@ import com.intelliviz.lowlevel.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_OWNER;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class SavingsIncomeDetailsActivity extends AppCompatActivity {
 
     private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
     private SavingsIncomeViewModel mViewModel;
-    private SavingsData mSIE;
+    private SavingsData mSD;
     private long mId;
 
     private Toolbar mToolbar;
@@ -53,6 +57,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private FloatingActionButton mEditSavingsFAB;
     private RecyclerView mRecyclerView;
+    private TextView mOwnerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +75,16 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
         mCollapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
         mEditSavingsFAB = findViewById(R.id.editSavingsFAB);
         mRecyclerView = findViewById(R.id.recyclerview);
+        mOwnerTextView = findViewById(R.id.owner_text);
 
         setSupportActionBar(mToolbar);
 
         Intent intent = getIntent();
         mId = 0;
+        int owner = RetirementConstants.OWNER_SELF_ONLY;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
+            owner = intent.getIntExtra(EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF_ONLY);
         }
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
@@ -122,7 +130,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
         });
 
         SavingsIncomeViewModel.Factory factory = new
-                SavingsIncomeViewModel.Factory(getApplication(), mId, 0);
+                SavingsIncomeViewModel.Factory(getApplication(), mId, 0, owner);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(SavingsIncomeViewModel.class);
 
@@ -136,7 +144,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
         mViewModel.get().observe(this, new Observer<SavingsViewData>() {
             @Override
             public void onChanged(@Nullable SavingsViewData svd) {
-                mSIE = svd.getSavingsData();
+                mSD = svd.getSavingsData();
                 updateUI();
             }
         });
@@ -166,7 +174,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             String annualPercentIncrease = bundle.getString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE);
             int showMonths = bundle.getInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS);
 
-            SavingsData sdata = new SavingsData(mId, mSIE.getType(), name, mSIE.getSelf(), startAge,
+            SavingsData sdata = new SavingsData(mId, mSD.getType(), name, mSD.getOwner(), startAge,
                     balance, interest, monthlyAddition, stopMonthlyAddtionAge,
                     withdrawAmount, annualPercentIncrease, showMonths);
             mViewModel.setData(sdata);
@@ -176,24 +184,32 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        if(mSIE == null) {
+        if(mSD == null) {
             return;
         }
 
-        SystemUtils.setToolbarSubtitle(this, "401(k) - " + mSIE.getName());
+        if(mSD.getOwner() == OWNER_SELF_ONLY) {
+            mOwnerTextView.setVisibility(View.GONE);
+        } else if(mSD.getOwner() == OWNER_SELF) {
+            mOwnerTextView.setText("Self");
+        } else if(mSD.getOwner() == OWNER_SPOUSE) {
+            mOwnerTextView.setText("Spouse");
+        }
 
-        mNameTextView.setText(mSIE.getName());
+        SystemUtils.setToolbarSubtitle(this, "401(k) - " + mSD.getName());
 
-        AgeData age = mSIE.getStartAge();
+        mNameTextView.setText(mSD.getName());
+
+        AgeData age = mSD.getStartAge();
         mStartAgeTextView.setText(age.toString());
 
-        String formattedValue = SystemUtils.getFormattedCurrency(mSIE.getMonthlyAddition());
+        String formattedValue = SystemUtils.getFormattedCurrency(mSD.getMonthlyAddition());
         mMonthlyIncreaseTextView.setText(formattedValue);
 
-        formattedValue = mSIE.getInterest() + "%";
+        formattedValue = mSD.getInterest() + "%";
         mAnnualInterestTextView.setText(formattedValue);
 
-        formattedValue = SystemUtils.getFormattedCurrency(mSIE.getBalance());
+        formattedValue = SystemUtils.getFormattedCurrency(mSD.getBalance());
         mBalanceTextView.setText(formattedValue);
     }
 /*

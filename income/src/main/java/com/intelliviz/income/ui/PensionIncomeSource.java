@@ -24,7 +24,7 @@ public class PensionIncomeSource implements IncomeSource {
     public void startAddActivity(FragmentActivity activity) {
         Intent intent = new Intent(activity, PensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, 0);
-        intent.putExtra(EXTRA_INCOME_OWNER, mIncomeSourceEntity.getSelf());
+        intent.putExtra(EXTRA_INCOME_OWNER, mIncomeSourceEntity.getOwner());
         activity.startActivity(intent);
     }
 

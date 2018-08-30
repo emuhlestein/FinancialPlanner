@@ -31,6 +31,9 @@ import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_TWO_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_TYPE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class SavingsIncomeEditActivity extends AppCompatActivity implements
         AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse {
@@ -40,7 +43,6 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     private long mId;
     private int mIncomeType;
     private int mAgeType = STOP_AGE;
-    private boolean mActivityResult;
     private SavingsIncomeViewModel mViewModel;
 
     private Toolbar mToolbar;
@@ -52,6 +54,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     private TextView mInitWithdrawPercentTextView;
     private Button mEditStartAgeButton;
     private Button mAddIncomeSourceButton;
+    private TextView mOwnerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_edit_savings_income);
 
         mToolbar = findViewById(R.id.income_source_toolbar);
+
+        mOwnerTextView = findViewById(R.id.owner_text);
 
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
         mIncomeSourceName = findViewById(R.id.name_edit_text);
@@ -89,11 +94,11 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         mId = 0;
+        int owner = RetirementConstants.OWNER_SELF_ONLY;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
             mIncomeType = intent.getIntExtra(EXTRA_INCOME_TYPE, 0);
-            int rc = intent.getIntExtra(RetirementConstants.EXTRA_ACTIVITY_RESULT, 0);
-            mActivityResult = RetirementConstants.ACTIVITY_RESULT == rc;
+            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF_ONLY);
         }
 
         mSD = null;
@@ -149,7 +154,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         });
 
         SavingsIncomeViewModel.Factory factory = new
-                SavingsIncomeViewModel.Factory(getApplication(), mId, mIncomeType);
+                SavingsIncomeViewModel.Factory(getApplication(), mId, mIncomeType, owner);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(SavingsIncomeViewModel.class);
 
@@ -177,6 +182,14 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     private void updateUI() {
         if (mSD == null) {
             return;
+        }
+
+        if(mSD.getOwner() == OWNER_SELF_ONLY) {
+            mOwnerTextView.setVisibility(View.GONE);
+        } else if(mSD.getOwner() == OWNER_SELF) {
+            mOwnerTextView.setText("Self");
+        } else if(mSD.getOwner() == OWNER_SPOUSE) {
+            mOwnerTextView.setText("Spouse");
         }
 
         mInitWithdrawPercentTextView.setText(mSD.getWithdrawPercent()+"%");
@@ -272,18 +285,10 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         String name = mIncomeSourceName.getText().toString();
 
         int showMonths = getShowMonths() ? 1 : 0;
-        SavingsData sie = new SavingsData(mId, mSD.getType(), name, mSD.getSelf(),
+        SavingsData sie = new SavingsData(mId, mSD.getType(), name, mSD.getOwner(),
                 startAge, balance, interest, monthlyAddition,
                 stopAge, withdrawPercent, annualPercentIncrease, showMonths);
         mViewModel.setData(sie);
-        /*
-        if(mActivityResult) {
-            sendData(mId, name, startAge, balance, interest, monthlyAddition, stopAge,
-                    withdrawPercent, annualPercentIncrease, showMonths);
-        } else {
-            mViewModel.setData(sie);
-        }
-        */
 
         finish();
     }
@@ -295,28 +300,6 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         if(mAgeType == START_AGE) {
             mStartAgeTextView.setText(age.toString());
         }
-    }
-
-    private void sendData(long id, String name, AgeData startAge, String balance, String interest, String monthlyAddition,
-                          AgeData stopMonthlyAdditionAge, String withdrawPercent, String annualPercentIncrease,
-                          int showMonths) {
-        Intent returnIntent = new Intent();
-        Bundle bundle = new Bundle();
-
-        bundle.putLong(EXTRA_INCOME_SOURCE_ID, id);
-        bundle.putInt(EXTRA_INCOME_TYPE, mIncomeType);
-        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_NAME, name);
-        bundle.putParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE, startAge);
-        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, balance);
-        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, interest);
-        bundle.putString(RetirementConstants.EXTRA_INCOME_SOURCE_INCREASE, monthlyAddition);
-        bundle.putParcelable(RetirementConstants.EXTRA_INCOME_STOP_MONTHLY_ADDITION_AGE, stopMonthlyAdditionAge);
-        bundle.putString(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT, withdrawPercent);
-        bundle.putString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE, annualPercentIncrease);
-        bundle.putInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS, showMonths);
-        returnIntent.putExtras(bundle);
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
     }
 
     private String getStopMonthlyAdditionAge() {

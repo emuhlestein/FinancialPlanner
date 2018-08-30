@@ -74,10 +74,10 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mShowMonths = 0;
     }
 
-    public SavingsIncomeEntity(long id, int type, String name, int self, AgeData startAge, String balance, String interest,
+    public SavingsIncomeEntity(long id, int type, String name, int owner, AgeData startAge, String balance, String interest,
                                String monthlyAddition, AgeData stopMonthlyAdditionAge,
                                String withdrawPercent, String annualPercentIncrease, int showMonths) {
-        super(id, type, name, self);
+        super(id, type, name, owner);
         mStartAge = startAge;
         mBalance = balance;
         mInterest = interest;

@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentActivity;
 
 import com.intelliviz.db.entity.AbstractIncomeSource;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_OWNER;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_TYPE;
 
@@ -26,8 +26,8 @@ public class SavingsIncomeSource implements IncomeSource {
     public void startAddActivity(FragmentActivity activity) {
         Intent intent = new Intent(activity, SavingsIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, 0);
-        intent.putExtra(EXTRA_INCOME_SELF, mIncomeSourceEntity.getSelf());
         intent.putExtra(EXTRA_INCOME_TYPE, mIncomeSourceEntity.getType());
+        intent.putExtra(EXTRA_INCOME_OWNER, mIncomeSourceEntity.getOwner());
         activity.startActivity(intent);
     }
 

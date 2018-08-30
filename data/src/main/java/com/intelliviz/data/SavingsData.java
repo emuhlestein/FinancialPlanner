@@ -116,7 +116,7 @@ public class SavingsData extends AbstractIncomeSource {
 
         if(mRules != null) {
             Bundle bundle = new Bundle();
-            bundle.putInt(RetirementConstants.EXTRA_INCOME_OWNER, getSelf());
+            bundle.putInt(RetirementConstants.EXTRA_INCOME_OWNER, getOwner());
             bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, Double.parseDouble(mBalance));
             bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, Double.parseDouble(mInterest));
             bundle.putDouble(RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION, Double.parseDouble(mMonthlyAddition));

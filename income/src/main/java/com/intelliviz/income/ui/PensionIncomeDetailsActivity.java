@@ -43,7 +43,6 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     private PensionIncomeViewModel mViewModel;
     private PensionData mPD;
     private long mId;
-    private int mOwner;
 
     private Toolbar mToolbar;
     private android.support.design.widget.AppBarLayout mAppBarLayout;
@@ -74,9 +73,10 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mId = 0;
+        int owner = RetirementConstants.OWNER_SELF_ONLY;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
-            mOwner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_SELF, 1);
+            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF_ONLY);
         }
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
@@ -118,7 +118,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         });
 
         PensionIncomeViewModel.Factory factory = new
-                PensionIncomeViewModel.Factory(getApplication(), mId, mOwner);
+                PensionIncomeViewModel.Factory(getApplication(), mId, owner);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeViewModel.class);
 
@@ -149,7 +149,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
             AgeData minAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
             String monthlyBenefit = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_BENEFIT);
 
-            PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getSelf(),
+            PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(),
                     minAge, monthlyBenefit, 0);
             mViewModel.setData(pd);
 
@@ -165,11 +165,11 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         SystemUtils.setToolbarSubtitle(this, "Pension - " + mPD.getName());
 
         String name = mPD.getName();
-        if(mPD.getSelf() == OWNER_SELF_ONLY) {
+        if(mPD.getOwner() == OWNER_SELF_ONLY) {
             mOwnerTextView.setVisibility(View.GONE);
-        } else if(mPD.getSelf() == OWNER_SELF) {
+        } else if(mPD.getOwner() == OWNER_SELF) {
             mOwnerTextView.setText("Self");
-        } else if(mPD.getSelf() == OWNER_SPOUSE) {
+        } else if(mPD.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");
         }
 

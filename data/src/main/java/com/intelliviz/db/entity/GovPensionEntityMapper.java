@@ -8,7 +8,7 @@ import com.intelliviz.data.GovPension;
 
 public class GovPensionEntityMapper {
     public static GovPension map(GovPensionEntity gpe) {
-        GovPension govPension = new GovPension(gpe.getId(), gpe.getType(), gpe.getName(), gpe.getSelf());
+        GovPension govPension = new GovPension(gpe.getId(), gpe.getType(), gpe.getName(), gpe.getOwner());
         govPension.setPrincipleSpouse(false); // TODO maybe need to remove principle spouse
         govPension.setFullMonthlyBenefit(gpe.getFullMonthlyBenefit());
         govPension.setSpouse(gpe.getSpouse() == 1 ? true : false);
@@ -17,7 +17,7 @@ public class GovPensionEntityMapper {
     }
 
     public static GovPensionEntity map(GovPension gp) {
-        GovPensionEntity gpe = new GovPensionEntity(gp.getId(), gp.getType(), gp.getName(), gp.getSelf(),
+        GovPensionEntity gpe = new GovPensionEntity(gp.getId(), gp.getType(), gp.getName(), gp.getOwner(),
                 gp.getFullMonthlyBenefit(), gp.getStartAge(), gp.isSpouse() ? 1 : 0);
         return gpe;
     }

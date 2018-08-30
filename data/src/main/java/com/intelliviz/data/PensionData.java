@@ -59,7 +59,7 @@ public class PensionData extends AbstractIncomeSource {
         if(rules instanceof PensionRules) {
             mRules = (PensionRules)rules;
             Bundle bundle = new Bundle();
-            bundle.putInt(RetirementConstants.EXTRA_INCOME_OWNER, getSelf());
+            bundle.putInt(RetirementConstants.EXTRA_INCOME_OWNER, getOwner());
             bundle.putString(RetirementConstants.EXTRA_INCOME_FULL_BENEFIT, mMonthlyBenefit);
             bundle.putParcelable(RetirementConstants.EXTRA_INCOME_START_AGE, mStartAge);
             mRules.setValues(bundle);
