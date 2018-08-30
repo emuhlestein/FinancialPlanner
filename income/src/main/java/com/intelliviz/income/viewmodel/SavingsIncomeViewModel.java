@@ -42,14 +42,14 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
     private SavingsIncomeEntityRepo mRepo;
     private LiveData<List<IncomeDetails>> mIncomeDetailsList = new MutableLiveData<>();
 
-    public SavingsIncomeViewModel(Application application, long incomeId, int incomeType) {
+    public SavingsIncomeViewModel(Application application, long incomeId, int incomeType, int owner) {
         super(application);
         mRepo = SavingsIncomeEntityRepo.getInstance(application);
         mSource = mRepo.getSavingsDataEx(incomeId);
-        subscribe(incomeId, incomeType);
+        subscribe(incomeId, incomeType, owner);
     }
 
-    private void subscribe(final long id, final int incomeType) {
+    private void subscribe(final long id, final int incomeType, final int owner) {
         mViewData = Transformations.switchMap(mSource,
                 new Function<SavingsDataEx, LiveData<SavingsViewData>>() {
                     @Override
@@ -65,7 +65,7 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
                         }
                         SavingsIncomeHelper helper = new SavingsIncomeHelper(getApplication(), sd, ro, input.getNumRecords());
                         MutableLiveData<SavingsViewData> ldata = new MutableLiveData();
-                        ldata.setValue(helper.get(id, incomeType));
+                        ldata.setValue(helper.get(id, incomeType, owner));
                         return ldata;
                     }
                 });
@@ -108,16 +108,18 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
         private final Application mApplication;
         private long mIncomeId;
         private int mIncomeType;
+        private int mOwner;
 
-        public Factory(@NonNull Application application, long incomeId, int incomeType) {
+        public Factory(@NonNull Application application, long incomeId, int incomeType, int owner) {
             mApplication = application;
             mIncomeId = incomeId;
             mIncomeType = incomeType;
+            mOwner = owner;
         }
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new SavingsIncomeViewModel(mApplication, mIncomeId, mIncomeType);
+            return (T) new SavingsIncomeViewModel(mApplication, mIncomeId, mIncomeType, mOwner);
         }
     }
 
