@@ -81,10 +81,10 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mId = 0;
-        int owner = RetirementConstants.OWNER_SELF_ONLY;
+        int owner = RetirementConstants.OWNER_SELF;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
-            owner = intent.getIntExtra(EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF_ONLY);
+            owner = intent.getIntExtra(EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF);
         }
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));

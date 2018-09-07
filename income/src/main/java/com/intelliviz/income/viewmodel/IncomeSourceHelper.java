@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import com.intelliviz.data.GovPension;
+import com.intelliviz.data.IncomeSourceType;
 import com.intelliviz.data.PensionData;
 import com.intelliviz.data.PensionRules;
 import com.intelliviz.data.RetirementOptions;
@@ -23,6 +24,8 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
 
 public class IncomeSourceHelper {
     private List<IncomeSourceEntityBase> mIncomeList;
@@ -57,21 +60,26 @@ public class IncomeSourceHelper {
         for(IncomeSourceEntityBase entity : list) {
             if(entity instanceof GovPensionEntity) {
                 GovPension gp = GovPensionEntityMapper.map((GovPensionEntity)entity);
-                gpList.add(gp);
-                incomeSourceList.add(gp);
+                if (includeIncomeSource(mRO, gp)) {
+                    gpList.add(gp);
+                    incomeSourceList.add(gp);
+                }
             }
 
             if(entity instanceof PensionIncomeEntity) {
                 PensionData pd = PensionDataEntityMapper.map((PensionIncomeEntity)entity);
-
-                pd.setRules(new PensionRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate()));
-                incomeSourceList.add(pd);
+                if (includeIncomeSource(mRO, pd)) {
+                    pd.setRules(new PensionRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate()));
+                    incomeSourceList.add(pd);
+                }
             }
 
             if(entity instanceof SavingsIncomeEntity) {
-                SavingsData savingsData = SavingsDataEntityMapper.map((SavingsIncomeEntity)entity);
-                savingsData.setRules(new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate()));
-                incomeSourceList.add(savingsData);
+                SavingsData sd = SavingsDataEntityMapper.map((SavingsIncomeEntity)entity);
+                if (includeIncomeSource(mRO, sd)) {
+                    sd.setRules(new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate()));
+                    incomeSourceList.add(sd);
+                }
             }
         }
 
@@ -79,4 +87,13 @@ public class IncomeSourceHelper {
 
         return incomeSourceList;
     }
+
+    private boolean includeIncomeSource(RetirementOptions ro, IncomeSourceType incomeSource) {
+        if(isSpouseIncluded() || incomeSource.getOwner() == OWNER_SELF) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

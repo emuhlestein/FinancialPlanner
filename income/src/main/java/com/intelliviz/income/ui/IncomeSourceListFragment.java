@@ -50,7 +50,6 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_DEL
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_EDIT;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_VIEW;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_INCOME_MENU;
 import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_YES_NO;
@@ -222,7 +221,7 @@ public class IncomeSourceListFragment extends Fragment implements
             dialog.setTargetFragment(this, EC_FOR_SELF_OR_SPOUSE);
             dialog.show(fm, "message");
         } else {
-            mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(mIncomeSourceType, OWNER_SELF_ONLY);
+            mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(mIncomeSourceType, OWNER_SELF);
             if (mSelectedIncomeSource != null) {
                 mSelectedIncomeSource.startAddActivity(getActivity());
             }
