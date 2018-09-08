@@ -27,11 +27,14 @@ import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.GovEntityRepo;
 
 import static android.view.View.GONE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class GovPensionIncomeDetailsActivity extends AppCompatActivity implements IncomeDetailsSelectListener{
     private GovPensionIncomeViewModel mViewModel;
     private GovPension mGP;
     private long mId;
+    private boolean mSpouseIncluded;
 
     private Toolbar mToolbar;
     private android.support.design.widget.AppBarLayout mAppBarLayout;
@@ -48,6 +51,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
     private TextView mDetailsTextView;
     private FloatingActionButton mEditPensionFAB;
     private CoordinatorLayout mCoordinatorLayout;
+    private TextView mOwnerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +73,16 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         mEditPensionFAB = findViewById(R.id.editPensionFAB);
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
         mDetailsTextView = findViewById(R.id.details_text);
+        mOwnerTextView = findViewById(R.id.owner_text);
 
         mPrincipleSpouseTextView.setVisibility(GONE);
 
         Intent intent = getIntent();
         mId = 0;
+        int owner = RetirementConstants.OWNER_SELF;
         if(intent != null) {
             mId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, 0);
+            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF);
         }
 
         // The FAB will pop up an activity to allow a new income source to be edited
@@ -94,14 +101,15 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
         //        linearLayoutManager.getOrientation()));
         GovPensionIncomeViewModel.Factory factory = new
-                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId);
+                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId, owner);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeViewModel.class);
 
         mViewModel.get().observe(this, new Observer<GovPensionViewData>() {
             @Override
-            public void onChanged(@Nullable GovPensionViewData gp) {
-                mGP = gp.getGovPension();
+            public void onChanged(@Nullable GovPensionViewData viewData) {
+                mSpouseIncluded = viewData.isSpouseIncluded();
+                mGP = viewData.getGovPension();
                 updateUI();
             }
         });
@@ -119,6 +127,14 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         }
 
         SystemUtils.setToolbarSubtitle(this, "Social Security - " + mGP.getName());
+
+        if(!mSpouseIncluded) {
+            mOwnerTextView.setVisibility(View.GONE);
+        } else if(mGP.getOwner() == OWNER_SELF) {
+            mOwnerTextView.setText("Self");
+        } else if(mGP.getOwner() == OWNER_SPOUSE) {
+            mOwnerTextView.setText("Spouse");
+        }
 
         if(mGP.isPrincipleSpouse()) {
             mPrincipleSpouseTextView.setVisibility(View.VISIBLE);

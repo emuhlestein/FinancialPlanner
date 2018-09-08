@@ -7,8 +7,10 @@ import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
 public class PensionIncomeHelper extends AbstractPensionIncomeHelper {
+    private boolean mSpouseIncluded;
     public PensionIncomeHelper(Application application, PensionData pd, RetirementOptions ro, int numRecords) {
         super(pd, ro);
+        mSpouseIncluded = ro.getIncludeSpouse()==1;
     }
 
     @Override
@@ -25,5 +27,10 @@ public class PensionIncomeHelper extends AbstractPensionIncomeHelper {
     @Override
     public String getOnlyOneSupportedErrorMessage() {
         return "";
+    }
+
+    @Override
+    public boolean isSpouseIncluded() {
+        return mSpouseIncluded;
     }
 }

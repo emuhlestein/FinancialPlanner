@@ -20,19 +20,19 @@ public class SavingsData extends AbstractIncomeSource {
     private int mShowMonths;
     private BaseSavingsIncomeRules mRules;
 
-    public SavingsData(long id, int type, int self) {
-        super(id, type, "", self);
+    public SavingsData(long id, int type, int owner) {
+        super(id, type, "", owner);
     }
 
-    public SavingsData(long id, int type, String name, int self) {
-        super(id, type, name, self);
+    public SavingsData(long id, int type, String name, int owner) {
+        super(id, type, name, owner);
     }
 
-    public SavingsData(long id, int type, String name, int self,
+    public SavingsData(long id, int type, String name, int owner,
                        AgeData startAge, String balance, String interest,
                        String monthlyAddition, AgeData stopMonthlyAdditionAge,
                        String withdrawPercent, String annualPercentIncrease, int showMonths) {
-        super(id, type, name, self);
+        super(id, type, name, owner);
         mStartAge = startAge;
         mBalance = balance;
         mInterest = interest;

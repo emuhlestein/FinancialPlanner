@@ -34,7 +34,6 @@ import java.util.List;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
@@ -43,6 +42,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     private PensionIncomeViewModel mViewModel;
     private PensionData mPD;
     private long mId;
+    private boolean mSpouseIncluded;
 
     private Toolbar mToolbar;
     private android.support.design.widget.AppBarLayout mAppBarLayout;
@@ -124,8 +124,9 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
 
         mViewModel.get().observe(this, new Observer<PensionViewData>() {
             @Override
-            public void onChanged(@Nullable PensionViewData pie) {
-                mPD = pie.getPensionData();
+            public void onChanged(@Nullable PensionViewData viewData) {
+                mSpouseIncluded = viewData.isSpouseIncluded();
+                mPD = viewData.getPensionData();
                 updateUI();
             }
         });
@@ -165,7 +166,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         SystemUtils.setToolbarSubtitle(this, "Pension - " + mPD.getName());
 
         String name = mPD.getName();
-        if(mPD.getOwner() == OWNER_SELF_ONLY) {
+        if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
         } else if(mPD.getOwner() == OWNER_SELF) {
             mOwnerTextView.setText("Self");

@@ -21,6 +21,7 @@ public abstract class AbstractSavingsIncomeHelper {
     public abstract boolean canCreateNewIncomeSource();
     public abstract int getOnlyOneSupportedErrorCode();
     public abstract String getOnlyOneSupportedErrorMessage();
+    public abstract boolean isSpouseIncluded();
 
     public SavingsViewData get(final long id, final int incomeType, int owner) {
         if (id == 0) {
@@ -28,7 +29,7 @@ public abstract class AbstractSavingsIncomeHelper {
                 // create default pension income source
                 return createDefault(incomeType, owner);
             } else {
-                return new SavingsViewData(null, getOnlyOneSupportedErrorCode(), getOnlyOneSupportedErrorMessage());
+                return new SavingsViewData(null, isSpouseIncluded(), getOnlyOneSupportedErrorCode(), getOnlyOneSupportedErrorMessage());
             }
         } else {
             IncomeTypeRules sr;
@@ -38,7 +39,7 @@ public abstract class AbstractSavingsIncomeHelper {
                 sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
             }
             mSD.setRules(sr);
-            return new SavingsViewData(mSD, RetirementConstants.EC_NO_ERROR, "");
+            return new SavingsViewData(mSD, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
         }
     }
 
@@ -52,6 +53,6 @@ public abstract class AbstractSavingsIncomeHelper {
             sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
         }
         sd.setRules(sr);
-        return new SavingsViewData(sd, RetirementConstants.EC_NO_ERROR, "");
+        return new SavingsViewData(sd, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
     }
 }

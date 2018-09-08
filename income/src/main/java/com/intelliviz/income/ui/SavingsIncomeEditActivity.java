@@ -32,7 +32,6 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_TWO_SUPPO
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_TYPE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class SavingsIncomeEditActivity extends AppCompatActivity implements
@@ -44,6 +43,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     private int mIncomeType;
     private int mAgeType = STOP_AGE;
     private SavingsIncomeViewModel mViewModel;
+    private boolean mSpouseIncluded;
 
     private Toolbar mToolbar;
     private CoordinatorLayout mCoordinatorLayout;
@@ -161,7 +161,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         mViewModel.get().observe(this, new Observer<SavingsViewData>() {
             @Override
             public void onChanged(@Nullable SavingsViewData viewData) {
-                FragmentManager fm ;
+                FragmentManager fm;
+                mSpouseIncluded = viewData.isSpouseIncluded();
                 mSD = viewData.getSavingsData();
                 switch(viewData.getStatus()) {
                     case EC_ONLY_TWO_SUPPORTED:
@@ -184,7 +185,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
             return;
         }
 
-        if(mSD.getOwner() == OWNER_SELF_ONLY) {
+        if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
         } else if(mSD.getOwner() == OWNER_SELF) {
             mOwnerTextView.setText("Self");

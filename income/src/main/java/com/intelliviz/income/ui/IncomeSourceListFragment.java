@@ -2,10 +2,8 @@ package com.intelliviz.income.ui;
 
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,11 +11,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.transition.Slide;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -144,6 +140,8 @@ public class IncomeSourceListFragment extends Fragment implements
             }
         });
 
+        mStatus = 0;
+
         return view;
     }
 
@@ -195,17 +193,15 @@ public class IncomeSourceListFragment extends Fragment implements
 
     @Override
     public void onSelectIncomeSource(AbstractIncomeSource incomeSource, boolean showMenu) {
-        mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(incomeSource);
         if(showMenu) {
             // show edit/delete menu
             Slide slide = new Slide(Gravity.RIGHT);
             slide.setDuration(1000);
-
-
             Intent intent = new Intent(getContext(), IncomeSourceListMenuFragment.class);
             startActivityForResult(intent, REQUEST_INCOME_MENU);
             getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
         } else {
+            mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(incomeSource);
             if(mSelectedIncomeSource != null) {
                 mSelectedIncomeSource.startDetailsActivity(getContext());
             }
@@ -254,34 +250,6 @@ public class IncomeSourceListFragment extends Fragment implements
         if (mIncomeAction == INCOME_ACTION_DELETE && mSelectedIncomeSource.getId() != 0) {
             mViewModel.delete(mSelectedIncomeSource.getIncomeSourceEntity());
             //mViewModel.updateAppWidget();
-        }
-    }
-
-    public static class MyAlertDialog extends DialogFragment {
-        public static MyAlertDialog newInstance(String title, String message) {
-            MyAlertDialog fragment = new MyAlertDialog();
-            Bundle args = new Bundle();
-            args.putString("title", title);
-            args.putString("message", message);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            String title = getArguments().getString("title");
-            String message = getArguments().getString("message");
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle(title);
-            alertDialogBuilder.setMessage(message);
-            alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int i) {
-                    dialog.dismiss();
-                }
-            });
-
-            return alertDialogBuilder.create();
         }
     }
 

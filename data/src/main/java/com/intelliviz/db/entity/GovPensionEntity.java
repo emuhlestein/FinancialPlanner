@@ -8,6 +8,7 @@ import android.arch.persistence.room.TypeConverters;
 import com.intelliviz.lowlevel.data.AgeData;
 
 import static com.intelliviz.db.entity.GovPensionEntity.TABLE_NAME;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
 
 /**
  * Database table for government pension income source.
@@ -19,7 +20,6 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     public static final String TABLE_NAME = "gov_pension_income";
     private static final String MONTHLY_BENEFIT_FIELD = "full_monthly_benefit";
     private static final String START_AGE_FIELD = "start_age";
-    private static final String SPOUSE_FIELD = "spouse";
 
     @ColumnInfo(name = MONTHLY_BENEFIT_FIELD)
     private String mFullMonthlyBenefit;
@@ -28,15 +28,11 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     @ColumnInfo(name = START_AGE_FIELD)
     private AgeData mStartAge;
 
-    @ColumnInfo(name = SPOUSE_FIELD)
-    private int mSpouse;
-
     @Ignore
     public GovPensionEntity(long id, int type) {
-        super(id, type, "", 1);
+        super(id, type, "", OWNER_SELF);
         mFullMonthlyBenefit = "0";
         mStartAge = new AgeData(0);
-        mSpouse = 0;
     }
 
     /**
@@ -46,13 +42,11 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
      * @param name Name of income source.
      * @param fullMonthlyBenefit Monthly benefit when full retirement age is reached.
      * @param startAge The age at which to start receiving benefits.
-     * @param spouse 1 if this is a spouse. 0 otherwise.
      */
-    public GovPensionEntity(long id, int type, String name, int owner, String fullMonthlyBenefit, AgeData startAge, int spouse) {
+    public GovPensionEntity(long id, int type, String name, int owner, String fullMonthlyBenefit, AgeData startAge) {
         super(id, type, name, owner);
         mFullMonthlyBenefit = fullMonthlyBenefit;
         mStartAge = startAge;
-        mSpouse = spouse;
     }
 
     /**
@@ -70,13 +64,4 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
     public void setStartAge(AgeData startAge) {
         mStartAge = startAge;
     }
-
-    public int getSpouse() {
-        return mSpouse;
-    }
-
-    public void setSpouse(int spouse) {
-        mSpouse = spouse;
-    }
-
 }

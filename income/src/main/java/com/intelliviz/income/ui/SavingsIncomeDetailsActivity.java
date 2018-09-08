@@ -35,7 +35,6 @@ import java.util.List;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_OWNER;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class SavingsIncomeDetailsActivity extends AppCompatActivity {
@@ -45,6 +44,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
     private SavingsIncomeViewModel mViewModel;
     private SavingsData mSD;
     private long mId;
+    private boolean mSpouseIncluded;
 
     private Toolbar mToolbar;
     private android.support.design.widget.AppBarLayout mAppBarLayout;
@@ -144,6 +144,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
         mViewModel.get().observe(this, new Observer<SavingsViewData>() {
             @Override
             public void onChanged(@Nullable SavingsViewData svd) {
+                mSpouseIncluded = svd.isSpouseIncluded();
                 mSD = svd.getSavingsData();
                 updateUI();
             }
@@ -188,7 +189,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             return;
         }
 
-        if(mSD.getOwner() == OWNER_SELF_ONLY) {
+        if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
         } else if(mSD.getOwner() == OWNER_SELF) {
             mOwnerTextView.setText("Self");

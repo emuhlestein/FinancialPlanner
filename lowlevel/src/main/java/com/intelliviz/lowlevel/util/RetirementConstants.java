@@ -112,9 +112,8 @@ public class RetirementConstants {
 
     // self
     public static final String EXTRA_OWNER_TYPE = "owner type";
-    public static final int OWNER_SELF_ONLY = 0; // no annotation
-    public static final int OWNER_SPOUSE = 1;    // annotation is spouse
-    public static final int OWNER_SELF = 2;      // annotation is self
+    public static final int OWNER_SPOUSE = 0;    // annotation is spouse
+    public static final int OWNER_SELF = 1;      // annotation is self
 
     public static final String EXTRA_DIALOG_RESPONSE = "dialog response";
 }

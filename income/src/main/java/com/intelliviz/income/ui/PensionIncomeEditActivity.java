@@ -31,7 +31,6 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPO
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
@@ -41,6 +40,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private PensionData mPD;
     private long mId;
     private PensionIncomeViewModel mViewModel;
+    private boolean mSpouseIncluded;
 
     private CoordinatorLayout mCoordinatorLayout;
     private EditText mIncomeSourceName;
@@ -120,6 +120,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                 if(viewData == null) {
                     return;
                 }
+                mSpouseIncluded = viewData.isSpouseIncluded();
                 mPD = viewData.getPensionData();
                 switch(viewData.getStatus()) {
                     case EC_ONLY_ONE_SUPPORTED:
@@ -143,7 +144,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             return;
         }
         String name = mPD.getName();
-        if(mPD.getOwner() == OWNER_SELF_ONLY) {
+        if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
         } else if(mPD.getOwner() == OWNER_SELF) {
             mOwnerTextView.setText("Self");

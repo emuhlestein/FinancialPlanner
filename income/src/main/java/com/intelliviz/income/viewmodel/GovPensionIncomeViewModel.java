@@ -35,16 +35,17 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
 
     public GovPensionIncomeViewModel(Application application,
                                      GovEntityRepo govRepo,
-                                     long incomeId) {
+                                     long incomeId,
+                                     int owner) {
         super(application);
         mRepo = govRepo;
         mSource = mRepo.getGovPensionDataEx();
-        subscribe(incomeId);
+        subscribe(incomeId, owner);
         mIncomeId = incomeId;
         //mRepo.load();
     }
 
-    private void subscribe(final long id) {
+    private void subscribe(final long id, final int owner) {
         //LiveData<GovPensionEx> gpe = mRepo.getEx();
         mViewData = Transformations.switchMap(mSource,
                 new Function<GovPensionEx, LiveData<GovPensionViewData>>() {
@@ -54,7 +55,7 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
                         RetirementOptions ro = RetirementOptionsMapper.map(input.getROE());
                         GovPensionHelper helper = new GovPensionHelper(getApplication(), gpeList, ro);
                         MutableLiveData<GovPensionViewData> ldata = new MutableLiveData();
-                        ldata.setValue(helper.get(id));
+                        ldata.setValue(helper.get(id, owner));
                         return ldata;
                     }
                 });
@@ -81,16 +82,18 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
         private final Application mApplication;
         private long mIncomeId;
         private GovEntityRepo mRepo;
+        private int mOwner;
 
-        public Factory(@NonNull Application application, GovEntityRepo repo, long incomeId) {
+        public Factory(@NonNull Application application, GovEntityRepo repo, long incomeId, int owner) {
             mApplication = application;
             mRepo = repo;
             mIncomeId = incomeId;
+            mOwner = owner;
         }
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new GovPensionIncomeViewModel(mApplication, mRepo, mIncomeId);
+            return (T) new GovPensionIncomeViewModel(mApplication, mRepo, mIncomeId, mOwner);
         }
     }
 }

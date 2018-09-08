@@ -34,6 +34,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_SPOUSE_BIRT
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_NOT_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
 import static com.intelliviz.lowlevel.util.SystemUtils.getFloatValue;
 
@@ -45,6 +47,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
     private long mId;
     private GovPensionIncomeViewModel mViewModel;
     private boolean mIsPrincipleSpouse;
+    private boolean mSpouseIncluded;
 
     private CoordinatorLayout mCoordinatorLayout;
     private EditText mName;
@@ -53,11 +56,14 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
     private EditText mFullMonthlyBenefit;
     private Toolbar mToolbar;
     private Button mAddIncomeSource;
+    private TextView mOwnerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_gov_pension_income);
+
+        mOwnerTextView = findViewById(R.id.owner_text);
 
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
         mName = findViewById(R.id.name_edit_text);
@@ -78,8 +84,10 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         mId = 0;
+        int owner = RetirementConstants.OWNER_SELF;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
+            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF);
         }
 
         mFullMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -98,7 +106,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
         });
 
         GovPensionIncomeViewModel.Factory factory = new
-                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId);
+                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId, owner);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeViewModel.class);
 
@@ -108,6 +116,8 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                 if(viewData == null) {
                     return;
                 }
+
+                mSpouseIncluded = viewData.isSpouseIncluded();
                 mGP = viewData.getGovPension();
                 mIsPrincipleSpouse = false;
                 switch(viewData.getStatus()) {
@@ -170,6 +180,14 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
     private void updateUI() {
         if(mGP == null) {
             return;
+        }
+
+        if(!mSpouseIncluded) {
+            mOwnerTextView.setVisibility(View.GONE);
+        } else if(mGP.getOwner() == OWNER_SELF) {
+            mOwnerTextView.setText("Self");
+        } else if(mGP.getOwner() == OWNER_SPOUSE) {
+            mOwnerTextView.setText("Spouse");
         }
 
         if(mIsPrincipleSpouse) {

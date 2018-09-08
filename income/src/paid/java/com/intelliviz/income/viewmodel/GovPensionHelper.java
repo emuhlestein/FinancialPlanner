@@ -13,10 +13,12 @@ import java.util.List;
 public class GovPensionHelper extends AbstractGovPensionHelper {
     private static final int MAX_GOV_PENSION = 2;
     private String EC_ONLY_TWO_SUPPORTED;
+    private boolean mSpouseIncluded;
 
     public GovPensionHelper(Application application, List<GovPensionEntity> gpeList, RetirementOptions ro) {
         super(application, gpeList, ro);
         EC_ONLY_TWO_SUPPORTED = application.getResources().getString(R.string.ec_only_two_social_security_allowed);
+        mSpouseIncluded = ro.getIncludeSpouse()==1;
     }
 
     @Override
@@ -34,4 +36,8 @@ public class GovPensionHelper extends AbstractGovPensionHelper {
         return EC_ONLY_TWO_SUPPORTED;
     }
 
+    @Override
+    public boolean isSpouseIncluded() {
+        return mSpouseIncluded;
+    }
 }

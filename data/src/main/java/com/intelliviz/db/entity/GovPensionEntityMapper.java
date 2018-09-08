@@ -11,14 +11,13 @@ public class GovPensionEntityMapper {
         GovPension govPension = new GovPension(gpe.getId(), gpe.getType(), gpe.getName(), gpe.getOwner());
         govPension.setPrincipleSpouse(false); // TODO maybe need to remove principle spouse
         govPension.setFullMonthlyBenefit(gpe.getFullMonthlyBenefit());
-        govPension.setSpouse(gpe.getSpouse() == 1 ? true : false);
         govPension.setStartAge(gpe.getStartAge());
         return govPension;
     }
 
     public static GovPensionEntity map(GovPension gp) {
         GovPensionEntity gpe = new GovPensionEntity(gp.getId(), gp.getType(), gp.getName(), gp.getOwner(),
-                gp.getFullMonthlyBenefit(), gp.getStartAge(), gp.isSpouse() ? 1 : 0);
+                gp.getFullMonthlyBenefit(), gp.getStartAge());
         return gpe;
     }
 }

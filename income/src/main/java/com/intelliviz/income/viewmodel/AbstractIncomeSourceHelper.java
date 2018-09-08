@@ -27,20 +27,16 @@ import java.util.List;
 
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
 
-public class IncomeSourceHelper {
+public abstract class AbstractIncomeSourceHelper {
     private List<IncomeSourceEntityBase> mIncomeList;
     private RetirementOptions mRO;
 
-    IncomeSourceHelper(List<IncomeSourceEntityBase> incomeList, RetirementOptions ro) {
+    AbstractIncomeSourceHelper(List<IncomeSourceEntityBase> incomeList, RetirementOptions ro) {
         mIncomeList = incomeList;
         mRO = ro;
     }
 
-    // TODO this needs to be abstract so free version won't include spouse
-    // TODO hence th is calss needs to be abstract
-    public boolean isSpouseIncluded() {
-        return(mRO.getIncludeSpouse() == 1);
-    }
+    public abstract boolean isSpouseIncluded();
 
     public LiveData<IncomeSourceViewData> get() {
         int status = 0;
