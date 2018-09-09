@@ -47,12 +47,18 @@ public abstract class AbstractSavingsIncomeHelper {
         SavingsData sd = new SavingsData(0, incomeType, "", RetirementConstants.OWNER_SELF,
                 new AgeData(65, 0), "0", "0", "0", new AgeData(65, 0), "0", "0", 0);
         IncomeTypeRules sr;
+
+        int status = RetirementConstants.EC_NO_ERROR;
+        if(isSpouseIncluded()) {
+            status = RetirementConstants.EC_SPOUSE_INCLUDED;
+        }
+
         if(incomeType == RetirementConstants.INCOME_TYPE_401K) {
             sr = new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
         } else {
             sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
         }
         sd.setRules(sr);
-        return new SavingsViewData(sd, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
+        return new SavingsViewData(sd, isSpouseIncluded(), status, "");
     }
 }
