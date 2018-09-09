@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/title_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8sp"
+        android:textSize="22sp"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/title_view"
+        android:background="@drawable/separator" />
+
+    <TextView
+        android:id="@+id/message_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider"
+        android:layout_marginBottom="16dp"
+        android:textSize="22sp"/>
+
+    <Button
+        android:id="@+id/positive_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/message_view"
+        android:textSize="22sp"/>
+
+    <Button
+        android:id="@+id/neutral_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/message_view"
+        android:layout_toStartOf="@+id/positive_button"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/negative_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/message_view"
+        android:layout_toStartOf="@+id/neutral_button"
+        android:textSize="22sp" />
+
+</RelativeLayout>

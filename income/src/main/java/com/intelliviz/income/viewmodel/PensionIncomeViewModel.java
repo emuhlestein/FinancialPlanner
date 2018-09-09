@@ -28,18 +28,18 @@ public class PensionIncomeViewModel extends AndroidViewModel {
     private PensionIncomeEntityRepo mRepo;
     private LiveData<PensionDataEx> mSource;
 
-    public PensionIncomeViewModel(Application application, long incomeId, int owner) {
+    public PensionIncomeViewModel(Application application, long incomeId) {
         super(application);
         mRepo = PensionIncomeEntityRepo.getInstance(application);
         mSource = mRepo.getPensionDataEx(incomeId);
-        subscribe(incomeId, owner);
+        subscribe(incomeId);
     }
 
     public LiveData<PensionViewData> get() {
         return mViewData;
     }
 
-    private void subscribe(final long id, final int owner) {
+    private void subscribe(final long id) {
         mViewData = Transformations.switchMap(mSource,
                 new Function<PensionDataEx, LiveData<PensionViewData>>() {
                     @Override
@@ -52,7 +52,7 @@ public class PensionIncomeViewModel extends AndroidViewModel {
                         }
                         PensionIncomeHelper helper = new PensionIncomeHelper(getApplication(), pd, ro, input.getNumRecords());
                         MutableLiveData<PensionViewData> ldata = new MutableLiveData();
-                        ldata.setValue(helper.get(id, owner));
+                        ldata.setValue(helper.get(id));
                         return ldata;
                     }
                 });
@@ -73,17 +73,15 @@ public class PensionIncomeViewModel extends AndroidViewModel {
         @NonNull
         private final Application mApplication;
         private long mIncomeId;
-        private int mOwner;
 
-        public Factory(@NonNull Application application, long incomeId, int owner) {
+        public Factory(@NonNull Application application, long incomeId) {
             mApplication = application;
             mIncomeId = incomeId;
-            mOwner = owner;
         }
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new PensionIncomeViewModel(mApplication, mIncomeId, mOwner);
+            return (T) new PensionIncomeViewModel(mApplication, mIncomeId);
         }
     }
 

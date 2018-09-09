@@ -31,16 +31,16 @@ public class IncomeSourceFactory {
         }
     }
 
-    public static IncomeSource createIncomeSource(int type, int self) {
+    public static IncomeSource createIncomeSource(int type) {
         switch(type) {
             case INCOME_TYPE_GOV_PENSION:
-                return new GovPensionIncomeSource(new GovPension(0, type, self));
+                return new GovPensionIncomeSource(new GovPension(0, type));
             case INCOME_TYPE_401K:
-                return new SavingsIncomeSource(new SavingsData(0, type, self));
+                return new SavingsIncomeSource(new SavingsData(0, type));
             case INCOME_TYPE_SAVINGS:
-                return new SavingsIncomeSource(new SavingsData(0, type, self));
+                return new SavingsIncomeSource(new SavingsData(0, type));
             case INCOME_TYPE_PENSION:
-                return new PensionIncomeSource(new PensionData(0, type, self));
+                return new PensionIncomeSource(new PensionData(0, type));
             default:
                 return null;
         }

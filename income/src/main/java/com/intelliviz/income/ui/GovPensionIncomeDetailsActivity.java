@@ -79,10 +79,8 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
 
         Intent intent = getIntent();
         mId = 0;
-        int owner = RetirementConstants.OWNER_SELF;
         if(intent != null) {
             mId = intent.getLongExtra(RetirementConstants.EXTRA_INCOME_SOURCE_ID, 0);
-            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF);
         }
 
         // The FAB will pop up an activity to allow a new income source to be edited
@@ -101,7 +99,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
         //        linearLayoutManager.getOrientation()));
         GovPensionIncomeViewModel.Factory factory = new
-                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId, owner);
+                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeViewModel.class);
 

@@ -23,11 +23,11 @@ public abstract class AbstractSavingsIncomeHelper {
     public abstract String getOnlyOneSupportedErrorMessage();
     public abstract boolean isSpouseIncluded();
 
-    public SavingsViewData get(final long id, final int incomeType, int owner) {
+    public SavingsViewData get(final long id, final int incomeType) {
         if (id == 0) {
             if (canCreateNewIncomeSource()) {
                 // create default pension income source
-                return createDefault(incomeType, owner);
+                return createDefault(incomeType);
             } else {
                 return new SavingsViewData(null, isSpouseIncluded(), getOnlyOneSupportedErrorCode(), getOnlyOneSupportedErrorMessage());
             }
@@ -43,8 +43,8 @@ public abstract class AbstractSavingsIncomeHelper {
         }
     }
 
-    private SavingsViewData createDefault(final int incomeType, final int owner) {
-        SavingsData sd = new SavingsData(0, incomeType, "", owner,
+    private SavingsViewData createDefault(final int incomeType) {
+        SavingsData sd = new SavingsData(0, incomeType, "", RetirementConstants.OWNER_SELF,
                 new AgeData(65, 0), "0", "0", "0", new AgeData(65, 0), "0", "0", 0);
         IncomeTypeRules sr;
         if(incomeType == RetirementConstants.INCOME_TYPE_401K) {

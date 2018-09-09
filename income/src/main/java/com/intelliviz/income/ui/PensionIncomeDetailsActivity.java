@@ -73,10 +73,8 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mId = 0;
-        int owner = RetirementConstants.OWNER_SELF;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
-            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF);
         }
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
@@ -118,7 +116,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         });
 
         PensionIncomeViewModel.Factory factory = new
-                PensionIncomeViewModel.Factory(getApplication(), mId, owner);
+                PensionIncomeViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeViewModel.class);
 

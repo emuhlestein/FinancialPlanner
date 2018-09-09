@@ -27,7 +27,6 @@ public class GovPensionIncomeSource implements IncomeSource {
         Intent intent = new Intent(activity, GovPensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
-        intent.putExtra(EXTRA_INCOME_OWNER, mIncomeSourceEntity.getOwner());
         activity.startActivity(intent);
     }
 

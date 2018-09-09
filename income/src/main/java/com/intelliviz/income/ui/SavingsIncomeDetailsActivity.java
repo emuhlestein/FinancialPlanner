@@ -32,7 +32,6 @@ import com.intelliviz.lowlevel.util.SystemUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_OWNER;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
@@ -81,10 +80,8 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mId = 0;
-        int owner = RetirementConstants.OWNER_SELF;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
-            owner = intent.getIntExtra(EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF);
         }
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
@@ -130,7 +127,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
         });
 
         SavingsIncomeViewModel.Factory factory = new
-                SavingsIncomeViewModel.Factory(getApplication(), mId, 0, owner);
+                SavingsIncomeViewModel.Factory(getApplication(), mId, 0);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(SavingsIncomeViewModel.class);
 

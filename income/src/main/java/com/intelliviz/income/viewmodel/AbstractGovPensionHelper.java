@@ -31,7 +31,7 @@ public abstract class AbstractGovPensionHelper {
     public abstract String getSupportedSpouseErrorMessage();
     public abstract boolean isSpouseIncluded();
 
-    public GovPensionViewData get(long id, int owner) {
+    public GovPensionViewData get(long id) {
 
         List<GovPension> gpList = new ArrayList<>();
         for(GovPensionEntity gpe : mGpeList) {
@@ -42,7 +42,7 @@ public abstract class AbstractGovPensionHelper {
         // if id is 0, we're adding a new default record
         if(id == 0) {
             if (gpList.isEmpty()) {
-                GovPension gp = createDefault(owner);
+                GovPension gp = createDefault();
                 gpList.add(gp);
                 SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
                 return new GovPensionViewData(gp, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
@@ -51,7 +51,7 @@ public abstract class AbstractGovPensionHelper {
                 if(mRO.getSpouseBirthdate().equals("0")) {
                     return new GovPensionViewData(null, isSpouseIncluded(), RetirementConstants.EC_NO_SPOUSE_BIRTHDATE, EC_NO_SPOUSE_BIRTHDATE);
                 } else {
-                    GovPension gp = createDefault(owner);
+                    GovPension gp = createDefault();
                     gpList.add(gp);
                     SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
                     return new GovPensionViewData(gp, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
@@ -82,8 +82,8 @@ public abstract class AbstractGovPensionHelper {
         }
     }
 
-    private GovPension createDefault(int owner) {
-        return new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "", owner,
+    private GovPension createDefault() {
+        return new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "", RetirementConstants.OWNER_SELF,
                 "0", new AgeData(65, 0), false);
     }
 }

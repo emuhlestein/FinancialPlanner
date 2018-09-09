@@ -27,7 +27,6 @@ public class SavingsIncomeSource implements IncomeSource {
         Intent intent = new Intent(activity, SavingsIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, 0);
         intent.putExtra(EXTRA_INCOME_TYPE, mIncomeSourceEntity.getType());
-        intent.putExtra(EXTRA_INCOME_OWNER, mIncomeSourceEntity.getOwner());
         activity.startActivity(intent);
     }
 

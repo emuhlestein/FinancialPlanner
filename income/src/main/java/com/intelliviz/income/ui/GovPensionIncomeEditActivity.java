@@ -23,16 +23,20 @@ import com.intelliviz.income.data.GovPensionViewData;
 import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
+import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.GovEntityRepo;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_NOT_SUPPORTED;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_NOT_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
@@ -41,7 +45,7 @@ import static com.intelliviz.lowlevel.util.SystemUtils.getFloatValue;
 
 
 public class GovPensionIncomeEditActivity extends AppCompatActivity implements
-        AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse, BirthdateDialog.BirthdateDialogListener {
+        AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse, NewMessageDialog.DialogResponse, BirthdateDialog.BirthdateDialogListener {
 
     private GovPension mGP;
     private long mId;
@@ -84,10 +88,8 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         mId = 0;
-        int owner = RetirementConstants.OWNER_SELF;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
-            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF);
         }
 
         mFullMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -106,7 +108,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
         });
 
         GovPensionIncomeViewModel.Factory factory = new
-                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId, owner);
+                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(GovPensionIncomeViewModel.class);
 
@@ -156,6 +158,11 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                         fm = getSupportFragmentManager();
                         dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_SPOUSE_NOT_SUPPORTED, true, null, null);
                         dialog.show(fm, "message");
+                        break;
+                    case EC_SPOUSE_INCLUDED:
+                        fm = getSupportFragmentManager();
+                        NewMessageDialog newdialog = NewMessageDialog.newInstance(EC_FOR_SELF_OR_SPOUSE, "Income Source", "Is this income source for spouse or self?", "Self", "Spouse");
+                        newdialog.show(fm, "message");
                         break;
                 }
                 updateUI();
@@ -289,6 +296,23 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
             finish();
         } else {
             mViewModel.updateSpouseBirthdate(birthdate);
+        }
+    }
+
+    @Override
+    public void onGetResponse(int id, int button) {
+        switch (id) {
+            case EC_ONLY_ONE_SUPPORTED:
+                finish();
+                break;
+            case EC_FOR_SELF_OR_SPOUSE:
+                if (button == NewMessageDialog.POS_BUTTON) {
+                    mGP.setOwner(RetirementConstants.OWNER_SELF);
+                } else if(button == NewMessageDialog.NEG_BUTTON) {
+                    mGP.setOwner(RetirementConstants.OWNER_SPOUSE);
+                }
+                updateUI();
+                break;
         }
     }
 }

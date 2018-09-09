@@ -19,8 +19,8 @@ public class PensionData extends AbstractIncomeSource {
     private int mBenefitInfo;
     private PensionRules mRules;
 
-    public PensionData(long id, int type, int self) {
-        this(id, type, "", self);
+    public PensionData(long id, int type) {
+        this(id, type, "", RetirementConstants.OWNER_SELF);
     }
 
     public PensionData(long id, int type, String name, int self) {

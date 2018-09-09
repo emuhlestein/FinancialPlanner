@@ -24,18 +24,22 @@ import com.intelliviz.income.data.SavingsViewData;
 import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
+import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_TWO_SUPPORTED;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_TYPE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class SavingsIncomeEditActivity extends AppCompatActivity implements
-        AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse {
+        AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse, NewMessageDialog.DialogResponse {
     private static final int START_AGE = 0;
     private static final int STOP_AGE = 1;
     private SavingsData mSD;
@@ -94,11 +98,9 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         mId = 0;
-        int owner = RetirementConstants.OWNER_SELF;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
             mIncomeType = intent.getIntExtra(EXTRA_INCOME_TYPE, 0);
-            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF);
         }
 
         mSD = null;
@@ -154,7 +156,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         });
 
         SavingsIncomeViewModel.Factory factory = new
-                SavingsIncomeViewModel.Factory(getApplication(), mId, mIncomeType, owner);
+                SavingsIncomeViewModel.Factory(getApplication(), mId, mIncomeType);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(SavingsIncomeViewModel.class);
 
@@ -173,6 +175,11 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
                         }
                         MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), viewData.getStatus(), true, null, null);
                         dialog.show(fm, "message");
+                        break;
+                    case EC_SPOUSE_INCLUDED:
+                        fm = getSupportFragmentManager();
+                        NewMessageDialog newdialog = NewMessageDialog.newInstance(EC_FOR_SELF_OR_SPOUSE, "Income Source", "Is this income source for spouse or self?", "Self", "Spouse");
+                        newdialog.show(fm, "message");
                         break;
                 }
                 updateUI();
@@ -382,6 +389,23 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         } else {
             // terminate activity
             finish();
+        }
+    }
+
+    @Override
+    public void onGetResponse(int id, int button) {
+        switch (id) {
+            case EC_ONLY_ONE_SUPPORTED:
+                finish();
+                break;
+            case EC_FOR_SELF_OR_SPOUSE:
+                if (button == NewMessageDialog.POS_BUTTON) {
+                    mSD.setOwner(RetirementConstants.OWNER_SELF);
+                } else if(button == NewMessageDialog.NEG_BUTTON) {
+                    mSD.setOwner(RetirementConstants.OWNER_SPOUSE);
+                }
+                updateUI();
+                break;
         }
     }
 }

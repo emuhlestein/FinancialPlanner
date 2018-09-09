@@ -21,11 +21,11 @@ public abstract class AbstractPensionIncomeHelper {
     public abstract String getOnlyOneSupportedErrorMessage();
     public abstract boolean isSpouseIncluded();
 
-    public PensionViewData get(long id, int owner) {
+    public PensionViewData get(long id) {
         if (id == 0) {
             if (canCreateNewIncomeSource()) {
                 // create default pension income source
-                return createDefault(owner);
+                return createDefault();
             } else {
                 return new PensionViewData(null, isSpouseIncluded(), getOnlyOneSupportedErrorCode(), getOnlyOneSupportedErrorMessage());
             }
@@ -36,11 +36,16 @@ public abstract class AbstractPensionIncomeHelper {
         }
     }
 
-    private PensionViewData createDefault(int owner) {
-        PensionData pd = new PensionData(0, RetirementConstants.INCOME_TYPE_PENSION, "", owner,
+    private PensionViewData createDefault() {
+        PensionData pd = new PensionData(0, RetirementConstants.INCOME_TYPE_PENSION, "", RetirementConstants.OWNER_SELF,
                 new AgeData(65, 0), "0", 0);
         PensionRules pr = new PensionRules(mRO.getBirthdate(),  mRO.getEndAge(), mRO.getSpouseBirthdate());
         pd.setRules(pr);
-        return new PensionViewData(pd, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
+
+        int status = RetirementConstants.EC_NO_ERROR;
+        if(isSpouseIncluded()) {
+            status = RetirementConstants.EC_SPOUSE_INCLUDED;
+        }
+        return new PensionViewData(pd, isSpouseIncluded(), status, "");
     }
 }

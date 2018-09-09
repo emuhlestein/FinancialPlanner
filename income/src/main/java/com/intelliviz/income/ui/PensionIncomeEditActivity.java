@@ -1,6 +1,5 @@
 package com.intelliviz.income.ui;
 
-import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -22,12 +21,14 @@ import com.intelliviz.income.data.PensionViewData;
 import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
+import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
@@ -35,7 +36,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
 public class PensionIncomeEditActivity extends AppCompatActivity implements
-        AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse {
+        AgeDialog.OnAgeEditListener, NewMessageDialog.DialogResponse {
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
     private PensionData mPD;
     private long mId;
@@ -84,10 +85,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         mId = 0;
-        int owner = RetirementConstants.OWNER_SELF;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
-            owner = intent.getIntExtra(RetirementConstants.EXTRA_INCOME_OWNER, RetirementConstants.OWNER_SELF);
         }
 
         mPD = null;
@@ -108,7 +107,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         });
 
         PensionIncomeViewModel.Factory factory = new
-                PensionIncomeViewModel.Factory(getApplication(), mId, owner);
+                PensionIncomeViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
                 get(PensionIncomeViewModel.class);
 
@@ -128,11 +127,11 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                         MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_ONLY_ONE_SUPPORTED, true, null, null);
                         dialog.show(fm, "message");
                         break;
-//                    case EC_NO_ERROR:
-//                        fm = getSupportFragmentManager();
-//                        dialog = MessageDialog.newInstance("Query", "Is this income source for spouse or self?", EC_FOR_SELF_OR_SPOUSE, false, "Spouse", "Self");
-//                        dialog.show(fm, "message");
-//                        break;
+                    case EC_SPOUSE_INCLUDED:
+                        fm = getSupportFragmentManager();
+                        NewMessageDialog newdialog = NewMessageDialog.newInstance(EC_FOR_SELF_OR_SPOUSE, "Income Source", "Is this income source for spouse or self?", "Self", "Spouse");
+                        newdialog.show(fm, "message");
+                        break;
                 }
                 updateUI();
             }
@@ -194,23 +193,19 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onGetResponse(int response, int id, boolean isOk) {
-        if (response == Activity.RESULT_OK) {
+    public void onGetResponse(int id, int button) {
             switch (id) {
                 case EC_ONLY_ONE_SUPPORTED:
                     finish();
                     break;
                 case EC_FOR_SELF_OR_SPOUSE:
-                    if(isOk) {
-                        mPD.setOwner(1);
-                    } else {
-                        mPD.setOwner(0);
+                    if (button == NewMessageDialog.POS_BUTTON) {
+                        mPD.setOwner(RetirementConstants.OWNER_SELF);
+                    } else if(button == NewMessageDialog.NEG_BUTTON) {
+                        mPD.setOwner(RetirementConstants.OWNER_SPOUSE);
                     }
+                    updateUI();
                     break;
             }
-        } else {
-            // terminate activity
-            finish();
-        }
     }
 }
