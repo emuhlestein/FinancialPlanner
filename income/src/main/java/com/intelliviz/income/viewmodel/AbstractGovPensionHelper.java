@@ -42,7 +42,7 @@ public abstract class AbstractGovPensionHelper {
         // if id is 0, we're adding a new default record
         if(id == 0) {
             if (gpList.isEmpty()) {
-                GovPension gp = createDefault();
+                GovPension gp = createDefault(RetirementConstants.OWNER_SELF);
                 gpList.add(gp);
                 SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
                 int status = RetirementConstants.EC_NO_ERROR;
@@ -50,20 +50,21 @@ public abstract class AbstractGovPensionHelper {
                     status = RetirementConstants.EC_SPOUSE_INCLUDED;
                 }
                 return new GovPensionViewData(gp, isSpouseIncluded(), status, "");
-            } else if(gpList.size() < getMaxGovPensions()) {
-                // second one is a spouse
-                if(mRO.getSpouseBirthdate().equals("0")) {
-                    return new GovPensionViewData(null, isSpouseIncluded(), RetirementConstants.EC_NO_SPOUSE_BIRTHDATE, EC_NO_SPOUSE_BIRTHDATE);
-                } else {
-                    GovPension gp = createDefault();
-                    gpList.add(gp);
-                    SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
-                    int status = RetirementConstants.EC_NO_ERROR;
-                    if(isSpouseIncluded()) {
-                        status = RetirementConstants.EC_SPOUSE_INCLUDED;
-                    }
-                    return new GovPensionViewData(gp, isSpouseIncluded(), status, "");
+            } else if (gpList.size() < getMaxGovPensions()) {
+                if (!isSpouseIncluded()) {
+                    return new GovPensionViewData(null, isSpouseIncluded(), getSupportedSpouseErrorCode(), getSupportedSpouseErrorMessage());
                 }
+                GovPension govPension = gpList.get(0);
+                GovPension gp;
+                if (govPension.getOwner() == RetirementConstants.OWNER_SELF) {
+                    gp = createDefault(RetirementConstants.OWNER_SPOUSE);
+                } else {
+                    gp = createDefault(RetirementConstants.OWNER_SELF);
+                }
+                gpList.add(gp);
+                SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
+                int status = RetirementConstants.EC_NO_ERROR;
+                return new GovPensionViewData(gp, isSpouseIncluded(), status, "");
             } else {
                 return new GovPensionViewData(null, isSpouseIncluded(), getSupportedSpouseErrorCode(), getSupportedSpouseErrorMessage());
             }
@@ -90,8 +91,8 @@ public abstract class AbstractGovPensionHelper {
         }
     }
 
-    private GovPension createDefault() {
-        return new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "", RetirementConstants.OWNER_SELF,
+    private GovPension createDefault(int owner) {
+        return new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "", owner,
                 "0", new AgeData(65, 0), false);
     }
 }

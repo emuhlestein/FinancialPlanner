@@ -109,6 +109,7 @@ public class RetirementConstants {
     public static final int EC_ONLY_TWO_SUPPORTED = 7;
     public static final int EC_FOR_SELF_OR_SPOUSE = 8;
     public static final int EC_SPOUSE_INCLUDED = 9;
+    public static final int EC_ONLY_ONE_SOCIAL_SECURITY = 10;
 
     // self
     public static final String EXTRA_OWNER_TYPE = "owner type";

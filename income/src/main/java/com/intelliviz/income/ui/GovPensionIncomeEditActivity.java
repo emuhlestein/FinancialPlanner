@@ -32,7 +32,9 @@ import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_ERROR;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SOCIAL_SECURITY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
@@ -163,6 +165,13 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                         fm = getSupportFragmentManager();
                         NewMessageDialog newdialog = NewMessageDialog.newInstance(EC_FOR_SELF_OR_SPOUSE, "Income Source", "Is this income source for spouse or self?", "Self", "Spouse");
                         newdialog.show(fm, "message");
+                        break;
+                    case EC_ONLY_ONE_SOCIAL_SECURITY:
+                        fm = getSupportFragmentManager();
+                        newdialog = NewMessageDialog.newInstance(EC_ONLY_ONE_SOCIAL_SECURITY, "Income Source", "You can only have one social security income source for yourself", "Ok");
+                        newdialog.show(fm, "message");
+                        break;
+                    case EC_NO_ERROR:
                         break;
                 }
                 updateUI();
