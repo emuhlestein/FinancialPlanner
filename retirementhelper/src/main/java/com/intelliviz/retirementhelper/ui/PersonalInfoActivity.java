@@ -257,6 +257,7 @@ public class PersonalInfoActivity extends AppCompatActivity implements
                 snackbar.show();
                 return;
             }
+            mROE.setSpouseBirthdate(spouseBirthdate);
         }
 
         if(mPersonalInfoDialogAction != null) {
@@ -273,7 +274,6 @@ public class PersonalInfoActivity extends AppCompatActivity implements
         }
 
         mROE.setIncludeSpouse(includeSpouse);
-        mROE.setSpouseBirthdate(spouseBirthdate);
         mROE.setBirthdate(birthdate);
         mViewModel.update(mROE);
 
