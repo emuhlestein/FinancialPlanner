@@ -175,6 +175,7 @@ public class IncomeSourceListFragment extends Fragment implements
 
     @Override
     public void onSelectIncomeSource(AbstractIncomeSource incomeSource, boolean showMenu) {
+        mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(incomeSource);
         if(showMenu) {
             // show edit/delete menu
             Slide slide = new Slide(Gravity.RIGHT);
@@ -183,7 +184,6 @@ public class IncomeSourceListFragment extends Fragment implements
             startActivityForResult(intent, REQUEST_INCOME_MENU);
             getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
         } else {
-            mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(incomeSource);
             if(mSelectedIncomeSource != null) {
                 mSelectedIncomeSource.startDetailsActivity(getContext());
             }
@@ -201,7 +201,7 @@ public class IncomeSourceListFragment extends Fragment implements
 
     private void onHandleIncomeMenuSourceAction(Intent resultIntent) {
         int action = resultIntent.getIntExtra(EXTRA_INCOME_SOURCE_ACTION, INCOME_ACTION_VIEW);
-        if (mSelectedIncomeSource.getId() == 0) {
+        if (mSelectedIncomeSource != null && mSelectedIncomeSource.getId() == 0) {
             mSelectedIncomeSource = null;
             return;
         }
