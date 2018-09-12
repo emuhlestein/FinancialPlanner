@@ -35,13 +35,12 @@ public class PensionIncomeEntityRepo {
     private PensionIncomeEntityRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
         new GetListAsyncTask().execute();
+        mPdEx = new MutableLiveData<>();
     }
 
     public MutableLiveData<PensionDataEx> getPensionDataEx(long id) {
-        MutableLiveData<PensionDataEx> pensionDataEx = new MutableLiveData<>();
-        mPdEx = pensionDataEx;
         load(id);
-        return pensionDataEx;
+        return mPdEx;
     }
 
     public void load(long id) {

@@ -41,12 +41,14 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
     private LiveData<SavingsDataEx> mSource;
     private SavingsIncomeEntityRepo mRepo;
     private LiveData<List<IncomeDetails>> mIncomeDetailsList = new MutableLiveData<>();
+    private long mId;
 
     public SavingsIncomeViewModel(Application application, long incomeId, int incomeType) {
         super(application);
         mRepo = SavingsIncomeEntityRepo.getInstance(application);
         mSource = mRepo.getSavingsDataEx(incomeId);
         subscribe(incomeId, incomeType);
+        mId = incomeId;
     }
 
     private void subscribe(final long id, final int incomeType) {
@@ -96,7 +98,7 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
     }
 
     public void update() {
-        //new GetBenefitDataListByIdAsyncTask().execute(mIncomeId);
+      mRepo.load(mId);
     }
 
     public void setData(SavingsData sie) {

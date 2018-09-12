@@ -24,15 +24,17 @@ import com.intelliviz.repo.PensionIncomeEntityRepo;
  */
 
 public class PensionIncomeViewModel extends AndroidViewModel {
-    private LiveData<PensionViewData> mViewData = new MutableLiveData<>();
+    private LiveData<PensionViewData> mViewData;
     private PensionIncomeEntityRepo mRepo;
     private LiveData<PensionDataEx> mSource;
+    private long mId;
 
     public PensionIncomeViewModel(Application application, long incomeId) {
         super(application);
         mRepo = PensionIncomeEntityRepo.getInstance(application);
         mSource = mRepo.getPensionDataEx(incomeId);
         subscribe(incomeId);
+        mId = incomeId;
     }
 
     public LiveData<PensionViewData> get() {
@@ -63,10 +65,7 @@ public class PensionIncomeViewModel extends AndroidViewModel {
     }
 
     public void update() {
-//        PensionData pd = mPD.getValue();
-//        if(pd != null) {
-//            mRepo.setData(PensionDataEntityMapper.map(pd));
-//        }
+        mRepo.load(mId);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
