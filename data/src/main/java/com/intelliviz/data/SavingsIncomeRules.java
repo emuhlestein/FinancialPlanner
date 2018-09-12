@@ -2,6 +2,10 @@ package com.intelliviz.data;
 
 import com.intelliviz.lowlevel.data.AgeData;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_EXHAUSTED;
+import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_GOOD;
+import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_LOW;
+
 /**
  * Created by edm on 10/19/2017.
  */
@@ -13,13 +17,17 @@ public class SavingsIncomeRules extends BaseSavingsIncomeRules implements Income
     }
 
     @Override
-    protected double getPenaltyAmount(AgeData age, double amount) {
-        return 0;
-    }
+    protected IncomeData createIncomeData(AgeData age, double monthlyAmount, double balance) {
+        int balanceState = BALANCE_STATE_GOOD;
+        if(balance == 0) {
+            balanceState = BALANCE_STATE_EXHAUSTED;
+        } else if(balance < monthlyAmount * 12) {
+            balanceState = BALANCE_STATE_LOW;
+        } else {
+            balanceState = BALANCE_STATE_GOOD;
+        }
 
-    @Override
-    protected boolean isPenalty(AgeData age) {
-        return false;
+        return new IncomeData(age, monthlyAmount, balance, balanceState);
     }
 
     @Override

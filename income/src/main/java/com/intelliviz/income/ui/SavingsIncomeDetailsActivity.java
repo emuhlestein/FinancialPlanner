@@ -143,6 +143,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             public void onChanged(@Nullable SavingsViewData svd) {
                 mSpouseIncluded = svd.isSpouseIncluded();
                 mSD = svd.getSavingsData();
+                mAdapter.update(svd.getIncomeDetail());
                 updateUI();
             }
         });

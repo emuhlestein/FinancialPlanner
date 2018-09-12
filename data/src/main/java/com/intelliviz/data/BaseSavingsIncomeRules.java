@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
-import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,15 +41,13 @@ public abstract class BaseSavingsIncomeRules {
      * @param ownerBirthDate The birthdate.
      * @param endAge    The end retirement age.
      */
-    public BaseSavingsIncomeRules(String ownerBirthDate, AgeData endAge, String otherBirthdate) {
+    BaseSavingsIncomeRules(String ownerBirthDate, AgeData endAge, String otherBirthdate) {
         mOwnerBirthdate = ownerBirthDate;
         mEndAge = endAge;
         mOtherBirthdate = otherBirthdate;
     }
 
-    protected abstract double getPenaltyAmount(AgeData age, double amount);
-
-    protected abstract boolean isPenalty(AgeData age);
+    protected abstract IncomeData createIncomeData(AgeData age, double monthlyAmount, double balance);
 
     protected abstract IncomeDataAccessor getIncomeDataAccessor();
 
@@ -107,7 +104,8 @@ public abstract class BaseSavingsIncomeRules {
                 balance = 0;
             }
 
-            listAmountDate.add(new IncomeData(age, monthlyWithdraw, 0, balance, 0, false));
+            listAmountDate.add(createIncomeData(age, monthlyWithdraw, balance));
+            //listAmountDate.add(new IncomeData(age, monthlyWithdraw, 0, balance, 0, false));
 
             if (age.isAfter(mStopAge)) {
                 monthlyDeposit = 0;
@@ -121,88 +119,74 @@ public abstract class BaseSavingsIncomeRules {
         return listAmountDate;
     }
 
-    public IncomeData getIncomeData(IncomeData benefitData) {
-        return getBenefitDataForNextYear(benefitData);
-    }
+//    public IncomeData getIncomeData(IncomeData benefitData) {
+//        return getBenefitDataForNextYear(benefitData);
+//    }
 
-    IncomeData getBenefitDataForNextYear(IncomeData benefitData) {
-        int numMonths = 1;
-        if (benefitData == null) {
-            return null; //getInitBenefitDataForNextMonth(new AgeData(mCurrentAge.getYear(), 0));
-        } else {
-            IncomeData bd = benefitData;
-            for (int month = 0; month < numMonths; month++) {
-                bd = getBenefitDataForNextMonth(bd.getAge(),
-                        bd.getBalance(), bd.getMonthlyAmountNoPenalty());
-            }
-            bd.setMonthlyAmount(bd.getMonthlyAmount() * (1 + mAnnualPercentIncrease / 100));
+//    private IncomeData getBenefitDataForNextYear(IncomeData benefitData) {
+//        int numMonths = 1;
+//        if (benefitData == null) {
+//            return null; //getInitBenefitDataForNextMonth(new AgeData(mCurrentAge.getYear(), 0));
+//        } else {
+//            IncomeData bd = benefitData;
+//            for (int month = 0; month < numMonths; month++) {
+//                bd = getBenefitDataForNextMonth(bd.getAge(),
+//                        bd.getBalance(), bd.getMonthlyAmountNoPenalty());
+//            }
+//            bd.setMonthlyAmount(bd.getMonthlyAmount() * (1 + mAnnualPercentIncrease / 100));
+//
+//            return bd;
+//        }
+//    }
+//
+//    private IncomeData getBenefitDataForNextMonth(AgeData age, double balance, double monthlyWithdrawAmount) {
+//        AgeData nextAge = new AgeData(age.getNumberOfMonths() + 1);
+//
+//        double monthlyDeposit;
+//        if (age.isBefore(mStopAge)) {
+//            monthlyDeposit = mMonthlyDeposit;
+//        } else {
+//            monthlyDeposit = 0;
+//        }
+//
+//        double monthlyInterest = mInterest / 1200.0; // TODO make member variable
+//
+//        balance = getBalance(balance, monthlyDeposit, monthlyInterest);
+//
+//        if (nextAge.isBefore(mStartAge)) {
+//            monthlyWithdrawAmount = 0;
+//        } else if (nextAge.getNumberOfMonths() == mStartAge.getNumberOfMonths()) {
+//            monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
+//        }
+//
+//        balance = balance - monthlyWithdrawAmount;
+//        int status = checkBalance(balance, monthlyWithdrawAmount);
+//        double penaltyAmount = getPenaltyAmount(nextAge, monthlyWithdrawAmount);
+//
+//        if (isPenalty(nextAge) && monthlyWithdrawAmount > 0) {
+//            status = getPenaltyStatus();
+//        }
+//        return new IncomeData(nextAge, monthlyWithdrawAmount, penaltyAmount, balance, status, isPenalty(nextAge));
+//    }
 
-            return bd;
-        }
-    }
-
-    IncomeData getInitBenefitDataForNextMonth(AgeData age) {
-        double monthlyWithdrawAmount = 0;
-        if (age.isBefore(mStartAge)) {
-            monthlyWithdrawAmount = 0;
-        } else if (age.getNumberOfMonths() == mStartAge.getNumberOfMonths()) {
-            monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(mBalance);
-        }
-
-        int status = checkBalance(mBalance, monthlyWithdrawAmount);
-        double penaltyAmount = getPenaltyAmount(age, monthlyWithdrawAmount);
-
-        return new IncomeData(age, monthlyWithdrawAmount, penaltyAmount, mBalance, status, isPenalty(age));
-    }
-
-    IncomeData getBenefitDataForNextMonth(AgeData age, double balance, double monthlyWithdrawAmount) {
-        AgeData nextAge = new AgeData(age.getNumberOfMonths() + 1);
-
-        double monthlyDeposit;
-        if (age.isBefore(mStopAge)) {
-            monthlyDeposit = mMonthlyDeposit;
-        } else {
-            monthlyDeposit = 0;
-        }
-
-        double monthlyInterest = mInterest / 1200.0; // TODO make member variable
-
-        balance = getBalance(balance, monthlyDeposit, monthlyInterest);
-
-        if (nextAge.isBefore(mStartAge)) {
-            monthlyWithdrawAmount = 0;
-        } else if (nextAge.getNumberOfMonths() == mStartAge.getNumberOfMonths()) {
-            monthlyWithdrawAmount = getInitMonthlyWithdrawAmount(balance);
-        }
-
-        balance = balance - monthlyWithdrawAmount;
-        int status = checkBalance(balance, monthlyWithdrawAmount);
-        double penaltyAmount = getPenaltyAmount(nextAge, monthlyWithdrawAmount);
-
-        if (isPenalty(nextAge) && monthlyWithdrawAmount > 0) {
-            status = RetirementConstants.BALANCE_STATE_LOW;
-        }
-        return new IncomeData(nextAge, monthlyWithdrawAmount, penaltyAmount, balance, status, isPenalty(nextAge));
-    }
-
-    private int checkBalance(double balance, double monthlyWithdrawAmount) {
-        if (balance == 0) {
-            return RetirementConstants.BALANCE_STATE_EXHAUSTED;
-        } else {
-            if (balance < monthlyWithdrawAmount * 12) {
-                return RetirementConstants.BALANCE_STATE_LOW;
-            } else {
-                return RetirementConstants.BALANCE_STATE_GOOD;
-            }
-        }
-    }
-
-    private static double getBalance(double balance, double monthlyDeposit, double monthlyInterest) {
-        double interestEarned = balance * monthlyInterest;
-        return monthlyDeposit + interestEarned + balance;
-    }
-
-    private double getInitMonthlyWithdrawAmount(double balance) {
-        return balance * mInitialWithdrawPercent / 1200;
-    }
+//    private int checkBalance(double balance, double monthlyWithdrawAmount) {
+//        if (balance == 0) {
+//            return RetirementConstants.BALANCE_STATE_EXHAUSTED;
+//        } else {
+//            if (balance < monthlyWithdrawAmount * 12) {
+//                return RetirementConstants.BALANCE_STATE_LOW;
+//            } else {
+//                return RetirementConstants.BALANCE_STATE_GOOD;
+//            }
+//        }
+//    }
+//
+//    private static double getBalance(double balance, double monthlyDeposit, double monthlyInterest) {
+//        double interestEarned = balance * monthlyInterest;
+//        return monthlyDeposit + interestEarned + balance;
+//    }
+//
+//    private double getInitMonthlyWithdrawAmount(double balance) {
+//        return balance * mInitialWithdrawPercent / 1200;
+//    }
 }

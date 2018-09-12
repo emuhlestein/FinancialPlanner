@@ -2,6 +2,10 @@ package com.intelliviz.data;
 
 import com.intelliviz.lowlevel.data.AgeData;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_EXHAUSTED;
+import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_GOOD;
+import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_LOW;
+
 /**
  * Created by edm on 10/18/2017.
  */
@@ -18,22 +22,39 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
         mPenalty = PENALTY_PERCENT;
     }
 
-    @Override
-    protected double getPenaltyAmount(AgeData age, double amount) {
-        if(age.isBefore(PENALTY_AGE)) {
+    private double getPenaltyAmount(AgeData age, double amount) {
+        if(isPenalty(age)) {
             return amount * PENALTY_PERCENT / 1200;
         } else {
             return 0;
         }
     }
 
-    @Override
-    protected boolean isPenalty(AgeData age) {
+    private boolean isPenalty(AgeData age) {
         if(age.isBefore(PENALTY_AGE)) {
             return true;
         } else {
             return false;
         }
+    }
+    
+    @Override
+    protected IncomeData createIncomeData(AgeData age, double monthlyAmount, double balance) {
+        boolean isPenalty = isPenalty(age);
+
+        if(isPenalty) {
+            double penalyAmount = getPenaltyAmount(age, monthlyAmount);
+            monthlyAmount -= penalyAmount;
+        }
+
+        int balanceState = BALANCE_STATE_GOOD;
+        if(balance == 0) {
+            balanceState = BALANCE_STATE_EXHAUSTED;
+        } else if(balance < monthlyAmount * 12) {
+            balanceState = BALANCE_STATE_LOW;
+        }
+
+        return new IncomeData(age, monthlyAmount, balance, balanceState, isPenalty);
     }
 
     @Override

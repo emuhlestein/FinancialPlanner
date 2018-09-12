@@ -8,7 +8,7 @@ import com.intelliviz.lowlevel.data.AgeData;
 
 public interface IncomeDataAccessor {
     /**
-     * Get the income data for the specified age of the principle (self).
+     * Get the income data for the specified age.
      * @param age The age.
      * @return The IncomeData.
      */

@@ -14,6 +14,10 @@ public class IncomeData {
     private int mBalanceState;
     private boolean mPenalty;
 
+    public IncomeData(AgeData age, double monthlyAmount, double balance, int balanceState) {
+        this(age, monthlyAmount, 0, balance, balanceState, false);
+    }
+
     public IncomeData(AgeData age, double monthlyAmount, double balance, int balanceState, boolean penalty) {
         this(age, monthlyAmount, 0, balance, balanceState, penalty);
     }
