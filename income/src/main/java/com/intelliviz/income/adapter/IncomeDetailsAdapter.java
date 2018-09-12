@@ -100,28 +100,35 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
 
             mIncomeDetails = incomeDetails;
 
+            int cardColor = mContext.getResources().getColor(R.color.card_green);
             final int sdk = android.os.Build.VERSION.SDK_INT;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                if(incomeDetails.getBenefitInfo() == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
-                    mCardView.setCardBackgroundColor( mContext.getResources().getColor(R.color.card_red) );
+                if(isBenefitInfo(incomeDetails, RetirementConstants.BI_EXHAUSTED_BALANCE)) {
+                    cardColor = mContext.getResources().getColor(R.color.card_red);
                 } else {
-                    if(incomeDetails.getBenefitInfo() == RetirementConstants.BALANCE_STATE_LOW) {
-                        mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_yellow));
-                    } else {
-                        mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_green));
+                    if(isBenefitInfo(incomeDetails, RetirementConstants.BI_LOW_BALANCE)) {
+                        cardColor = mContext.getResources().getColor(R.color.card_yellow);
+                    } else if(isBenefitInfo(incomeDetails, RetirementConstants.BI_GOOD)){
+                        cardColor = mContext.getResources().getColor(R.color.card_green);
                     }
                 }
             } else {
-                if(incomeDetails.getBenefitInfo() == RetirementConstants.BALANCE_STATE_EXHAUSTED) {
-                    mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_red));
+                if(isBenefitInfo(incomeDetails, RetirementConstants.BI_EXHAUSTED_BALANCE)) {
+                    cardColor = mContext.getResources().getColor(R.color.card_red);
                 } else {
-                    if(incomeDetails.getBenefitInfo() == RetirementConstants.BALANCE_STATE_LOW) {
-                        mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_yellow));
-                    } else {
-                        mCardView.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_green));
+                    if(isBenefitInfo(incomeDetails, RetirementConstants.BI_LOW_BALANCE)) {
+                        cardColor = mContext.getResources().getColor(R.color.card_yellow);
+                    } else if(isBenefitInfo(incomeDetails, RetirementConstants.BI_GOOD)) {
+                        cardColor = mContext.getResources().getColor(R.color.card_green);
                     }
                 }
             }
+
+            if(isBenefitInfo(incomeDetails, RetirementConstants.BI_PENALTY)) {
+                cardColor = mContext.getResources().getColor(R.color.card_red);
+            }
+
+            mCardView.setCardBackgroundColor(cardColor);
 
             if(incomeDetails.getNumLines() == 1) {
                 if(incomeDetails.hasDetails()) {
@@ -144,6 +151,14 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
                 if(mIncomeDetails.isAcceptClick()) {
                     mListener.onIncomeDetailsSelect(mIncomeDetails);
                 }
+            }
+        }
+
+        private boolean isBenefitInfo(IncomeDetails incomeDetails, int flag) {
+            if((incomeDetails.getBenefitInfo() & flag) == flag) {
+                return true;
+            } else {
+                return false;
             }
         }
     }

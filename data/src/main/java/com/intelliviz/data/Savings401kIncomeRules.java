@@ -23,24 +23,24 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
     }
 
     private double getPenaltyAmount(AgeData age, double amount) {
-        if(isPenalty(age)) {
-            return amount * PENALTY_PERCENT / 1200;
+        if(isPenalty(age, amount)) {
+            return amount * PENALTY_PERCENT / 100;
         } else {
             return 0;
         }
     }
 
-    private boolean isPenalty(AgeData age) {
-        if(age.isBefore(PENALTY_AGE)) {
+    private boolean isPenalty(AgeData age, double amount) {
+        if(age.isBefore(PENALTY_AGE) && amount > 0) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     @Override
     protected IncomeData createIncomeData(AgeData age, double monthlyAmount, double balance) {
-        boolean isPenalty = isPenalty(age);
+        boolean isPenalty = isPenalty(age, monthlyAmount);
 
         if(isPenalty) {
             double penalyAmount = getPenaltyAmount(age, monthlyAmount);

@@ -99,7 +99,7 @@ public class RetirementConstants {
     public static final int REQUEST_SPOUSE_BIRTHDATE = 12;
     public static final int REQUEST_SIGN_IN = 13;
 
-    // these must be compile time constants
+    // Error Code: these must be compile time constants
     public static final int EC_NO_ERROR = 0;
     public static final int EC_MAX_NUM_SOCIAL_SECURITY = 1;
     public static final int EC_MAX_NUM_SOCIAL_SECURITY_FREE = 2;
@@ -112,6 +112,12 @@ public class RetirementConstants {
     public static final int EC_SPOUSE_INCLUDED = 9;
     public static final int EC_ONLY_ONE_SOCIAL_SECURITY = 10;
     public static final int EC_401K_WITHDRAW_PENALTY = 11;
+
+    // Benefit Info
+    public static final int BI_GOOD = 0;
+    public static final int BI_LOW_BALANCE = 1;
+    public static final int BI_EXHAUSTED_BALANCE = 2;
+    public static final int BI_PENALTY = 4;
 
     // self
     public static final String EXTRA_OWNER_TYPE = "owner type";

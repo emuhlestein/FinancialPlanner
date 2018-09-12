@@ -18,6 +18,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_EXHAUSTED;
+import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_LOW;
+import static com.intelliviz.lowlevel.util.RetirementConstants.BI_EXHAUSTED_BALANCE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.BI_GOOD;
+import static com.intelliviz.lowlevel.util.RetirementConstants.BI_LOW_BALANCE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.BI_PENALTY;
+
 public abstract class AbstractSavingsIncomeHelper {
     private SavingsData mSD;
     private RetirementOptions mRO;
@@ -42,7 +49,7 @@ public abstract class AbstractSavingsIncomeHelper {
             }
         } else {
             IncomeTypeRules sr;
-            if(incomeType == RetirementConstants.INCOME_TYPE_401K) {
+            if(mSD.getType() == RetirementConstants.INCOME_TYPE_401K) {
                 sr = new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
             } else {
                 sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
@@ -59,7 +66,7 @@ public abstract class AbstractSavingsIncomeHelper {
                     incomeDataList.add(benefitData);
                 }
             }
-            List<IncomeDetails> incomeDetails = getIncomeDetailsList(incomeDataList, mRO);
+            List<IncomeDetails> incomeDetails = getIncomeDetailsList(incomeDataList);
 
             return new SavingsViewData(mSD, incomeDetails, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
         }
@@ -85,7 +92,7 @@ public abstract class AbstractSavingsIncomeHelper {
     }
 
     // TODO make utils method
-    private List<IncomeDetails> getIncomeDetailsList(List<IncomeData> incomeDataList, RetirementOptions ro) {
+    private List<IncomeDetails> getIncomeDetailsList(List<IncomeData> incomeDataList) {
         List<IncomeDetails> incomeDetails = new ArrayList<>();
 
         for (IncomeData benefitData : incomeDataList) {
@@ -93,7 +100,17 @@ public abstract class AbstractSavingsIncomeHelper {
             String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
             String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
             String line1 = age.toString() + "   " + amount + "  " + balance;
-            IncomeDetails incomeDetail = new IncomeDetails(line1, RetirementConstants.BALANCE_STATE_GOOD, "");
+            int benefitInfo = BI_GOOD;
+            if(benefitData.isPenalty()) {
+                benefitInfo |= BI_PENALTY;
+            }
+            if(benefitData.getBalanceState() == BALANCE_STATE_LOW) {
+                benefitInfo |= BI_LOW_BALANCE;
+            } else if(benefitData.getBalanceState() == BALANCE_STATE_EXHAUSTED) {
+                benefitInfo |= BI_EXHAUSTED_BALANCE;
+            }
+
+            IncomeDetails incomeDetail = new IncomeDetails(line1, benefitInfo, "");
             incomeDetails.add(incomeDetail);
         }
 
