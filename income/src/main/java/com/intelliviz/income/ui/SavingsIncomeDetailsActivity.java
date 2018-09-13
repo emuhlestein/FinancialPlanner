@@ -52,6 +52,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
     private TextView mAnnualInterestTextView;
     private TextView mMonthlyIncreaseTextView;
     private TextView mBalanceTextView;
+    private TextView mInitPercentWithdrawTextView;
     private LinearLayout mExpandedTextLayout;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private FloatingActionButton mEditSavingsFAB;
@@ -75,6 +76,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
         mEditSavingsFAB = findViewById(R.id.editSavingsFAB);
         mRecyclerView = findViewById(R.id.recyclerview);
         mOwnerTextView = findViewById(R.id.owner_text);
+        mInitPercentWithdrawTextView = findViewById(R.id.init_per_withdraw_text_view);
 
         setSupportActionBar(mToolbar);
 
@@ -106,6 +108,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
                 }
             }
         });
+
 
         //mAppBarLayout.addOnOffsetChangedListener(new ScrollingHelper(mAppBarLayout.getTotalScrollRange(), this));
 
@@ -210,6 +213,9 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
 
         formattedValue = SystemUtils.getFormattedCurrency(mSD.getBalance());
         mBalanceTextView.setText(formattedValue);
+
+        formattedValue = mSD.getWithdrawPercent() + "%";
+        mInitPercentWithdrawTextView.setText(formattedValue);
     }
 /*
     @Override

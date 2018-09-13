@@ -38,6 +38,7 @@ public class SavingsIncomeEntityRepo {
     private SavingsIncomeEntityRepo(Application application) {
         mDB = AppDatabase.getInstance(application);
         new GetListAsyncTask().execute();
+        mSdEx = new MutableLiveData<>();
     }
 
     public void load(long id) {
@@ -69,10 +70,8 @@ public class SavingsIncomeEntityRepo {
     }
 
     public MutableLiveData<SavingsDataEx> getSavingsDataEx(long id) {
-        MutableLiveData<SavingsDataEx> savingsDataEx = new MutableLiveData<>();
-        mSdEx = savingsDataEx;
         load(id);
-        return savingsDataEx;
+        return mSdEx;
     }
 
     public void delete(SavingsIncomeEntity entity) {

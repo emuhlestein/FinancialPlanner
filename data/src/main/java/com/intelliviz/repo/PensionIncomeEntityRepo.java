@@ -19,7 +19,7 @@ public class PensionIncomeEntityRepo {
             new MutableLiveData<>();
     private MutableLiveData<List<PensionIncomeEntity>> mPensionList =
             new MutableLiveData<>();
-    private MutableLiveData<PensionDataEx> mPdEx = new MutableLiveData<>();
+    private MutableLiveData<PensionDataEx> mPdEx;
 
     public static PensionIncomeEntityRepo getInstance(Application application) {
         if(mINSTANCE == null) {

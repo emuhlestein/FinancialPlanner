@@ -28,9 +28,9 @@
 
 
     <string name="name_of_institution">Name of Institution:</string>
-    <string name="balance">Balance:</string>
-    <string name="annual_interest">Annual Interest:</string>
-    <string name="monthly_increase">Monthly Increase:</string>
+
+
+
     <string name="minimum_withdraw_age">Minimum Withdraw Age:</string>
     <string name="min_401k_age">59y 6m</string>
     <string name="penalty_401k">10%</string>
@@ -40,7 +40,7 @@
     <string name="monthly_benefit_noc">Monthly Benefit</string>
     <string name="retirement_age">Retirement Age</string>
     <string name="age">Age</string>
-    <string name="current_balance">Current Balance:</string>
+
 
     <string name="penalty_amount">Penalty Amount:</string>
 
@@ -131,8 +131,8 @@
     <string name="monthly_pretire_income">Monthly Pre-Retirement Income</string>
     <string name="spousal_benefits">Spousal Benefits?</string>
     <string name="monthly_addition">Monthly Addition</string>
-    <string name="init_percentage_withdraw">Initial % Withdraw</string>
-    <string name="save">Save</string>
+
+
     <string name="stop_addition_age">Stop Addition Age</string>
     <string name="show_months">Show Months</string>
     <string name="country">Country</string>

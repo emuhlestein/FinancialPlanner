@@ -13,7 +13,6 @@ import android.util.Log;
 
 import com.intelliviz.data.IncomeData;
 import com.intelliviz.data.IncomeDetails;
-import com.intelliviz.data.IncomeSummaryEx;
 import com.intelliviz.data.IncomeSummaryHelper;
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.data.SavingsData;
@@ -71,22 +70,6 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
                         return ldata;
                     }
                 });
-    }
-
-    private void subscribe() {
-        LiveData<IncomeSummaryEx> incomeSummaryEx = mRepo.getList();
-
-        mIncomeDetailsList =
-                Transformations.switchMap(incomeSummaryEx,
-                        new Function<IncomeSummaryEx, LiveData<List<IncomeDetails>>>() {
-                            @Override
-                            public LiveData<List<IncomeDetails>> apply(IncomeSummaryEx input) {
-                                MutableLiveData<List<IncomeDetails>> ldata = new MutableLiveData<>();
-                                RetirementOptions ro = RetirementOptionsMapper.map(input.getROE());
-                                ldata.setValue(getIncomeDetailsList(input.getIncomeSourceList(), ro));
-                                return ldata;
-                            }
-                        });
     }
 
     public LiveData<SavingsViewData> get() {
