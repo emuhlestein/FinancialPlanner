@@ -91,7 +91,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
                 mLine2TextView = itemView.findViewById(R.id.line2);
                 mLine3TextView = itemView.findViewById(R.id.line3);
             }
-            //itemView.setOnClickListener(this);
+            itemView.setOnClickListener(this);
             mImageView = itemView.findViewById(R.id.info_image);
             mImageView.setOnClickListener(this);
         }
@@ -148,7 +148,7 @@ public class IncomeDetailsAdapter extends RecyclerView.Adapter<IncomeDetailsAdap
         @Override
         public void onClick(View v) {
             if(mListener != null) {
-                if(mIncomeDetails.isAcceptClick()) {
+                if(mIncomeDetails.isClickAccepted()) {
                     mListener.onIncomeDetailsSelect(mIncomeDetails);
                 }
             }

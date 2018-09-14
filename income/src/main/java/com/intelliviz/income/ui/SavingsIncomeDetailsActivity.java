@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,7 @@ import com.intelliviz.income.adapter.IncomeDetailsAdapter;
 import com.intelliviz.income.data.SavingsViewData;
 import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
@@ -109,15 +111,20 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             }
         });
 
-
-        //mAppBarLayout.addOnOffsetChangedListener(new ScrollingHelper(mAppBarLayout.getTotalScrollRange(), this));
-
         mIncomeDetails = new ArrayList<>();
         mAdapter = new IncomeDetailsAdapter(this, mIncomeDetails);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+        mAdapter.setIncomeDetailsSelectListener(new IncomeDetailsSelectListener() {
+            @Override
+            public void onIncomeDetailsSelect(IncomeDetails incomeDetails) {
+                FragmentManager fm = getSupportFragmentManager();
+                NewMessageDialog newdialog = NewMessageDialog.newInstance(0, "Info", incomeDetails.getMessage(), "Ok");
+                newdialog.show(fm, "message");
+            }
+        });
         // The FAB will pop up an activity to allow a new income source to be edited
         mEditSavingsFAB.setOnClickListener(new View.OnClickListener() {
             @Override

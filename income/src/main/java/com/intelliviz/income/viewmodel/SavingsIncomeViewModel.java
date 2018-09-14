@@ -11,23 +11,15 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.intelliviz.data.IncomeData;
 import com.intelliviz.data.IncomeDetails;
-import com.intelliviz.data.IncomeSummaryHelper;
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.data.SavingsData;
 import com.intelliviz.data.SavingsDataEx;
-import com.intelliviz.db.entity.IncomeSourceEntityBase;
 import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.db.entity.SavingsDataEntityMapper;
 import com.intelliviz.income.data.SavingsViewData;
-import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.RetirementConstants;
-import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.SavingsIncomeEntityRepo;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -104,26 +96,5 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
         public <T extends ViewModel> T create(Class<T> modelClass) {
             return (T) new SavingsIncomeViewModel(mApplication, mIncomeId, mIncomeType);
         }
-    }
-
-    // TODO make utils method
-    private List<IncomeDetails> getIncomeDetailsList(List<IncomeSourceEntityBase> incomeSourceList, RetirementOptions ro) {
-        List<IncomeData> incomeDataList = IncomeSummaryHelper.getIncomeSummary(incomeSourceList, ro);
-        if(incomeDataList == null) {
-            return Collections.emptyList();
-        }
-
-        List<IncomeDetails> incomeDetails = new ArrayList<>();
-
-        for (IncomeData benefitData : incomeDataList) {
-            AgeData age = benefitData.getAge();
-            String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
-            String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
-            String line1 = age.toString() + "   " + amount + "  " + balance;
-            IncomeDetails incomeDetail = new IncomeDetails(line1, RetirementConstants.BALANCE_STATE_GOOD, "");
-            incomeDetails.add(incomeDetail);
-        }
-
-        return incomeDetails;
     }
 }

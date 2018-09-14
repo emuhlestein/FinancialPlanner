@@ -101,16 +101,21 @@ public abstract class AbstractSavingsIncomeHelper {
             String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
             String line1 = age.toString() + "   " + amount + "  " + balance;
             int benefitInfo = BI_GOOD;
+            String message = "";
+            boolean clickAccepted = false;
             if(benefitData.isPenalty()) {
                 benefitInfo |= BI_PENALTY;
             }
             if(benefitData.getBalanceState() == BALANCE_STATE_LOW) {
                 benefitInfo |= BI_LOW_BALANCE;
+                message = "balance will be exhausted in less than a year";
+                clickAccepted = true;
             } else if(benefitData.getBalanceState() == BALANCE_STATE_EXHAUSTED) {
                 benefitInfo |= BI_EXHAUSTED_BALANCE;
             }
 
-            IncomeDetails incomeDetail = new IncomeDetails(line1, benefitInfo, "");
+            IncomeDetails incomeDetail = new IncomeDetails(line1, benefitInfo, message);
+            incomeDetail.setClickAccepted(clickAccepted);
             incomeDetails.add(incomeDetail);
         }
 

@@ -145,8 +145,10 @@ public class NewMessageDialog extends DialogFragment {
             //intent.putExtra(EXTRA_DIALOG_RESPONSE, isOk);
             //getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
         } else {
-            NewMessageDialog.DialogResponse response = (NewMessageDialog.DialogResponse) getActivity();
-            response.onGetResponse(mId, button);
+            if(getActivity() instanceof NewMessageDialog.DialogResponse) {
+                NewMessageDialog.DialogResponse response = (NewMessageDialog.DialogResponse) getActivity();
+                response.onGetResponse(mId, button);
+            }
         }
 
         dismiss();
