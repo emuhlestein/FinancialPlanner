@@ -2,9 +2,9 @@ package com.intelliviz.data;
 
 import com.intelliviz.lowlevel.data.AgeData;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_EXHAUSTED;
-import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_GOOD;
-import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_LOW;
+import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
+import static com.intelliviz.lowlevel.util.RetirementConstants.SC_SEVERE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.SC_WARNING;
 
 /**
  * Created by edm on 10/19/2017.
@@ -18,20 +18,20 @@ public class SavingsIncomeRules extends BaseSavingsIncomeRules implements Income
 
     @Override
     protected IncomeData createIncomeData(AgeData age, double monthlyAmount, double balance) {
-        int balanceState = BALANCE_STATE_GOOD;
+        int state;
         if(balance == 0) {
-            balanceState = BALANCE_STATE_EXHAUSTED;
+            state = SC_SEVERE;
         } else if(balance < monthlyAmount * 12) {
-            balanceState = BALANCE_STATE_LOW;
+            state = SC_WARNING;
         } else {
-            balanceState = BALANCE_STATE_GOOD;
+            state = SC_GOOD;
         }
 
-        return new IncomeData(age, monthlyAmount, balance, balanceState);
+        return new IncomeData(age, monthlyAmount, balance, state, "");
     }
 
     @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
-        return new SavingIncomeDataAccessor(getIncomeData());
+        return new SavingIncomeDataAccessor(getIncomeData(), getOwner());
     }
 }

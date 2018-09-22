@@ -11,6 +11,16 @@ public class RetirementOptions {
     private String mCountryCode;
     private boolean mCountryAvailable;
 
+    public RetirementOptions(String birthdate, String spouseBirthdate) {
+        mBirthdate = birthdate;
+        mSpouseBirthdate = spouseBirthdate;
+        id = -1;
+        mEndAge = new AgeData(0);
+        mIncludeSpouse = 0;
+        mCountryCode = "US";
+        mCountryAvailable = false;
+    }
+
     public RetirementOptions(long id, AgeData endAge, String birthdate, String spouseBirthdate, int includeSpouse, String countryCode) {
         this.id = id;
         mEndAge = endAge;

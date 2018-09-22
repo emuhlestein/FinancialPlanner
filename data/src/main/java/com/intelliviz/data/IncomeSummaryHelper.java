@@ -17,13 +17,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
+
 /**
  * Created by edm on 2/17/2018.
  */
 
 public class IncomeSummaryHelper {
     public static List<IncomeData> getIncomeSummary(List<IncomeSourceEntityBase> incomeSourceList,
-                                                              RetirementOptions roe) {
+                                                              RetirementOptions ro) {
         List<IncomeData> benefitDataList = new ArrayList<>();
         List<IncomeDataAccessor> accessorList = new ArrayList<>();
         List<GovPension> gpList = new ArrayList<>();
@@ -36,19 +39,17 @@ public class IncomeSummaryHelper {
             } else if(entity instanceof PensionIncomeEntity) {
                 PensionIncomeEntity pie = (PensionIncomeEntity)entity;
                 PensionData pd = PensionDataEntityMapper.map(pie);
-                PensionRules pr = new PensionRules(roe.getBirthdate(), roe.getEndAge(),
-                        roe.getBirthdate());
-                pd.setRules(pr);
+                pd.setRules(new PensionRules(ro));
                 accessorList.add(pd.getIncomeDataAccessor());
             } else if(entity instanceof SavingsIncomeEntity) {
                 SavingsIncomeEntity sie = (SavingsIncomeEntity)entity;
                 SavingsData sd = SavingsDataEntityMapper.map(sie);
                 if (sd.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
-                    SavingsIncomeRules sir = new SavingsIncomeRules(roe.getBirthdate(), roe.getEndAge(), roe.getSpouseBirthdate());
+                    SavingsIncomeRules sir = new SavingsIncomeRules(ro.getBirthdate(), ro.getEndAge(), ro.getSpouseBirthdate());
                     sd.setRules(sir);
                     accessorList.add(sd.getIncomeDataAccessor());
                 } else if (sd.getType() == RetirementConstants.INCOME_TYPE_401K) {
-                    Savings401kIncomeRules tdir = new Savings401kIncomeRules(roe.getBirthdate(), roe.getEndAge(), roe.getSpouseBirthdate());
+                    Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro.getBirthdate(), ro.getEndAge(), ro.getSpouseBirthdate());
                     sd.setRules(tdir);
                     accessorList.add(sd.getIncomeDataAccessor());
                 }
@@ -56,7 +57,7 @@ public class IncomeSummaryHelper {
         }
 
         if(!gpList.isEmpty()) {
-            SocialSecurityRules.setRulesOnGovPensionEntities(gpList, roe);
+            SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro);
             for (GovPension gp : gpList) {
                 accessorList.add(gp.getIncomeDataAccessor());
             }
@@ -88,8 +89,8 @@ public class IncomeSummaryHelper {
             }
         }
 
-        AgeData age = AgeUtils.getAge(roe.getBirthdate());
-        AgeData endAge = roe.getEndAge();
+        AgeData age = AgeUtils.getAge(ro.getBirthdate());
+        AgeData endAge = ro.getEndAge();
 
         for(int year = age.getYear(); year <= endAge.getYear(); year++) {
             double sumBalance = 0;
@@ -97,6 +98,7 @@ public class IncomeSummaryHelper {
             //AgeData age = incomeSourceEntityList.get(0).get(0).getAge();
 
             for(IncomeDataAccessor accessor : accessorList) {
+                //AgeData ownerAge = accessor.getAge(new AgeData(year, 0));
                 IncomeData benefitData = accessor.getIncomeData(new AgeData(year, 0));
                 if(benefitData != null) {
                     sumBalance += benefitData.getBalance();
@@ -104,7 +106,7 @@ public class IncomeSummaryHelper {
                 }
             }
 
-            benefitDataList.add(new IncomeData(new AgeData(year, 0), sumMonthlyWithdraw, sumBalance, 0, false));
+            benefitDataList.add(new IncomeData(new AgeData(year, 0), sumMonthlyWithdraw, sumBalance, SC_GOOD, null));
 /*
             for (List<IncomeData> bdList : incomeSourceEntityList) {
                 benefitData = bdList.get(year);
@@ -117,4 +119,21 @@ public class IncomeSummaryHelper {
 
         return benefitDataList;
     }
+
+    /**
+     * Get the age in terms of the owner of the income source. If owner is self,
+     * no need to convert. If owner is spouse, need to convert.
+     * @param age Age of principle spouse where owner is self.
+     * @param owner Self or spouse.
+     * @param ro The retirement options.
+     * @return The age of the owner.
+     */
+    public static AgeData getOwnerAge(AgeData age, int owner, RetirementOptions ro) {
+        if(owner == OWNER_SPOUSE) {
+            return AgeUtils.getAge(ro.getSpouseBirthdate(), ro.getBirthdate(), age);
+        } else {
+            return age;
+        }
+    }
+
 }

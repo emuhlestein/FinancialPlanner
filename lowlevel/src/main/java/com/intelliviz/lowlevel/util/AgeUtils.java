@@ -72,58 +72,6 @@ public class AgeUtils {
         return new AgeData(years, months);
     }
 
-    /**
-     * The format for age is "Y M", where Y is an integer that is the year, and M
-     * is an integer that is the month.
-     *
-     * @param age The age.
-     * @return The AgeData;
-     */
-    // TODO make sure all callers check for invalid age
-    /*
-    public static AgeData parseAgeString(String age) {
-        if(age == null || age.isEmpty()) {
-            return null;
-        }
-
-        String[] tokens = age.split(" ");
-        int year;
-        int month = 0;
-        if(tokens.length == 1) {
-            try {
-                year = parseInt(tokens[0]);
-            } catch (NumberFormatException e) {
-                return null;
-            }
-            return new AgeData(year, month);
-        } else if(tokens.length == 2) {
-            try {
-                year = parseInt(tokens[0]);
-                month = parseInt(tokens[1]);
-            } catch (NumberFormatException e) {
-                return null;
-            }
-            return new AgeData(year, month);
-        }
-        return new AgeData();
-    }
-
-    public static AgeData parseAgeString(String year, String month) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(year);
-        sb.append(" ");
-        sb.append(month);
-        return parseAgeString(sb.toString());
-    }
-    */
-
-//    public static String trimAge(String age) {
-//        age = age.replace("y", "");
-//        age = age.replace("m", "");
-//        return age;
-//    }
-
-
     public static boolean validateBirthday(String birthdate) {
         if(birthdate == null || birthdate.isEmpty()) {
             return false;
@@ -135,32 +83,16 @@ public class AgeUtils {
 
         // Validate day
         if(tokens[0].length() == 1) {
-            if(tokens[0].matches("[1-9]")) {
-                return true;
-            } else {
-                return false;
-            }
+            return tokens[0].matches("[1-9]");
         } else if(tokens[0].length() == 2) {
-            if (tokens[0].matches("[0-9]{2}")) {
-                return true;
-            } else {
-                return false;
-            }
+            return tokens[0].matches("[0-9]{2}");
         }
 
         // Validate month
         if(tokens[1].length() == 1) {
-            if(tokens[1].matches("[1-9]")) {
-                return true;
-            } else {
-                return false;
-            }
+            return tokens[1].matches("[1-9]");
         } else if(tokens[1].length() == 2) {
-            if(tokens[1].matches("[0-9]{2}")) {
-                return true;
-            } else {
-                return false;
-            }
+            return tokens[1].matches("[0-9]{2}");
         }
 
         // Validate year
@@ -193,52 +125,30 @@ public class AgeUtils {
     public static String getFormattedAge(AgeData ageData) {
         String year = Integer.toString(ageData.getYear());
         String month = Integer.toString(ageData.getMonth());
-        StringBuilder sb = new StringBuilder();
-        sb.append(year);
-        sb.append("y ");
-        sb.append(month);
-        sb.append("m");
-        return sb.toString();
+        return year + "y " + month + "m";
     }
-    /**
-     * Get the age for the spouse, given the principle spouse's age.
-     * @param birthdate The birthdate of the principle spouse.
-     * @param spouseBirthdate The spouse's birthdate.
-     * @param age The age of the principle spouse.
-     * @return The spouse start age.
-     */
-    public static AgeData getOtherAge(String birthdate, String spouseBirthdate, AgeData age) {
-        AgeData currentAge = AgeUtils.getAge(birthdate);
-        AgeData spouseAge =  AgeUtils.getAge(spouseBirthdate);
-        int numMonths = currentAge.diff(spouseAge);
 
-        if(spouseAge.isBefore(currentAge)) {
-            // spouse is younger
-            return age.subtract(numMonths);
-        } else {
-            // spouse is older
-            return age.add(numMonths);
+    /**
+     * Get the age for person2, given person1's age.
+     * @param birthdate1 The birthdate for person1.
+     * @param birthdate2 The birthdate for person2.
+     * @param age1 The age of person1.
+     * @return The age of person2.
+     */
+    public static AgeData getAge(String birthdate1, String birthdate2, AgeData age1) {
+        if(birthdate1 == null || birthdate1.isEmpty() || birthdate2 == null || birthdate2.isEmpty()) {
+            return new AgeData(age1);
         }
-    }
+        AgeData currentAge1 = AgeUtils.getAge(birthdate1);
+        AgeData currentAge2 = AgeUtils.getAge(birthdate2);
+        int numMonths = currentAge2.diff(currentAge1);
 
-    /**
-     * Get the age for the spouse, given the other spouse's age.
-     * @param birthdate The birthdate.
-     * @param spouseBirthdate The spouse's birthdate.
-     * @param spouseAge The age.
-     * @return The spouse start age.
-     */
-    public static AgeData getAge(String birthdate, String spouseBirthdate, AgeData spouseAge) {
-        AgeData currentAge = AgeUtils.getAge(birthdate);
-        AgeData spouseCurrentAge = AgeUtils.getAge(spouseBirthdate);
-        int numMonths = spouseCurrentAge.diff(currentAge);
-
-        if(currentAge.isBefore(spouseCurrentAge)) {
-            // spouse is younger
-            return spouseAge.subtract(numMonths);
+        if(currentAge1.isBefore(currentAge2)) {
+            // person1 is younger
+            return age1.subtract(numMonths);
         } else {
-            // spouse is older
-            return spouseAge.add(numMonths);
+            // person1 is older
+            return age1.add(numMonths);
         }
     }
 

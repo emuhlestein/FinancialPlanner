@@ -134,9 +134,9 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
             mOwnerTextView.setText("Spouse");
         }
 
-        if(mGP.isPrincipleSpouse()) {
-            mPrincipleSpouseTextView.setVisibility(View.VISIBLE);
-        }
+        //if(mGP.isPrincipleSpouse()) {
+        //    mPrincipleSpouseTextView.setVisibility(View.VISIBLE);
+        //}
 
         mNameTextView.setText(mGP.getName());
 

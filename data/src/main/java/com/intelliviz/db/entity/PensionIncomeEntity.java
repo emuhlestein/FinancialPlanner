@@ -5,14 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.TypeConverters;
 
-import com.intelliviz.data.IncomeData;
-import com.intelliviz.data.IncomeDataAccessor;
-import com.intelliviz.data.IncomeTypeRules;
-import com.intelliviz.data.PensionRules;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
-
-import java.util.List;
 
 import static com.intelliviz.db.entity.PensionIncomeEntity.TABLE_NAME;
 
@@ -32,9 +26,6 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
 
     @ColumnInfo(name = MONTHLY_BENEFIT_FIELD)
     private String monthlyBenefit;
-
-    @Ignore
-    private PensionRules mRules;
 
     @Ignore
     public PensionIncomeEntity(long id, int type) {
@@ -70,29 +61,5 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
 
     public void setMonthlyBenefit(String monthlyBenefit) {
         this.monthlyBenefit = monthlyBenefit;
-    }
-
-    public void setRules(IncomeTypeRules rules) {
-        if(rules instanceof PensionRules) {
-            mRules = (PensionRules)rules;
-        } else {
-            mRules = null;
-        }
-    }
-
-    public List<IncomeData> getIncomeData() {
-        if(mRules != null) {
-            return mRules.getIncomeData();
-        } else {
-            return null;
-        }
-    }
-
-    public IncomeDataAccessor getIncomeDataAccessor() {
-        if(mRules != null) {
-            return mRules.getIncomeDataAccessor();
-        } else {
-            return null;
-        }
     }
 }

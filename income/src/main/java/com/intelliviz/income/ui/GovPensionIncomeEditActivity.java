@@ -241,7 +241,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
         AgeData startAge = getStartRetirementAge();
 
         GovPension gp = new GovPension(mGP.getId(), mGP.getType(), name, mGP.getOwner(),
-                fullBenefit, startAge, mGP.isSpouse());
+                fullBenefit, startAge);
         mViewModel.setData(gp);
 
         finish();

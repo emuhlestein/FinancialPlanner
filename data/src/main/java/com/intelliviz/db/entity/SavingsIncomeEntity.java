@@ -4,15 +4,8 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.TypeConverters;
-import android.os.Bundle;
 
-import com.intelliviz.data.IncomeData;
-import com.intelliviz.data.IncomeDataAccessor;
-import com.intelliviz.data.IncomeTypeRules;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.RetirementConstants;
-
-import java.util.List;
 
 import static com.intelliviz.db.entity.SavingsIncomeEntity.TABLE_NAME;
 
@@ -57,9 +50,6 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
 
     @ColumnInfo(name = SHOW_MONTHLY_AMOUNTS)
     private int mShowMonths;
-
-    @Ignore
-    private IncomeTypeRules mRules;
 
     @Ignore
     public SavingsIncomeEntity(long id, int type) {
@@ -150,36 +140,5 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
 
     public void setShowMonths(int showMonths) {
         mShowMonths = showMonths;
-    }
-
-    public void setRules(IncomeTypeRules rules) {
-        mRules = rules;
-
-        Bundle bundle = new Bundle();
-        bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_BALANCE, Double.parseDouble(mBalance));
-        bundle.putDouble(RetirementConstants.EXTRA_INCOME_SOURCE_INTEREST, Double.parseDouble(mInterest));
-        bundle.putDouble(RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION, Double.parseDouble(mMonthlyAddition));
-        bundle.putDouble(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT, Double.parseDouble(mWithdrawPercent));
-        bundle.putDouble(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE, Double.parseDouble(mAnnualPercentIncrease));
-        bundle.putParcelable(RetirementConstants.EXTRA_INCOME_START_AGE, mStartAge);
-        bundle.putParcelable(RetirementConstants.EXTRA_INCOME_STOP_AGE, mStopMonthlyAdditionAge);
-        bundle.putInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS, mShowMonths);
-        mRules.setValues(bundle);
-    }
-
-    public List<IncomeData> getIncomeData() {
-        if(mRules != null) {
-            return mRules.getIncomeData();
-        } else {
-            return null;
-        }
-    }
-
-    public IncomeDataAccessor getIncomeDataAccessor() {
-        if(mRules != null) {
-            return mRules.getIncomeDataAccessor();
-        } else {
-            return null;
-        }
     }
 }

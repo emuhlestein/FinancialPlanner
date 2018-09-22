@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_WITH
  */
 
 public abstract class BaseSavingsIncomeRules {
+    private int mOwner;
     private String mOwnerBirthdate;
     private String mOtherBirthdate;
     private AgeData mStartAge; // age at which withdraws begin
@@ -39,7 +41,7 @@ public abstract class BaseSavingsIncomeRules {
      * Constructor
      *
      * @param ownerBirthDate The birthdate.
-     * @param endAge    The end retirement age.
+     * @param endAge The end retirement age.
      */
     BaseSavingsIncomeRules(String ownerBirthDate, AgeData endAge, String otherBirthdate) {
         mOwnerBirthdate = ownerBirthDate;
@@ -47,11 +49,16 @@ public abstract class BaseSavingsIncomeRules {
         mOtherBirthdate = otherBirthdate;
     }
 
+    public int getOwner() {
+        return mOwner;
+    }
+
     protected abstract IncomeData createIncomeData(AgeData age, double monthlyAmount, double balance);
 
     protected abstract IncomeDataAccessor getIncomeDataAccessor();
 
     public void setValues(Bundle bundle) {
+        mOwner = bundle.getInt(RetirementConstants.EXTRA_INCOME_OWNER);
         mBalance = bundle.getDouble(EXTRA_INCOME_SOURCE_BALANCE);
         mInterest = bundle.getDouble(EXTRA_INCOME_SOURCE_INTEREST);
         mMonthlyDeposit = bundle.getDouble(EXTRA_INCOME_MONTHLY_ADDITION);

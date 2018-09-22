@@ -30,7 +30,7 @@ public abstract class AbstractPensionIncomeHelper {
                 return new PensionViewData(null, isSpouseIncluded(), getOnlyOneSupportedErrorCode(), getOnlyOneSupportedErrorMessage());
             }
         } else {
-            PensionRules pr = new PensionRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
+            PensionRules pr = new PensionRules(mRO);
             mPD.setRules(pr);
             return new PensionViewData(mPD, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
         }
@@ -38,8 +38,8 @@ public abstract class AbstractPensionIncomeHelper {
 
     private PensionViewData createDefault() {
         PensionData pd = new PensionData(0, RetirementConstants.INCOME_TYPE_PENSION, "", RetirementConstants.OWNER_SELF,
-                new AgeData(65, 0), "0", 0);
-        PensionRules pr = new PensionRules(mRO.getBirthdate(),  mRO.getEndAge(), mRO.getSpouseBirthdate());
+                new AgeData(65, 0), "0");
+        PensionRules pr = new PensionRules(mRO);
         pd.setRules(pr);
 
         int status = RetirementConstants.EC_NO_ERROR;

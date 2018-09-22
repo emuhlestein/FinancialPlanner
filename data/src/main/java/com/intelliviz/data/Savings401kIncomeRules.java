@@ -2,9 +2,9 @@ package com.intelliviz.data;
 
 import com.intelliviz.lowlevel.data.AgeData;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_EXHAUSTED;
-import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_GOOD;
-import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_LOW;
+import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
+import static com.intelliviz.lowlevel.util.RetirementConstants.SC_SEVERE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.SC_WARNING;
 
 /**
  * Created by edm on 10/18/2017.
@@ -40,25 +40,25 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
 
     @Override
     protected IncomeData createIncomeData(AgeData age, double monthlyAmount, double balance) {
-        boolean isPenalty = isPenalty(age, monthlyAmount);
-
-        if(isPenalty) {
-            double penalyAmount = getPenaltyAmount(age, monthlyAmount);
-            monthlyAmount -= penalyAmount;
-        }
-
-        int balanceState = BALANCE_STATE_GOOD;
-        if(balance == 0) {
-            balanceState = BALANCE_STATE_EXHAUSTED;
+        String message = null;
+        int status = SC_GOOD;
+        if(isPenalty(age, monthlyAmount)) {
+            monthlyAmount -= getPenaltyAmount(age, monthlyAmount);
+            status = SC_WARNING;
+            message = "There is a 10% penalty for early withdrawal.";
+        } else if(balance == 0) {
+            status = SC_SEVERE;
+            message = "Balance has been exhausted. Need to increase savings, reduce initial monthly withdraw or delay retirement.";
         } else if(balance < monthlyAmount * 12) {
-            balanceState = BALANCE_STATE_LOW;
+            status = SC_WARNING;
+            message = "Balance will be exhausted in less than a year";
         }
 
-        return new IncomeData(age, monthlyAmount, balance, balanceState, isPenalty);
+        return new IncomeData(age, monthlyAmount, balance, status, message);
     }
 
     @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
-        return new Savings401kIncomeDataAccessor(getIncomeData());
+        return new Savings401kIncomeDataAccessor(getIncomeData(), getOwner());
     }
 }

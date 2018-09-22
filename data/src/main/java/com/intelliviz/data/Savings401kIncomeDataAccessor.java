@@ -10,11 +10,12 @@ import java.util.Map;
  * Created by edm on 6/5/2018.
  */
 
-public class Savings401kIncomeDataAccessor implements IncomeDataAccessor {
+public class Savings401kIncomeDataAccessor extends AbstractIncomeDataAccessor {
     private List<IncomeData> mIncomeData;
     Map<Integer, IncomeData> mIncomeDataMap;
 
-    public Savings401kIncomeDataAccessor(List<IncomeData> incomeData) {
+    public Savings401kIncomeDataAccessor(List<IncomeData> incomeData, int owner) {
+        super(owner);
         mIncomeData = incomeData;
 
         mIncomeDataMap = new HashMap<>();

@@ -179,7 +179,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             return;
         }
 
-        PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(), minAge, benefit, 0);
+        PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(), minAge, benefit);
         mViewModel.setData(pd);
 
         finish();

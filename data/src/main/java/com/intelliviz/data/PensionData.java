@@ -16,23 +16,27 @@ import java.util.List;
 public class PensionData extends AbstractIncomeSource {
     private AgeData mStartAge;
     private String mMonthlyBenefit;
-    private int mBenefitInfo;
     private PensionRules mRules;
 
     public PensionData(long id, int type) {
         this(id, type, "", RetirementConstants.OWNER_SELF);
     }
 
-    public PensionData(long id, int type, String name, int self) {
-        super(id, type, name, self);
+    public PensionData(long id, int type, String name, int owner) {
+        super(id, type, name, owner);
     }
 
-    public PensionData(long id, int type, String name, int self,
-                       AgeData age, String monthlyBenefit, int benefitInfo) {
-        this(id, type, name, self);
-        mStartAge = age;
+    public PensionData(long id, int type, String name, int owner,
+                       AgeData startAge, String monthlyBenefit) {
+        this(id, type, name, owner);
+        mStartAge = startAge;
         mMonthlyBenefit = monthlyBenefit;
-        mBenefitInfo = benefitInfo;
+    }
+
+    public PensionData(int owner, AgeData startAge, String monthlyBenefit) {
+        this(-1, 0, "", owner);
+        mStartAge = startAge;
+        mMonthlyBenefit = monthlyBenefit;
     }
 
     public void setStartAge(AgeData startAge) {
@@ -49,10 +53,6 @@ public class PensionData extends AbstractIncomeSource {
 
     public String getMonthlyBenefit() {
         return mMonthlyBenefit;
-    }
-
-    public int getBenefitInfo() {
-        return mBenefitInfo;
     }
 
     public void setRules(IncomeTypeRules rules) {

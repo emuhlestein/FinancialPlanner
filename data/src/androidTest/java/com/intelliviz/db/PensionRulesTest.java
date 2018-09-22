@@ -4,10 +4,13 @@ import com.intelliviz.data.IncomeData;
 import com.intelliviz.data.IncomeDataAccessor;
 import com.intelliviz.data.PensionData;
 import com.intelliviz.data.PensionRules;
+import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.lowlevel.data.AgeData;
 
 import org.junit.Test;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static org.junit.Assert.assertEquals;
 
 public class PensionRulesTest {
@@ -20,17 +23,15 @@ public class PensionRulesTest {
     }
 
     @Test
-    public void testMontlyBenefits() {
+    public void testOwnerMonthlyBenefitsNoSpouse() {
         String fullMonthlyBenefit = "1000";
-        String otherMonthlyBenefit = "500";
         AgeData startAge = new AgeData(65, 0);
-        AgeData endAge = new AgeData(90, 0);
         String ownerBirthdate = "01-01-1960";
-        String otherBirthdate = "01-01-1965";
-        PensionData spouse1 = new PensionData(0, 0, "", 1, startAge, fullMonthlyBenefit, 0);
-        PensionRules rules = new PensionRules(ownerBirthdate, endAge, otherBirthdate);
-        spouse1.setRules(rules);
 
+        PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
+        RetirementOptions ro = new RetirementOptions(ownerBirthdate, null);
+        PensionRules rules = new PensionRules(ro);
+        spouse1.setRules(rules);
         IncomeDataAccessor accessor = spouse1.getIncomeDataAccessor();
         IncomeData incomeData = accessor.getIncomeData(new AgeData(64, 0));
         double amount = incomeData.getMonthlyAmount();
@@ -40,13 +41,80 @@ public class PensionRulesTest {
         amount = incomeData.getMonthlyAmount();
         assertEquals(amount, 1000, 0);
 
-        PensionData spouse2 = new PensionData(0, 0, "", 0, startAge, otherMonthlyBenefit, 0);
-        rules = new PensionRules(otherBirthdate, endAge, ownerBirthdate);
-        spouse2.setRules(rules);
+        incomeData = accessor.getIncomeData(new AgeData(66, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
 
-        accessor = spouse2.getIncomeDataAccessor();
+        incomeData = accessor.getIncomeData(new AgeData(69, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(70, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(90, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+    }
+
+    @Test
+    public void testOwnerMonthlyBenefitsSpouse() {
+        String fullMonthlyBenefit = "1000";
+        AgeData startAge = new AgeData(65, 0);
+        String ownerBirthdate = "01-01-1960";
+        String spouseBirthdate = "01-01-1965";
+
+        PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
+        RetirementOptions ro = new RetirementOptions(ownerBirthdate, spouseBirthdate);
+        PensionRules rules = new PensionRules(ro);
+        spouse1.setRules(rules);
+        IncomeDataAccessor accessor = spouse1.getIncomeDataAccessor();
+        IncomeData incomeData = accessor.getIncomeData(new AgeData(64, 0));
+        double amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 0, 0);
+
         incomeData = accessor.getIncomeData(new AgeData(65, 0));
         amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(66, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(69, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(70, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(90, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+    }
+
+    @Test
+    public void testSpouseMonthlyBenefits() {
+        String spouseMonthlyBenefit = "500";
+        AgeData startAge = new AgeData(65, 0);
+        String spouseBirthdate = "01-01-1965";
+        String principleSpouseBirthdate = "01-01-1960";
+
+        PensionData spouse1 = new PensionData(OWNER_SPOUSE, startAge, spouseMonthlyBenefit);
+        RetirementOptions ro = new RetirementOptions(principleSpouseBirthdate, spouseBirthdate);
+        PensionRules rules = new PensionRules(ro);
+        spouse1.setRules(rules);
+        IncomeDataAccessor accessor = spouse1.getIncomeDataAccessor();
+        IncomeData incomeData = accessor.getIncomeData(new AgeData(64, 0));
+        double amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 0, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(65, 0));
+        amount = incomeData.getMonthlyAmount();
+
+        // spouse is 5 years younger than principle spouse, so at age 65 the amount should be 0
         assertEquals(amount, 0, 0);
 
         incomeData = accessor.getIncomeData(new AgeData(66, 0));

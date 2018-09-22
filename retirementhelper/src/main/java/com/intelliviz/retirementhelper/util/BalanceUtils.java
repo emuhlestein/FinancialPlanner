@@ -37,7 +37,7 @@ public class BalanceUtils {
         double balance = startBalance;
         AgeData age = new AgeData(startAge.getYear(), startAge.getMonth());
         if(numMonths == 0) {
-            return new IncomeData(age, getMonthlyAmount(balance, withdrawMode, withdrawAmount),  startBalance, 0, false);
+            return new IncomeData(age, getMonthlyAmount(balance, withdrawMode, withdrawAmount),  startBalance, 0, null);
         }
 
         double monthlyInterest = interest / 1200;
@@ -60,6 +60,6 @@ public class BalanceUtils {
             }
         }
 
-        return new IncomeData(age, monthlyAmount,  balance, 0, false);
+        return new IncomeData(age, monthlyAmount,  balance, 0, null);
     }
 }

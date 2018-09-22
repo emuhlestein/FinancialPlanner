@@ -1,38 +1,29 @@
 package com.intelliviz.data;
 
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by edm on 6/5/2018.
  */
 
-public class SocialSecurityIncomeDataAccessor implements IncomeDataAccessor {
-    private AgeData mStartAge;
-    private double mMonthlyAmount;
-    private String mBirthDate;
-    private boolean mIsSpouse;
-    private String mSpouseBirthdate;
+public class SocialSecurityIncomeDataAccessor extends AbstractIncomeDataAccessor {
+    private Map<Integer, IncomeData> mIncomeDataMap;
 
-    public SocialSecurityIncomeDataAccessor(AgeData startAge, double monthlyAmount, String birthDate, boolean isSpouse, String spouseBirthdate) {
-        mStartAge = startAge;
-        mMonthlyAmount = monthlyAmount;
-        mBirthDate = birthDate;
-        mIsSpouse = isSpouse;
-        mSpouseBirthdate = spouseBirthdate;
+    public SocialSecurityIncomeDataAccessor(List<IncomeData> incomeData, int owner) {
+        super(owner);
+        mIncomeDataMap = new HashMap<>();
+        for(IncomeData bData : incomeData) {
+            int month = bData.getAge().getNumberOfMonths();
+            mIncomeDataMap.put(month, bData);
+        }
     }
 
     @Override
-    public IncomeData getIncomeData(AgeData principleAge) {
-        AgeData age = principleAge;
-        if(mIsSpouse) {
-            age = AgeUtils.getOtherAge(mSpouseBirthdate, mBirthDate, principleAge);
-        }
-
-        if(age.isOnOrAfter(mStartAge)) {
-            return new IncomeData(age, mMonthlyAmount, 0, 0, false);
-        } else {
-            return new IncomeData(age, 0, 0, 0, false);
-        }
+    public IncomeData getIncomeData(AgeData age) {
+        return mIncomeDataMap.get(age.getNumberOfMonths());
     }
 }

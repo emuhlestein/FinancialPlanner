@@ -9,26 +9,22 @@ import com.intelliviz.lowlevel.data.AgeData;
 public class IncomeData {
     private AgeData mAge;
     private double mMonthlyAmount;
-    private double mPenaltyAmount;
     private double mBalance;
-    private int mBalanceState;
-    private boolean mPenalty;
+    private int mStatus;
+    private String mMessage;
 
-    public IncomeData(AgeData age, double monthlyAmount, double balance, int balanceState) {
-        this(age, monthlyAmount, 0, balance, balanceState, false);
-    }
-
-    public IncomeData(AgeData age, double monthlyAmount, double balance, int balanceState, boolean penalty) {
-        this(age, monthlyAmount, 0, balance, balanceState, penalty);
-    }
-
-    public IncomeData(AgeData age, double monthlyAmount, double penaltyAmount, double balance, int balanceState, boolean penalty) {
+    public IncomeData(AgeData age, double monthlyAmount, double balance, int status, String message) {
         mAge = age;
         mMonthlyAmount = monthlyAmount;
-        mPenaltyAmount = penaltyAmount;
         mBalance = balance;
-        mBalanceState = balanceState;
-        mPenalty = penalty;
+        mStatus = status;
+
+        // empty strings are not allowed
+        if(message != null && message.isEmpty()) {
+            mMessage = null;
+        } else {
+            mMessage = message;
+        }
     }
 
     public AgeData getAge() {
@@ -36,14 +32,6 @@ public class IncomeData {
     }
 
     public double getMonthlyAmount() {
-        return mMonthlyAmount - mPenaltyAmount;
-    }
-
-    public void setMonthlyAmount(double monthlyAmount) {
-        mMonthlyAmount = monthlyAmount;
-    }
-
-    public double getMonthlyAmountNoPenalty() {
         return mMonthlyAmount;
     }
 
@@ -51,11 +39,11 @@ public class IncomeData {
         return mBalance;
     }
 
-    public int getBalanceState() {
-        return mBalanceState;
+    public int getStatus() {
+        return mStatus;
     }
 
-    public boolean isPenalty() {
-        return mPenalty;
+    public String getMessage() {
+        return mMessage;
     }
 }

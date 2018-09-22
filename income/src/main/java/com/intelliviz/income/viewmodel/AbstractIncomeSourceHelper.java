@@ -65,7 +65,7 @@ public abstract class AbstractIncomeSourceHelper {
             if(entity instanceof PensionIncomeEntity) {
                 PensionData pd = PensionDataEntityMapper.map((PensionIncomeEntity)entity);
                 if (includeIncomeSource(mRO, pd)) {
-                    pd.setRules(new PensionRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate()));
+                    pd.setRules(new PensionRules(mRO));
                     incomeSourceList.add(pd);
                 }
             }

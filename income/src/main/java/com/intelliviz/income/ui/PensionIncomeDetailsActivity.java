@@ -149,7 +149,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
             String monthlyBenefit = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_BENEFIT);
 
             PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(),
-                    minAge, monthlyBenefit, 0);
+                    minAge, monthlyBenefit);
             mViewModel.setData(pd);
 
         }

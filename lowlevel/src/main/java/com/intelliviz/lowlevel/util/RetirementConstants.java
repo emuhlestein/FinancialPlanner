@@ -119,10 +119,16 @@ public class RetirementConstants {
     public static final int BI_EXHAUSTED_BALANCE = 2;
     public static final int BI_PENALTY = 4;
 
-    // self
+    // status codes
+    public static final int SC_GOOD = 0;
+    public static final int SC_INFO = 1;
+    public static final int SC_WARNING = 2;
+    public static final int SC_SEVERE = 3;
+
+    // owner type
     public static final String EXTRA_OWNER_TYPE = "owner type";
-    public static final int OWNER_SPOUSE = 0;    // annotation is spouse
-    public static final int OWNER_SELF = 1;      // annotation is self
+    public static final int OWNER_SPOUSE = 0; // income source is spouse
+    public static final int OWNER_SELF = 1;   // income source is self
 
     public static final String EXTRA_DIALOG_RESPONSE = "dialog response";
 }

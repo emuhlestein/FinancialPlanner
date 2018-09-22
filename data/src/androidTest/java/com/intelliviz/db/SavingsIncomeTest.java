@@ -9,7 +9,7 @@ import com.intelliviz.lowlevel.util.AgeUtils;
 
 import org.junit.Test;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF_ONLY;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
 import static org.junit.Assert.assertEquals;
 
 public class SavingsIncomeTest {
@@ -33,7 +33,7 @@ public class SavingsIncomeTest {
         String initWithdrawPercent = "0";
         String annualPercentIncrease = "0";
 
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF_ONLY, startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
 
         SavingsIncomeRules rules = new SavingsIncomeRules(birthDate, endAge, null);
@@ -61,7 +61,7 @@ public class SavingsIncomeTest {
         age = new AgeData(currentAge.getNumberOfMonths());
         monthlyAddition = "100";
         startAge = age.add(1);
-        savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF_ONLY, startAge, startBalance, interest, monthlyAddition,
+        savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         accessor = savingsData.getIncomeDataAccessor();
@@ -102,7 +102,7 @@ public class SavingsIncomeTest {
         String annualPercentIncrease = "0";
 
         SavingsIncomeRules rules = new SavingsIncomeRules(birthDate, endAge, null);
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF_ONLY, startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         IncomeDataAccessor accessor = savingsData.getIncomeDataAccessor();
@@ -169,7 +169,7 @@ public class SavingsIncomeTest {
         String annualPercentIncrease = "0";
 
         SavingsIncomeRules rules = new SavingsIncomeRules(birthDate, endAge, null);
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF_ONLY, startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         IncomeDataAccessor accessor = savingsData.getIncomeDataAccessor();
@@ -250,7 +250,7 @@ public class SavingsIncomeTest {
         String annualPercentIncrease = "0";
 
         SavingsIncomeRules rules = new SavingsIncomeRules(birthDate, endAge, null);
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF_ONLY, startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
         savingsData.setRules(rules);
         IncomeDataAccessor accessor = savingsData.getIncomeDataAccessor();

@@ -12,18 +12,10 @@ import com.intelliviz.income.data.SavingsViewData;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
-import com.intelliviz.lowlevel.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_EXHAUSTED;
-import static com.intelliviz.lowlevel.util.RetirementConstants.BALANCE_STATE_LOW;
-import static com.intelliviz.lowlevel.util.RetirementConstants.BI_EXHAUSTED_BALANCE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.BI_GOOD;
-import static com.intelliviz.lowlevel.util.RetirementConstants.BI_LOW_BALANCE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.BI_PENALTY;
 
 public abstract class AbstractSavingsIncomeHelper {
     private SavingsData mSD;
@@ -94,7 +86,7 @@ public abstract class AbstractSavingsIncomeHelper {
     // TODO make utils method
     private List<IncomeDetails> getIncomeDetailsList(List<IncomeData> incomeDataList) {
         List<IncomeDetails> incomeDetails = new ArrayList<>();
-
+/*
         for (IncomeData benefitData : incomeDataList) {
             AgeData age = benefitData.getAge();
             String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
@@ -102,23 +94,22 @@ public abstract class AbstractSavingsIncomeHelper {
             String line1 = age.toString() + "   " + amount + "  " + balance;
             int benefitInfo = BI_GOOD;
             String message = "";
-            boolean clickAccepted = false;
             if(benefitData.isPenalty()) {
                 benefitInfo |= BI_PENALTY;
+                message = "There is a 10% penalty for early withdrawal.";
             }
-            if(benefitData.getBalanceState() == BALANCE_STATE_LOW) {
+            if(benefitData.getState() == BALANCE_STATE_LOW) {
                 benefitInfo |= BI_LOW_BALANCE;
-                message = "balance will be exhausted in less than a year";
-                clickAccepted = true;
-            } else if(benefitData.getBalanceState() == BALANCE_STATE_EXHAUSTED) {
+                message = "Balance will be exhausted in less than a year";
+            } else if(benefitData.getState() == BALANCE_STATE_EXHAUSTED) {
                 benefitInfo |= BI_EXHAUSTED_BALANCE;
+                message = "Balance has been exhausted. Need to increase savings, reduce initial monthly withdraw or delay retirement.";
             }
 
             IncomeDetails incomeDetail = new IncomeDetails(line1, benefitInfo, message);
-            incomeDetail.setClickAccepted(clickAccepted);
             incomeDetails.add(incomeDetail);
         }
-
+*/
         return incomeDetails;
     }
 }

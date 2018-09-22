@@ -10,10 +10,11 @@ import java.util.Map;
  * Created by edm on 6/5/2018.
  */
 
-public class SavingIncomeDataAccessor implements IncomeDataAccessor {
+public class SavingIncomeDataAccessor extends AbstractIncomeDataAccessor {
     private Map<Integer, IncomeData> mIncomeDataMap;
 
-    public SavingIncomeDataAccessor(List<IncomeData> incomeData) {
+    public SavingIncomeDataAccessor(List<IncomeData> incomeData, int owner) {
+        super(owner);
         mIncomeDataMap = new HashMap<>();
         for(IncomeData bData : incomeData) {
             int month = bData.getAge().getNumberOfMonths();

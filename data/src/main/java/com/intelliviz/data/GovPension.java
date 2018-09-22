@@ -14,39 +14,28 @@ import java.util.List;
 
 public class GovPension extends AbstractIncomeSource {
     private SocialSecurityRules mRules;
-    private boolean mIsPrincipleSpouse;
     private String mFullMonthlyBenefit;
     private AgeData mStartAge;
-    private boolean mSpouse;
     private int mState;
     private String mMessage;
+
+    public GovPension(long id, int type, String name, int owner) {
+        super(id, type, name, owner);
+    }
 
     public GovPension(long id, int type) {
         this(id, type, "", RetirementConstants.OWNER_SELF);
     }
 
-    public GovPension(long id, int type, String name, int self) {
-        super(id, type, name, self);
-    }
-
-    public GovPension(long id, int type, String name, int self,
-        String fullBenefit, AgeData startAge, boolean isSpouse) {
-        this(id, type, name, self);
+    public GovPension(long id, int type, String name, int owner,
+        String fullBenefit, AgeData startAge) {
+        this(id, type, name, owner);
         mFullMonthlyBenefit = fullBenefit;
         mStartAge = startAge;
-        mSpouse = isSpouse;
     }
 
     public AgeData getFullRetirementAge() {
         return mRules.getFullRetirementAge();
-    }
-
-    public boolean isPrincipleSpouse() {
-        return mIsPrincipleSpouse;
-    }
-
-    public void setPrincipleSpouse(boolean principleSpouse) {
-        mIsPrincipleSpouse = principleSpouse;
     }
 
     public void setFullMonthlyBenefit(String fullMonthlyBenefit) {
@@ -63,14 +52,6 @@ public class GovPension extends AbstractIncomeSource {
 
     public AgeData getStartAge() {
         return mStartAge;
-    }
-
-    public void setSpouse(boolean spouse) {
-        mSpouse = spouse;
-    }
-
-    public boolean isSpouse() {
-        return mSpouse;
     }
 
     public double getMonthlyBenefit() {
