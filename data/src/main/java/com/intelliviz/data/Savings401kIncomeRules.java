@@ -16,8 +16,8 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
     private AgeData mMinAge;
     private double mPenalty;
 
-    public Savings401kIncomeRules(String ownerBirthdate, AgeData endAge, String otherBirthdate) {
-        super(ownerBirthdate, endAge, otherBirthdate);
+    public Savings401kIncomeRules(RetirementOptions ro) {
+        super(ro);
         mMinAge = PENALTY_AGE;
         mPenalty = PENALTY_PERCENT;
     }
@@ -59,6 +59,6 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
 
     @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
-        return new Savings401kIncomeDataAccessor(getIncomeData(), getOwner());
+        return new Savings401kIncomeDataAccessor(getOwner(), getIncomeData(), getRetirementOptions());
     }
 }

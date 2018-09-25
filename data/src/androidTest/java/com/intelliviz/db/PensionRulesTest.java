@@ -59,11 +59,48 @@ public class PensionRulesTest {
     }
 
     @Test
-    public void testOwnerMonthlyBenefitsSpouse() {
+    public void testOwnerMonthlyBenefitsYoungerSpouse() {
         String fullMonthlyBenefit = "1000";
         AgeData startAge = new AgeData(65, 0);
         String ownerBirthdate = "01-01-1960";
         String spouseBirthdate = "01-01-1965";
+
+        PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
+        RetirementOptions ro = new RetirementOptions(ownerBirthdate, spouseBirthdate);
+        PensionRules rules = new PensionRules(ro);
+        spouse1.setRules(rules);
+        IncomeDataAccessor accessor = spouse1.getIncomeDataAccessor();
+        IncomeData incomeData = accessor.getIncomeData(new AgeData(64, 0));
+        double amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 0, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(65, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(66, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(69, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(70, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+
+        incomeData = accessor.getIncomeData(new AgeData(90, 0));
+        amount = incomeData.getMonthlyAmount();
+        assertEquals(amount, 1000, 0);
+    }
+
+    @Test
+    public void testOwnerMonthlyBenefitsOlderSpouse() {
+        String fullMonthlyBenefit = "1000";
+        AgeData startAge = new AgeData(65, 0);
+        String ownerBirthdate = "01-01-1965";
+        String spouseBirthdate = "01-05-1960";
 
         PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
         RetirementOptions ro = new RetirementOptions(ownerBirthdate, spouseBirthdate);

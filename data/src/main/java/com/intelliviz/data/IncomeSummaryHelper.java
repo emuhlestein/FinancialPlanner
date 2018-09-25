@@ -45,11 +45,11 @@ public class IncomeSummaryHelper {
                 SavingsIncomeEntity sie = (SavingsIncomeEntity)entity;
                 SavingsData sd = SavingsDataEntityMapper.map(sie);
                 if (sd.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
-                    SavingsIncomeRules sir = new SavingsIncomeRules(ro.getBirthdate(), ro.getEndAge(), ro.getSpouseBirthdate());
+                    SavingsIncomeRules sir = new SavingsIncomeRules(ro);
                     sd.setRules(sir);
                     accessorList.add(sd.getIncomeDataAccessor());
                 } else if (sd.getType() == RetirementConstants.INCOME_TYPE_401K) {
-                    Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro.getBirthdate(), ro.getEndAge(), ro.getSpouseBirthdate());
+                    Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro);
                     sd.setRules(tdir);
                     accessorList.add(sd.getIncomeDataAccessor());
                 }

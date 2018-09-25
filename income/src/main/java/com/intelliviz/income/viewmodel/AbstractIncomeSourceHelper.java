@@ -73,7 +73,7 @@ public abstract class AbstractIncomeSourceHelper {
             if(entity instanceof SavingsIncomeEntity) {
                 SavingsData sd = SavingsDataEntityMapper.map((SavingsIncomeEntity)entity);
                 if (includeIncomeSource(mRO, sd)) {
-                    sd.setRules(new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate()));
+                    sd.setRules(new Savings401kIncomeRules(mRO));
                     incomeSourceList.add(sd);
                 }
             }

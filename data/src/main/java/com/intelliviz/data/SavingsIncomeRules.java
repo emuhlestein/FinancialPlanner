@@ -12,8 +12,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.SC_WARNING;
 
 public class SavingsIncomeRules extends BaseSavingsIncomeRules implements IncomeTypeRules {
 
-    public SavingsIncomeRules(String ownerBirthDate, AgeData endAge, String otherBirthdate) {
-        super(ownerBirthDate, endAge, otherBirthdate);
+    public SavingsIncomeRules(RetirementOptions ro) {
+        super(ro);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class SavingsIncomeRules extends BaseSavingsIncomeRules implements Income
 
     @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
-        return new SavingIncomeDataAccessor(getIncomeData(), getOwner());
+        return new SavingIncomeDataAccessor(getOwner(), getIncomeData(), getRetirementOptions());
     }
 }

@@ -42,9 +42,9 @@ public abstract class AbstractSavingsIncomeHelper {
         } else {
             IncomeTypeRules sr;
             if(mSD.getType() == RetirementConstants.INCOME_TYPE_401K) {
-                sr = new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
+                sr = new Savings401kIncomeRules(mRO);
             } else {
-                sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
+                sr = new SavingsIncomeRules(mRO);
             }
             mSD.setRules(sr);
             IncomeDataAccessor accessor = mSD.getIncomeDataAccessor();
@@ -75,9 +75,9 @@ public abstract class AbstractSavingsIncomeHelper {
         }
 
         if(incomeType == RetirementConstants.INCOME_TYPE_401K) {
-            sr = new Savings401kIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
+            sr = new Savings401kIncomeRules(mRO);
         } else {
-            sr = new SavingsIncomeRules(mRO.getBirthdate(), mRO.getEndAge(), mRO.getSpouseBirthdate());
+            sr = new SavingsIncomeRules(mRO);
         }
         sd.setRules(sr);
         return new SavingsViewData(sd, Collections.<IncomeDetails>emptyList(), isSpouseIncluded(), status, "");

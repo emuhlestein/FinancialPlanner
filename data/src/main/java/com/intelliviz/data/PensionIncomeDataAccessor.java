@@ -11,19 +11,15 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
 public class PensionIncomeDataAccessor extends AbstractIncomeDataAccessor { ;
     private AgeData mStartAge;
     private double mMonthlyAmount;
-    private String mOwnerBirthdate;
-    private String mSpouseBirthdate;
     private int mStatus;
     private String mMessage;
     private RetirementOptions mRO;
 
-    public PensionIncomeDataAccessor(int owner, AgeData startAge, double monthlyAmount, String ownerBirthdate, String spouseBirthdate,
+    public PensionIncomeDataAccessor(int owner, AgeData startAge, double monthlyAmount,
                                      int status, String message, RetirementOptions ro) {
         super(owner);
         mStartAge = startAge;
         mMonthlyAmount = monthlyAmount;
-        mOwnerBirthdate = ownerBirthdate;
-        mSpouseBirthdate = spouseBirthdate;
         mStatus = status;
         mMessage = message;
         mRO = ro;
@@ -31,7 +27,7 @@ public class PensionIncomeDataAccessor extends AbstractIncomeDataAccessor { ;
 
     @Override
     public IncomeData getIncomeData(AgeData age) {
-        age = getAge(age, mRO);
+        age = getOwnerAge(age, mRO);
         if(age.isBefore(mStartAge)) {
             return new IncomeData(age, 0, 0, SC_GOOD, null);
         } else {

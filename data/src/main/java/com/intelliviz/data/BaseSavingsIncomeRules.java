@@ -36,22 +36,20 @@ public abstract class BaseSavingsIncomeRules {
     private double mInitialWithdrawPercent; // The percentage of balance for initial withdraw.
     private double mAnnualPercentIncrease; // percent to increase withdraw
     private boolean mShowMonths;
+    private RetirementOptions mRO;
 
-    /**
-     * Constructor
-     *
-     * @param ownerBirthDate The birthdate.
-     * @param endAge The end retirement age.
-     */
-    BaseSavingsIncomeRules(String ownerBirthDate, AgeData endAge, String otherBirthdate) {
-        mOwnerBirthdate = ownerBirthDate;
-        mEndAge = endAge;
-        mOtherBirthdate = otherBirthdate;
+    BaseSavingsIncomeRules(RetirementOptions ro) {
+        mRO = ro;
+        mOwnerBirthdate = ro.getBirthdate();
+        mEndAge = ro.getEndAge();
+        mOtherBirthdate = ro.getSpouseBirthdate();
     }
 
     public int getOwner() {
         return mOwner;
     }
+
+    public RetirementOptions getRetirementOptions() { return mRO; }
 
     protected abstract IncomeData createIncomeData(AgeData age, double monthlyAmount, double balance);
 

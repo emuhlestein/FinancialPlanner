@@ -13,10 +13,12 @@ import java.util.Map;
 public class Savings401kIncomeDataAccessor extends AbstractIncomeDataAccessor {
     private List<IncomeData> mIncomeData;
     Map<Integer, IncomeData> mIncomeDataMap;
+    private RetirementOptions mRO;
 
-    public Savings401kIncomeDataAccessor(List<IncomeData> incomeData, int owner) {
+    public Savings401kIncomeDataAccessor(int owner, List<IncomeData> incomeData,RetirementOptions ro) {
         super(owner);
         mIncomeData = incomeData;
+        mRO = ro;
 
         mIncomeDataMap = new HashMap<>();
         for(IncomeData iData : mIncomeData) {
@@ -27,6 +29,7 @@ public class Savings401kIncomeDataAccessor extends AbstractIncomeDataAccessor {
 
     @Override
     public IncomeData getIncomeData(AgeData age) {
+        age = getOwnerAge(age, mRO);
         return mIncomeDataMap.get(age.getYear());
     }
 }
