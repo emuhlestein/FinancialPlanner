@@ -122,11 +122,37 @@ public class AgeUtils {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         return sdf.format(date);
     }
+
     public static String getFormattedAge(AgeData ageData) {
         String year = Integer.toString(ageData.getYear());
         String month = Integer.toString(ageData.getMonth());
         return year + "y " + month + "m";
     }
+
+    public static String getBirthdate(AgeData age) {
+        Date date = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        String sdate = sdf.format(date);
+        AgeData ageData = getAge(sdate);
+        int numMonths = ageData.diff(age);
+        if(age.isBefore(ageData)) {
+            age.add(numMonths);
+        } else {
+            age.subtract(numMonths);
+        }
+        String[] tokens = sdate.split("-");
+        int day = parseInt(tokens[0]);
+        int month = parseInt(tokens[1]);
+        int year = parseInt(tokens[2]);
+        int newYear = year - age.getYear();
+        int newMonth = month - age.getMonth();
+        if(newMonth < 0) {
+            newMonth += 12;
+            newYear--;
+        }
+        return day + "-" + newMonth + "-" + newYear;
+    }
+
 
     /**
      * Get the age for person2, given person1's age.

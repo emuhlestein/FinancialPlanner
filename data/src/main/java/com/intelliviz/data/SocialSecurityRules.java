@@ -151,7 +151,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
         if(gpList.size() == 1) {
             GovPension spouse1 = gpList.get(0);
-            SocialSecurityRules ssr = new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate());
+            SocialSecurityRules ssr = new SocialSecurityRules(roe.getEndAge(), roe.getPrimaryBirthdate());
             spouse1.setRules(ssr);
         } else if(gpList.size() == 2) {
             GovPension principleSpouse;
@@ -164,10 +164,10 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 spouse = gpList.get(0);
             }
 
-            SocialSecurityRules ssr = new SocialSecurityRules(roe.getEndAge(), roe.getBirthdate(), roe.getSpouseBirthdate(),
+            SocialSecurityRules ssr = new SocialSecurityRules(roe.getEndAge(), roe.getPrimaryBirthdate(), roe.getSpouseBirthdate(),
                     spouse.getFullMonthlyBenefit(), spouse.getStartAge(), true, false);
             principleSpouse.setRules(ssr);
-            ssr = new SocialSecurityRules(roe.getEndAge(), roe.getSpouseBirthdate(), roe.getBirthdate(),
+            ssr = new SocialSecurityRules(roe.getEndAge(), roe.getSpouseBirthdate(), roe.getPrimaryBirthdate(),
                     principleSpouse.getFullMonthlyBenefit(), principleSpouse.getStartAge(), true, true);
             spouse.setRules(ssr);
         }

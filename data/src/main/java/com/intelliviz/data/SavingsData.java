@@ -29,9 +29,9 @@ public class SavingsData extends AbstractIncomeSource {
     }
 
     public SavingsData(long id, int type, String name, int owner,
-                       AgeData startAge, String balance, String interest,
-                       String monthlyAddition, AgeData stopMonthlyAdditionAge,
-                       String withdrawPercent, String annualPercentIncrease, int showMonths) {
+                         AgeData startAge, String balance, String interest,
+                         String monthlyAddition, AgeData stopMonthlyAdditionAge,
+                         String withdrawPercent, String annualPercentIncrease, int showMonths) {
         super(id, type, name, owner);
         mStartAge = startAge;
         mBalance = balance;
@@ -41,6 +41,21 @@ public class SavingsData extends AbstractIncomeSource {
         mWithdrawPercent = withdrawPercent;
         mAnnualPercentIncrease = annualPercentIncrease;
         mShowMonths = showMonths;
+    }
+
+    public SavingsData(int owner,
+                       AgeData startAge, String balance, String interest,
+                       String monthlyAddition, AgeData stopMonthlyAdditionAge,
+                       String withdrawPercent, String annualPercentIncrease) {
+        super(-1, 0, "", owner);
+        mStartAge = startAge;
+        mBalance = balance;
+        mInterest = interest;
+        mMonthlyAddition = monthlyAddition;
+        mStopMonthlyAdditionAge = stopMonthlyAdditionAge;
+        mWithdrawPercent = withdrawPercent;
+        mAnnualPercentIncrease = annualPercentIncrease;
+        mShowMonths = 0;
     }
 
     public void setStartAge(AgeData startAge) {
@@ -133,7 +148,7 @@ public class SavingsData extends AbstractIncomeSource {
         if(mRules != null) {
             return mRules.getIncomeData();
         } else {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 

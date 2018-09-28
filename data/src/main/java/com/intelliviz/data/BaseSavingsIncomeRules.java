@@ -40,7 +40,7 @@ public abstract class BaseSavingsIncomeRules {
 
     BaseSavingsIncomeRules(RetirementOptions ro) {
         mRO = ro;
-        mOwnerBirthdate = ro.getBirthdate();
+        mOwnerBirthdate = ro.getPrimaryBirthdate();
         mEndAge = ro.getEndAge();
         mOtherBirthdate = ro.getSpouseBirthdate();
     }
@@ -65,6 +65,11 @@ public abstract class BaseSavingsIncomeRules {
         mStartAge = bundle.getParcelable(EXTRA_INCOME_START_AGE);
         mStopAge = bundle.getParcelable(EXTRA_INCOME_STOP_AGE);
         mShowMonths = bundle.getInt(EXTRA_INCOME_SHOW_MONTHS) == 1;
+
+        if(mOwner == RetirementConstants.OWNER_SPOUSE) {
+            mOwnerBirthdate = mRO.getSpouseBirthdate();
+            mOtherBirthdate = mRO.getPrimaryBirthdate();
+        }
 
         AgeData currentAge = AgeUtils.getAge(mOwnerBirthdate);
 

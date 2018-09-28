@@ -109,6 +109,10 @@ public class AgeData implements Parcelable {
         return new AgeData(getNumberOfMonths() + numMonths);
     }
 
+    public AgeData addYear(int numYears) {
+        return new AgeData(getNumberOfMonths() + numYears*12);
+    }
+
     public int diff(AgeData ageData) {
         return Math.abs(mNumMonths - ageData.getNumberOfMonths());
     }

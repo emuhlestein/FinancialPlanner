@@ -179,14 +179,14 @@ public class StartUpActivity extends AppCompatActivity implements
         mResponse = response;
 
         boolean isBirthdateValid = false;
-        if(AgeUtils.validateBirthday(mROE.getBirthdate())) {
+        if(AgeUtils.validateBirthday(mROE.getPrimaryBirthdate())) {
             isBirthdateValid = true;
         }
 
         if(isBirthdateValid) {
             onStartNavigationActivity();
         } else {
-            onStartBirthdateActivity(mROE.getBirthdate());
+            onStartBirthdateActivity(mROE.getPrimaryBirthdate());
         }
     }
 
@@ -219,10 +219,10 @@ public class StartUpActivity extends AppCompatActivity implements
     }
 
     private void attemptToStartNavigateActivity() {
-        if(AgeUtils.validateBirthday(mROE.getBirthdate())) {
+        if(AgeUtils.validateBirthday(mROE.getPrimaryBirthdate())) {
             onStartNavigationActivity();
         } else {
-            onStartBirthdateActivity(mROE.getBirthdate());
+            onStartBirthdateActivity(mROE.getPrimaryBirthdate());
         }
     }
 

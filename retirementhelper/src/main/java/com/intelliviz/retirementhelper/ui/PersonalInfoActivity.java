@@ -216,7 +216,7 @@ public class PersonalInfoActivity extends AppCompatActivity implements
         mNameTextView.setText(displayName);
 
         mEmailTextView.setText(email);
-        mBirthDateViewText.setText(roe.getBirthdate());
+        mBirthDateViewText.setText(roe.getPrimaryBirthdate());
         //mSpouseBirthdateTextView.setText(roe.getSpouseBirthdate());
 
         String countryCode = roe.getCountryCode();
@@ -274,7 +274,7 @@ public class PersonalInfoActivity extends AppCompatActivity implements
         }
 
         mROE.setIncludeSpouse(includeSpouse);
-        mROE.setBirthdate(birthdate);
+        mROE.setPrimaryBirthdate(birthdate);
         mViewModel.update(mROE);
 
         finish();

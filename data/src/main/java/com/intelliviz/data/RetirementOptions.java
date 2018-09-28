@@ -5,26 +5,41 @@ import com.intelliviz.lowlevel.data.AgeData;
 public class RetirementOptions {
     private long id;
     private AgeData mEndAge;
-    private String mBirthdate;
+    private String mPrimaryBirthdate;
     private String mSpouseBirthdate;
     private int mIncludeSpouse;
     private String mCountryCode;
     private boolean mCountryAvailable;
 
-    public RetirementOptions(String birthdate, String spouseBirthdate) {
-        mBirthdate = birthdate;
+    /**
+     * Constructor for unit tests.
+     * @param primaryBirthdate Birthdate of primary (or self).
+     * @param spouseBirthdate Birhtdate of spouse if included.
+     * @param endAge End age of primary.
+     */
+    public RetirementOptions(AgeData endAge, String primaryBirthdate, String spouseBirthdate) {
+        mEndAge = endAge;
+        mPrimaryBirthdate = primaryBirthdate;
         mSpouseBirthdate = spouseBirthdate;
         id = -1;
-        mEndAge = new AgeData(0);
         mIncludeSpouse = 0;
         mCountryCode = "US";
         mCountryAvailable = false;
     }
 
-    public RetirementOptions(long id, AgeData endAge, String birthdate, String spouseBirthdate, int includeSpouse, String countryCode) {
+    /**
+     * Constructor
+     * @param id Database id. -1 if it's a new record.
+     * @param endAge End age of primary.
+     * @param primaryBirthdate Birthdate of primary (or self).
+     * @param spouseBirthdate Birthdate of spouse if included.
+     * @param includeSpouse Flag for if spouse is included. Is 1 if included, otherwise, 0.
+     * @param countryCode Country code.
+     */
+    public RetirementOptions(long id, AgeData endAge, String primaryBirthdate, String spouseBirthdate, int includeSpouse, String countryCode) {
         this.id = id;
         mEndAge = endAge;
-        mBirthdate = birthdate;
+        mPrimaryBirthdate = primaryBirthdate;
         mSpouseBirthdate = spouseBirthdate;
         mIncludeSpouse = includeSpouse;
         mCountryCode = countryCode;
@@ -47,12 +62,12 @@ public class RetirementOptions {
         mEndAge = endAge;
     }
 
-    public String getBirthdate() {
-        return mBirthdate;
+    public String getPrimaryBirthdate() {
+        return mPrimaryBirthdate;
     }
 
-    public void setBirthdate(String birthdate) {
-        mBirthdate = birthdate;
+    public void setPrimaryBirthdate(String birthdate) {
+        mPrimaryBirthdate = birthdate;
     }
 
     public String getSpouseBirthdate() {

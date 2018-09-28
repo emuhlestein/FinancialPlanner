@@ -55,34 +55,43 @@ public class AgeDataTest {
 
     @Test
     public void testAgeUtils() {
-        String birthDate = "01-01-1960";
-        AgeData age = AgeUtils.getAge(birthDate);
+        AgeData testAge = new AgeData(60, 0);
+        String birthdate = AgeUtils.getBirthdate(testAge);
+        AgeData age = AgeUtils.getAge(birthdate);
+        assertTrue(testAge.getYear() == age.getYear());
+        assertTrue(testAge.getMonth() == age.getMonth());
 
-        // TODO this is not a good test as it will fail when the month changes
-        assertTrue(age.getYear() == 58);
-        assertTrue(age.getMonth() == 8);
+        testAge = new AgeData(65, 6);
+        birthdate = AgeUtils.getBirthdate(testAge);
+        age = AgeUtils.getAge(birthdate);
+        assertTrue(testAge.getYear() == age.getYear());
+        assertTrue(testAge.getMonth() == age.getMonth());
 
-        AgeData age1 = new AgeData(70, 0);
-        String birthDate2 = "01-01-1962";
-        AgeData age2 = AgeUtils.getAge(birthDate, birthDate2, age1);
-        assertTrue(age2.getYear() == 72);
-        assertTrue(age2.getMonth() == 0);
+        testAge = new AgeData(55, 11);
+        birthdate = AgeUtils.getBirthdate(testAge);
+        age = AgeUtils.getAge(birthdate);
+        assertTrue(testAge.getYear() == age.getYear());
+        assertTrue(testAge.getMonth() == age.getMonth());
 
-        age1 = new AgeData(70, 0);
-        birthDate2 = "01-01-1958";
-        age2 = AgeUtils.getAge(birthDate, birthDate2, age1);
-        assertTrue(age2.getYear() == 68);
-        assertTrue(age2.getMonth() == 0);
+        testAge = new AgeData(55, 4);
+        birthdate = AgeUtils.getBirthdate(testAge);
+        age = AgeUtils.getAge(birthdate);
+        assertTrue(testAge.getYear() == age.getYear());
+        assertTrue(testAge.getMonth() == age.getMonth());
 
-        birthDate2 = "01-05-1958";
-        age2 = AgeUtils.getAge(birthDate, birthDate2, age1);
-        assertTrue(age2.getYear() == 68);
-        assertTrue(age2.getMonth() == 4);
+        testAge = new AgeData(70, 10);
+        birthdate = AgeUtils.getBirthdate(testAge);
+        age = AgeUtils.getAge(birthdate);
+        assertTrue(testAge.getYear() == age.getYear());
+        assertTrue(testAge.getMonth() == age.getMonth());
+    }
 
-        age1 = new AgeData(70, 0);
-        birthDate2 = "01-01-1962";
-        age2 = AgeUtils.getAge(birthDate, birthDate2, age1);
-        assertTrue(age2.getYear() == 72);
-        assertTrue(age2.getMonth() == 0);
+    @Test
+    public void getBirthdateTest() {
+        AgeData testAge = new AgeData(60, 0);
+        String birthdate = AgeUtils.getBirthdate(testAge);
+        AgeData age = AgeUtils.getAge(birthdate);
+        assertTrue(testAge.getYear() == age.getYear());
+        assertTrue(testAge.getMonth() == age.getMonth());
     }
 }

@@ -14,7 +14,7 @@ public abstract class AbstractIncomeDataAccessor implements IncomeDataAccessor {
 
     protected AgeData getOwnerAge(AgeData age, RetirementOptions ro) {
         if(mOwner == OWNER_SPOUSE) {
-            return AgeUtils.getAge(ro.getSpouseBirthdate(), ro.getBirthdate(), age);
+            return AgeUtils.getAge(ro.getSpouseBirthdate(), ro.getPrimaryBirthdate(), age);
         } else {
             return age;
         }

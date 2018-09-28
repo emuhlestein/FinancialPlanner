@@ -29,7 +29,7 @@ public class PensionRulesTest {
         String ownerBirthdate = "01-01-1960";
 
         PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
-        RetirementOptions ro = new RetirementOptions(ownerBirthdate, null);
+        RetirementOptions ro = new RetirementOptions(null, ownerBirthdate, null);
         PensionRules rules = new PensionRules(ro);
         spouse1.setRules(rules);
         IncomeDataAccessor accessor = spouse1.getIncomeDataAccessor();
@@ -66,7 +66,7 @@ public class PensionRulesTest {
         String spouseBirthdate = "01-01-1965";
 
         PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
-        RetirementOptions ro = new RetirementOptions(ownerBirthdate, spouseBirthdate);
+        RetirementOptions ro = new RetirementOptions(null, ownerBirthdate, spouseBirthdate);
         PensionRules rules = new PensionRules(ro);
         spouse1.setRules(rules);
         IncomeDataAccessor accessor = spouse1.getIncomeDataAccessor();
@@ -103,7 +103,7 @@ public class PensionRulesTest {
         String spouseBirthdate = "01-05-1960";
 
         PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
-        RetirementOptions ro = new RetirementOptions(ownerBirthdate, spouseBirthdate);
+        RetirementOptions ro = new RetirementOptions(null, ownerBirthdate, spouseBirthdate);
         PensionRules rules = new PensionRules(ro);
         spouse1.setRules(rules);
         IncomeDataAccessor accessor = spouse1.getIncomeDataAccessor();
@@ -140,7 +140,7 @@ public class PensionRulesTest {
         String principleSpouseBirthdate = "01-01-1960";
 
         PensionData spouse1 = new PensionData(OWNER_SPOUSE, startAge, spouseMonthlyBenefit);
-        RetirementOptions ro = new RetirementOptions(principleSpouseBirthdate, spouseBirthdate);
+        RetirementOptions ro = new RetirementOptions(null, principleSpouseBirthdate, spouseBirthdate);
         PensionRules rules = new PensionRules(ro);
         spouse1.setRules(rules);
         IncomeDataAccessor accessor = spouse1.getIncomeDataAccessor();

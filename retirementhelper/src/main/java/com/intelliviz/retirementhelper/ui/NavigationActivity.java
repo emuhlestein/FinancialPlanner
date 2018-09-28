@@ -135,7 +135,7 @@ public class NavigationActivity extends AppCompatActivity implements
                     }
                 });
                 //intent = new Intent(this, PersonalInfoActivity.class);
-                //intent.putExtra(EXTRA_BIRTHDATE, mROE.getBirthdate());
+                //intent.putExtra(EXTRA_BIRTHDATE, mROE.getPrimaryBirthdate());
                 //intent.putExtra(EXTRA_SPOUSE_BIRTHDATE, mROE.getSpouseBirthdate());
                 //intent.putExtra(EXTRA_INCLUDE_SPOUSE, mROE.getIncludeSpouse());
                 //startActivity(intent); //, REQUEST_PERSONAL_INFO);

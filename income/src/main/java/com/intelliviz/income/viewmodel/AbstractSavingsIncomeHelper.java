@@ -48,7 +48,7 @@ public abstract class AbstractSavingsIncomeHelper {
             }
             mSD.setRules(sr);
             IncomeDataAccessor accessor = mSD.getIncomeDataAccessor();
-            AgeData age = AgeUtils.getAge(mRO.getBirthdate());
+            AgeData age = AgeUtils.getAge(mRO.getPrimaryBirthdate());
             AgeData endAge = mRO.getEndAge();
 
             List<IncomeData> incomeDataList = new ArrayList();

@@ -89,7 +89,7 @@ public class IncomeSummaryHelper {
             }
         }
 
-        AgeData age = AgeUtils.getAge(ro.getBirthdate());
+        AgeData age = AgeUtils.getAge(ro.getPrimaryBirthdate());
         AgeData endAge = ro.getEndAge();
 
         for(int year = age.getYear(); year <= endAge.getYear(); year++) {
@@ -130,7 +130,7 @@ public class IncomeSummaryHelper {
      */
     public static AgeData getOwnerAge(AgeData age, int owner, RetirementOptions ro) {
         if(owner == OWNER_SPOUSE) {
-            return AgeUtils.getAge(ro.getSpouseBirthdate(), ro.getBirthdate(), age);
+            return AgeUtils.getAge(ro.getSpouseBirthdate(), ro.getPrimaryBirthdate(), age);
         } else {
             return age;
         }
