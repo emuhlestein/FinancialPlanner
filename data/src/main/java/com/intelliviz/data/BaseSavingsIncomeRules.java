@@ -116,7 +116,7 @@ public abstract class BaseSavingsIncomeRules {
 
             listAmountDate.add(createIncomeData(age, monthlyWithdraw, balance));
 
-            if (age.isAfter(mStopAge)) {
+            if (age.isOnOrAfter(mStopAge)) {
                 monthlyDeposit = 0;
             }
             balance += monthlyDeposit;
