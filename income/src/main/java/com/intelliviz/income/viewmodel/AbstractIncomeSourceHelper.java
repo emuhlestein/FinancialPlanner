@@ -85,11 +85,6 @@ public abstract class AbstractIncomeSourceHelper {
     }
 
     private boolean includeIncomeSource(RetirementOptions ro, IncomeSourceType incomeSource) {
-        if(isSpouseIncluded() || incomeSource.getOwner() == OWNER_PRIMARY) {
-            return true;
-        } else {
-            return false;
-        }
+        return isSpouseIncluded() || incomeSource.getOwner() == OWNER_PRIMARY;
     }
-
 }
