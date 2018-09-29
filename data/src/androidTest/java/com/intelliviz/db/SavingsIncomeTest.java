@@ -292,6 +292,48 @@ public class SavingsIncomeTest {
         assertEquals(balance, 6500, 0);
     }
 
+    @Test
+    public void testAnnualInterestPrimary() {
+        AgeData startAge = new AgeData(65, 0);
+        AgeData stopMonthlyAdditionAge = new AgeData(60, 0);
+        String startBalance = "1000";
+        String interest = "10";
+        String monthlyAddition = "0";
+        String initWithdrawPercent = "0";
+        String annualPercentIncrease = "0";
+
+        SavingsData savingsData = new SavingsData(OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
+                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
+
+        AgeData primaryAge = new AgeData(65, 0);
+        SavingsIncomeRules rules = createRules(primaryAge, null);
+        savingsData.setRules(rules);
+        IncomeDataAccessor accessor = savingsData.getIncomeDataAccessor();
+        AgeData currentAge = new AgeData(primaryAge);
+        AgeData age = new AgeData(currentAge.getYear()+1, 0);
+        IncomeData incomeData = accessor.getIncomeData(age);
+        double balance;
+        balance = incomeData.getBalance();
+        assertEquals(balance, 1104.71, 0.01);
+
+        age = age.addYear(1);
+        incomeData = accessor.getIncomeData(age);
+        balance = incomeData.getBalance();
+        assertEquals(balance, 1220.39, 0.01);
+
+        age = new AgeData(currentAge.getYear(), 0);
+        age = age.addYear(5);
+        incomeData = accessor.getIncomeData(age);
+        balance = incomeData.getBalance();
+        assertEquals(balance, 1645.31, 0.01);
+
+        age = new AgeData(currentAge.getYear(), 0);
+        age = age.addYear(10);
+        incomeData = accessor.getIncomeData(age);
+        balance = incomeData.getBalance();
+        assertEquals(balance, 2707.04, 0.01);
+    }
+
 
 /*
     @Test
@@ -527,7 +569,10 @@ public class SavingsIncomeTest {
 
     private SavingsIncomeRules createRules(AgeData primaryAge, AgeData spouseAge) {
         String primaryBirthdate = AgeUtils.getBirthdate(primaryAge);
-        String spouseBirthdate = AgeUtils.getBirthdate(spouseAge);
+        String spouseBirthdate = null;
+        if(spouseAge != null) {
+            spouseBirthdate = AgeUtils.getBirthdate(spouseAge);
+        }
         RetirementOptions ro = new RetirementOptions(mEndAge,  primaryBirthdate, spouseBirthdate);
         return new SavingsIncomeRules(ro);
     }
