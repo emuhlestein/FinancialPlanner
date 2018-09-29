@@ -25,7 +25,7 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 
 public abstract class AbstractIncomeSourceHelper {
     private List<IncomeSourceEntityBase> mIncomeList;
@@ -85,7 +85,7 @@ public abstract class AbstractIncomeSourceHelper {
     }
 
     private boolean includeIncomeSource(RetirementOptions ro, IncomeSourceType incomeSource) {
-        if(isSpouseIncluded() || incomeSource.getOwner() == OWNER_SELF) {
+        if(isSpouseIncluded() || incomeSource.getOwner() == OWNER_PRIMARY) {
             return true;
         } else {
             return false;

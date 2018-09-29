@@ -40,7 +40,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOU
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_NOT_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
 import static com.intelliviz.lowlevel.util.SystemUtils.getFloatValue;
@@ -200,7 +200,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
 
         if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
-        } else if(mGP.getOwner() == OWNER_SELF) {
+        } else if(mGP.getOwner() == OWNER_PRIMARY) {
             mOwnerTextView.setText("Self");
         } else if(mGP.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");
@@ -316,7 +316,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                 break;
             case EC_FOR_SELF_OR_SPOUSE:
                 if (button == NewMessageDialog.POS_BUTTON) {
-                    mGP.setOwner(RetirementConstants.OWNER_SELF);
+                    mGP.setOwner(RetirementConstants.OWNER_PRIMARY);
                 } else if(button == NewMessageDialog.NEG_BUTTON) {
                     mGP.setOwner(RetirementConstants.OWNER_SPOUSE);
                 }

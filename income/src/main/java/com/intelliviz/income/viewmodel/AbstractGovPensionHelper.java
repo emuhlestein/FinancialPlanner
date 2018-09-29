@@ -42,7 +42,7 @@ public abstract class AbstractGovPensionHelper {
         // if id is 0, we're adding a new default record
         if(id == 0) {
             if (gpList.isEmpty()) {
-                GovPension gp = createDefault(RetirementConstants.OWNER_SELF);
+                GovPension gp = createDefault(RetirementConstants.OWNER_PRIMARY);
                 gpList.add(gp);
                 SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
                 int status = RetirementConstants.EC_NO_ERROR;
@@ -56,10 +56,10 @@ public abstract class AbstractGovPensionHelper {
                 }
                 GovPension govPension = gpList.get(0);
                 GovPension gp;
-                if (govPension.getOwner() == RetirementConstants.OWNER_SELF) {
+                if (govPension.getOwner() == RetirementConstants.OWNER_PRIMARY) {
                     gp = createDefault(RetirementConstants.OWNER_SPOUSE);
                 } else {
-                    gp = createDefault(RetirementConstants.OWNER_SELF);
+                    gp = createDefault(RetirementConstants.OWNER_PRIMARY);
                 }
                 gpList.add(gp);
                 SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);

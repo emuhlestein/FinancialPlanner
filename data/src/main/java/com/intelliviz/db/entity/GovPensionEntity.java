@@ -8,7 +8,7 @@ import android.arch.persistence.room.TypeConverters;
 import com.intelliviz.lowlevel.data.AgeData;
 
 import static com.intelliviz.db.entity.GovPensionEntity.TABLE_NAME;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 
 /**
  * Database table for government pension income source.
@@ -30,7 +30,7 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
     @Ignore
     public GovPensionEntity(long id, int type) {
-        super(id, type, "", OWNER_SELF);
+        super(id, type, "", OWNER_PRIMARY);
         mFullMonthlyBenefit = "0";
         mStartAge = new AgeData(0);
     }

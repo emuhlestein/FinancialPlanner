@@ -65,7 +65,7 @@ public abstract class AbstractSavingsIncomeHelper {
     }
 
     private SavingsViewData createDefault(final int incomeType) {
-        SavingsData sd = new SavingsData(0, incomeType, "", RetirementConstants.OWNER_SELF,
+        SavingsData sd = new SavingsData(0, incomeType, "", RetirementConstants.OWNER_PRIMARY,
                 new AgeData(65, 0), "0", "0", "0", new AgeData(65, 0), "0", "0", 0);
         IncomeTypeRules sr;
 

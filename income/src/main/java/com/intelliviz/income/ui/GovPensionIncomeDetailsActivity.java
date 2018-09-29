@@ -27,7 +27,7 @@ import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.GovEntityRepo;
 
 import static android.view.View.GONE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class GovPensionIncomeDetailsActivity extends AppCompatActivity implements IncomeDetailsSelectListener{
@@ -128,7 +128,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
 
         if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
-        } else if(mGP.getOwner() == OWNER_SELF) {
+        } else if(mGP.getOwner() == OWNER_PRIMARY) {
             mOwnerTextView.setText("Self");
         } else if(mGP.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");

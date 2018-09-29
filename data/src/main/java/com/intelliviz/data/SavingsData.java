@@ -21,7 +21,7 @@ public class SavingsData extends AbstractIncomeSource {
     private BaseSavingsIncomeRules mRules;
 
     public SavingsData(long id, int type) {
-        super(id, type, "", RetirementConstants.OWNER_SELF);
+        super(id, type, "", RetirementConstants.OWNER_PRIMARY);
     }
 
     public SavingsData(long id, int type, String name, int owner) {

@@ -24,7 +24,7 @@ public class GovPension extends AbstractIncomeSource {
     }
 
     public GovPension(long id, int type) {
-        this(id, type, "", RetirementConstants.OWNER_SELF);
+        this(id, type, "", RetirementConstants.OWNER_PRIMARY);
     }
 
     public GovPension(long id, int type, String name, int owner,

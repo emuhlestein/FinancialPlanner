@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class SavingsIncomeDetailsActivity extends AppCompatActivity {
@@ -199,7 +199,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
 
         if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
-        } else if(mSD.getOwner() == OWNER_SELF) {
+        } else if(mSD.getOwner() == OWNER_PRIMARY) {
             mOwnerTextView.setText("Self");
         } else if(mSD.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");

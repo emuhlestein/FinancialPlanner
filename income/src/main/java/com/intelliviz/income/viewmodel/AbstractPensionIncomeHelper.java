@@ -37,7 +37,7 @@ public abstract class AbstractPensionIncomeHelper {
     }
 
     private PensionViewData createDefault() {
-        PensionData pd = new PensionData(0, RetirementConstants.INCOME_TYPE_PENSION, "", RetirementConstants.OWNER_SELF,
+        PensionData pd = new PensionData(0, RetirementConstants.INCOME_TYPE_PENSION, "", RetirementConstants.OWNER_PRIMARY,
                 new AgeData(65, 0), "0");
         PensionRules pr = new PensionRules(mRO);
         pd.setRules(pr);

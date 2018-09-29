@@ -33,7 +33,7 @@ import java.util.List;
 
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
@@ -166,7 +166,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         String name = mPD.getName();
         if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
-        } else if(mPD.getOwner() == OWNER_SELF) {
+        } else if(mPD.getOwner() == OWNER_PRIMARY) {
             mOwnerTextView.setText("Self");
         } else if(mPD.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");

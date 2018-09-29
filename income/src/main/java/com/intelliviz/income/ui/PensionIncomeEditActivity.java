@@ -31,7 +31,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPO
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
@@ -145,7 +145,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         String name = mPD.getName();
         if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
-        } else if(mPD.getOwner() == OWNER_SELF) {
+        } else if(mPD.getOwner() == OWNER_PRIMARY) {
             mOwnerTextView.setText("Self");
         } else if(mPD.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");
@@ -200,7 +200,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                     break;
                 case EC_FOR_SELF_OR_SPOUSE:
                     if (button == NewMessageDialog.POS_BUTTON) {
-                        mPD.setOwner(RetirementConstants.OWNER_SELF);
+                        mPD.setOwner(RetirementConstants.OWNER_PRIMARY);
                     } else if(button == NewMessageDialog.NEG_BUTTON) {
                         mPD.setOwner(RetirementConstants.OWNER_SPOUSE);
                     }

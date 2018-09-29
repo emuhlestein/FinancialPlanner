@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 
 
 /**
@@ -156,7 +156,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         } else if(gpList.size() == 2) {
             GovPension principleSpouse;
             GovPension spouse;
-            if(gpList.get(0).getOwner() == OWNER_SELF) {
+            if(gpList.get(0).getOwner() == OWNER_PRIMARY) {
                 principleSpouse = gpList.get(0);
                 spouse = gpList.get(1);
             } else {

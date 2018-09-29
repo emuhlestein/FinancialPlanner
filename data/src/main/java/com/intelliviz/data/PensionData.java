@@ -19,7 +19,7 @@ public class PensionData extends AbstractIncomeSource {
     private PensionRules mRules;
 
     public PensionData(long id, int type) {
-        this(id, type, "", RetirementConstants.OWNER_SELF);
+        this(id, type, "", RetirementConstants.OWNER_PRIMARY);
     }
 
     public PensionData(long id, int type, String name, int owner) {
@@ -73,7 +73,7 @@ public class PensionData extends AbstractIncomeSource {
         if(mRules != null) {
             return mRules.getIncomeData();
         } else {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 

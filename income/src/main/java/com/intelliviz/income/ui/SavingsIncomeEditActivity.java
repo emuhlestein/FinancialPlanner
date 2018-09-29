@@ -35,7 +35,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_TWO_SUPPO
 import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_TYPE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class SavingsIncomeEditActivity extends AppCompatActivity implements
@@ -194,7 +194,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
 
         if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
-        } else if(mSD.getOwner() == OWNER_SELF) {
+        } else if(mSD.getOwner() == OWNER_PRIMARY) {
             mOwnerTextView.setText("Self");
         } else if(mSD.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");
@@ -400,7 +400,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
                 break;
             case EC_FOR_SELF_OR_SPOUSE:
                 if (button == NewMessageDialog.POS_BUTTON) {
-                    mSD.setOwner(RetirementConstants.OWNER_SELF);
+                    mSD.setOwner(OWNER_PRIMARY);
                 } else if(button == NewMessageDialog.NEG_BUTTON) {
                     mSD.setOwner(RetirementConstants.OWNER_SPOUSE);
                 }

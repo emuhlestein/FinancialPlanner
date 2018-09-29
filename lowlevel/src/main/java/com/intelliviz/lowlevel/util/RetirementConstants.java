@@ -128,7 +128,7 @@ public class RetirementConstants {
     // owner type
     public static final String EXTRA_OWNER_TYPE = "owner type";
     public static final int OWNER_SPOUSE = 0; // income source is spouse
-    public static final int OWNER_SELF = 1;   // income source is self
+    public static final int OWNER_PRIMARY = 1;   // income source is self or primary
 
     public static final String EXTRA_DIALOG_RESPONSE = "dialog response";
 }
