@@ -26,10 +26,8 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
@@ -46,11 +44,9 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private CoordinatorLayout mCoordinatorLayout;
     private EditText mIncomeSourceName;
     private TextView mMinAge;
-    private Button mEditMinimumgeButton;
-    private Button mAddIncomeSourceButton;
     private EditText mMonthlyBenefit;
-    private Toolbar mToolbar;
     private TextView mOwnerTextView;
+    private MessageMgr mMessageMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +55,13 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
 
         mOwnerTextView = findViewById(R.id.owner_text);
 
-        mToolbar = findViewById(R.id.income_source_toolbar);
+        Toolbar toolbar = findViewById(R.id.income_source_toolbar);
         mMonthlyBenefit = findViewById(R.id.monthly_benefit_text);
         mMinAge = findViewById(R.id.minimum_age_text);
         mIncomeSourceName = findViewById(R.id.name_edit_text);
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
-        mEditMinimumgeButton = findViewById(R.id.edit_minimum_age_button);
-        mEditMinimumgeButton.setOnClickListener(new View.OnClickListener() {
+        Button editMinimumAgeButton = findViewById(R.id.edit_minimum_age_button);
+        editMinimumAgeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AgeData startAge = mPD.getStartAge();
@@ -74,19 +70,20 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                 dialog.show(fm, "");
             }
         });
-        mAddIncomeSourceButton = findViewById(R.id.add_income_source_button);
-        mAddIncomeSourceButton.setOnClickListener(new View.OnClickListener() {
+        Button addIncomeSourceButton = findViewById(R.id.add_income_source_button);
+        addIncomeSourceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 updateIncomeSourceData();
             }
         });
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
         mId = 0;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
+            mMessageMgr = intent.getParcelableExtra(EXTRA_MESSAGE_MGR);
         }
 
         mPD = null;
@@ -121,15 +118,18 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                 }
                 mSpouseIncluded = viewData.isSpouseIncluded();
                 mPD = viewData.getPensionData();
+                String message;
                 switch(viewData.getStatus()) {
-                    case EC_ONLY_ONE_SUPPORTED:
+                    case MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED:
                         fm = getSupportFragmentManager();
-                        MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_ONLY_ONE_SUPPORTED, true, null, null);
+                        message = mMessageMgr.getMessage(MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED);
+                        MessageDialog dialog = MessageDialog.newInstance("Warning", message, MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED, true, null, null);
                         dialog.show(fm, "message");
                         break;
-                    case EC_SPOUSE_INCLUDED:
+                    case MessageMgr.EC_FOR_SELF_OR_SPOUSE:
                         fm = getSupportFragmentManager();
-                        NewMessageDialog newdialog = NewMessageDialog.newInstance(EC_FOR_SELF_OR_SPOUSE, "Income Source", "Is this income source for spouse or self?", "Self", "Spouse");
+                        message = mMessageMgr.getMessage(MessageMgr.EC_FOR_SELF_OR_SPOUSE);
+                        NewMessageDialog newdialog = NewMessageDialog.newInstance(MessageMgr.EC_FOR_SELF_OR_SPOUSE, "Income Source", message, "Self", "Spouse");
                         newdialog.show(fm, "message");
                         break;
                 }
@@ -146,9 +146,9 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
         } else if(mPD.getOwner() == OWNER_PRIMARY) {
-            mOwnerTextView.setText("Self");
+            mOwnerTextView.setText(getResources().getString(R.string.self));
         } else if(mPD.getOwner() == OWNER_SPOUSE) {
-            mOwnerTextView.setText("Spouse");
+            mOwnerTextView.setText(getResources().getString(R.string.spouse));
         }
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mPD.getMonthlyBenefit());
         AgeData minAge = mPD.getStartAge();
@@ -195,10 +195,10 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     @Override
     public void onGetResponse(int id, int button) {
             switch (id) {
-                case EC_ONLY_ONE_SUPPORTED:
+                case MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED:
                     finish();
                     break;
-                case EC_FOR_SELF_OR_SPOUSE:
+                case MessageMgr.EC_FOR_SELF_OR_SPOUSE:
                     if (button == NewMessageDialog.POS_BUTTON) {
                         mPD.setOwner(RetirementConstants.OWNER_PRIMARY);
                     } else if(button == NewMessageDialog.NEG_BUTTON) {

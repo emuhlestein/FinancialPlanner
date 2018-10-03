@@ -20,11 +20,11 @@ import com.intelliviz.db.entity.PensionIncomeEntity;
 import com.intelliviz.db.entity.SavingsDataEntityMapper;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 import com.intelliviz.income.data.IncomeSourceViewData;
-import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intelliviz.income.ui.MessageMgr.EC_SPOUSE_INCLUDED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 
 public abstract class AbstractIncomeSourceHelper {
@@ -41,7 +41,7 @@ public abstract class AbstractIncomeSourceHelper {
     public LiveData<IncomeSourceViewData> get() {
         int status = 0;
         if(isSpouseIncluded()) {
-            status = RetirementConstants.EC_SPOUSE_INCLUDED;
+            status = EC_SPOUSE_INCLUDED;
         }
         List<AbstractIncomeSource> allSources = getAllIncomeSources(mIncomeList);
         MutableLiveData<IncomeSourceViewData> ldata = new MutableLiveData<>();

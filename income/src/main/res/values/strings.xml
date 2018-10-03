@@ -21,22 +21,32 @@
     <string name="birthdate_not_valid">Birthdate is not valid</string>
     <string name="monthly_benefit_not_valid">Spouse monthly monthlyBenefit value is not valid</string>
 
-
+    <string name="self">Self</string>
+    <string name="spouse">Spouse</string>
 
     <string name="ec_no_error">No error</string>
-    <string name="ec_no_spouse_birthdate">Need to add birthdate for spouse before adding social security income source.</string>
+    <string name="ec_no_spouse_birthdate">Need to add birth date for spouse before adding social security income source.</string>
     <string name="ec_only_two_social_security_allowed">Can only have two Social Security income sources.</string>
     <string name="ec_only_one_social_security_allowed">Can only have one Social Security income source with free version.</string>
     <string name="ec_only_one_pension_allowed">Can only have one Pension income source with free version.</string>
     <string name="ec_only_one_savings_allowed">Can only have one Savings income source with free version.</string>
     <string name="ec_only_two_savings_allowed">Can only have two Savings or 401(k) income source with free version.</string>
-    <string name="ec_principle_spouse">Principle Spouse</string>
+    <string name="ec_only_one_social_security_allowed_for_self">You can only have one social security income source for yourself".</string>
+    <string name="ec_ten_percent_penalty_for_withdrawal">There is a 10% penalty for early withdrawal.</string>
+    <string name="ec_balance_exhausted">Balance has been exhausted. Need to increase savings, reduce initial monthly withdraw or delay retirement."</string>
+    <string name="ec_balance_exhausted_in_year">Balance will be exhausted in less than a year"</string>
     <string-array name="error_codes">
         <item>@string/ec_no_error</item>
+        <item>@string/ec_no_spouse_birthdate</item>
         <item>@string/ec_only_two_social_security_allowed</item>
         <item>@string/ec_only_one_social_security_allowed</item>
-        <item>@string/ec_no_spouse_birthdate</item>
-        <item>@string/ec_principle_spouse</item>
+        <item>@string/ec_only_one_pension_allowed</item>
+        <item>@string/ec_only_one_savings_allowed</item>
+        <item>@string/ec_only_two_savings_allowed</item>
+        <item>@string/ec_only_one_social_security_allowed_for_self</item>
+        <item>@string/ec_ten_percent_penalty_for_withdrawal</item>
+        <item>@string/ec_balance_exhausted</item>
+        <item>@string/ec_balance_exhausted_in_year</item>
     </string-array>
 
     <string name="dismiss">Dismiss</string>

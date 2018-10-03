@@ -15,6 +15,9 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
+import static com.intelliviz.income.ui.MessageMgr.EC_SPOUSE_INCLUDED;
+
 public abstract class AbstractGovPensionHelper {
     private List<GovPensionEntity> mGpeList;
     private RetirementOptions mRO;
@@ -45,9 +48,9 @@ public abstract class AbstractGovPensionHelper {
                 GovPension gp = createDefault(RetirementConstants.OWNER_PRIMARY);
                 gpList.add(gp);
                 SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
-                int status = RetirementConstants.EC_NO_ERROR;
+                int status = EC_NO_ERROR;
                 if(isSpouseIncluded()) {
-                    status = RetirementConstants.EC_SPOUSE_INCLUDED;
+                    status = EC_SPOUSE_INCLUDED;
                 }
                 return new GovPensionViewData(gp, isSpouseIncluded(), status, "");
             } else if (gpList.size() < getMaxGovPensions()) {
@@ -63,7 +66,7 @@ public abstract class AbstractGovPensionHelper {
                 }
                 gpList.add(gp);
                 SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
-                int status = RetirementConstants.EC_NO_ERROR;
+                int status = EC_NO_ERROR;
                 return new GovPensionViewData(gp, isSpouseIncluded(), status, "");
             } else {
                 return new GovPensionViewData(null, isSpouseIncluded(), getSupportedSpouseErrorCode(), getSupportedSpouseErrorMessage());
@@ -71,7 +74,7 @@ public abstract class AbstractGovPensionHelper {
         } else {
             SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
             GovPension gp = getGovPension(gpList, id);
-            return new GovPensionViewData(gp, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
+            return new GovPensionViewData(gp, isSpouseIncluded(), EC_NO_ERROR, "");
         }
     }
 

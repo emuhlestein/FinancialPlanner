@@ -6,9 +6,10 @@ import android.app.Application;
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.income.R;
-import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.List;
+
+import static com.intelliviz.income.ui.MessageMgr.EC_SPOUSE_NOT_SUPPORTED;
 
 public class GovPensionHelper extends AbstractGovPensionHelper {
     private static final int MAX_GOV_PENSION = 2;
@@ -28,7 +29,7 @@ public class GovPensionHelper extends AbstractGovPensionHelper {
 
     @Override
     public int getSupportedSpouseErrorCode() {
-        return RetirementConstants.EC_SPOUSE_NOT_SUPPORTED;
+        return EC_SPOUSE_NOT_SUPPORTED;
     }
 
     @Override

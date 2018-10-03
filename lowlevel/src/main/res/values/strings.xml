@@ -2,4 +2,35 @@
     <string name="app_name">lowlevel</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+
+    <string name="ec_no_error">No error</string>
+    <string name="ec_no_spouse_birthdate">Need to add birth date for spouse before adding social security income source.</string>
+    <string name="ec_only_two_social_security_allowed">Can only have two Social Security income sources.</string>
+    <string name="ec_only_one_social_security_allowed">Can only have one Social Security income source with free version.</string>
+    <string name="ec_only_one_pension_allowed">Can only have one Pension income source with free version.</string>
+    <string name="ec_only_two_savings_allowed">Can only have two Savings or 401(k) income source with free version.</string>
+    <string name="ec_only_one_social_security_allowed_for_self">You can only have one social security income source for yourself".</string>
+    <string name="ec_ten_percent_penalty_for_withdrawal">There is a 10% penalty for early withdrawal.</string>
+    <string name="ec_balance_exhausted">Balance has been exhausted. Need to increase savings, reduce initial monthly withdraw or delay retirement."</string>
+    <string name="ec_balance_exhausted_in_year">Balance will be exhausted in less than a year"</string>
+    <string name="ec_self_or_spouse">Is this income source for spouse or self?</string>
+    <string name="ec_spouse_not_supported">Spouse is not supported</string>
+    <string name="ec_spouse_included">Spouse is included</string>
+    <string name="ec_principle_spouse">Principle Spouse</string>
+    <string-array name="error_messages">
+        <item>@string/ec_no_error</item>
+        <item>@string/ec_no_spouse_birthdate</item>
+        <item>@string/ec_only_two_social_security_allowed</item>
+        <item>@string/ec_only_one_social_security_allowed</item>
+        <item>@string/ec_only_one_pension_allowed</item>
+        <item>@string/ec_only_two_savings_allowed</item>
+        <item>@string/ec_only_one_social_security_allowed_for_self</item>
+        <item>@string/ec_ten_percent_penalty_for_withdrawal</item>
+        <item>@string/ec_balance_exhausted</item>
+        <item>@string/ec_balance_exhausted_in_year</item>
+        <item>@string/ec_self_or_spouse</item>
+        <item>@string/ec_spouse_not_supported</item>
+        <item>@string/ec_spouse_included</item>
+        <item>@string/ec_principle_spouse</item>
+    </string-array>
 </resources>

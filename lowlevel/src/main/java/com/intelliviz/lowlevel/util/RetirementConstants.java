@@ -88,6 +88,8 @@ public class RetirementConstants {
     public static final String EXTRA_YEAR = "year";
     public static final String EXTRA_MONTH = "month";
 
+    public static final String EXTRA_MESSAGE_MGR = "message_mgr";
+
     public static final int REQUEST_RETIRE_OPTIONS = 0;
     public static final int REQUEST_PERSONAL_INFO = 1;
     public static final int REQUEST_INCOME_MENU = 6;
@@ -100,6 +102,7 @@ public class RetirementConstants {
     public static final int REQUEST_SIGN_IN = 13;
 
     // Error Code: these must be compile time constants
+    /*
     public static final int EC_NO_ERROR = 0;
     public static final int EC_MAX_NUM_SOCIAL_SECURITY = 1;
     public static final int EC_MAX_NUM_SOCIAL_SECURITY_FREE = 2;
@@ -112,6 +115,7 @@ public class RetirementConstants {
     public static final int EC_SPOUSE_INCLUDED = 9;
     public static final int EC_ONLY_ONE_SOCIAL_SECURITY = 10;
     public static final int EC_401K_WITHDRAW_PENALTY = 11;
+    */
 
     // Benefit Info
     public static final int BI_GOOD = 0;

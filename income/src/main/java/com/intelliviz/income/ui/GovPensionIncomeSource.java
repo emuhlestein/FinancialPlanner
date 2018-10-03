@@ -2,14 +2,13 @@ package com.intelliviz.income.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
 
 import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_OWNER;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
 
 
 /**
@@ -18,30 +17,35 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOUR
 
 public class GovPensionIncomeSource implements IncomeSource {
     private AbstractIncomeSource mIncomeSourceEntity;
-    public GovPensionIncomeSource(AbstractIncomeSource incomeSourceEntity) {
+    private MessageMgr mMessageMgr;
+    public GovPensionIncomeSource(AbstractIncomeSource incomeSourceEntity, MessageMgr messageMgr) {
         mIncomeSourceEntity = incomeSourceEntity;
+        mMessageMgr = messageMgr;
     }
 
     @Override
-    public void startAddActivity(FragmentActivity activity) {
-        Intent intent = new Intent(activity, GovPensionIncomeEditActivity.class);
+    public void startAddActivity(Context context) {
+        Intent intent = new Intent(context, GovPensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_ADD);
-        activity.startActivity(intent);
+        intent.putExtra(EXTRA_MESSAGE_MGR, mMessageMgr);
+        context.startActivity(intent);
     }
 
     @Override
-    public void startEditActivity(FragmentActivity activity) {
-        Intent intent = new Intent(activity, GovPensionIncomeEditActivity.class);
+    public void startEditActivity(Context context) {
+        Intent intent = new Intent(context, GovPensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
         intent.putExtra(EXTRA_INCOME_SOURCE_ACTION, RetirementConstants.INCOME_ACTION_EDIT);
-        activity.startActivity(intent);
+        intent.putExtra(EXTRA_MESSAGE_MGR, mMessageMgr);
+        context.startActivity(intent);
     }
 
     @Override
     public void startDetailsActivity(Context context) {
         Intent intent = new Intent(context, GovPensionIncomeDetailsActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
+        intent.putExtra(EXTRA_MESSAGE_MGR, mMessageMgr);
         context.startActivity(intent);
     }
 

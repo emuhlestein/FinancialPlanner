@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ACTION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MENU_ITEM_LIST;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_SELECTED_MENU_ITEM;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_DELETE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_ACTION_EDIT;
@@ -65,6 +65,7 @@ public class IncomeSourceListFragment extends Fragment implements
     private FloatingActionButton mAddIncomeSourceFAB;
     private int mStatus;
     private int mIncomeSourceType;
+    private MessageMgr mMessageMgr;
 
     /**
      * Default constructor.
@@ -77,8 +78,12 @@ public class IncomeSourceListFragment extends Fragment implements
      * Create a new instance of the fragment.
      * @return The fragment.
      */
-    public static IncomeSourceListFragment newInstance() {
-        return new IncomeSourceListFragment();
+    public static IncomeSourceListFragment newInstance(MessageMgr messageMgr) {
+        Bundle args = new Bundle();
+        args.putParcelable(EXTRA_MESSAGE_MGR, messageMgr);
+        IncomeSourceListFragment fragment = new IncomeSourceListFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -86,6 +91,8 @@ public class IncomeSourceListFragment extends Fragment implements
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_income_list_layout, container, false);
+
+        mMessageMgr = getArguments().getParcelable(EXTRA_MESSAGE_MGR);
 
         mRecyclerView = view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.emptyView);
@@ -175,7 +182,7 @@ public class IncomeSourceListFragment extends Fragment implements
 
     @Override
     public void onSelectIncomeSource(AbstractIncomeSource incomeSource, boolean showMenu) {
-        mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(incomeSource);
+        mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(incomeSource, mMessageMgr);
         if(showMenu) {
             // show edit/delete menu
             Slide slide = new Slide(Gravity.RIGHT);
@@ -193,7 +200,7 @@ public class IncomeSourceListFragment extends Fragment implements
     // Add new income source
     private void onHandleIncomeSourceSelection(Intent resultIntent) {
         mIncomeSourceType = resultIntent.getIntExtra(EXTRA_SELECTED_MENU_ITEM, -1);
-        mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(mIncomeSourceType);
+        mSelectedIncomeSource = IncomeSourceFactory.createIncomeSource(mIncomeSourceType, mMessageMgr);
         if (mSelectedIncomeSource != null) {
             mSelectedIncomeSource.startAddActivity(getActivity());
         }
@@ -231,12 +238,7 @@ public class IncomeSourceListFragment extends Fragment implements
     @Override
     public void onGetResponse(int response, int id, boolean isOk) {
         if (response == Activity.RESULT_OK) {
-            switch (id) {
-                case EC_ONLY_ONE_SUPPORTED:
-                    break;
-            }
         } else {
-
         }
     }
 }

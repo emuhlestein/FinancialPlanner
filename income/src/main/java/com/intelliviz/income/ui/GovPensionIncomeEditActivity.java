@@ -28,18 +28,16 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 import com.intelliviz.repo.GovEntityRepo;
 
+import static com.intelliviz.income.ui.MessageMgr.EC_FOR_SELF_OR_SPOUSE;
+import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
+import static com.intelliviz.income.ui.MessageMgr.EC_NO_SPOUSE_BIRTHDATE;
+import static com.intelliviz.income.ui.MessageMgr.EC_ONLY_ONE_SOCIAL_SECURITY_ALLOWED;
+import static com.intelliviz.income.ui.MessageMgr.EC_ONLY_TWO_SOCIAL_SECURITY_ALLOWED;
+import static com.intelliviz.income.ui.MessageMgr.EC_PRINCIPLE_SPOUSE;
+import static com.intelliviz.income.ui.MessageMgr.EC_SPOUSE_NOT_SUPPORTED;
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_MAX_NUM_SOCIAL_SECURITY_FREE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_ERROR;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_NO_SPOUSE_BIRTHDATE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SOCIAL_SECURITY;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_PRINCIPLE_SPOUSE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_NOT_SUPPORTED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_SPOUSE_BIRTHDATE;
@@ -63,6 +61,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
     private Toolbar mToolbar;
     private Button mAddIncomeSource;
     private TextView mOwnerTextView;
+    private MessageMgr mMessageMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +91,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
         mId = 0;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
+            mMessageMgr = intent.getParcelableExtra(EXTRA_MESSAGE_MGR);
         }
 
         mFullMonthlyBenefit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -124,8 +124,9 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                 mSpouseIncluded = viewData.isSpouseIncluded();
                 mGP = viewData.getGovPension();
                 mIsPrincipleSpouse = false;
+                String message;
                 switch(viewData.getStatus()) {
-                    case EC_MAX_NUM_SOCIAL_SECURITY:
+                    case EC_ONLY_TWO_SOCIAL_SECURITY_ALLOWED:
                         final Snackbar snackbar = Snackbar.make(mCoordinatorLayout, viewData.getMessage(), Snackbar.LENGTH_INDEFINITE);
                         snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
                             @Override
@@ -135,17 +136,6 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                             }
                         });
                         snackbar.show();
-                        break;
-                    case EC_MAX_NUM_SOCIAL_SECURITY_FREE:
-                        final Snackbar snackbar1 = Snackbar.make(mCoordinatorLayout, viewData.getMessage(), Snackbar.LENGTH_INDEFINITE);
-                        snackbar1.setAction(R.string.dismiss, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                snackbar1.dismiss();
-                                finish();
-                            }
-                        });
-                        snackbar1.show();
                         break;
                     case EC_NO_SPOUSE_BIRTHDATE:
                         FragmentManager fm = getSupportFragmentManager();
@@ -158,17 +148,19 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
                         break;
                     case EC_SPOUSE_NOT_SUPPORTED:
                         fm = getSupportFragmentManager();
-                        dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), EC_SPOUSE_NOT_SUPPORTED, true, null, null);
+                        dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), viewData.getStatus(), true, null, null);
                         dialog.show(fm, "message");
                         break;
-                    case EC_SPOUSE_INCLUDED:
+                    case EC_FOR_SELF_OR_SPOUSE:
                         fm = getSupportFragmentManager();
-                        NewMessageDialog newdialog = NewMessageDialog.newInstance(EC_FOR_SELF_OR_SPOUSE, "Income Source", "Is this income source for spouse or self?", "Self", "Spouse");
+                        message = mMessageMgr.getMessage(viewData.getStatus());
+                        NewMessageDialog newdialog = NewMessageDialog.newInstance(viewData.getStatus(), "Income Source", message, "Self", "Spouse");
                         newdialog.show(fm, "message");
                         break;
-                    case EC_ONLY_ONE_SOCIAL_SECURITY:
+                    case EC_ONLY_ONE_SOCIAL_SECURITY_ALLOWED:
                         fm = getSupportFragmentManager();
-                        newdialog = NewMessageDialog.newInstance(EC_ONLY_ONE_SOCIAL_SECURITY, "Income Source", "You can only have one social security income source for yourself", "Ok");
+                        message = mMessageMgr.getMessage(viewData.getStatus());
+                        newdialog = NewMessageDialog.newInstance(viewData.getStatus(), "Income Source", message, "Ok");
                         newdialog.show(fm, "message");
                         break;
                     case EC_NO_ERROR:
@@ -311,7 +303,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
     @Override
     public void onGetResponse(int id, int button) {
         switch (id) {
-            case EC_ONLY_ONE_SUPPORTED:
+            case EC_ONLY_ONE_SOCIAL_SECURITY_ALLOWED:
                 finish();
                 break;
             case EC_FOR_SELF_OR_SPOUSE:

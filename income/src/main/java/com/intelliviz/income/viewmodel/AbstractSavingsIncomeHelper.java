@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
+import static com.intelliviz.income.ui.MessageMgr.EC_SPOUSE_INCLUDED;
+
 public abstract class AbstractSavingsIncomeHelper {
     private SavingsData mSD;
     private RetirementOptions mRO;
@@ -51,7 +54,7 @@ public abstract class AbstractSavingsIncomeHelper {
             AgeData age = AgeUtils.getAge(mRO.getPrimaryBirthdate());
             AgeData endAge = mRO.getEndAge();
 
-            List<IncomeData> incomeDataList = new ArrayList();
+            List<IncomeData> incomeDataList = new ArrayList<>();
             for(int year = age.getYear(); year <= endAge.getYear(); year++) {
                 IncomeData benefitData = accessor.getIncomeData(new AgeData(year, 0));
                 if(benefitData != null) {
@@ -60,7 +63,7 @@ public abstract class AbstractSavingsIncomeHelper {
             }
             List<IncomeDetails> incomeDetails = getIncomeDetailsList(incomeDataList);
 
-            return new SavingsViewData(mSD, incomeDetails, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
+            return new SavingsViewData(mSD, incomeDetails, isSpouseIncluded(), EC_NO_ERROR, "");
         }
     }
 
@@ -69,9 +72,9 @@ public abstract class AbstractSavingsIncomeHelper {
                 new AgeData(65, 0), "0", "0", "0", new AgeData(65, 0), "0", "0", 0);
         IncomeTypeRules sr;
 
-        int status = RetirementConstants.EC_NO_ERROR;
+        int status = EC_NO_ERROR;
         if(isSpouseIncluded()) {
-            status = RetirementConstants.EC_SPOUSE_INCLUDED;
+            status = EC_SPOUSE_INCLUDED;
         }
 
         if(incomeType == RetirementConstants.INCOME_TYPE_401K) {

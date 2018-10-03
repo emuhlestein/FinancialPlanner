@@ -1,7 +1,6 @@
 package com.intelliviz.income.ui;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 
 import com.intelliviz.db.entity.AbstractIncomeSource;
 
@@ -10,8 +9,8 @@ import com.intelliviz.db.entity.AbstractIncomeSource;
  */
 
 public interface IncomeSource {
-    void startAddActivity(FragmentActivity activity);
-    void startEditActivity(FragmentActivity activity);
+    void startAddActivity(Context context);
+    void startEditActivity(Context context);
     void startDetailsActivity(Context context);
     AbstractIncomeSource getIncomeSourceEntity();
     long getId();

@@ -8,6 +8,7 @@ import com.intelliviz.db.entity.AbstractIncomeSource;
 
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_OWNER;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
 
 /**
  * Created by edm on 3/13/2018.
@@ -15,29 +16,34 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOUR
 
 public class PensionIncomeSource implements IncomeSource {
     private AbstractIncomeSource mIncomeSourceEntity;
+    private MessageMgr mMessageMgr;
 
-    public PensionIncomeSource(AbstractIncomeSource incomeSourceEntity) {
+    public PensionIncomeSource(AbstractIncomeSource incomeSourceEntity, MessageMgr messageMgr) {
         mIncomeSourceEntity = incomeSourceEntity;
+        mMessageMgr = messageMgr;
     }
 
     @Override
-    public void startAddActivity(FragmentActivity activity) {
-        Intent intent = new Intent(activity, PensionIncomeEditActivity.class);
+    public void startAddActivity(Context context) {
+        Intent intent = new Intent(context, PensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, 0);
-        activity.startActivity(intent);
+        intent.putExtra(EXTRA_MESSAGE_MGR, mMessageMgr);
+        context.startActivity(intent);
     }
 
     @Override
-    public void startEditActivity(FragmentActivity activity) {
-        Intent intent = new Intent(activity, PensionIncomeEditActivity.class);
+    public void startEditActivity(Context context) {
+        Intent intent = new Intent(context, PensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
-        activity.startActivity(intent);
+        intent.putExtra(EXTRA_MESSAGE_MGR, mMessageMgr);
+        context.startActivity(intent);
     }
 
     @Override
     public void startDetailsActivity(Context context) {
         Intent intent = new Intent(context, PensionIncomeDetailsActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
+        intent.putExtra(EXTRA_MESSAGE_MGR, mMessageMgr);
         context.startActivity(intent);
     }
 

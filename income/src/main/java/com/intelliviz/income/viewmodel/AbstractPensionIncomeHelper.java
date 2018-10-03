@@ -7,6 +7,9 @@ import com.intelliviz.income.data.PensionViewData;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
+import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
+import static com.intelliviz.income.ui.MessageMgr.EC_SPOUSE_INCLUDED;
+
 public abstract class AbstractPensionIncomeHelper {
     private PensionData mPD;
     private RetirementOptions mRO;
@@ -32,7 +35,7 @@ public abstract class AbstractPensionIncomeHelper {
         } else {
             PensionRules pr = new PensionRules(mRO);
             mPD.setRules(pr);
-            return new PensionViewData(mPD, isSpouseIncluded(), RetirementConstants.EC_NO_ERROR, "");
+            return new PensionViewData(mPD, isSpouseIncluded(), EC_NO_ERROR, "");
         }
     }
 
@@ -42,9 +45,9 @@ public abstract class AbstractPensionIncomeHelper {
         PensionRules pr = new PensionRules(mRO);
         pd.setRules(pr);
 
-        int status = RetirementConstants.EC_NO_ERROR;
+        int status = EC_NO_ERROR;
         if(isSpouseIncluded()) {
-            status = RetirementConstants.EC_SPOUSE_INCLUDED;
+            status = EC_SPOUSE_INCLUDED;
         }
         return new PensionViewData(pd, isSpouseIncluded(), status, "");
     }

@@ -4,7 +4,8 @@ import android.app.Application;
 
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.data.SavingsData;
-import com.intelliviz.lowlevel.util.RetirementConstants;
+
+import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
 
 public class SavingsIncomeHelper extends AbstractSavingsIncomeHelper {
     private boolean mSpouseIncluded;
@@ -21,7 +22,7 @@ public class SavingsIncomeHelper extends AbstractSavingsIncomeHelper {
 
     @Override
     public int getOnlyOneSupportedErrorCode() {
-        return RetirementConstants.EC_NO_ERROR;
+        return EC_NO_ERROR;
     }
 
     @Override

@@ -31,11 +31,7 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
     }
 
     private boolean isPenalty(AgeData age, double amount) {
-        if(age.isBefore(PENALTY_AGE) && amount > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return age.isBefore(PENALTY_AGE) && amount > 0;
     }
 
     @Override

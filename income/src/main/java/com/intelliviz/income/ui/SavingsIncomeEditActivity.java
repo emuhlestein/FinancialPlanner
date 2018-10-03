@@ -28,13 +28,12 @@ import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
+import static com.intelliviz.income.ui.MessageMgr.EC_FOR_SELF_OR_SPOUSE;
+import static com.intelliviz.income.ui.MessageMgr.EC_ONLY_TWO_SAVED_ALLOWED;
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_FOR_SELF_OR_SPOUSE;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_ONE_SUPPORTED;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_ONLY_TWO_SUPPORTED;
-import static com.intelliviz.lowlevel.util.RetirementConstants.EC_SPOUSE_INCLUDED;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_TYPE;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
@@ -49,23 +48,21 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     private SavingsIncomeViewModel mViewModel;
     private boolean mSpouseIncluded;
 
-    private Toolbar mToolbar;
     private CoordinatorLayout mCoordinatorLayout;
     private EditText mIncomeSourceName;
     private EditText mBalance;
     private EditText mAnnualInterest;
     private TextView mStartAgeTextView;
     private TextView mInitWithdrawPercentTextView;
-    private Button mEditStartAgeButton;
-    private Button mAddIncomeSourceButton;
     private TextView mOwnerTextView;
+    private MessageMgr mMessageMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_savings_income);
 
-        mToolbar = findViewById(R.id.income_source_toolbar);
+        Toolbar toolbar = findViewById(R.id.income_source_toolbar);
 
         mOwnerTextView = findViewById(R.id.owner_text);
 
@@ -75,8 +72,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         mAnnualInterest = findViewById(R.id.annual_interest_text);
         mStartAgeTextView = findViewById(R.id.start_age_text_view);
         mInitWithdrawPercentTextView = findViewById(R.id.withdraw_percent_edit_text);
-        mEditStartAgeButton = findViewById(R.id.edit_start_age_button);
-        mEditStartAgeButton.setOnClickListener(new View.OnClickListener() {
+        Button editStartAgeButton = findViewById(R.id.edit_start_age_button);
+        editStartAgeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AgeData startAge = mSD.getStartAge();
@@ -86,21 +83,22 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
                 mAgeType = START_AGE;
             }
         });
-        mAddIncomeSourceButton = findViewById(R.id.add_income_source_button);
-        mAddIncomeSourceButton.setOnClickListener(new View.OnClickListener() {
+        Button addIncomeSourceButton = findViewById(R.id.add_income_source_button);
+        addIncomeSourceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 updateIncomeSourceData();
             }
         });
 
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
         mId = 0;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
             mIncomeType = intent.getIntExtra(EXTRA_INCOME_TYPE, 0);
+            mMessageMgr = intent.getParcelableExtra(EXTRA_MESSAGE_MGR);
         }
 
         mSD = null;
@@ -164,21 +162,24 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
             @Override
             public void onChanged(@Nullable SavingsViewData viewData) {
                 FragmentManager fm;
+
+                if(viewData == null) {
+                    return;
+                }
                 mSpouseIncluded = viewData.isSpouseIncluded();
                 mSD = viewData.getSavingsData();
+                String message;
                 switch(viewData.getStatus()) {
-                    case EC_ONLY_TWO_SUPPORTED:
+                    case EC_ONLY_TWO_SAVED_ALLOWED:
                         fm = getSupportFragmentManager();
-                        Fragment fragment = fm.findFragmentByTag("message");
-                        if(fragment != null) {
-                            //return;
-                        }
-                        MessageDialog dialog = MessageDialog.newInstance("Warning", viewData.getMessage(), viewData.getStatus(), true, null, null);
+                        message = mMessageMgr.getMessage(viewData.getStatus());
+                        MessageDialog dialog = MessageDialog.newInstance("Warning", message, viewData.getStatus(), true, null, null);
                         dialog.show(fm, "message");
                         break;
-                    case EC_SPOUSE_INCLUDED:
+                    case EC_FOR_SELF_OR_SPOUSE:
                         fm = getSupportFragmentManager();
-                        NewMessageDialog newdialog = NewMessageDialog.newInstance(EC_FOR_SELF_OR_SPOUSE, "Income Source", "Is this income source for spouse or self?", "Self", "Spouse");
+                        message = mMessageMgr.getMessage(viewData.getStatus());
+                        NewMessageDialog newdialog = NewMessageDialog.newInstance(viewData.getStatus(), "Income Source", message, "Self", "Spouse");
                         newdialog.show(fm, "message");
                         break;
                 }
@@ -195,15 +196,14 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
         } else if(mSD.getOwner() == OWNER_PRIMARY) {
-            mOwnerTextView.setText("Self");
+            mOwnerTextView.setText(getResources().getString(R.string.self));
         } else if(mSD.getOwner() == OWNER_SPOUSE) {
-            mOwnerTextView.setText("Spouse");
+            mOwnerTextView.setText(getResources().getString(R.string.spouse));
         }
 
         mInitWithdrawPercentTextView.setText(mSD.getWithdrawPercent()+"%");
 
         String incomeSourceName = mSD.getName();
-        int type = mSD.getType();
         String incomeSourceTypeString = getIncomeSourceTypeString(this, mIncomeType);
         SystemUtils.setToolbarSubtitle(this, incomeSourceTypeString);
 
@@ -382,7 +382,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     public void onGetResponse(int response, int id, boolean isOk) {
         if (response == Activity.RESULT_OK) {
             switch (id) {
-                case EC_ONLY_TWO_SUPPORTED:
+                case EC_ONLY_TWO_SAVED_ALLOWED:
                     finish();
                     break;
             }
@@ -395,7 +395,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     @Override
     public void onGetResponse(int id, int button) {
         switch (id) {
-            case EC_ONLY_ONE_SUPPORTED:
+            case EC_ONLY_TWO_SAVED_ALLOWED:
                 finish();
                 break;
             case EC_FOR_SELF_OR_SPOUSE:

@@ -10,7 +10,7 @@ import com.intelliviz.lowlevel.util.AgeUtils;
 
 import org.junit.Test;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static org.junit.Assert.assertEquals;
 
@@ -36,7 +36,7 @@ public class SavingsIncomeTest {
         String initWithdrawPercent = "0";
         String annualPercentIncrease = "0";
 
-        SavingsData savingsData = new SavingsData(OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
 
         selfBirthdate = AgeUtils.getBirthdate(new AgeData(60, 0));
@@ -125,7 +125,7 @@ public class SavingsIncomeTest {
         String initWithdrawPercent = "0";
         String annualPercentIncrease = "0";
 
-        SavingsData savingsData = new SavingsData(OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
 
         AgeData primaryAge = new AgeData(65, 0);
@@ -158,7 +158,7 @@ public class SavingsIncomeTest {
         assertEquals(balance, 1000.0, 0);
 
         stopMonthlyAdditionAge = new AgeData(65, 0);
-        savingsData = new SavingsData(OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
+        savingsData = new SavingsData(OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
 
         savingsData.setRules(rules);
@@ -302,7 +302,7 @@ public class SavingsIncomeTest {
         String initWithdrawPercent = "0";
         String annualPercentIncrease = "0";
 
-        SavingsData savingsData = new SavingsData(OWNER_SELF, startAge, startBalance, interest, monthlyAddition,
+        SavingsData savingsData = new SavingsData(OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
 
         AgeData primaryAge = new AgeData(65, 0);

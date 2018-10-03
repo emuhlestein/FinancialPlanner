@@ -9,7 +9,7 @@ import com.intelliviz.lowlevel.data.AgeData;
 
 import org.junit.Test;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SELF;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static org.junit.Assert.assertEquals;
 
@@ -28,7 +28,7 @@ public class PensionRulesTest {
         AgeData startAge = new AgeData(65, 0);
         String ownerBirthdate = "01-01-1960";
 
-        PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
+        PensionData spouse1 = new PensionData(OWNER_PRIMARY, startAge, fullMonthlyBenefit);
         RetirementOptions ro = new RetirementOptions(null, ownerBirthdate, null);
         PensionRules rules = new PensionRules(ro);
         spouse1.setRules(rules);
@@ -65,7 +65,7 @@ public class PensionRulesTest {
         String ownerBirthdate = "01-01-1960";
         String spouseBirthdate = "01-01-1965";
 
-        PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
+        PensionData spouse1 = new PensionData(OWNER_PRIMARY, startAge, fullMonthlyBenefit);
         RetirementOptions ro = new RetirementOptions(null, ownerBirthdate, spouseBirthdate);
         PensionRules rules = new PensionRules(ro);
         spouse1.setRules(rules);
@@ -102,7 +102,7 @@ public class PensionRulesTest {
         String ownerBirthdate = "01-01-1965";
         String spouseBirthdate = "01-05-1960";
 
-        PensionData spouse1 = new PensionData(OWNER_SELF, startAge, fullMonthlyBenefit);
+        PensionData spouse1 = new PensionData(OWNER_PRIMARY, startAge, fullMonthlyBenefit);
         RetirementOptions ro = new RetirementOptions(null, ownerBirthdate, spouseBirthdate);
         PensionRules rules = new PensionRules(ro);
         spouse1.setRules(rules);

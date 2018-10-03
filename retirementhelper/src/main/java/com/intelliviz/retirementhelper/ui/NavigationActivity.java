@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.intelliviz.data.SocialSecurityRules;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
 import com.intelliviz.income.ui.IncomeSourceListFragment;
+import com.intelliviz.income.ui.MessageMgr;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
 import com.intelliviz.lowlevel.ui.SimpleTextDialog;
@@ -57,6 +58,7 @@ public class NavigationActivity extends AppCompatActivity implements
     private int mStartFragment;
     private NavigationModelView mViewModel;
     private RetirementOptionsEntity mROE;
+    private MessageMgr mMessageMgr;
 
     @BindView(R.id.summary_toolbar)
     Toolbar mToolbar;
@@ -71,6 +73,8 @@ public class NavigationActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
+
+        mMessageMgr = new MessageMgr(getApplication());
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -253,7 +257,7 @@ public class NavigationActivity extends AppCompatActivity implements
                 fragmentTag = SUMMARY_FRAG_TAG;
                 break;
             case R.id.income_menu:
-                fragment = IncomeSourceListFragment.newInstance();
+                fragment = IncomeSourceListFragment.newInstance(mMessageMgr);
                 fragmentTag = INCOME_FRAG_TAG;
                 break;
             case R.id.milestones_menu:
