@@ -61,7 +61,7 @@ public class MessageMgr implements Parcelable {
     }
 
     private void readFromParcel(Parcel in) {
-        in.readStringArray(mMessages);
+        mMessages = in.createStringArray();
     }
 
     public static final Parcelable.Creator<MessageMgr> CREATOR = new Parcelable.Creator<MessageMgr>()
