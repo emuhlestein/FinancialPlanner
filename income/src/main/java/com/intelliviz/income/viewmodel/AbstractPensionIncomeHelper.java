@@ -7,8 +7,8 @@ import com.intelliviz.income.data.PensionViewData;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
+import static com.intelliviz.income.ui.MessageMgr.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
-import static com.intelliviz.income.ui.MessageMgr.EC_SPOUSE_INCLUDED;
 
 public abstract class AbstractPensionIncomeHelper {
     private PensionData mPD;
@@ -47,7 +47,7 @@ public abstract class AbstractPensionIncomeHelper {
 
         int status = EC_NO_ERROR;
         if(isSpouseIncluded()) {
-            status = EC_SPOUSE_INCLUDED;
+            status = EC_FOR_SELF_OR_SPOUSE;
         }
         return new PensionViewData(pd, isSpouseIncluded(), status, "");
     }

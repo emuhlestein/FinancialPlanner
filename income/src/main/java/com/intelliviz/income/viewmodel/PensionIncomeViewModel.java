@@ -34,6 +34,7 @@ public class PensionIncomeViewModel extends AndroidViewModel {
         mRepo = PensionIncomeEntityRepo.getInstance(application);
         mSource = mRepo.getPensionDataEx(incomeId);
         subscribe(incomeId);
+        mRepo.load(incomeId);
         mId = incomeId;
     }
 

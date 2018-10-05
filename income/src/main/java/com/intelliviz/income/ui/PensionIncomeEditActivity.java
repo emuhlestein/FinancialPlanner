@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ import com.intelliviz.lowlevel.util.SystemUtils;
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_USER_EVENT;
 import static com.intelliviz.lowlevel.util.RetirementConstants.INCOME_TYPE_PENSION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
@@ -47,6 +49,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private EditText mMonthlyBenefit;
     private TextView mOwnerTextView;
     private MessageMgr mMessageMgr;
+    private static final String EXTRA_FIRST_TIME = "first_time";
+    private boolean mStartedFromUserEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,13 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_edit_pension_income);
 
         mOwnerTextView = findViewById(R.id.owner_text);
+
+        if(savedInstanceState == null) {
+            Log.d(TAG, "HERE");
+            mStartedFromUserEvent = true;
+        } else {
+            mStartedFromUserEvent = false;
+        }
 
         Toolbar toolbar = findViewById(R.id.income_source_toolbar);
         mMonthlyBenefit = findViewById(R.id.monthly_benefit_text);
@@ -81,9 +92,14 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         mId = 0;
+        boolean userEvent = false;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
             mMessageMgr = intent.getParcelableExtra(EXTRA_MESSAGE_MGR);
+            userEvent = intent.getBooleanExtra(EXTRA_USER_EVENT, false);
+            if(userEvent) {
+                intent.putExtra(EXTRA_USER_EVENT, false);
+            }
         }
 
         mPD = null;
@@ -121,21 +137,31 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                 String message;
                 switch(viewData.getStatus()) {
                     case MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED:
-                        fm = getSupportFragmentManager();
-                        message = mMessageMgr.getMessage(MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED);
-                        MessageDialog dialog = MessageDialog.newInstance("Warning", message, MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED, true, null, null);
-                        dialog.show(fm, "message");
+                        if(mStartedFromUserEvent) {
+                            fm = getSupportFragmentManager();
+                            message = mMessageMgr.getMessage(MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED);
+                            MessageDialog dialog = MessageDialog.newInstance("Warning", message, MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED, true, null, null);
+                            dialog.show(fm, "message");
+                        }
                         break;
                     case MessageMgr.EC_FOR_SELF_OR_SPOUSE:
-                        fm = getSupportFragmentManager();
-                        message = mMessageMgr.getMessage(MessageMgr.EC_FOR_SELF_OR_SPOUSE);
-                        NewMessageDialog newdialog = NewMessageDialog.newInstance(MessageMgr.EC_FOR_SELF_OR_SPOUSE, "Income Source", message, "Self", "Spouse");
-                        newdialog.show(fm, "message");
+                        if(mStartedFromUserEvent) {
+                            fm = getSupportFragmentManager();
+                            message = mMessageMgr.getMessage(MessageMgr.EC_FOR_SELF_OR_SPOUSE);
+                            NewMessageDialog newdialog = NewMessageDialog.newInstance(MessageMgr.EC_FOR_SELF_OR_SPOUSE, "Income Source", message, "Self", "Spouse");
+                            newdialog.show(fm, "message");
+                        }
                         break;
                 }
                 updateUI();
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(EXTRA_FIRST_TIME, true);
     }
 
     private void updateUI() {

@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.intelliviz.income.ui.MessageMgr.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
-import static com.intelliviz.income.ui.MessageMgr.EC_SPOUSE_INCLUDED;
 
 public abstract class AbstractSavingsIncomeHelper {
     private SavingsData mSD;
@@ -74,7 +74,7 @@ public abstract class AbstractSavingsIncomeHelper {
 
         int status = EC_NO_ERROR;
         if(isSpouseIncluded()) {
-            status = EC_SPOUSE_INCLUDED;
+            status = EC_FOR_SELF_OR_SPOUSE;
         }
 
         if(incomeType == RetirementConstants.INCOME_TYPE_401K) {

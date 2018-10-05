@@ -7,6 +7,7 @@ import com.intelliviz.db.entity.AbstractIncomeSource;
 
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_USER_EVENT;
 
 /**
  * Created by edm on 3/13/2018.
@@ -26,6 +27,7 @@ public class PensionIncomeSource implements IncomeSource {
         Intent intent = new Intent(context, PensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, 0);
         intent.putExtra(EXTRA_MESSAGE_MGR, mMessageMgr);
+        intent.putExtra(EXTRA_USER_EVENT, true);
         context.startActivity(intent);
     }
 
@@ -34,6 +36,7 @@ public class PensionIncomeSource implements IncomeSource {
         Intent intent = new Intent(context, PensionIncomeEditActivity.class);
         intent.putExtra(EXTRA_INCOME_SOURCE_ID, mIncomeSourceEntity.getId());
         intent.putExtra(EXTRA_MESSAGE_MGR, mMessageMgr);
+        intent.putExtra(EXTRA_USER_EVENT, true);
         context.startActivity(intent);
     }
 

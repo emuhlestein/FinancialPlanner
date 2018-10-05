@@ -89,6 +89,7 @@ public class RetirementConstants {
     public static final String EXTRA_MONTH = "month";
 
     public static final String EXTRA_MESSAGE_MGR = "message_mgr";
+    public static final String EXTRA_USER_EVENT = "user_event";
 
     public static final int REQUEST_RETIRE_OPTIONS = 0;
     public static final int REQUEST_PERSONAL_INFO = 1;

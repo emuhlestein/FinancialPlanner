@@ -39,7 +39,7 @@ public class PensionIncomeEntityRepo {
     }
 
     public MutableLiveData<PensionDataEx> getPensionDataEx(long id) {
-        load(id);
+        //load(id);
         return mPdEx;
     }
 
