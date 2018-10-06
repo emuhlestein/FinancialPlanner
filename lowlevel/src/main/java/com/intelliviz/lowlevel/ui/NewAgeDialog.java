@@ -1,6 +1,5 @@
 package com.intelliviz.lowlevel.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -14,13 +13,11 @@ import android.widget.TextView;
 import com.intelliviz.lowlevel.R;
 
 public class NewAgeDialog extends DialogFragment {
-    private static final String ARG_ID = "arg_id";
     private static final String ARG_YEAR = "year";
     private static final String ARG_MONTH = "month";
     private EditText mYearEditText;
     private EditText mMonthEditText;
     private TextView mMessageTextView;
-    private int mId;
 
     public interface OnAgeEditListener {
         void onEditAge(String year, String month);
@@ -40,13 +37,12 @@ public class NewAgeDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.new_age_dialog_layout, container, false);
 
-        mId = getArguments().getInt(ARG_ID);
         String year = getArguments().getString(ARG_YEAR);
         String month = getArguments().getString(ARG_MONTH);
 
         TextView titleTextView = view.findViewById(R.id.title_view);
         mMessageTextView = view.findViewById(R.id.message_view);
-        titleTextView.setText("Age");
+        titleTextView.setText(getResources().getString(R.string.age));
         mMessageTextView.setText("");
 
         mYearEditText = view.findViewById(R.id.year_edit_text);
@@ -58,17 +54,16 @@ public class NewAgeDialog extends DialogFragment {
         Button negativeButton = view.findViewById(R.id.negative_button);
 
 
-        positiveButton.setText("Ok");
-        negativeButton.setText("Cancel");
+        positiveButton.setText(getResources().getString(R.string.ok));
+        negativeButton.setText(getResources().getString(R.string.cancel));
 
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isAgeValid()) {
+                if(validateAge()) {
                     sendResult();
-                } else {
-                    mMessageTextView.setText("Error: ");
+                    dismiss();
                 }
             }
         });
@@ -83,12 +78,27 @@ public class NewAgeDialog extends DialogFragment {
         return view;
     }
 
-    private boolean isAgeValid() {
+    private boolean validateAge() {
         String year = mYearEditText.getText().toString();
         String month = mMonthEditText.getText().toString();
 
-        if(Integer.parseInt(month) < 0 || Integer.parseInt(month) > 11) {
+        try {
+            if (Integer.parseInt(month) < 0 || Integer.parseInt(month) > 11) {
+                mMessageTextView.setText(getResources().getString(R.string.age_error_invalid_month));
+                return false;
+            }
+        } catch(NumberFormatException e) {
+            mMessageTextView.setText(getResources().getString(R.string.age_error_invalid_month));
+            return false;
+        }
 
+        try {
+            if (Integer.parseInt(year) < 0 || Integer.parseInt(year) > 100) {
+                mMessageTextView.setText(getResources().getString(R.string.age_error_invalid_month));
+                return false;
+            }
+        } catch(NumberFormatException e) {
+            mMessageTextView.setText(getResources().getString(R.string.age_error_invalid_year));
             return false;
         }
 
@@ -100,7 +110,7 @@ public class NewAgeDialog extends DialogFragment {
         String month = mMonthEditText.getText().toString();
 
         if(getTargetFragment() != null) {
-            Intent intent = new Intent();
+            //Intent intent = new Intent();
             //intent.putExtra(EXTRA_DIALOG_RESPONSE, isOk);
             //getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
         } else {
@@ -109,7 +119,5 @@ public class NewAgeDialog extends DialogFragment {
                 listener.onEditAge(year, month);
             }
         }
-
-        dismiss();
     }
 }
