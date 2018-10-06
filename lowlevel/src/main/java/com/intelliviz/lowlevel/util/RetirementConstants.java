@@ -70,6 +70,7 @@ public class RetirementConstants {
     public static final String EXTRA_INCOME_SHOW_MONTHS = "show months";
     public static final String EXTRA_INCOME_SPOUSE_START_AGE = "spouse start age";
     public static final String EXTRA_INCOME_OWNER = "owner";
+    public static final String EXTRA_FIRST_TIME = "first_time";
 
     public static final String EXTRA_LOGIN_RESPONSE = "login response";
     public static final String EXTRA_BIRTHDATE = "birthdate";
@@ -87,6 +88,7 @@ public class RetirementConstants {
     public static final String EXTRA_MENU_ITEM_LIST = "menu item list";
     public static final String EXTRA_YEAR = "year";
     public static final String EXTRA_MONTH = "month";
+    public static final String EXTRA_AGE_ID = "age id";
 
     public static final String EXTRA_MESSAGE_MGR = "message_mgr";
     public static final String EXTRA_USER_EVENT = "user_event";

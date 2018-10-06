@@ -16,19 +16,22 @@ import android.widget.TextView;
 
 import com.intelliviz.income.R;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.ui.NewAgeDialog;
 import com.intelliviz.lowlevel.util.SystemUtils;
+
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MONTH;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_YEAR;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SavingsAdvancedFragment extends Fragment implements AgeDialog.OnAgeEditListener {
+public class SavingsAdvancedFragment extends Fragment implements NewAgeDialog.OnAgeEditListener {
 
     private EditText mMonthlyAddition;
     private TextView mStopMonthlyAdditionAgeTextView;
     private EditText mAnnualPercentIncrease;
     private CheckBox mShowMonths;
-    private Button mEditStopAgeButton;
 
     public SavingsAdvancedFragment() {
         // Required empty public constructor
@@ -44,17 +47,19 @@ public class SavingsAdvancedFragment extends Fragment implements AgeDialog.OnAge
         mStopMonthlyAdditionAgeTextView = view.findViewById(R.id.stop_age_text_view);
         mAnnualPercentIncrease = view.findViewById(R.id.annual_percent_increase_edit_text);
         mShowMonths = view.findViewById(R.id.show_months_check_box);
-        mEditStopAgeButton = view.findViewById(R.id.edit_stop_age_button);
-        mEditStopAgeButton.setOnClickListener(new View.OnClickListener() {
+        Button editStopAgeButton = view.findViewById(R.id.edit_stop_age_button);
+        editStopAgeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AgeData stopAge;
                 String age = mStopMonthlyAdditionAgeTextView.getText().toString();
                 stopAge = new AgeData(age);
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                AgeDialog dialog = AgeDialog.newInstance(""+stopAge.getYear(), ""+stopAge.getMonth());
-                dialog.show(fm, "");
-                dialog.setTargetFragment(SavingsAdvancedFragment.this, 0);
+                if(getActivity() != null) {
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    NewAgeDialog dialog = NewAgeDialog.newInstance(0, "" + stopAge.getYear(), "" + stopAge.getMonth());
+                    dialog.show(fm, "");
+                    dialog.setTargetFragment(SavingsAdvancedFragment.this, 0);
+                }
             }
         });
 
@@ -94,11 +99,13 @@ public class SavingsAdvancedFragment extends Fragment implements AgeDialog.OnAge
         return view;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent intent)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (resultCode == Activity.RESULT_OK)
-        {
+        if (resultCode == Activity.RESULT_OK){
+            String month = intent.getStringExtra(EXTRA_MONTH);
+            String year = intent.getStringExtra(EXTRA_YEAR);
+            AgeData age = new AgeData(year, month);
+            mStopMonthlyAdditionAgeTextView.setText(age.toString());
         }
     }
 
@@ -135,7 +142,7 @@ public class SavingsAdvancedFragment extends Fragment implements AgeDialog.OnAge
     }
 
     @Override
-    public void onEditAge(String year, String month) {
+    public void onEditAge(int id, String year, String month) {
         AgeData age = new AgeData(year, month);
         mStopMonthlyAdditionAgeTextView.setText(age.toString());
     }

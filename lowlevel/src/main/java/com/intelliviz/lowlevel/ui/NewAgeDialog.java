@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.intelliviz.lowlevel.R;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_AGE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MONTH;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_YEAR;
 
@@ -24,16 +25,19 @@ public class NewAgeDialog extends DialogFragment {
     private static final int MAX_YEAR = 100;
     private static final String ARG_YEAR = "year";
     private static final String ARG_MONTH = "month";
+    private static final String ARG_AGE_ID = "id";
     private EditText mYearEditText;
     private EditText mMonthEditText;
     private TextView mMessageTextView;
+    private int mAgeId;
 
     public interface OnAgeEditListener {
-        void onEditAge(String year, String month);
+        void onEditAge(int id, String year, String month);
     }
 
-    public static NewAgeDialog newInstance(String year, String month) {
+    public static NewAgeDialog newInstance(int ageId, String year, String month) {
         Bundle args = new Bundle();
+        args.putInt(ARG_AGE_ID, ageId);
         args.putString(ARG_YEAR, year);
         args.putString(ARG_MONTH, month);
         NewAgeDialog dialog = new NewAgeDialog();
@@ -46,6 +50,7 @@ public class NewAgeDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.new_age_dialog_layout, container, false);
 
+        mAgeId = getArguments().getInt(ARG_AGE_ID);
         String year = getArguments().getString(ARG_YEAR);
         String month = getArguments().getString(ARG_MONTH);
 
@@ -120,13 +125,14 @@ public class NewAgeDialog extends DialogFragment {
 
         if(getTargetFragment() != null) {
             Intent intent = new Intent();
+            intent.putExtra(EXTRA_AGE_ID, mAgeId);
             intent.putExtra(EXTRA_MONTH, month);
             intent.putExtra(EXTRA_YEAR, year);
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
         } else {
             if(getActivity() instanceof NewAgeDialog.OnAgeEditListener) {
                 NewAgeDialog.OnAgeEditListener listener = (NewAgeDialog.OnAgeEditListener) getActivity();
-                listener.onEditAge(year, month);
+                listener.onEditAge(mAgeId, year, month);
             }
         }
     }

@@ -24,6 +24,7 @@ import com.intelliviz.income.data.SavingsViewData;
 import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
+import com.intelliviz.lowlevel.ui.NewAgeDialog;
 import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
@@ -31,6 +32,7 @@ import com.intelliviz.lowlevel.util.SystemUtils;
 import static com.intelliviz.income.ui.MessageMgr.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.income.ui.MessageMgr.EC_ONLY_TWO_SAVED_ALLOWED;
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_FIRST_TIME;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_TYPE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
@@ -38,13 +40,12 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class SavingsIncomeEditActivity extends AppCompatActivity implements
-        AgeDialog.OnAgeEditListener, MessageDialog.DialogResponse, NewMessageDialog.DialogResponse {
+        NewAgeDialog.OnAgeEditListener, MessageDialog.DialogResponse, NewMessageDialog.DialogResponse {
     private static final int START_AGE = 0;
     private static final int STOP_AGE = 1;
     private SavingsData mSD;
     private long mId;
     private int mIncomeType;
-    private int mAgeType = STOP_AGE;
     private SavingsIncomeViewModel mViewModel;
     private boolean mSpouseIncluded;
 
@@ -56,11 +57,18 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     private TextView mInitWithdrawPercentTextView;
     private TextView mOwnerTextView;
     private MessageMgr mMessageMgr;
+    private boolean mStartedFromUserEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_savings_income);
+
+        if(savedInstanceState == null) {
+            mStartedFromUserEvent = true;
+        } else {
+            mStartedFromUserEvent = false;
+        }
 
         Toolbar toolbar = findViewById(R.id.income_source_toolbar);
 
@@ -78,9 +86,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 AgeData startAge = mSD.getStartAge();
                 FragmentManager fm = getSupportFragmentManager();
-                AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
+                NewAgeDialog dialog = NewAgeDialog.newInstance(START_AGE, ""+startAge.getYear(), ""+startAge.getMonth());
                 dialog.show(fm, "");
-                mAgeType = START_AGE;
             }
         });
         Button addIncomeSourceButton = findViewById(R.id.add_income_source_button);
@@ -166,26 +173,41 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
                 if(viewData == null) {
                     return;
                 }
+
+                if(!mViewModel.isStatusValid()) {
+                    return;
+                }
+
                 mSpouseIncluded = viewData.isSpouseIncluded();
                 mSD = viewData.getSavingsData();
                 String message;
                 switch(viewData.getStatus()) {
-                    case EC_ONLY_TWO_SAVED_ALLOWED:
-                        fm = getSupportFragmentManager();
-                        message = mMessageMgr.getMessage(viewData.getStatus());
-                        MessageDialog dialog = MessageDialog.newInstance("Warning", message, viewData.getStatus(), true, null, null);
-                        dialog.show(fm, "message");
+                    case MessageMgr.EC_ONLY_TWO_SAVED_ALLOWED:
+                        if(mStartedFromUserEvent) {
+                            fm = getSupportFragmentManager();
+                            message = mMessageMgr.getMessage(viewData.getStatus());
+                            MessageDialog dialog = MessageDialog.newInstance("Warning", message, viewData.getStatus(), true, null, null);
+                            dialog.show(fm, "message");
+                        }
                         break;
-                    case EC_FOR_SELF_OR_SPOUSE:
-                        fm = getSupportFragmentManager();
-                        message = mMessageMgr.getMessage(viewData.getStatus());
-                        NewMessageDialog newdialog = NewMessageDialog.newInstance(viewData.getStatus(), "Income Source", message, "Self", "Spouse");
-                        newdialog.show(fm, "message");
+                    case MessageMgr.EC_FOR_SELF_OR_SPOUSE:
+                        if(mStartedFromUserEvent) {
+                            fm = getSupportFragmentManager();
+                            message = mMessageMgr.getMessage(viewData.getStatus());
+                            NewMessageDialog newdialog = NewMessageDialog.newInstance(viewData.getStatus(), "Income Source", message, "Self", "Spouse");
+                            newdialog.show(fm, "message");
+                        }
                         break;
                 }
                 updateUI();
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(EXTRA_FIRST_TIME, true);
     }
 
     private void updateUI() {
@@ -284,11 +306,9 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
 
         String age = mStartAgeTextView.getText().toString();
         AgeData startAge = new AgeData(age);
-        // TODO need to check for valid age
 
         age = getStopMonthlyAdditionAge();
         AgeData stopAge = new AgeData(age);
-        // TODO need to check for valid age
 
         String name = mIncomeSourceName.getText().toString();
 
@@ -302,10 +322,9 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onEditAge(String year, String month) {
+    public void onEditAge(int ageId, String year, String month) {
         AgeData age = new AgeData(year, month);
-        // TODO need to check for valid age
-        if(mAgeType == START_AGE) {
+        if(ageId == START_AGE) {
             mStartAgeTextView.setText(age.toString());
         }
     }
@@ -394,6 +413,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
 
     @Override
     public void onGetResponse(int id, int button) {
+        mViewModel.setHandled();
         switch (id) {
             case EC_ONLY_TWO_SAVED_ALLOWED:
                 finish();

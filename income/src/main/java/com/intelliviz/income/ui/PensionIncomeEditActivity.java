@@ -27,6 +27,7 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
 
 import static com.intelliviz.income.util.uiUtils.getIncomeSourceTypeString;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_FIRST_TIME;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOURCE_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MESSAGE_MGR;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_USER_EVENT;
@@ -49,7 +50,6 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private EditText mMonthlyBenefit;
     private TextView mOwnerTextView;
     private MessageMgr mMessageMgr;
-    private static final String EXTRA_FIRST_TIME = "first_time";
     private boolean mStartedFromUserEvent;
 
     @Override
@@ -77,7 +77,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 AgeData startAge = mPD.getStartAge();
                 FragmentManager fm = getSupportFragmentManager();
-                NewAgeDialog dialog = NewAgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
+                NewAgeDialog dialog = NewAgeDialog.newInstance(0, ""+startAge.getYear(), ""+startAge.getMonth());
                 dialog.show(fm, "");
             }
         });
@@ -218,8 +218,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onEditAge(String year, String month) {
-        // TODO check to see if age is valid
+    public void onEditAge(int ageId, String year, String month) {
         AgeData age = new AgeData(year, month);
         mMinAge.setText(age.toString());
     }

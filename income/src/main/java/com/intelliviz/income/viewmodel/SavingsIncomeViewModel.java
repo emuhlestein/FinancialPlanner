@@ -33,6 +33,7 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
     private SavingsIncomeEntityRepo mRepo;
     private LiveData<List<IncomeDetails>> mIncomeDetailsList = new MutableLiveData<>();
     private long mId;
+    private int mStatus = -1;
 
     public SavingsIncomeViewModel(Application application, long incomeId, int incomeType) {
         super(application);
@@ -57,11 +58,31 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
                             Log.d("SavingsIncomeViewModel", "HERE");
                         }
                         SavingsIncomeHelper helper = new SavingsIncomeHelper(getApplication(), sd, ro, input.getNumRecords());
+                        SavingsViewData savingsViewData = helper.get(id, incomeType);
+                        int status = savingsViewData.getStatus();
+                        if(status == mStatus) {
+                            mStatus = -1;
+                        } else {
+                            mStatus = status;
+                        }
+
                         MutableLiveData<SavingsViewData> ldata = new MutableLiveData();
                         ldata.setValue(helper.get(id, incomeType));
                         return ldata;
                     }
                 });
+    }
+
+    public int getStatus() {
+        return mStatus;
+    }
+
+    public boolean isStatusValid() {
+        return (mStatus != -1);
+    }
+
+    public void setHandled() {
+        mStatus = -1;
     }
 
     public LiveData<SavingsViewData> get() {
