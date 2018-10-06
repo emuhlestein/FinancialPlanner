@@ -132,10 +132,16 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                 if(viewData == null) {
                     return;
                 }
+
+                if(!mViewModel.isStatusValid()) {
+                    return;
+                }
+
+                int status = mViewModel.getStatus();
                 mSpouseIncluded = viewData.isSpouseIncluded();
                 mPD = viewData.getPensionData();
                 String message;
-                switch(viewData.getStatus()) {
+                switch(status) {
                     case MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED:
                         if(mStartedFromUserEvent) {
                             fm = getSupportFragmentManager();
@@ -220,18 +226,19 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
 
     @Override
     public void onGetResponse(int id, int button) {
-            switch (id) {
-                case MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED:
-                    finish();
-                    break;
-                case MessageMgr.EC_FOR_SELF_OR_SPOUSE:
-                    if (button == NewMessageDialog.POS_BUTTON) {
-                        mPD.setOwner(RetirementConstants.OWNER_PRIMARY);
-                    } else if(button == NewMessageDialog.NEG_BUTTON) {
-                        mPD.setOwner(RetirementConstants.OWNER_SPOUSE);
-                    }
-                    updateUI();
-                    break;
-            }
+        mViewModel.setHandled();
+        switch (id) {
+            case MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED:
+                finish();
+                break;
+            case MessageMgr.EC_FOR_SELF_OR_SPOUSE:
+                if (button == NewMessageDialog.POS_BUTTON) {
+                    mPD.setOwner(RetirementConstants.OWNER_PRIMARY);
+                } else if (button == NewMessageDialog.NEG_BUTTON) {
+                    mPD.setOwner(RetirementConstants.OWNER_SPOUSE);
+                }
+                updateUI();
+                break;
+        }
     }
 }

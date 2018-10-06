@@ -28,6 +28,7 @@ public class PensionIncomeViewModel extends AndroidViewModel {
     private PensionIncomeEntityRepo mRepo;
     private LiveData<PensionDataEx> mSource;
     private long mId;
+    private int mStatus = -1;
 
     public PensionIncomeViewModel(Application application, long incomeId) {
         super(application);
@@ -54,11 +55,30 @@ public class PensionIncomeViewModel extends AndroidViewModel {
                             pd = PensionDataEntityMapper.map(input.getPie());
                         }
                         PensionIncomeHelper helper = new PensionIncomeHelper(getApplication(), pd, ro, input.getNumRecords());
-                        MutableLiveData<PensionViewData> ldata = new MutableLiveData();
+                        MutableLiveData<PensionViewData> ldata = new MutableLiveData<>();
+                        PensionViewData pensionViewData = helper.get(id);
+                        int status = pensionViewData.getStatus();
+                        if(status == mStatus) {
+                            mStatus = -1;
+                        } else {
+                            mStatus = status;
+                        }
                         ldata.setValue(helper.get(id));
                         return ldata;
                     }
                 });
+    }
+
+    public int getStatus() {
+        return mStatus;
+    }
+
+    public boolean isStatusValid() {
+        return (mStatus != -1);
+    }
+
+    public void setHandled() {
+        mStatus = -1;
     }
 
     public void setData(PensionData pd) {
