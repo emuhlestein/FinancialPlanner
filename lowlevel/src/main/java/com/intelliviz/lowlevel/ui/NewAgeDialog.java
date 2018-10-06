@@ -13,6 +13,10 @@ import android.widget.TextView;
 import com.intelliviz.lowlevel.R;
 
 public class NewAgeDialog extends DialogFragment {
+    private static final int MIN_MONTH = 0;
+    private static final int MAX_MONTH = 11;
+    private static final int MIN_YEAR = 0;
+    private static final int MAX_YEAR = 100;
     private static final String ARG_YEAR = "year";
     private static final String ARG_MONTH = "month";
     private EditText mYearEditText;
@@ -83,7 +87,7 @@ public class NewAgeDialog extends DialogFragment {
         String month = mMonthEditText.getText().toString();
 
         try {
-            if (Integer.parseInt(month) < 0 || Integer.parseInt(month) > 11) {
+            if (Integer.parseInt(month) < MIN_MONTH || Integer.parseInt(month) > MAX_MONTH) {
                 mMessageTextView.setText(getResources().getString(R.string.age_error_invalid_month));
                 return false;
             }
@@ -93,8 +97,8 @@ public class NewAgeDialog extends DialogFragment {
         }
 
         try {
-            if (Integer.parseInt(year) < 0 || Integer.parseInt(year) > 100) {
-                mMessageTextView.setText(getResources().getString(R.string.age_error_invalid_month));
+            if (Integer.parseInt(year) < MIN_YEAR || Integer.parseInt(year) > MAX_YEAR) {
+                mMessageTextView.setText(getResources().getString(R.string.age_error_invalid_year));
                 return false;
             }
         } catch(NumberFormatException e) {

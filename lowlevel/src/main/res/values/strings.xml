@@ -5,8 +5,8 @@
     <string name="year">Year</string>
     <string name="month">Month</string>
     <string name="age">Age</string>
-    <string name="age_error_invalid_month">Invalid Month</string>
-    <string name="age_error_invalid_year">Invalid Year</string>
+    <string name="age_error_invalid_month">Invalid Month: 0 - 11</string>
+    <string name="age_error_invalid_year">Invalid Year: 0 - 100</string>
 
     <string name="ec_no_error">No error</string>
     <string name="ec_no_spouse_birthdate">Need to add birth date for spouse before adding social security income source.</string>
