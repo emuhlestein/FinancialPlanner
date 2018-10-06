@@ -21,7 +21,6 @@ import com.intelliviz.income.R;
 import com.intelliviz.income.data.PensionViewData;
 import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.ui.MessageDialog;
 import com.intelliviz.lowlevel.ui.NewAgeDialog;
 import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -147,7 +146,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                         if(mStartedFromUserEvent) {
                             fm = getSupportFragmentManager();
                             message = mMessageMgr.getMessage(MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED);
-                            MessageDialog dialog = MessageDialog.newInstance("Warning", message, MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED, true, null, null);
+                            NewMessageDialog dialog = NewMessageDialog.newInstance(MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED, "Warning", message, "Ok");
                             dialog.show(fm, "message");
                         }
                         break;
