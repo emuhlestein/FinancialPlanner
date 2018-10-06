@@ -26,8 +26,6 @@ public class NewMessageDialog extends DialogFragment {
     private static final String ARG_NEG_LABEL = "negative";
     private static final String ARG_NEU_LABEL = "neutral";
     private static final String ARG_MODE = "mode";
-    private TextView mMessage;
-    private TextView mTitle;
     private int mId;
 
     public interface DialogResponse {
@@ -81,10 +79,10 @@ public class NewMessageDialog extends DialogFragment {
 
         String title = getArguments().getString(ARG_TITLE);
         String message = getArguments().getString(ARG_MESSAGE);
-        mTitle = view.findViewById(R.id.title_view);
-        mMessage = view.findViewById(R.id.message_view);
-        mTitle.setText(title);
-        mMessage.setText(message);
+        TextView titleTextVIew = view.findViewById(R.id.title_view);
+        TextView messageTextVIew = view.findViewById(R.id.message_view);
+        titleTextVIew.setText(title);
+        messageTextVIew.setText(message);
 
         int mode = getArguments().getInt(ARG_MODE);
 

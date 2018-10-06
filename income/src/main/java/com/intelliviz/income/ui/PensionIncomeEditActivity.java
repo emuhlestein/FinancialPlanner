@@ -22,6 +22,7 @@ import com.intelliviz.income.data.PensionViewData;
 import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
+import com.intelliviz.lowlevel.ui.NewAgeDialog;
 import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
@@ -36,7 +37,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
 public class PensionIncomeEditActivity extends AppCompatActivity implements
-        AgeDialog.OnAgeEditListener, NewMessageDialog.DialogResponse {
+        NewAgeDialog.OnAgeEditListener, NewMessageDialog.DialogResponse {
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
     private PensionData mPD;
     private long mId;
@@ -77,7 +78,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 AgeData startAge = mPD.getStartAge();
                 FragmentManager fm = getSupportFragmentManager();
-                AgeDialog dialog = AgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
+                NewAgeDialog dialog = NewAgeDialog.newInstance(""+startAge.getYear(), ""+startAge.getMonth());
                 dialog.show(fm, "");
             }
         });
@@ -92,7 +93,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         mId = 0;
-        boolean userEvent = false;
+        boolean userEvent;
         if(intent != null) {
             mId = intent.getLongExtra(EXTRA_INCOME_SOURCE_ID, 0);
             mMessageMgr = intent.getParcelableExtra(EXTRA_MESSAGE_MGR);

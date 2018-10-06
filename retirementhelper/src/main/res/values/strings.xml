@@ -21,15 +21,9 @@
     <string name="no_text">No</string>
     <string name="yes_text">Yes</string>
 
-
     <string name="minimum_age">Minimum Age:</string>
 
-
-
-
     <string name="name_of_institution">Name of Institution:</string>
-
-
 
     <string name="minimum_withdraw_age">Minimum Withdraw Age:</string>
     <string name="min_401k_age">59y 6m</string>
@@ -41,9 +35,7 @@
     <string name="retirement_age">Retirement Age</string>
     <string name="age">Age</string>
 
-
     <string name="penalty_amount">Penalty Amount:</string>
-
 
     <string name="usa">USA</string>
     <string name="other_country">Other</string>
@@ -51,7 +43,6 @@
         <item>@string/usa</item>
         <item>@string/other_country</item>
     </string-array>
-
 
     <string name="when_reach_amount">When Reach Amount</string>
     <string name="when_reach_percentage">When Reach Percentage</string>
@@ -62,13 +53,7 @@
         <item>@string/when_reach_percentage</item>
     </string-array>
 
-
-
-
-
     <string name="empty_list">LIST IS EMPTY</string>
-
-
 
     <string name="add_age">Add a retirement age.</string>
     <string name="delete_age">Delete retirement age?</string>
@@ -131,7 +116,6 @@
     <string name="monthly_pretire_income">Monthly Pre-Retirement Income</string>
     <string name="spousal_benefits">Spousal Benefits?</string>
     <string name="monthly_addition">Monthly Addition</string>
-
 
     <string name="stop_addition_age">Stop Addition Age</string>
     <string name="show_months">Show Months</string>

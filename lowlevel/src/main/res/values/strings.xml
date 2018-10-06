@@ -2,6 +2,8 @@
     <string name="app_name">lowlevel</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="year">Year</string>
+    <string name="month">Month</string>
 
     <string name="ec_no_error">No error</string>
     <string name="ec_no_spouse_birthdate">Need to add birth date for spouse before adding social security income source.</string>

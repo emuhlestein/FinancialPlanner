@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.intelliviz.income.R;
 
@@ -20,6 +22,7 @@ public class AgeDialog extends DialogFragment {
     private static final String ARG_MONTH = "month";
     private EditText mYearEditText;
     private EditText mMonthEditText;
+    private TextView mMessage;
     private OnAgeEditListener mListener;
 
     public interface OnAgeEditListener {
@@ -35,6 +38,11 @@ public class AgeDialog extends DialogFragment {
         return fragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -46,6 +54,7 @@ public class AgeDialog extends DialogFragment {
 
         mYearEditText = view.findViewById(R.id.year_edit_text);
         mMonthEditText = view.findViewById(R.id.month_edit_text);
+        mMessage = view.findViewById(R.id.error_message);
 
         mYearEditText.setText(year);
         mMonthEditText.setText(month);
@@ -59,7 +68,10 @@ public class AgeDialog extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
+                                if(!isAgeValid()) {
+                                    return;
+                                }
+                                //dialog.dismiss();
                                 sendResult();
                             }
                         })
@@ -67,7 +79,7 @@ public class AgeDialog extends DialogFragment {
                         new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
+                                //dialog.dismiss();
                             }
                         })
                 .create();
@@ -87,9 +99,27 @@ public class AgeDialog extends DialogFragment {
         mListener = null;
     }
 
+    private boolean isAgeValid() {
+        String year = mYearEditText.getText().toString();
+        String month = mMonthEditText.getText().toString();
+
+        mMessage.setText("Error: ");
+        if(Integer.parseInt(month) < 0 || Integer.parseInt(month) > 11) {
+            return false;
+        }
+
+        return true;
+    }
+
+
     private void sendResult() {
         String year = mYearEditText.getText().toString();
         String month = mMonthEditText.getText().toString();
+
+        mMessage.setText("Error: ");
+        if(Integer.parseInt(month) < 0 || Integer.parseInt(month) > 11) {
+            return;
+        }
 
         if (getTargetFragment() != null) {
             mListener = (OnAgeEditListener) getTargetFragment();
