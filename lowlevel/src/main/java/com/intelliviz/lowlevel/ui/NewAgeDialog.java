@@ -1,5 +1,7 @@
 package com.intelliviz.lowlevel.ui;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -11,6 +13,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intelliviz.lowlevel.R;
+
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_MONTH;
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_YEAR;
 
 public class NewAgeDialog extends DialogFragment {
     private static final int MIN_MONTH = 0;
@@ -114,9 +119,10 @@ public class NewAgeDialog extends DialogFragment {
         String month = mMonthEditText.getText().toString();
 
         if(getTargetFragment() != null) {
-            //Intent intent = new Intent();
-            //intent.putExtra(EXTRA_DIALOG_RESPONSE, isOk);
-            //getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_MONTH, month);
+            intent.putExtra(EXTRA_YEAR, year);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
         } else {
             if(getActivity() instanceof NewAgeDialog.OnAgeEditListener) {
                 NewAgeDialog.OnAgeEditListener listener = (NewAgeDialog.OnAgeEditListener) getActivity();
