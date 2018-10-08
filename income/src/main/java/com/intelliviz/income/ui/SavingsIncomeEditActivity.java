@@ -84,9 +84,10 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         editStartAgeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String message = getResources().getString(R.string.start_withdraw_age);
                 AgeData startAge = mSD.getStartAge();
                 FragmentManager fm = getSupportFragmentManager();
-                NewAgeDialog dialog = NewAgeDialog.newInstance(START_AGE, ""+startAge.getYear(), ""+startAge.getMonth());
+                NewAgeDialog dialog = NewAgeDialog.newInstance(START_AGE, ""+startAge.getYear(), ""+startAge.getMonth(), message);
                 dialog.show(fm, "");
             }
         });

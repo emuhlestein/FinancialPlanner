@@ -38,7 +38,7 @@
                 android:id="@+id/edit_stop_age_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stop_addition_age"
+                android:text="@string/stop_add_age"
                 android:textSize="22sp" />
 
             <TextView

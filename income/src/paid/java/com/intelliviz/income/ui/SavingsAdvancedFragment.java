@@ -55,8 +55,9 @@ public class SavingsAdvancedFragment extends Fragment implements NewAgeDialog.On
                 String age = mStopMonthlyAdditionAgeTextView.getText().toString();
                 stopAge = new AgeData(age);
                 if(getActivity() != null) {
+                    String message = getResources().getString(R.string.stop_addition_age);
                     FragmentManager fm = getActivity().getSupportFragmentManager();
-                    NewAgeDialog dialog = NewAgeDialog.newInstance(0, "" + stopAge.getYear(), "" + stopAge.getMonth());
+                    NewAgeDialog dialog = NewAgeDialog.newInstance(0, "" + stopAge.getYear(), "" + stopAge.getMonth(), message);
                     dialog.show(fm, "");
                     dialog.setTargetFragment(SavingsAdvancedFragment.this, 0);
                 }

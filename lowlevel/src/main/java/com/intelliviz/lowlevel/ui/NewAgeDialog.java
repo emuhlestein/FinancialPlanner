@@ -25,6 +25,7 @@ public class NewAgeDialog extends DialogFragment {
     private static final int MAX_YEAR = 100;
     private static final String ARG_YEAR = "year";
     private static final String ARG_MONTH = "month";
+    private static final String ARG_TITLE = "title";
     private static final String ARG_AGE_ID = "id";
     private EditText mYearEditText;
     private EditText mMonthEditText;
@@ -36,13 +37,11 @@ public class NewAgeDialog extends DialogFragment {
     }
 
     public static NewAgeDialog newInstance(int ageId, String year, String month) {
-        Bundle args = new Bundle();
-        args.putInt(ARG_AGE_ID, ageId);
-        args.putString(ARG_YEAR, year);
-        args.putString(ARG_MONTH, month);
-        NewAgeDialog dialog = new NewAgeDialog();
-        dialog.setArguments(args);
-        return dialog;
+        return createIstance(ageId, year, month, null);
+    }
+
+    public static NewAgeDialog newInstance(int ageId, String year, String month, String title) {
+        return createIstance(ageId, year, month, title);
     }
 
     @Nullable
@@ -53,10 +52,14 @@ public class NewAgeDialog extends DialogFragment {
         mAgeId = getArguments().getInt(ARG_AGE_ID);
         String year = getArguments().getString(ARG_YEAR);
         String month = getArguments().getString(ARG_MONTH);
+        String title = getArguments().getString(ARG_TITLE);
+        if(title == null) {
+            title = getResources().getString(R.string.age);
+        }
 
         TextView titleTextView = view.findViewById(R.id.title_view);
         mMessageTextView = view.findViewById(R.id.message_view);
-        titleTextView.setText(getResources().getString(R.string.age));
+        titleTextView.setText(title);
         mMessageTextView.setText("");
 
         mYearEditText = view.findViewById(R.id.year_edit_text);
@@ -135,5 +138,18 @@ public class NewAgeDialog extends DialogFragment {
                 listener.onEditAge(mAgeId, year, month);
             }
         }
+    }
+
+    private static NewAgeDialog createIstance(int ageId, String year, String month, String title) {
+        Bundle args = new Bundle();
+        args.putInt(ARG_AGE_ID, ageId);
+        args.putString(ARG_YEAR, year);
+        args.putString(ARG_MONTH, month);
+        if(title != null) {
+            args.putString(ARG_TITLE, title);
+        }
+        NewAgeDialog dialog = new NewAgeDialog();
+        dialog.setArguments(args);
+        return dialog;
     }
 }
