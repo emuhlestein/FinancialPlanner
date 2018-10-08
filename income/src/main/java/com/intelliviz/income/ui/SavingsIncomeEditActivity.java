@@ -186,7 +186,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
                         if(mStartedFromUserEvent) {
                             fm = getSupportFragmentManager();
                             message = mMessageMgr.getMessage(viewData.getStatus());
-                            MessageDialog dialog = MessageDialog.newInstance("Warning", message, viewData.getStatus(), true, null, null);
+                            NewMessageDialog dialog = NewMessageDialog.newInstance(viewData.getStatus(), "Warning", message, "Ok");
                             dialog.show(fm, "message");
                         }
                         break;

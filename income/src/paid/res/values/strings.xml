@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="monthly_addition">Monthly Addition</string>
+    <string name="stop_addition_age">Stop Addition Age</string>
+    <string name="annual_percent_increase">Annual % Withdraw Increase</string>
+    <string name="show_months">Show Months</string>
+</resources>
