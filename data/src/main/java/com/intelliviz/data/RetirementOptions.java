@@ -5,6 +5,7 @@ import com.intelliviz.lowlevel.data.AgeData;
 public class RetirementOptions {
     private long id;
     private AgeData mEndAge;
+    private AgeData mSpouseEndAge;
     private String mPrimaryBirthdate;
     private String mSpouseBirthdate;
     private int mIncludeSpouse;
@@ -13,12 +14,15 @@ public class RetirementOptions {
 
     /**
      * Constructor for unit tests.
+     * @param endAge End age of primary.
+     * @param spouseEndAge End age of primary.
      * @param primaryBirthdate Birthdate of primary (or self).
      * @param spouseBirthdate Birhtdate of spouse if included.
-     * @param endAge End age of primary.
+
      */
-    public RetirementOptions(AgeData endAge, String primaryBirthdate, String spouseBirthdate) {
+    public RetirementOptions(AgeData endAge, AgeData spouseEndAge, String primaryBirthdate, String spouseBirthdate) {
         mEndAge = endAge;
+        mSpouseEndAge = spouseEndAge;
         mPrimaryBirthdate = primaryBirthdate;
         mSpouseBirthdate = spouseBirthdate;
         id = -1;
@@ -31,14 +35,16 @@ public class RetirementOptions {
      * Constructor
      * @param id Database id. -1 if it's a new record.
      * @param endAge End age of primary.
+     * @param spouseEndAge End age of primary.
      * @param primaryBirthdate Birthdate of primary (or self).
      * @param spouseBirthdate Birthdate of spouse if included.
      * @param includeSpouse Flag for if spouse is included. Is 1 if included, otherwise, 0.
      * @param countryCode Country code.
      */
-    public RetirementOptions(long id, AgeData endAge, String primaryBirthdate, String spouseBirthdate, int includeSpouse, String countryCode) {
+    public RetirementOptions(long id, AgeData endAge, AgeData spouseEndAge, String primaryBirthdate, String spouseBirthdate, int includeSpouse, String countryCode) {
         this.id = id;
         mEndAge = endAge;
+        mSpouseEndAge = spouseEndAge;
         mPrimaryBirthdate = primaryBirthdate;
         mSpouseBirthdate = spouseBirthdate;
         mIncludeSpouse = includeSpouse;
@@ -60,6 +66,14 @@ public class RetirementOptions {
 
     public void setEndAge(AgeData endAge) {
         mEndAge = endAge;
+    }
+
+    public AgeData getSpouseEndAge() {
+        return mSpouseEndAge;
+    }
+
+    public void setSpouseEndAge(AgeData endAge) {
+        mSpouseEndAge = endAge;
     }
 
     public String getPrimaryBirthdate() {

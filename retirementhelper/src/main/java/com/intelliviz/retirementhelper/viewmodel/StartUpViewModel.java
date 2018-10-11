@@ -77,7 +77,8 @@ public class StartUpViewModel extends AndroidViewModel {
     }
 
     public void update(RetirementOptions ro) {
-        RetirementOptionsEntity roe = new RetirementOptionsEntity(ro.getId(), ro.getEndAge(), ro.getPrimaryBirthdate(), ro.getIncludeSpouse(), ro.getSpouseBirthdate(), ro.getCountryCode());
+        RetirementOptionsEntity roe = new RetirementOptionsEntity(ro.getId(), ro.getEndAge(), ro.getSpouseEndAge(),
+                ro.getPrimaryBirthdate(), ro.getIncludeSpouse(), ro.getSpouseBirthdate(), ro.getCountryCode());
         mRetireRepo.update(RetirementOptionsMapper.map(ro));
     }
 

@@ -2,28 +2,36 @@ package com.intelliviz.data;
 
 import com.intelliviz.lowlevel.data.AgeData;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
 
 /**
  * Created by edm on 6/5/2018.
  */
 
 public class SocialSecurityIncomeDataAccessor extends AbstractIncomeDataAccessor {
-    private Map<Integer, IncomeData> mIncomeDataMap;
+    private AgeData mStartAge;
+    private double mMonthlyAmount;
+    private int mStatus;
+    private String mMessage;
+    private RetirementOptions mRO;
 
-    public SocialSecurityIncomeDataAccessor(List<IncomeData> incomeData, int owner) {
+    public SocialSecurityIncomeDataAccessor(int owner, AgeData startAge, double monthlyAmount,
+                                            int status, String message, RetirementOptions ro) {
         super(owner);
-        mIncomeDataMap = new HashMap<>();
-        for(IncomeData bData : incomeData) {
-            int month = bData.getAge().getNumberOfMonths();
-            mIncomeDataMap.put(month, bData);
-        }
+        mStartAge = startAge;
+        mMonthlyAmount = monthlyAmount;
+        mStatus = status;
+        mMessage = message;
+        mRO = ro;
     }
 
     @Override
     public IncomeData getIncomeData(AgeData age) {
-        return mIncomeDataMap.get(age.getNumberOfMonths());
+        age = getOwnerAge(age, mRO);
+        if(age.isBefore(mStartAge)) {
+            return new IncomeData(age, 0, 0, SC_GOOD, null);
+        } else {
+            return new IncomeData(age, mMonthlyAmount, 0, mStatus, mMessage);
+        }
     }
 }

@@ -9,11 +9,11 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
+import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
 
 
 /**
@@ -36,6 +36,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private AgeData mMinAge = new AgeData(62, 0);
     private AgeData mMaxAge = new AgeData(70, 0);
     private AgeData mEndAge;
+    private AgeData mSpouseEndAge;
     private AgeData mStartAge;
     private AgeData mActualStartAge;
     private String mBirthdate;
@@ -47,16 +48,19 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private boolean mIsSpouseIncluded;
     private boolean mIsSpouseEntity;
     private BigDecimal mPenaltyFraction;
+    private RetirementOptions mRO;
 
-    public SocialSecurityRules(AgeData endAge, String birthDate) {
-        this(endAge, birthDate, null, "0", null, false, false);
+    public SocialSecurityRules(RetirementOptions ro) {
+        this(ro, "0", null, false, false);
     }
 
-    public SocialSecurityRules(AgeData endAge, String birthDate, String spouseBirthdate, String spouseFullBenefit,
+    public SocialSecurityRules(RetirementOptions ro, String spouseFullBenefit,
                                AgeData spouseStartAge, boolean isSpouseIncluded, boolean isSpouseEntity) {
-        mEndAge = endAge;
-        mBirthdate = birthDate;
-        mSpouseBirthdate = spouseBirthdate;
+        mRO = ro;
+        mEndAge = ro.getEndAge();
+        mSpouseEndAge = ro.getSpouseEndAge();
+        mBirthdate = ro.getPrimaryBirthdate();
+        mSpouseBirthdate = ro.getSpouseBirthdate();
         if(spouseFullBenefit != null) {
             mSpouseFullBenefit = new BigDecimal(spouseFullBenefit);
         }
@@ -95,7 +99,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
     @Override
     public List<IncomeData> getIncomeData() {
-        AgeData startAge = mStartAge;
+       /* AgeData startAge = mStartAge;
 
         if(mActualStartAge != null) {
             startAge = mActualStartAge;
@@ -121,14 +125,14 @@ public class SocialSecurityRules implements IncomeTypeRules {
             }
 
             age = new AgeData(nextAge.getYear(), 0);
-        }
+        }*/
 
-        return listAmountDate;
+        return  Collections.emptyList();
     }
 
     @Override
     public IncomeDataAccessor getIncomeDataAccessor() {
-        return new SocialSecurityIncomeDataAccessor(getIncomeData(), mOwner);
+        return new SocialSecurityIncomeDataAccessor(mOwner, mStartAge, mMonthlyBenefit.doubleValue(), SC_GOOD, null, mRO);
     }
 
     public double getMonthlyBenefit() {
@@ -144,14 +148,15 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return getFullRetirementAgeFromYear(birthyear);
     }
 
-    public static void setRulesOnGovPensionEntities(List<GovPension> gpList, RetirementOptions roe) {
+    public static void setRulesOnGovPensionEntities(List<GovPension> gpList, RetirementOptions ro) {
         if(gpList == null || gpList.isEmpty()) {
             return;
         }
 
         if(gpList.size() == 1) {
             GovPension spouse1 = gpList.get(0);
-            SocialSecurityRules ssr = new SocialSecurityRules(roe.getEndAge(), roe.getPrimaryBirthdate());
+            SocialSecurityRules ssr = new SocialSecurityRules(ro,
+                    null, null, false, false);
             spouse1.setRules(ssr);
         } else if(gpList.size() == 2) {
             GovPension principleSpouse;
@@ -164,10 +169,10 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 spouse = gpList.get(0);
             }
 
-            SocialSecurityRules ssr = new SocialSecurityRules(roe.getEndAge(), roe.getPrimaryBirthdate(), roe.getSpouseBirthdate(),
+            SocialSecurityRules ssr = new SocialSecurityRules(ro,
                     spouse.getFullMonthlyBenefit(), spouse.getStartAge(), true, false);
             principleSpouse.setRules(ssr);
-            ssr = new SocialSecurityRules(roe.getEndAge(), roe.getSpouseBirthdate(), roe.getPrimaryBirthdate(),
+            ssr = new SocialSecurityRules(ro,
                     principleSpouse.getFullMonthlyBenefit(), principleSpouse.getStartAge(), true, true);
             spouse.setRules(ssr);
         }

@@ -7,7 +7,6 @@ import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.data.SocialSecurityRules;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.GovPensionEntityMapper;
-import com.intelliviz.income.R;
 import com.intelliviz.income.data.GovPensionViewData;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -15,18 +14,16 @@ import com.intelliviz.lowlevel.util.RetirementConstants;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intelliviz.income.ui.MessageMgr.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
-import static com.intelliviz.income.ui.MessageMgr.EC_SPOUSE_INCLUDED;
 
 public abstract class AbstractGovPensionHelper {
     private List<GovPensionEntity> mGpeList;
     private RetirementOptions mRO;
-    private static String EC_NO_SPOUSE_BIRTHDATE;
 
     public AbstractGovPensionHelper(Application application, List<GovPensionEntity> gpeList, RetirementOptions ro) {
         mGpeList = gpeList;
         mRO = ro;
-        EC_NO_SPOUSE_BIRTHDATE = application.getResources().getString(R.string.ec_no_spouse_birthdate);
     }
 
     public abstract int getMaxGovPensions();
@@ -50,7 +47,7 @@ public abstract class AbstractGovPensionHelper {
                 SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
                 int status = EC_NO_ERROR;
                 if(isSpouseIncluded()) {
-                    status = EC_SPOUSE_INCLUDED;
+                    status = EC_FOR_SELF_OR_SPOUSE;
                 }
                 return new GovPensionViewData(gp, isSpouseIncluded(), status, "");
             } else if (gpList.size() < getMaxGovPensions()) {

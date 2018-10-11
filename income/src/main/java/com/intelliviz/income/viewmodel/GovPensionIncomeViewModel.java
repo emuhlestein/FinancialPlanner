@@ -13,10 +13,14 @@ import android.support.annotation.NonNull;
 import com.intelliviz.data.GovPension;
 import com.intelliviz.data.GovPensionEx;
 import com.intelliviz.data.RetirementOptions;
+import com.intelliviz.data.SocialSecurityRules;
 import com.intelliviz.db.entity.GovPensionEntity;
 import com.intelliviz.db.entity.GovPensionEntityMapper;
 import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.income.data.GovPensionViewData;
+import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.repo.GovEntityRepo;
 
 import java.util.List;
@@ -30,6 +34,7 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
     private LiveData<GovPensionViewData> mViewData = new MutableLiveData<>();
     private GovEntityRepo mRepo;
     private LiveData<GovPensionEx> mSource;
+    private RetirementOptions mRO;
 
     private static long mIncomeId;
 
@@ -45,14 +50,13 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
     }
 
     private void subscribe(final long id) {
-        //LiveData<GovPensionEx> gpe = mRepo.getEx();
         mViewData = Transformations.switchMap(mSource,
                 new Function<GovPensionEx, LiveData<GovPensionViewData>>() {
                     @Override
                     public LiveData<GovPensionViewData> apply(GovPensionEx input) {
                         List<GovPensionEntity> gpeList = input.getGpeList();
-                        RetirementOptions ro = RetirementOptionsMapper.map(input.getROE());
-                        GovPensionHelper helper = new GovPensionHelper(getApplication(), gpeList, ro);
+                        mRO = RetirementOptionsMapper.map(input.getROE());
+                        GovPensionHelper helper = new GovPensionHelper(getApplication(), gpeList, mRO);
                         MutableLiveData<GovPensionViewData> ldata = new MutableLiveData();
                         ldata.setValue(helper.get(id));
                         return ldata;
@@ -74,6 +78,18 @@ public class GovPensionIncomeViewModel extends AndroidViewModel {
 
     public void updateSpouseBirthdate(String birthdate) {
         mRepo.updateSpouseBirthdate(birthdate);
+    }
+
+    public AgeData getFRA(GovPension gp) {
+        String birthdate;
+        if(gp.getOwner() == RetirementConstants.OWNER_PRIMARY) {
+            birthdate = mRO.getPrimaryBirthdate();
+        } else {
+            birthdate = mRO.getSpouseBirthdate();
+        }
+
+        int year = AgeUtils.getBirthYear(birthdate);
+        return SocialSecurityRules.getFullRetirementAgeFromYear(year);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {

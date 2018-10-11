@@ -63,8 +63,8 @@ public class PersonalInfoViewModel extends AndroidViewModel {
         @Override
         protected RetirementOptions doInBackground(Void... params) {
             RetirementOptionsEntity roe = mRetireRepo.getImmediate();
-            RetirementOptions ro = new RetirementOptions(roe.getId(), roe.getEndAge(), roe.getBirthdate(),
-                    roe.getSpouseBirthdate(), roe.getIncludeSpouse(), roe.getCountryCode());
+            RetirementOptions ro = new RetirementOptions(roe.getId(), roe.getEndAge(), roe.getSpouseEndAge(),
+                    roe.getBirthdate(), roe.getSpouseBirthdate(), roe.getIncludeSpouse(), roe.getCountryCode());
             List<GovPensionEntity> gpeList = mGovPensionRepo.getImmediate();
             if(!gpeList.isEmpty()) {
                 ro.setCountryAvailable(false);

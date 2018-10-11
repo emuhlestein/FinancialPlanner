@@ -193,9 +193,9 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
         if(!mSpouseIncluded) {
             mOwnerTextView.setVisibility(View.GONE);
         } else if(mGP.getOwner() == OWNER_PRIMARY) {
-            mOwnerTextView.setText("Self");
+            mOwnerTextView.setText(getResources().getString(R.string.self));
         } else if(mGP.getOwner() == OWNER_SPOUSE) {
-            mOwnerTextView.setText("Spouse");
+            mOwnerTextView.setText(getResources().getString(R.string.spouse));
         }
 
         if(mIsPrincipleSpouse) {
@@ -241,7 +241,6 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
 
     @Override
     public void onEditAge(String year, String month) {
-        // TODO should check to make sure it's valid
         AgeData age = new AgeData(year, month);
         setStartRetirementAge(age.toString());
     }
@@ -302,6 +301,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
 
     @Override
     public void onGetResponse(int id, int button) {
+        AgeData fra;
         switch (id) {
             case EC_ONLY_ONE_SOCIAL_SECURITY_ALLOWED:
                 finish();
@@ -309,10 +309,13 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
             case EC_FOR_SELF_OR_SPOUSE:
                 if (button == NewMessageDialog.POS_BUTTON) {
                     mGP.setOwner(RetirementConstants.OWNER_PRIMARY);
+                    fra = mViewModel.getFRA(mGP);
+                    mFullRetirementAge.setText(fra.toString());
                 } else if(button == NewMessageDialog.NEG_BUTTON) {
                     mGP.setOwner(RetirementConstants.OWNER_SPOUSE);
+                    fra = mViewModel.getFRA(mGP);
+                    mFullRetirementAge.setText(fra.toString());
                 }
-                updateUI();
                 break;
         }
     }

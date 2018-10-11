@@ -17,6 +17,7 @@ import static com.intelliviz.db.entity.RetirementOptionsEntity.TABLE_NAME;
 public class RetirementOptionsEntity {
     public static final String TABLE_NAME = "retirement_options";
     public static final String END_AGE_FIELD = "end_age";
+    public static final String SPOUSE_END_AGE_FIELD = "spouse_end_age";
     public static final String BIRTHDATE_FIELD = "birthdate";
     public static final String INCLUDE_SPOUSE_FIELD = "include_spouse";
     public static final String SPOUSE_BIRTHDATE_FIELD = "spouse_birthdate";
@@ -27,6 +28,9 @@ public class RetirementOptionsEntity {
     @TypeConverters({AgeConverter.class})
     @ColumnInfo(name = END_AGE_FIELD)
     private AgeData mEndAge;
+    @TypeConverters({AgeConverter.class})
+    @ColumnInfo(name = SPOUSE_END_AGE_FIELD)
+    private AgeData mSpouseEndAge;
     @ColumnInfo(name = BIRTHDATE_FIELD)
     private String mBirthdate;
     @ColumnInfo(name = SPOUSE_BIRTHDATE_FIELD)
@@ -36,9 +40,10 @@ public class RetirementOptionsEntity {
     @ColumnInfo(name = COUNTRY_CODE_FIELD)
     private String mCountryCode;
 
-    public RetirementOptionsEntity(long id, AgeData endAge, String birthdate, int includeSpouse, String spouseBirthdate, String countryCode) {
+    public RetirementOptionsEntity(long id, AgeData endAge, AgeData spouseEndAge, String birthdate, int includeSpouse, String spouseBirthdate, String countryCode) {
         this.id = id;
         mEndAge = endAge;
+        mSpouseEndAge = spouseEndAge;
         mBirthdate = birthdate;
         mIncludeSpouse = includeSpouse;
         mSpouseBirthdate = spouseBirthdate;
@@ -59,6 +64,14 @@ public class RetirementOptionsEntity {
 
     public void setEndAge(AgeData endAge) {
         mEndAge = endAge;
+    }
+
+    public AgeData getSpouseEndAge() {
+        return mSpouseEndAge;
+    }
+
+    public void setSpouseEndAge(AgeData spouseEndAge) {
+        mSpouseEndAge = spouseEndAge;
     }
 
     public String getBirthdate() {
