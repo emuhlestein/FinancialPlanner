@@ -23,8 +23,9 @@ import com.intelliviz.repo.PensionIncomeEntityRepo;
  * Created by edm on 9/30/2017.
  */
 
-public class PensionIncomeViewModel extends AndroidViewModel {
+public class PensionIncomeViewModel extends AndroidViewModel implements PensionIncomeEntityRepo.OnDataChangedListener{
     private LiveData<PensionViewData> mViewData;
+    private MutableLiveData<PensionViewData> mViewDataNew = new MutableLiveData<>();
     private PensionIncomeEntityRepo mRepo;
     private LiveData<PensionDataEx> mSource;
     private long mId;
@@ -34,13 +35,14 @@ public class PensionIncomeViewModel extends AndroidViewModel {
         super(application);
         mRepo = PensionIncomeEntityRepo.getInstance(application);
         mSource = mRepo.getPensionDataEx(incomeId);
-        subscribe(incomeId);
+        //subscribe(incomeId);
         mRepo.load(incomeId);
         mId = incomeId;
+        mRepo.addListener(this);
     }
 
     public LiveData<PensionViewData> get() {
-        return mViewData;
+        return mViewDataNew;
     }
 
     private void subscribe(final long id) {
@@ -87,6 +89,25 @@ public class PensionIncomeViewModel extends AndroidViewModel {
 
     public void update() {
         mRepo.load(mId);
+    }
+
+    @Override
+    public void onDataChanged(PensionDataEx pdEx) {
+        RetirementOptions ro = RetirementOptionsMapper.map(pdEx.getROE());
+
+        PensionData pd = null;
+        if(pdEx.getPie() != null) {
+            pd = PensionDataEntityMapper.map(pdEx.getPie());
+        }
+        PensionIncomeHelper helper = new PensionIncomeHelper(getApplication(), pd, ro, pdEx.getNumRecords());
+        PensionViewData pensionViewData = helper.get(mId);
+        int status = pensionViewData.getStatus();
+        if(status == mStatus) {
+            mStatus = -1;
+        } else {
+            mStatus = status;
+        }
+        mViewDataNew.setValue(pensionViewData);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {

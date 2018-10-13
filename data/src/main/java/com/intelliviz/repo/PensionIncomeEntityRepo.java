@@ -10,6 +10,7 @@ import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.PensionIncomeEntity;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PensionIncomeEntityRepo {
@@ -20,6 +21,11 @@ public class PensionIncomeEntityRepo {
     private MutableLiveData<List<PensionIncomeEntity>> mPensionList =
             new MutableLiveData<>();
     private MutableLiveData<PensionDataEx> mPdEx;
+    private List<OnDataChangedListener> mListeners = new ArrayList<>();
+
+    public interface OnDataChangedListener {
+        void onDataChanged(PensionDataEx pensionDataEx);
+    }
 
     public static PensionIncomeEntityRepo getInstance(Application application) {
         if(mINSTANCE == null) {
@@ -37,6 +43,11 @@ public class PensionIncomeEntityRepo {
         new GetListAsyncTask().execute();
         mPdEx = new MutableLiveData<>();
     }
+
+    public void addListener(OnDataChangedListener listener) {
+        mListeners.add(listener);
+    }
+
 
     public MutableLiveData<PensionDataEx> getPensionDataEx(long id) {
         //load(id);
@@ -101,7 +112,10 @@ public class PensionIncomeEntityRepo {
 
         @Override
         protected void onPostExecute(PensionDataEx pdEx) {
-            mPdEx.setValue(pdEx);
+            //mPdEx.setValue(pdEx);
+            for(OnDataChangedListener listener : mListeners) {
+                listener.onDataChanged(pdEx);
+            }
         }
     }
 
@@ -119,17 +133,22 @@ public class PensionIncomeEntityRepo {
         }
     }
 
-    private class UpdateAsyncTask extends AsyncTask<PensionIncomeEntity, Void, PensionIncomeEntity> {
+    private class UpdateAsyncTask extends AsyncTask<PensionIncomeEntity, Void, PensionDataEx> {
 
         @Override
-        protected PensionIncomeEntity doInBackground(PensionIncomeEntity... params) {
+        protected PensionDataEx doInBackground(PensionIncomeEntity... params) {
             mDB.pensionIncomeDao().update(params[0]);
-            return mDB.pensionIncomeDao().get(params[0].getId());
+            PensionIncomeEntity pie = mDB.pensionIncomeDao().get(params[0].getId());
+            List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
+            return new PensionDataEx(pie, pieList.size(), roe);
         }
 
         @Override
-        protected void onPostExecute(PensionIncomeEntity entity) {
-            mPIE.setValue(entity);
+        protected void onPostExecute(PensionDataEx pdEx) {
+            for(OnDataChangedListener listener : mListeners) {
+                listener.onDataChanged(pdEx);
+            }
         }
     }
 
