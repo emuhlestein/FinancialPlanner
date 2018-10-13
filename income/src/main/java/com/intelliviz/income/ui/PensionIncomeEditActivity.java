@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.intelliviz.data.PensionData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.data.PensionViewData;
-import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
+import com.intelliviz.income.viewmodel.PensionIncomeEditViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.NewAgeDialog;
 import com.intelliviz.lowlevel.ui.NewMessageDialog;
@@ -41,7 +41,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private static final String TAG = PensionIncomeEditActivity.class.getSimpleName();
     private PensionData mPD;
     private long mId;
-    private PensionIncomeViewModel mViewModel;
+    private PensionIncomeEditViewModel mViewModel;
     private boolean mSpouseIncluded;
 
     private CoordinatorLayout mCoordinatorLayout;
@@ -119,10 +119,10 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             }
         });
 
-        PensionIncomeViewModel.Factory factory = new
-                PensionIncomeViewModel.Factory(getApplication(), mId);
+        PensionIncomeEditViewModel.Factory factory = new
+                PensionIncomeEditViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(PensionIncomeViewModel.class);
+                get(PensionIncomeEditViewModel.class);
 
         mViewModel.get().observe(this, new Observer<PensionViewData>() {
             @Override
@@ -132,12 +132,13 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
                 if(viewData == null) {
                     return;
                 }
-
-                if(!mViewModel.isStatusValid()) {
-                    return;
-                }
-
-                int status = mViewModel.getStatus();
+//
+//                if(!mViewModel.isStatusValid()) {
+//                    return;
+//                }
+//
+//                int status = mViewModel.getStatus();
+                int status = viewData.getStatus();
                 mSpouseIncluded = viewData.isSpouseIncluded();
                 mPD = viewData.getPensionData();
                 String message;
@@ -168,6 +169,16 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(EXTRA_FIRST_TIME, true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void updateUI() {
@@ -225,7 +236,6 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
 
     @Override
     public void onGetResponse(int id, int button) {
-        mViewModel.setHandled();
         switch (id) {
             case MessageMgr.EC_ONLY_ONE_PENSION_ALLOWED:
                 finish();

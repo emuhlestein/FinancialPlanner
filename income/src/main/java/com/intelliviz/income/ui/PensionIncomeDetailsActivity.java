@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.intelliviz.data.PensionData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.data.PensionViewData;
-import com.intelliviz.income.viewmodel.PensionIncomeViewModel;
+import com.intelliviz.income.viewmodel.PensionIncomeDetailsViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
@@ -33,7 +33,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
 public class PensionIncomeDetailsActivity extends AppCompatActivity {
-    private PensionIncomeViewModel mViewModel;
+    private PensionIncomeDetailsViewModel mViewModel;
     private PensionData mPD;
     private long mId;
     private boolean mSpouseIncluded;
@@ -102,10 +102,10 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
             }
         });
 
-        PensionIncomeViewModel.Factory factory = new
-                PensionIncomeViewModel.Factory(getApplication(), mId);
+        PensionIncomeDetailsViewModel.Factory factory = new
+                PensionIncomeDetailsViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(PensionIncomeViewModel.class);
+                get(PensionIncomeDetailsViewModel.class);
 
         mViewModel.get().observe(this, new Observer<PensionViewData>() {
             @Override
@@ -127,6 +127,11 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if(resultCode != Activity.RESULT_OK) {
             return;
@@ -143,7 +148,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
 
             PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(),
                     minAge, monthlyBenefit);
-            mViewModel.setData(pd);
+            //mViewModel.setData(pd);
 
         }
         super.onActivityResult(requestCode, resultCode, intent);

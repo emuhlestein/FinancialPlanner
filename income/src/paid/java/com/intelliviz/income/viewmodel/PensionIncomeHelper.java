@@ -1,7 +1,5 @@
 package com.intelliviz.income.viewmodel;
 
-import android.app.Application;
-
 import com.intelliviz.data.PensionData;
 import com.intelliviz.data.RetirementOptions;
 
@@ -9,7 +7,7 @@ import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
 
 public class PensionIncomeHelper extends AbstractPensionIncomeHelper {
     private boolean mSpouseIncluded;
-    public PensionIncomeHelper(Application application, PensionData pd, RetirementOptions ro, int numRecords) {
+    public PensionIncomeHelper(PensionData pd, RetirementOptions ro, int numRecords) {
         super(pd, ro);
         mSpouseIncluded = ro.getIncludeSpouse()==1;
     }

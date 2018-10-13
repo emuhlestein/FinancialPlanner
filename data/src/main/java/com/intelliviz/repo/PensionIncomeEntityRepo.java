@@ -10,8 +10,9 @@ import com.intelliviz.db.AppDatabase;
 import com.intelliviz.db.entity.PensionIncomeEntity;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PensionIncomeEntityRepo {
     private volatile static PensionIncomeEntityRepo mINSTANCE;
@@ -21,7 +22,7 @@ public class PensionIncomeEntityRepo {
     private MutableLiveData<List<PensionIncomeEntity>> mPensionList =
             new MutableLiveData<>();
     private MutableLiveData<PensionDataEx> mPdEx;
-    private List<OnDataChangedListener> mListeners = new ArrayList<>();
+    private Map<String, OnDataChangedListener> mListeners = new HashMap<>();
 
     public interface OnDataChangedListener {
         void onDataChanged(PensionDataEx pensionDataEx);
@@ -44,8 +45,11 @@ public class PensionIncomeEntityRepo {
         mPdEx = new MutableLiveData<>();
     }
 
-    public void addListener(OnDataChangedListener listener) {
-        mListeners.add(listener);
+    public void addListener(String key, OnDataChangedListener listener) {
+        if(mListeners.containsKey(key)) {
+            mListeners.remove(key);
+        }
+        mListeners.put(key, listener);
     }
 
 
@@ -113,7 +117,7 @@ public class PensionIncomeEntityRepo {
         @Override
         protected void onPostExecute(PensionDataEx pdEx) {
             //mPdEx.setValue(pdEx);
-            for(OnDataChangedListener listener : mListeners) {
+            for(OnDataChangedListener listener : mListeners.values()) {
                 listener.onDataChanged(pdEx);
             }
         }
@@ -146,7 +150,7 @@ public class PensionIncomeEntityRepo {
 
         @Override
         protected void onPostExecute(PensionDataEx pdEx) {
-            for(OnDataChangedListener listener : mListeners) {
+            for(OnDataChangedListener listener : mListeners.values()) {
                 listener.onDataChanged(pdEx);
             }
         }
