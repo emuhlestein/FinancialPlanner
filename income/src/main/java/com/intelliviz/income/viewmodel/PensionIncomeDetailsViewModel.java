@@ -13,8 +13,6 @@ import com.intelliviz.data.PensionData;
 import com.intelliviz.data.PensionDataEx;
 import com.intelliviz.data.RetirementOptions;
 import com.intelliviz.db.AppDatabase;
-import com.intelliviz.db.dao.PensionIncomeDaoHelper;
-import com.intelliviz.db.dao.RetirementOptionsDaoHelper;
 import com.intelliviz.db.entity.PensionDataEntityMapper;
 import com.intelliviz.db.entity.PensionIncomeEntity;
 import com.intelliviz.db.entity.RetirementOptionsEntity;
@@ -47,9 +45,9 @@ public class PensionIncomeDetailsViewModel extends AndroidViewModel {
 
         @Override
         protected PensionDataEx doInBackground(Long... params) {
-            PensionIncomeEntity pie = PensionIncomeDaoHelper.getPensionIncomeEntity(mDB, params[0]);
-            List<PensionIncomeEntity> pieList = PensionIncomeDaoHelper.getAllPensionIncomeEntities(mDB);
-            RetirementOptionsEntity roe = RetirementOptionsDaoHelper.get(mDB);
+            PensionIncomeEntity pie = mDB.pensionIncomeDao().get(params[0]);
+            List<PensionIncomeEntity> pieList = mDB.pensionIncomeDao().get();
+            RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
             return new PensionDataEx(pie, pieList.size(), roe);
         }
 
