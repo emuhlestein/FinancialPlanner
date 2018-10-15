@@ -25,7 +25,7 @@ import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.adapter.IncomeDetailsAdapter;
 import com.intelliviz.income.data.SavingsViewData;
-import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
+import com.intelliviz.income.viewmodel.SavingsIncomeDetailsViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
@@ -42,7 +42,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
 
     private IncomeDetailsAdapter mAdapter;
     private List<IncomeDetails> mIncomeDetails;
-    private SavingsIncomeViewModel mViewModel;
+    private SavingsIncomeDetailsViewModel mViewModel;
     private SavingsData mSD;
     private long mId;
     private boolean mSpouseIncluded;
@@ -136,17 +136,10 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             }
         });
 
-        SavingsIncomeViewModel.Factory factory = new
-                SavingsIncomeViewModel.Factory(getApplication(), mId, 0);
+        SavingsIncomeDetailsViewModel.Factory factory = new
+                SavingsIncomeDetailsViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(SavingsIncomeViewModel.class);
-
-        mViewModel.getList().observe(this, new Observer<List<IncomeDetails>>() {
-            @Override
-            public void onChanged(@Nullable List<IncomeDetails> incomeDetails) {
-                mAdapter.update(incomeDetails);
-            }
-        });
+                get(SavingsIncomeDetailsViewModel.class);
 
         mViewModel.get().observe(this, new Observer<SavingsViewData>() {
             @Override
@@ -186,7 +179,14 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             SavingsData sdata = new SavingsData(mId, mSD.getType(), name, mSD.getOwner(), startAge,
                     balance, interest, monthlyAddition, stopMonthlyAddtionAge,
                     withdrawAmount, annualPercentIncrease, showMonths);
-            mViewModel.setData(sdata);
+            if(sdata != null) {
+                try {
+                    throw new IllegalAccessException("SHOULD NOt BE HERE!!!!!");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            //mViewModel.setData(sdata);
 
         }
         super.onActivityResult(requestCode, resultCode, intent);

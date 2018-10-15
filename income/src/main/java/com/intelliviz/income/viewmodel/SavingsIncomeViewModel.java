@@ -57,7 +57,7 @@ public class SavingsIncomeViewModel extends AndroidViewModel {
                         if(sd == null) {
                             Log.d("SavingsIncomeViewModel", "HERE");
                         }
-                        SavingsIncomeHelper helper = new SavingsIncomeHelper(getApplication(), sd, ro, input.getNumRecords());
+                        SavingsIncomeHelper helper = new SavingsIncomeHelper(sd, ro, input.getNumRecords());
                         SavingsViewData savingsViewData = helper.get(id, incomeType);
                         int status = savingsViewData.getStatus();
                         if(status == mStatus) {

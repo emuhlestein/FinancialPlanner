@@ -12,6 +12,7 @@ import com.intelliviz.income.data.SavingsViewData;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
+import com.intelliviz.lowlevel.util.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +62,7 @@ public abstract class AbstractSavingsIncomeHelper {
                     incomeDataList.add(benefitData);
                 }
             }
-            List<IncomeDetails> incomeDetails = getIncomeDetailsList(incomeDataList);
+            List<IncomeDetails> incomeDetails = getIncomeDetailsList(incomeDataList, mRO);
 
             return new SavingsViewData(mSD, incomeDetails, isSpouseIncluded(), EC_NO_ERROR, "");
         }
@@ -84,6 +85,26 @@ public abstract class AbstractSavingsIncomeHelper {
         }
         sd.setRules(sr);
         return new SavingsViewData(sd, Collections.<IncomeDetails>emptyList(), isSpouseIncluded(), status, "");
+    }
+
+    private List<IncomeDetails> getIncomeDetailsList(List<IncomeData> incomeDataList, RetirementOptions ro) {
+//        List<IncomeData> incomeDataList = IncomeSummaryHelper.getIncomeSummary(incomeSourceList, ro);
+//        if(incomeDataList == null) {
+//            return Collections.emptyList();
+//        }
+
+        List<IncomeDetails> incomeDetails = new ArrayList<>();
+
+        for (IncomeData benefitData : incomeDataList) {
+            AgeData age = benefitData.getAge();
+            String amount = SystemUtils.getFormattedCurrency(benefitData.getMonthlyAmount());
+            String balance = SystemUtils.getFormattedCurrency(benefitData.getBalance());
+            String line1 = age.toString() + "   " + amount + "  " + balance;
+            IncomeDetails incomeDetail = new IncomeDetails(line1, RetirementConstants.BALANCE_STATE_GOOD, "");
+            incomeDetails.add(incomeDetail);
+        }
+
+        return incomeDetails;
     }
 
     // TODO make utils method

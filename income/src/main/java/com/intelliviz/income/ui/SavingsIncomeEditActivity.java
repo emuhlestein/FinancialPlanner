@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.data.SavingsViewData;
+import com.intelliviz.income.viewmodel.SavingsIncomeEditViewModel;
 import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
@@ -46,7 +47,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     private SavingsData mSD;
     private long mId;
     private int mIncomeType;
-    private SavingsIncomeViewModel mViewModel;
+    private SavingsIncomeEditViewModel mViewModel;
     private boolean mSpouseIncluded;
 
     private CoordinatorLayout mCoordinatorLayout;
@@ -161,10 +162,10 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
             }
         });
 
-        SavingsIncomeViewModel.Factory factory = new
-                SavingsIncomeViewModel.Factory(getApplication(), mId, mIncomeType);
+        SavingsIncomeEditViewModel.Factory factory = new
+                SavingsIncomeEditViewModel.Factory(getApplication(), mId, mIncomeType);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(SavingsIncomeViewModel.class);
+                get(SavingsIncomeEditViewModel.class);
 
         mViewModel.get().observe(this, new Observer<SavingsViewData>() {
             @Override
@@ -172,10 +173,6 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
                 FragmentManager fm;
 
                 if(viewData == null) {
-                    return;
-                }
-
-                if(!mViewModel.isStatusValid()) {
                     return;
                 }
 
@@ -414,7 +411,6 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
 
     @Override
     public void onGetResponse(int id, int button) {
-        mViewModel.setHandled();
         switch (id) {
             case EC_ONLY_TWO_SAVED_ALLOWED:
                 finish();
