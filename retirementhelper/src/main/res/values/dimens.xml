@@ -7,5 +7,4 @@
     <dimen name="fab_margin">24dp</dimen>
     <dimen name="layout_margin">24dp</dimen>
     <dimen name="detail_backdrop_height">256dp</dimen>
-    <dimen name="app_bar_height">220dp</dimen>
 </resources>

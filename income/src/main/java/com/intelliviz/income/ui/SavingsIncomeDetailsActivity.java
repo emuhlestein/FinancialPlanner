@@ -60,6 +60,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
     private FloatingActionButton mEditSavingsFAB;
     private RecyclerView mRecyclerView;
     private TextView mOwnerTextView;
+    private TextView mAddAgeTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recyclerview);
         mOwnerTextView = findViewById(R.id.owner_text);
         mInitPercentWithdrawTextView = findViewById(R.id.init_per_withdraw_text_view);
+        mAddAgeTextView = findViewById(R.id.stop_add_age);
 
         setSupportActionBar(mToolbar);
 
@@ -223,6 +225,9 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
 
         formattedValue = mSD.getWithdrawPercent() + "%";
         mInitPercentWithdrawTextView.setText(formattedValue);
+
+        AgeData stopAddAge = mSD.getStopMonthlyAdditionAge();
+        mAddAgeTextView.setText(stopAddAge.toString());
     }
 /*
     @Override

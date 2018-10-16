@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="monthly_addition">Monthly Addition</string>
-    <string name="stop_add_age">Stop Add Age</string>
+    <string name="stop_add_age">Stop Add Age:</string>
     <string name="annual_percent_increase">Annual % Withdraw Increase</string>
     <string name="show_months">Show Months</string>
     <string name="stop_addition_age">Age when monthly additions stop.</string>
