@@ -46,7 +46,6 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private BigDecimal mSpouseFullBenefit;
     private AgeData mSpouseStartAge;
     private boolean mIsSpouseIncluded;
-    private boolean mIsSpouseEntity;
     private BigDecimal mPenaltyFraction;
     private RetirementOptions mRO;
 
@@ -57,16 +56,24 @@ public class SocialSecurityRules implements IncomeTypeRules {
     public SocialSecurityRules(RetirementOptions ro, String spouseFullBenefit,
                                AgeData spouseStartAge, boolean isSpouseIncluded, boolean isSpouseEntity) {
         mRO = ro;
-        mEndAge = ro.getEndAge();
-        mSpouseEndAge = ro.getSpouseEndAge();
-        mBirthdate = ro.getPrimaryBirthdate();
-        mSpouseBirthdate = ro.getSpouseBirthdate();
+
+        if(isSpouseEntity) {
+            mBirthdate = ro.getSpouseBirthdate();
+            mSpouseBirthdate = ro.getPrimaryBirthdate();
+            mEndAge = ro.getSpouseEndAge();
+            mSpouseEndAge = ro.getEndAge();
+        } else {
+            mBirthdate = ro.getPrimaryBirthdate();
+            mSpouseBirthdate = ro.getSpouseBirthdate();
+            mEndAge = ro.getEndAge();
+            mSpouseEndAge = ro.getSpouseEndAge();
+        }
+
         if(spouseFullBenefit != null) {
             mSpouseFullBenefit = new BigDecimal(spouseFullBenefit);
         }
         mSpouseStartAge = spouseStartAge;
         mIsSpouseIncluded = isSpouseIncluded;
-        mIsSpouseEntity = isSpouseEntity;
 
         BigDecimal five = new BigDecimal("5");
         BigDecimal nine = new BigDecimal("9");

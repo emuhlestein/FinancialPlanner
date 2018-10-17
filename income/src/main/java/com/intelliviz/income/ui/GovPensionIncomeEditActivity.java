@@ -20,13 +20,12 @@ import android.widget.TextView;
 import com.intelliviz.data.GovPension;
 import com.intelliviz.income.R;
 import com.intelliviz.income.data.GovPensionViewData;
-import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
+import com.intelliviz.income.viewmodel.GovPensionIncomeEditViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
 import com.intelliviz.lowlevel.ui.NewMessageDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
-import com.intelliviz.repo.GovEntityRepo;
 
 import static com.intelliviz.income.ui.MessageMgr.EC_FOR_SELF_OR_SPOUSE;
 import static com.intelliviz.income.ui.MessageMgr.EC_NO_ERROR;
@@ -49,7 +48,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
 
     private GovPension mGP;
     private long mId;
-    private GovPensionIncomeViewModel mViewModel;
+    private GovPensionIncomeEditViewModel mViewModel;
     private boolean mIsPrincipleSpouse;
     private boolean mSpouseIncluded;
 
@@ -109,10 +108,10 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
             }
         });
 
-        GovPensionIncomeViewModel.Factory factory = new
-                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId);
+        GovPensionIncomeEditViewModel.Factory factory = new
+                GovPensionIncomeEditViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(GovPensionIncomeViewModel.class);
+                get(GovPensionIncomeEditViewModel.class);
 
         mViewModel.get().observe(this, new Observer<GovPensionViewData>() {
             @Override
@@ -295,7 +294,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
         if(birthdate == null) {
             finish();
         } else {
-            mViewModel.updateSpouseBirthdate(birthdate);
+            //mViewModel.updateSpouseBirthdate(birthdate);
         }
     }
 

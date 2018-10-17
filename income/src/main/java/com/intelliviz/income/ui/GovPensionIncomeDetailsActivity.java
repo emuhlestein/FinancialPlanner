@@ -20,18 +20,17 @@ import com.intelliviz.data.GovPension;
 import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.income.R;
 import com.intelliviz.income.data.GovPensionViewData;
-import com.intelliviz.income.viewmodel.GovPensionIncomeViewModel;
+import com.intelliviz.income.viewmodel.GovPensionIncomeDetailsViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.lowlevel.util.SystemUtils;
-import com.intelliviz.repo.GovEntityRepo;
 
 import static android.view.View.GONE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 public class GovPensionIncomeDetailsActivity extends AppCompatActivity implements IncomeDetailsSelectListener{
-    private GovPensionIncomeViewModel mViewModel;
+    private GovPensionIncomeDetailsViewModel mViewModel;
     private GovPension mGP;
     private long mId;
     private boolean mSpouseIncluded;
@@ -98,10 +97,10 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         // For adding dividing line between views
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
         //        linearLayoutManager.getOrientation()));
-        GovPensionIncomeViewModel.Factory factory = new
-                GovPensionIncomeViewModel.Factory(getApplication(), GovEntityRepo.getInstance(getApplication()), mId);
+        GovPensionIncomeDetailsViewModel.Factory factory = new
+                GovPensionIncomeDetailsViewModel.Factory(getApplication(), mId);
         mViewModel = ViewModelProviders.of(this, factory).
-                get(GovPensionIncomeViewModel.class);
+                get(GovPensionIncomeDetailsViewModel.class);
 
         mViewModel.get().observe(this, new Observer<GovPensionViewData>() {
             @Override
