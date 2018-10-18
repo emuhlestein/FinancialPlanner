@@ -171,10 +171,10 @@ public class AgeUtils {
 
         if(currentAge1.isBefore(currentAge2)) {
             // person1 is younger
-            return age1.subtract(numMonths);
+            return age1.add(numMonths);
         } else {
             // person1 is older
-            return age1.add(numMonths);
+            return age1.subtract(numMonths);
         }
     }
 

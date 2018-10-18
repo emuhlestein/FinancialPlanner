@@ -20,38 +20,5 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="ThreeDigitPositiveNumber">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:inputType">number</item>
-        <item name="android:maxLength">3</item>
-        <item name="android:minEms">2</item>
-        <item name="android:textSize">22sp</item>
-    </style>
-
-    <style name="TwoDigitPositiveNumber" parent="ThreeDigitPositiveNumber">
-        <item name="android:maxLength">2</item>
-    </style>
-
-    <style name="FourDigitPositiveNumber" parent="ThreeDigitPositiveNumber">
-        <item name="android:minEms">3</item>
-        <item name="android:maxLength">4</item>
-    </style>
-
-    <style name="FiveDigitPositiveNumber" parent="ThreeDigitPositiveNumber">
-        <item name="android:maxLength">5</item>
-        <item name="android:minEms">4</item>
-    </style>
-
-    <style name="SevenDigitPositiveNumber" parent="ThreeDigitPositiveNumber">
-        <item name="android:maxLength">7</item>
-        <item name="android:minEms">6</item>
-    </style>
-
-    <style name="CurrencyStyle" parent="ThreeDigitPositiveNumber">
-        <item name="android:maxLength">20</item>
-        <item name="android:minEms">9</item>
-    </style>
 
 </resources>
