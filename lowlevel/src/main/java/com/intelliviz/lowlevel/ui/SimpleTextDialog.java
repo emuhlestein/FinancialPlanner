@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.InputType;
 import android.widget.EditText;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_DIALOG_ID;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_DIALOG_INPUT_TEXT;
 
 
@@ -22,14 +23,17 @@ public class SimpleTextDialog extends DialogFragment {
 
     private static final String ARG_MESSAGE = "message";
     private static final String ARG_INPUT = "input";
+    private static final String ARG_ID = "id";
     private EditText mInputText;
+    private int mId;
 
     public interface DialogResponse {
-        void onGetResponse(int response, String message);
+        void onGetResponse(int id, boolean isOk, String message);
     }
 
-    public static SimpleTextDialog newInstance(String message, String inputText) {
+    public static SimpleTextDialog newInstance(int id, String message, String inputText) {
         Bundle args = new Bundle();
+        args.putInt(ARG_ID, id);
         args.putString(ARG_MESSAGE, message);
         args.putString(ARG_INPUT, inputText);
         SimpleTextDialog fragment = new SimpleTextDialog();
@@ -42,6 +46,7 @@ public class SimpleTextDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String message = getArguments().getString(ARG_MESSAGE);
         String inputText = getArguments().getString(ARG_INPUT);
+        mId = getArguments().getInt(ARG_ID);
 
         setCancelable(false);
 
@@ -78,19 +83,20 @@ public class SimpleTextDialog extends DialogFragment {
 
     private void sendResult(boolean isOk) {
         String enteredText = mInputText.getText().toString();
-        int resultCode = Activity.RESULT_OK;
-        if(!isOk) {
-            resultCode = Activity.RESULT_CANCELED;
-        }
-
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, enteredText);
 
         if(getTargetFragment() != null) {
+            int resultCode = Activity.RESULT_OK;
+            if(!isOk) {
+                resultCode = Activity.RESULT_CANCELED;
+            }
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_DIALOG_INPUT_TEXT, enteredText);
+            intent.putExtra(EXTRA_DIALOG_ID, mId);
+
             getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
         } else {
             DialogResponse response = (DialogResponse) getActivity();
-            response.onGetResponse(resultCode, enteredText);
+            response.onGetResponse(mId, isOk, enteredText);
         }
     }
 }

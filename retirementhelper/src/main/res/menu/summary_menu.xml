@@ -17,6 +17,11 @@
         android:title="@string/fra"
         app:showAsAction="never" />
     <item
+        android:id="@+id/when_can_i"
+        android:orderInCategory="200"
+        android:title="When can I?"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/sign_out_item"
         android:orderInCategory="200"
         android:title="@string/sign_out"

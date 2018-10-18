@@ -89,6 +89,7 @@ public class RetirementConstants {
     public static final String EXTRA_YEAR = "year";
     public static final String EXTRA_MONTH = "month";
     public static final String EXTRA_AGE_ID = "age id";
+    public static final String EXTRA_DIALOG_ID = "dialog id";
 
     public static final String EXTRA_MESSAGE_MGR = "message_mgr";
     public static final String EXTRA_USER_EVENT = "user_event";

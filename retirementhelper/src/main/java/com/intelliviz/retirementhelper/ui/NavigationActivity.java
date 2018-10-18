@@ -49,6 +49,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_RETIRE_OP
  */
 public class NavigationActivity extends AppCompatActivity implements
         SimpleTextDialog.DialogResponse, MessageDialog.DialogResponse{
+    private static final int FRA_DIALOG_ID = 1;
+    private static final int WHEN_CAN_I_DIALOG_ID = 2;
     private static final String TAG = NavigationActivity.class.getSimpleName();
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";
@@ -146,8 +148,13 @@ public class NavigationActivity extends AppCompatActivity implements
                 //overridePendingTransition(R.anim.slide_right_in, 0);
                 break;
             case R.id.fra_item:
-                SimpleTextDialog dialog = SimpleTextDialog.newInstance("Enter birth year", "");
+                SimpleTextDialog dialog = SimpleTextDialog.newInstance(FRA_DIALOG_ID, "Enter birth year", "");
                 FragmentManager fm = getSupportFragmentManager();
+                dialog.show(fm, "year");
+                break;
+            case R.id.when_can_i:
+                dialog = SimpleTextDialog.newInstance(WHEN_CAN_I_DIALOG_ID, "When can I retire", "");
+                fm = getSupportFragmentManager();
                 dialog.show(fm, "year");
                 break;
             case R.id.sign_out_item:
@@ -321,12 +328,27 @@ public class NavigationActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onGetResponse(int response, String message) {
-        int year = Integer.parseInt(message);
-        AgeData age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
-        MessageDialog dialog = MessageDialog.newInstance(getResources().getString(R.string.fra_long), age.toString(), 0, true, null, null);
-        FragmentManager fm = getSupportFragmentManager();
-        dialog.show(fm, "year");
+    public void onGetResponse(int id, boolean isOk, String message) {
+        if(!isOk) {
+            return;
+        }
+
+        MessageDialog dialog;
+        FragmentManager fm;
+        switch(id) {
+            case WHEN_CAN_I_DIALOG_ID:
+                dialog = MessageDialog.newInstance("You can retire in: ", "Aug 5, 2030", 0, true, null, null);
+                fm = getSupportFragmentManager();
+                dialog.show(fm, "year");
+                break;
+            case FRA_DIALOG_ID:
+                int year = Integer.parseInt(message);
+                AgeData age = SocialSecurityRules.getFullRetirementAgeFromYear(year);
+                dialog = MessageDialog.newInstance(getResources().getString(R.string.fra_long), age.toString(), 0, true, null, null);
+                fm = getSupportFragmentManager();
+                dialog.show(fm, "year");
+                break;
+        }
     }
 
     @Override
