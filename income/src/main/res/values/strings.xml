@@ -3,6 +3,7 @@
     <string name="full_monthly_benefit">Full Monthly Benefit:</string>
     <string name="full_retirement_age">Full Retirement Age:</string>
     <string name="fra">FRA</string>
+    <string name="fra_long">Full Retirement Age</string>
     <string name="principle_spouse">Principle Spouse</string>
     <string name="name">Name: </string>
 
