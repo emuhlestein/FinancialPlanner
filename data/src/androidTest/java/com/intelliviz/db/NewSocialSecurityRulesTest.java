@@ -9,6 +9,7 @@ import com.intelliviz.lowlevel.data.AgeData;
 import org.junit.Test;
 
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static org.junit.Assert.assertEquals;
 
 public class NewSocialSecurityRulesTest {
@@ -322,5 +323,54 @@ public class NewSocialSecurityRulesTest {
 
         incomeData = principleSpouse.getIncomeData(new AgeData(70, 1));
         assertEquals(1320, incomeData.getMonthlyAmount(), .001);
+    }
+
+    @Test
+    public void testSpouseSameBenefitSameAge() {
+        String fullMonthlyBenefit = "1000";
+        String fullSpouseMonthlyBenefit = "1000";
+        AgeData startAge = new AgeData(66, 8);
+        AgeData spouseStartAge = new AgeData(66, 8);
+        AgeData endAge = new AgeData(90, 0);
+        AgeData spouseEndAge = new AgeData(90, 0);
+        String principleSpouseBirthdate = "01-01-1958";
+        String spouseBirthdate = "01-01-1958";
+
+        RetirementOptions ro = new RetirementOptions(endAge, spouseEndAge, principleSpouseBirthdate, spouseBirthdate);
+        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true);
+
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse.setRules(ssr1);
+
+        SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit,
+                spouseStartAge, true);
+        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, fullSpouseMonthlyBenefit, spouseStartAge);
+        spouse.setRules(ssr2);
+
+        IncomeData incomeData = principleSpouse.getIncomeData(new AgeData(62, 0));
+        assertEquals(716.667, incomeData.getMonthlyAmount(), 0.001);
+
+        incomeData = spouse.getIncomeData(new AgeData(62, 0));
+        assertEquals(716.667, incomeData.getMonthlyAmount(), 0.001);
+
+        incomeData = principleSpouse.getIncomeData(new AgeData(65, 0));
+        assertEquals(888.889, incomeData.getMonthlyAmount(), 0.001);
+
+        incomeData = spouse.getIncomeData(new AgeData(65, 0));
+        assertEquals(888.889, incomeData.getMonthlyAmount(), 0.001);
+
+        AgeData age = ssr1.getFullRetirementAge();
+        incomeData = principleSpouse.getIncomeData(age);
+        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+
+        age = ssr2.getFullRetirementAge();
+        incomeData = spouse.getIncomeData(age);
+        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+
+        incomeData = principleSpouse.getIncomeData(new AgeData(70, 0));
+        assertEquals(1266.67, incomeData.getMonthlyAmount(), 0.001);
+
+        incomeData = spouse.getIncomeData(new AgeData(70, 0));
+        assertEquals(1266.67, incomeData.getMonthlyAmount(), 0.001);
     }
 }
