@@ -162,6 +162,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
 
         BigDecimal monthlyBenefit = getMonthlyBenefit(birthYear, age, minAge, fullMonthlyBenefit);
         if(spousalBenefits != null) {
+            // spousal benefits cannot be more than half of the primary spouse's benefits
             if(monthlyBenefit.compareTo(fullMonthlyBenefit) > 0) {
                 monthlyBenefit = fullMonthlyBenefit;
             }
