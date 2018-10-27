@@ -6,8 +6,6 @@ import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
-import java.util.List;
-
 /**
  * Created by edm on 6/19/2018.
  */
@@ -90,6 +88,7 @@ public class GovPension extends AbstractIncomeSource {
         if(rules instanceof SocialSecurityRules) {
             mRules = (SocialSecurityRules)rules;
             Bundle bundle = new Bundle();
+            bundle.putInt(RetirementConstants.EXTRA_INCOME_OWNER, getOwner());
             bundle.putString(RetirementConstants.EXTRA_INCOME_FULL_BENEFIT, mFullMonthlyBenefit);
             bundle.putParcelable(RetirementConstants.EXTRA_INCOME_START_AGE, mStartAge);
             mRules.setValues(bundle);
@@ -98,7 +97,8 @@ public class GovPension extends AbstractIncomeSource {
         }
     }
 
-    public List<IncomeData> getIncomeData() {
+    @Override
+    public IncomeData getIncomeData() {
         if(mRules != null) {
             return mRules.getIncomeData();
         } else {
@@ -106,11 +106,13 @@ public class GovPension extends AbstractIncomeSource {
         }
     }
 
-    public IncomeDataAccessor getIncomeDataAccessor() {
-        if(mRules != null) {
-            return mRules.getIncomeDataAccessor();
-        } else {
-            return null;
-        }
+    @Override
+    public IncomeData getIncomeData(AgeData age) {
+        return mRules.getIncomeData(age);
+    }
+
+    @Override
+    public IncomeData getIncomeData(IncomeData incomeData) {
+        return null;
     }
 }
