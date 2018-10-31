@@ -556,14 +556,14 @@ public class NewSocialSecurityRulesTest {
         assertEquals(700, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
-        assertEquals(0, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(300, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(63, 0);
         incomeData = principleSpouse.getIncomeData(primaryAge);
         assertEquals(750.0, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
-        assertEquals(0, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(325, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(64, 0);
         incomeData = principleSpouse.getIncomeData(primaryAge);
@@ -808,35 +808,35 @@ public class NewSocialSecurityRulesTest {
 
         primaryAge = new AgeData(68, 0);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1106.67, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
         assertEquals(0, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(68, 8);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1160, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
         assertEquals(488.889, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(70, 0);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1266.67, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
         assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(70, 8);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1266.67, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
         assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(72, 0);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1266.67, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
         assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
@@ -875,7 +875,7 @@ public class NewSocialSecurityRulesTest {
         assertEquals(0, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
-        assertEquals(0, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = ssr1.getFullRetirementAge();
         incomeData = principleSpouse.getIncomeData(primaryAge);
@@ -886,35 +886,35 @@ public class NewSocialSecurityRulesTest {
 
         primaryAge = new AgeData(68, 0);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1080, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
-        assertEquals(0, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(68, 8);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1133.33, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
-        assertEquals(488.889, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(70, 0);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1240, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
         assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(70, 8);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1240, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
         assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(72, 0);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(1240, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
         assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
