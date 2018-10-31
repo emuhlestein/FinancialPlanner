@@ -94,4 +94,17 @@ public class AgeDataTest {
         assertTrue(testAge.getYear() == age.getYear());
         assertTrue(testAge.getMonth() == age.getMonth());
     }
+
+    @Test
+    public void testAgeDiff() {
+        AgeData testAge = new AgeData(60, 0);
+        AgeData age = AgeUtils.getAge("01-01-1960", "01-01-1960", testAge);
+        assertTrue(age.diff(testAge) == 0);
+
+        age = AgeUtils.getAge("01-01-1958", "01-01-1960", testAge);
+        assertTrue(age.diff(new AgeData(58, 0)) == 0);
+
+        age = AgeUtils.getAge("01-01-1960", "01-01-1958", testAge);
+        assertTrue(age.diff(new AgeData(62, 0)) == 0);
+    }
 }

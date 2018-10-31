@@ -13,7 +13,6 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
-import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 
 
 /**
@@ -33,50 +32,49 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 public class SocialSecurityRules implements IncomeTypeRules {
     private static final BigDecimal MAX_SS_PENALTY = new BigDecimal(30.0);
     private int mOwner;
+    private BigDecimal mOwnerFullBenefit;
+    private AgeData mOwnerStartAge;
+
     private AgeData mMinAge = new AgeData(62, 0);
     private AgeData mMaxAge = new AgeData(70, 0);
     private AgeData mEndAge;
-    private AgeData mSpouseEndAge;
+    private AgeData mOtherEndAge;
     private AgeData mStartAge;
     private AgeData mActualStartAge;
     private String mBirthdate;
     private BigDecimal mFullMonthlyBenefit;
     private BigDecimal mMonthlyBenefit;
-    private String mSpouseBirthdate;
-    private BigDecimal mSpouseFullBenefit;
-    private AgeData mSpouseStartAge;
+    private String mOtherBirthdate;
+    private BigDecimal mOtherFullBenefit;
+    private AgeData mOtherStartAge;
     private boolean mIsSpouseIncluded;
     private BigDecimal mPenaltyFraction;
     private RetirementOptions mRO;
     private boolean mUseStartAge;
+    private int mBirthYear;
 
     public SocialSecurityRules(RetirementOptions ro) {
         this(ro, "0", null, false, false);
     }
 
-    public SocialSecurityRules(RetirementOptions ro, String spouseFullBenefit,
-                               AgeData spouseStartAge, boolean isSpouseIncluded) {
-        this(ro, spouseFullBenefit, spouseStartAge, isSpouseIncluded, false);
+    public SocialSecurityRules(RetirementOptions ro, String otherFullBenefit,
+                               AgeData otherStartAge, boolean isSpouseIncluded) {
+        this(ro, otherFullBenefit, otherStartAge, isSpouseIncluded, false);
     }
 
-    public SocialSecurityRules(RetirementOptions ro, String spouseFullBenefit,
-                               AgeData spouseStartAge, boolean isSpouseIncluded, boolean useStartAge) {
+    public SocialSecurityRules(RetirementOptions ro, String otherFullBenefit,
+                               AgeData otherStartAge, boolean isSpouseIncluded, boolean useStartAge) {
         mRO = ro;
-
-        if(isSpouseIncluded) {
-            mSpouseBirthdate = ro.getSpouseBirthdate();
-            mSpouseStartAge = spouseStartAge;
-            mSpouseEndAge = ro.getSpouseEndAge();
-            mSpouseFullBenefit = new BigDecimal(spouseFullBenefit);
-        }
+        mOtherStartAge = otherStartAge;
+        mOtherFullBenefit = new BigDecimal(otherFullBenefit);
         mIsSpouseIncluded = isSpouseIncluded;
+
+        mUseStartAge = useStartAge;
 
         BigDecimal five = new BigDecimal("5");
         BigDecimal nine = new BigDecimal("9");
         MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
         mPenaltyFraction = five.divide(nine, mc);
-
-        mUseStartAge = useStartAge;
     }
 
     @Override
@@ -87,20 +85,33 @@ public class SocialSecurityRules implements IncomeTypeRules {
         BigDecimal fullMonthlyBenefit = new BigDecimal(value);
         AgeData startAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_START_AGE);
 
-        mBirthdate = mRO.getPrimaryBirthdate();
-        mSpouseBirthdate = mRO.getSpouseBirthdate();
+        mOwnerFullBenefit = fullMonthlyBenefit;
+        mOwnerStartAge = startAge;
+
+        if(mOwner == OWNER_PRIMARY) {
+            mBirthYear = AgeUtils.getBirthYear(mRO.getPrimaryBirthdate());
+        } else {
+            mBirthYear = AgeUtils.getBirthYear(mRO.getSpouseBirthdate());
+        }
+
+        /*mBirthdate = mRO.getPrimaryBirthdate();
+        mOtherBirthdate = mRO.getSpouseBirthdate();
         mEndAge = mRO.getEndAge();
-        mSpouseEndAge = mRO.getSpouseEndAge();
+        mOtherEndAge = mRO.getSpouseEndAge();
 
         if(mOwner == OWNER_SPOUSE) {
-            mStartAge = mSpouseStartAge;
-            mSpouseStartAge = startAge;
-            mFullMonthlyBenefit = mSpouseFullBenefit;
-            mSpouseFullBenefit = fullMonthlyBenefit;
+            mStartAge = mOtherStartAge;
+            mOtherStartAge = startAge;
+            mFullMonthlyBenefit = mOtherFullBenefit;
+            mOtherFullBenefit = fullMonthlyBenefit;
+            mBirthdate = mRO.getSpouseBirthdate();
+            mOtherBirthdate =  mRO.getPrimaryBirthdate();
         } else {
             mStartAge = startAge;
             mFullMonthlyBenefit = fullMonthlyBenefit;
-        }
+            mBirthdate = mRO.getPrimaryBirthdate();
+            mOtherBirthdate =  mRO.getSpouseBirthdate();
+        }*/
     }
 
     /**
@@ -110,19 +121,24 @@ public class SocialSecurityRules implements IncomeTypeRules {
      */
     public IncomeData getIncomeData(AgeData primaryAge) {
         AgeData age;
-        AgeData minAge = mMinAge;
         IncomeData incomeData;
-        int birthYear;
+
+        age = convertAge(primaryAge);
 
         if(mUseStartAge) {
-            if(mOwner == OWNER_SPOUSE) {
-                minAge = mSpouseStartAge;
-                birthYear = AgeUtils.getBirthYear(mSpouseBirthdate);
-                age = AgeUtils.getAge(mBirthdate, mSpouseBirthdate, primaryAge);
+            if(age.isBefore(mOwnerStartAge)) {
+                return new IncomeData(primaryAge, 0, 0, 0, null);
+            } else {
+                incomeData = getMonthlyBenefit(mBirthYear, age, mMinAge, mOtherStartAge);
+                return incomeData;
+            }
+
+           /* if(mOwner == OWNER_SPOUSE) {
+                minAge = mOtherStartAge;
                 if(age.isBefore(mStartAge)) {
                     return new IncomeData(primaryAge, 0, 0, 0, null);
                 } else {
-                    incomeData = getMonthlyBenefit(birthYear, age, minAge);
+                    incomeData = getMonthlyBenefit(mBirthYear, age, minAge);
                     if(incomeData.getMonthlyAmount() > mFullMonthlyBenefit.doubleValue()) {
                         return new IncomeData(incomeData.getAge(), mFullMonthlyBenefit.doubleValue(), 0, 0, null);
                     } else {
@@ -134,24 +150,16 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 if(primaryAge.isBefore(mStartAge)) {
                     return new IncomeData(primaryAge, 0, 0, 0, null);
                 } else {
-                    birthYear = AgeUtils.getBirthYear(mBirthdate);
-                    incomeData = getMonthlyBenefit(birthYear, primaryAge, minAge);
+                    incomeData = getMonthlyBenefit(mBirthYear, primaryAge, minAge);
                     if(incomeData.getMonthlyAmount() > mFullMonthlyBenefit.doubleValue()) {
                         return new IncomeData(incomeData.getAge(), mFullMonthlyBenefit.doubleValue(), 0, 0, null);
                     } else {
                         return incomeData;
                     }
                 }
-            }
+            }*/
         } else {
-            if(mOwner == OWNER_SPOUSE) {
-                birthYear = AgeUtils.getBirthYear(mSpouseBirthdate);
-                age = AgeUtils.getAge(mBirthdate, mSpouseBirthdate, primaryAge);
-            } else {
-                birthYear = AgeUtils.getBirthYear(mBirthdate);
-                age = primaryAge;
-            }
-            return getMonthlyBenefit(birthYear, age, minAge);
+            return getMonthlyBenefit(mBirthYear, age, mMinAge, age);
         }
     }
 
@@ -165,45 +173,41 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return null;
     }
 
-    private Pair<BigDecimal, AgeData> checkForSpousalBenefits(AgeData age) {
+    private Pair<BigDecimal, AgeData> checkForSpousalBenefits(AgeData age, AgeData otherAge) {
         BigDecimal two = new BigDecimal(2);
         MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
-        BigDecimal halfBenefit = mFullMonthlyBenefit.divide(two, mc);
-        if (mOwner == OWNER_SPOUSE && mSpouseFullBenefit.compareTo(halfBenefit) < 0) {
+        BigDecimal halfBenefit = mOtherFullBenefit.divide(two, mc);
+        /*if (mOwner == OWNER_SPOUSE && mFullMonthlyBenefit.compareTo(halfBenefit) < 0) {
             return new Pair<> (halfBenefit, new AgeData(Math.max(age.getNumberOfMonths(), mMinAge.getNumberOfMonths())));
         }
 
-        halfBenefit = mSpouseFullBenefit.divide(two, mc);
-        if (mOwner == OWNER_PRIMARY && mFullMonthlyBenefit.compareTo(halfBenefit.divide(two, mc)) < 0) {
+        halfBenefit = mFullMonthlyBenefit.divide(two, mc);
+        if (mOwner == OWNER_PRIMARY && mOtherFullBenefit.compareTo(halfBenefit.divide(two, mc)) < 0) {
             return new Pair<> (halfBenefit, new AgeData(Math.max(age.getNumberOfMonths(), mMinAge.getNumberOfMonths())));
+        }*/
+
+        if(mOwnerFullBenefit.compareTo(halfBenefit) < 0) {
+            return new Pair<> (halfBenefit, new AgeData(Math.max(age.getNumberOfMonths(), otherAge.getNumberOfMonths())));
         }
 
         return null;
     }
 
-    private IncomeData getMonthlyBenefit(int birthYear, AgeData age, AgeData minAge) {
-        //AgeData age;
-
+    private IncomeData getMonthlyBenefit(int birthYear, AgeData age, AgeData minAge, AgeData otherStartAge) {
         BigDecimal fullMonthlyBenefit;
-        if(mOwner == OWNER_SPOUSE) {
-            //age = AgeUtils.getAge(mBirthdate, mSpouseBirthdate, primaryAge);
-        } else {
-            //age = primaryAge;
-        }
-
         BigDecimal spousalBenefits = null;
         if(mIsSpouseIncluded) {
             // see if there are spousal benefits
-            Pair<BigDecimal, AgeData> pair = checkForSpousalBenefits(age);
+            Pair<BigDecimal, AgeData> pair = checkForSpousalBenefits(age, otherStartAge);
             if(pair != null) {
                 fullMonthlyBenefit = pair.first;
                 spousalBenefits = fullMonthlyBenefit;
                 minAge = pair.second;
             } else {
-                fullMonthlyBenefit = mFullMonthlyBenefit;
+                fullMonthlyBenefit = mOwnerFullBenefit;
             }
         } else {
-            fullMonthlyBenefit = mFullMonthlyBenefit;
+            fullMonthlyBenefit = mOwnerFullBenefit;
         }
 
         BigDecimal monthlyBenefit = getActualMonthlyBenefit(birthYear, age, minAge, fullMonthlyBenefit);
@@ -225,8 +229,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     public AgeData getFullRetirementAge() {
-        int birthyear = AgeUtils.getBirthYear(mBirthdate);
-        return getFullRetirementAgeFromYear(birthyear);
+        return getFullRetirementAgeFromYear(mBirthYear);
     }
 
     public static void setRulesOnGovPensionEntities(List<GovPension> gpList, RetirementOptions ro) {
@@ -408,4 +411,13 @@ public class SocialSecurityRules implements IncomeTypeRules {
         BigDecimal hundred = new BigDecimal("100");
         return temp.divide(hundred, mc);
     }
+
+    private AgeData convertAge(AgeData age) {
+        if(mOwner == OWNER_PRIMARY) {
+            return age;
+        } else {
+            return AgeUtils.getAge(mRO.getPrimaryBirthdate(), mRO.getSpouseBirthdate(), age);
+        }
+    }
+
 }
