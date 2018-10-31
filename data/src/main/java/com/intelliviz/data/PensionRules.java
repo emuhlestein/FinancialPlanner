@@ -3,11 +3,10 @@ package com.intelliviz.data;
 import android.os.Bundle;
 
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
-import java.util.Collections;
-import java.util.List;
-
+import static com.intelliviz.data.IncomeSummaryHelper.getOwnerAge;
 import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
 
 /**
@@ -16,7 +15,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.SC_GOOD;
 
 public class PensionRules implements IncomeTypeRules {
     private int mOwner;
-    private AgeData mStartAge;
+    private AgeData mMinAge;
     private double mMonthlyAmount;
     private RetirementOptions mRO;
 
@@ -33,16 +32,41 @@ public class PensionRules implements IncomeTypeRules {
         mOwner = bundle.getInt(RetirementConstants.EXTRA_INCOME_OWNER);
         String value = bundle.getString(RetirementConstants.EXTRA_INCOME_FULL_BENEFIT);
         mMonthlyAmount = Double.parseDouble(value);
-        mStartAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_START_AGE);
+        mMinAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_START_AGE);
+    }
+
+    public IncomeData getIncomeData(AgeData age) {
+        AgeData ownerAge = getOwnerAge(age, mOwner, mRO);
+        if(ownerAge.isBefore(mMinAge)) {
+            return new IncomeData(age, 0, 0, SC_GOOD, null);
+        } else {
+            return new IncomeData(age, mMonthlyAmount, 0, SC_GOOD, null);
+        }
     }
 
     @Override
-    public List<IncomeData> getIncomeData() {
-        return Collections.emptyList();
+    public IncomeData getIncomeData(IncomeData incomeData) {
+        if(incomeData == null) {
+            AgeData currentAge = AgeUtils.getAge(mRO.getPrimaryBirthdate());
+            if(currentAge.isBefore(mMinAge)) {
+                return new IncomeData(currentAge, 0, 0, SC_GOOD, null);
+            } else {
+                return new IncomeData(currentAge, mMonthlyAmount, 0, SC_GOOD, null);
+            }
+        } else {
+            AgeData age = incomeData.getAge();
+            age = new AgeData(age.getNumberOfMonths()+1);
+            if(age.isBefore(mMinAge)) {
+                return new IncomeData(age, 0, 0, SC_GOOD, null);
+            } else {
+                return new IncomeData(age, mMonthlyAmount, 0, SC_GOOD, null);
+            }
+        }
     }
 
     @Override
-    public IncomeDataAccessor getIncomeDataAccessor() {
-        return new PensionIncomeDataAccessor(mOwner, mStartAge, mMonthlyAmount, SC_GOOD, null, mRO);
+    public IncomeData getIncomeData() {
+        AgeData currentAge = AgeUtils.getAge(mRO.getPrimaryBirthdate());
+        return getIncomeData(currentAge);
     }
 }
