@@ -17,9 +17,9 @@
         android:title="@string/fra"
         app:showAsAction="never" />
     <item
-        android:id="@+id/when_can_i"
+        android:id="@+id/when_can_i_retire"
         android:orderInCategory="200"
-        android:title="When can I?"
+        android:title="When can I retire?"
         app:showAsAction="never" />
     <item
         android:id="@+id/sign_out_item"

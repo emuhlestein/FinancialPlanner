@@ -6,9 +6,6 @@ import com.intelliviz.db.entity.AbstractIncomeSource;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
-import java.util.Collections;
-import java.util.List;
-
 public class SavingsData extends AbstractIncomeSource {
     private AgeData mStartAge;
     private String mBalance;
@@ -144,19 +141,29 @@ public class SavingsData extends AbstractIncomeSource {
         }
     }
 
-    public List<IncomeData> getIncomeData() {
-        if(mRules != null) {
-            return mRules.getIncomeData();
-        } else {
-            return Collections.emptyList();
-        }
+    @Override
+    public IncomeData getIncomeData(AgeData age) {
+        return null;
     }
 
-    public IncomeDataAccessor getIncomeDataAccessor() {
+    public IncomeData getIncomeData() {
         if(mRules != null) {
-            return mRules.getIncomeDataAccessor();
+            return mRules.getIncomeData();
         } else {
             return null;
         }
     }
+
+    @Override
+    public IncomeData getIncomeData(IncomeData incomeData) {
+        return null;
+    }
+
+//    public IncomeDataAccessor getIncomeDataAccessor() {
+//        if(mRules != null) {
+//            return mRules.getIncomeDataAccessor();
+//        } else {
+//            return null;
+//        }
+//    }
 }

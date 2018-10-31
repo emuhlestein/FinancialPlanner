@@ -10,7 +10,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.SC_WARNING;
  * Created by edm on 10/18/2017.
  */
 
-public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements IncomeTypeRules {
+public class Savings401kIncomeRules extends BaseSavingsIncomeRules {
     private static final double PENALTY_PERCENT = 10.0;
     private static final AgeData PENALTY_AGE = new AgeData(59, 6);
     private AgeData mMinAge;
@@ -54,7 +54,12 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules implements In
     }
 
     @Override
-    public IncomeDataAccessor getIncomeDataAccessor() {
-        return new Savings401kIncomeDataAccessor(getOwner(), getIncomeData(), getRetirementOptions());
+    public IncomeData getIncomeData() {
+        return null;
     }
+
+//    @Override
+//    public IncomeDataAccessor getIncomeDataAccessor() {
+//        return new Savings401kIncomeDataAccessor(getOwner(), getIncomeData(), getRetirementOptions());
+//    }
 }

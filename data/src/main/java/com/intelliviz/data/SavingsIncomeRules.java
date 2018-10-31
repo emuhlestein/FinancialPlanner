@@ -30,8 +30,9 @@ public class SavingsIncomeRules extends BaseSavingsIncomeRules implements Income
         return new IncomeData(age, monthlyAmount, balance, state, "");
     }
 
-    @Override
-    public IncomeDataAccessor getIncomeDataAccessor() {
-        return new SavingIncomeDataAccessor(getOwner(), getIncomeData(), getRetirementOptions());
-    }
+
+//    @Override
+//    public IncomeDataAccessor getIncomeDataAccessor() {
+//        return new SavingIncomeDataAccessor(getOwner(), getIncomeData(), getRetirementOptions());
+//    }
 }

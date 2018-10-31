@@ -15,7 +15,7 @@ public class DataBaseUtils {
         db.summaryDao().deleteAll();
         List<MilestoneData> milestones = Collections.emptyList(); // TODO implement
         for(MilestoneData msd : milestones) {
-            db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
+            db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getActualMonthlyBenefit())));
         }
         */
     }

@@ -32,7 +32,6 @@ import com.intelliviz.lowlevel.ui.MessageDialog;
 import com.intelliviz.lowlevel.ui.SimpleTextDialog;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 import com.intelliviz.retirementhelper.R;
-import com.intelliviz.retirementhelper.data.RetirementOptionsData;
 import com.intelliviz.retirementhelper.util.PersonalInfoDialogAction;
 import com.intelliviz.retirementhelper.viewmodel.NavigationModelView;
 
@@ -50,7 +49,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.REQUEST_RETIRE_OP
 public class NavigationActivity extends AppCompatActivity implements
         SimpleTextDialog.DialogResponse, MessageDialog.DialogResponse{
     private static final int FRA_DIALOG_ID = 1;
-    private static final int WHEN_CAN_I_DIALOG_ID = 2;
+    private static final int WHEN_CAN_I_RETIRE_DIALOG_ID = 2;
     private static final String TAG = NavigationActivity.class.getSimpleName();
     private static final String SUMMARY_FRAG_TAG = "summary frag tag";
     private static final String INCOME_FRAG_TAG = "income frag tag";
@@ -108,6 +107,15 @@ public class NavigationActivity extends AppCompatActivity implements
                 mROE = roe;
             }
         });
+
+        mViewModel.getMonthlyAmount().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                MessageDialog dialog = MessageDialog.newInstance("You can retire at age: ", s, 0, true, null, null);
+                FragmentManager fm = getSupportFragmentManager();
+                dialog.show(fm, "dialog");
+            }
+        });
     }
 
     @Override
@@ -126,7 +134,6 @@ public class NavigationActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
-        RetirementOptionsData rod;
         switch (item.getItemId()) {
             case R.id.retirement_options_item:
                 intent = new Intent(this, RetirementOptionsDialog.class);
@@ -152,8 +159,8 @@ public class NavigationActivity extends AppCompatActivity implements
                 FragmentManager fm = getSupportFragmentManager();
                 dialog.show(fm, "year");
                 break;
-            case R.id.when_can_i:
-                dialog = SimpleTextDialog.newInstance(WHEN_CAN_I_DIALOG_ID, "When can I retire", "");
+            case R.id.when_can_i_retire:
+                dialog = SimpleTextDialog.newInstance(WHEN_CAN_I_RETIRE_DIALOG_ID, "When can I retire", "");
                 fm = getSupportFragmentManager();
                 dialog.show(fm, "year");
                 break;
@@ -285,7 +292,7 @@ public class NavigationActivity extends AppCompatActivity implements
             oldTag = frag.getTag();
         }
         Log.d(TAG, oldTag);
-        if(oldTag.equals(fragmentTag)) {
+        if(oldTag == null || oldTag.equals(fragmentTag)) {
             return;
         }
         FragmentTransaction ft;
@@ -336,10 +343,8 @@ public class NavigationActivity extends AppCompatActivity implements
         MessageDialog dialog;
         FragmentManager fm;
         switch(id) {
-            case WHEN_CAN_I_DIALOG_ID:
-                dialog = MessageDialog.newInstance("You can retire in: ", "Aug 5, 2030", 0, true, null, null);
-                fm = getSupportFragmentManager();
-                dialog.show(fm, "year");
+            case WHEN_CAN_I_RETIRE_DIALOG_ID:
+                mViewModel.whenCanRetire(message);
                 break;
             case FRA_DIALOG_ID:
                 int year = Integer.parseInt(message);

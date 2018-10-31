@@ -1,12 +1,9 @@
 package com.intelliviz.db.entity;
 
-import com.intelliviz.data.IncomeData;
-import com.intelliviz.data.IncomeDataAccessor;
+import com.intelliviz.data.IncomeSourceData;
 import com.intelliviz.data.IncomeSourceType;
 
-import java.util.List;
-
-public abstract class AbstractIncomeSource implements IncomeSourceType {
+public abstract class AbstractIncomeSource implements IncomeSourceData, IncomeSourceType {
     private long mId;
     private int mType;
     private String mName;
@@ -58,8 +55,4 @@ public abstract class AbstractIncomeSource implements IncomeSourceType {
     public void setOwner(int owner) {
         mOwner = owner;
     }
-
-    public abstract List<IncomeData> getIncomeData();
-
-    public abstract IncomeDataAccessor getIncomeDataAccessor();
 }

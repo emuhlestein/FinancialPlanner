@@ -40,18 +40,18 @@ public class IncomeSummaryHelper {
                 PensionIncomeEntity pie = (PensionIncomeEntity)entity;
                 PensionData pd = PensionDataEntityMapper.map(pie);
                 pd.setRules(new PensionRules(ro));
-                accessorList.add(pd.getIncomeDataAccessor());
+                //accessorList.add(pd.getIncomeDataAccessor());
             } else if(entity instanceof SavingsIncomeEntity) {
                 SavingsIncomeEntity sie = (SavingsIncomeEntity)entity;
                 SavingsData sd = SavingsDataEntityMapper.map(sie);
                 if (sd.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
                     SavingsIncomeRules sir = new SavingsIncomeRules(ro);
                     sd.setRules(sir);
-                    accessorList.add(sd.getIncomeDataAccessor());
+                    //accessorList.add(sd.getIncomeDataAccessor());
                 } else if (sd.getType() == RetirementConstants.INCOME_TYPE_401K) {
                     Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro);
                     sd.setRules(tdir);
-                    accessorList.add(sd.getIncomeDataAccessor());
+                    //accessorList.add(sd.getIncomeDataAccessor());
                 }
             }
         }
@@ -59,7 +59,7 @@ public class IncomeSummaryHelper {
         if(!gpList.isEmpty()) {
             SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro);
             for (GovPension gp : gpList) {
-                accessorList.add(gp.getIncomeDataAccessor());
+                //accessorList.add(gp.getIncomeDataAccessor());
             }
         }
 
@@ -123,7 +123,7 @@ public class IncomeSummaryHelper {
     /**
      * Get the age in terms of the owner of the income source. If owner is self,
      * no need to convert. If owner is spouse, need to convert.
-     * @param age Age of principle spouse where owner is self.
+     * @param age Age of principle (primary) spouse where owner is self.
      * @param owner Self or spouse.
      * @param ro The retirement options.
      * @return The age of the owner.

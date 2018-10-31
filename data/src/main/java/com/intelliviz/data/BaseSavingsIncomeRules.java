@@ -6,9 +6,6 @@ import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_MONTHLY_ADDITION;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SHOW_MONTHS;
@@ -23,7 +20,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_WITH
  * Created by edm on 12/30/2017.
  */
 
-public abstract class BaseSavingsIncomeRules {
+public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
     private int mOwner;
     private String mOwnerBirthdate;
     private String mOtherBirthdate;
@@ -53,8 +50,6 @@ public abstract class BaseSavingsIncomeRules {
 
     protected abstract IncomeData createIncomeData(AgeData age, double monthlyAmount, double balance);
 
-    protected abstract IncomeDataAccessor getIncomeDataAccessor();
-
     public void setValues(Bundle bundle) {
         mOwner = bundle.getInt(RetirementConstants.EXTRA_INCOME_OWNER);
         mBalance = bundle.getDouble(EXTRA_INCOME_SOURCE_BALANCE);
@@ -83,6 +78,37 @@ public abstract class BaseSavingsIncomeRules {
         }
     }
 
+
+    @Override
+    public IncomeData getIncomeData() {
+        return null;
+    }
+
+    @Override
+    public IncomeData getIncomeData(AgeData age) {
+        return null;
+    }
+
+    @Override
+    public IncomeData getIncomeData(IncomeData incomeData) {
+        /*
+        if(incomeData == null) {
+            AgeData currentAge = AgeUtils.getAge(mPrimartBirthdate);
+            return new IncomeData(currentAge, 0, mStartBalance, BI_GOOD, null);
+        } else {
+            AgeData age = incomeData.getAge();
+            age = new AgeData(age.getNumberOfMonths()+1);
+            double balance = incomeData.getBalance();
+            balance += mMonthlyDeposit;
+            double amount = balance * mMonthlyInterest;
+            balance += amount;
+            double monthlyAmount = balance * mInitialWithdrawPercent;
+            return new IncomeData(age, monthlyAmount, balance, BI_GOOD, null);
+        }
+        */
+        return null;
+    }
+/*
     public List<IncomeData> getIncomeData() {
         double monthlyWithdraw = 0;
         double balance = mBalance;
@@ -127,4 +153,5 @@ public abstract class BaseSavingsIncomeRules {
 
         return listAmountDate;
     }
+    */
 }

@@ -100,7 +100,7 @@ public class IncomeSourceListViewModel extends AndroidViewModel {
         //db.summaryDao().deleteAll();
         //List<MilestoneData> milestones = null;
         //for(MilestoneData msd : milestones) {
-        //    db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getMonthlyBenefit())));
+        //    db.summaryDao().insert(new SummaryEntity(0, msd.getStartAge(), SystemUtils.getFormattedCurrency(msd.getActualMonthlyBenefit())));
         //}
     }
 

@@ -1,6 +1,7 @@
 package com.intelliviz.data;
 
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
 /**
  * Created by edm on 11/3/2017.
@@ -12,6 +13,14 @@ public class IncomeData {
     private double mBalance;
     private int mStatus;
     private String mMessage;
+
+    public IncomeData() {
+        mAge = new AgeData(0);
+        mMonthlyAmount = 0;
+        mBalance = 0;
+        mStatus = RetirementConstants.SC_GOOD;
+        mMessage = null;
+    }
 
     public IncomeData(AgeData age, double monthlyAmount, double balance, int status, String message) {
         mAge = age;
