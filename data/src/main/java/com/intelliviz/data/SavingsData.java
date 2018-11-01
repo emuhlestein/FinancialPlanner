@@ -143,7 +143,11 @@ public class SavingsData extends AbstractIncomeSource {
 
     @Override
     public IncomeData getIncomeData(AgeData age) {
-        return null;
+        if(mRules != null) {
+            return mRules.getIncomeData(age);
+        } else {
+            return null;
+        }
     }
 
     public IncomeData getIncomeData() {

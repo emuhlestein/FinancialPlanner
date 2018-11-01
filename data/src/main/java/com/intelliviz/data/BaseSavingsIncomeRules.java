@@ -14,6 +14,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_SOUR
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_START_AGE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_STOP_AGE;
 import static com.intelliviz.lowlevel.util.RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT;
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 
 
 /**
@@ -34,6 +35,9 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
     private double mAnnualPercentIncrease; // percent to increase withdraw
     private boolean mShowMonths;
     private RetirementOptions mRO;
+
+    private double mCurrentBalance;
+    private AgeData mCurrentAge;
 
     BaseSavingsIncomeRules(RetirementOptions ro) {
         mRO = ro;
@@ -76,8 +80,10 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
         if (mStopAge.isBefore(currentAge)) {
             mStopAge = new AgeData(currentAge.getNumberOfMonths());
         }
-    }
 
+        mCurrentBalance = mBalance;
+        mCurrentAge = currentAge;
+    }
 
     @Override
     public IncomeData getIncomeData() {
@@ -85,8 +91,71 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
     }
 
     @Override
-    public IncomeData getIncomeData(AgeData age) {
-        return null;
+    public IncomeData getIncomeData(AgeData primaryAge) {
+        double monthlyWithdraw = 0;
+        double balance = mCurrentBalance;
+        double monthlyDeposit = mMonthlyDeposit;
+        double initWithdrawPercent = mInitialWithdrawPercent / 100;
+        double monthlyInterest = mInterest / 1200;
+        AgeData startAge = mStartAge;
+        boolean makeWidthdraw = false;
+
+        AgeData age = convertAge(primaryAge);
+
+        if(age.equals(mCurrentAge)) {
+            monthlyWithdraw = balance * initWithdrawPercent / 12;
+            return new IncomeData(primaryAge, monthlyWithdraw, mCurrentBalance, 0, null);
+        }
+
+        if(age.isBefore(mCurrentAge)) {
+            return new IncomeData();
+        }
+
+        int numMonths = age.diff(mCurrentAge);
+
+        startAge = new AgeData(mCurrentAge.getNumberOfMonths() + numMonths);
+        monthlyWithdraw = 0;
+
+        int month = mCurrentAge.getNumberOfMonths();
+        int totalMonths = month + numMonths;
+
+        for (; month < totalMonths; month++) {
+            AgeData currentAge = new AgeData(month);
+            monthlyWithdraw = getMonthlyWithdraw(currentAge, startAge, monthlyWithdraw, mCurrentBalance, initWithdrawPercent);
+
+//            if (currentAge.isOnOrAfter(mStartAge)) {
+//                if (currentAge.equals(mStartAge)) {
+//                    monthlyWithdraw = balance * initWithdrawPercent / 12;
+//                } else {
+//                    if (currentAge.getMonth() == 0) {
+//                        monthlyWithdraw = monthlyWithdraw + (monthlyWithdraw * mAnnualPercentIncrease / 100);
+//                    }
+//                }
+//            } else {
+//                monthlyWithdraw = 0;
+//            }
+
+            if(makeWidthdraw) {
+                mCurrentBalance -= monthlyWithdraw;
+                if (mCurrentBalance < 0) {
+                    mCurrentBalance += monthlyWithdraw;
+                    monthlyWithdraw = mCurrentBalance;
+                    balance = 0;
+                }
+            }
+
+            if (currentAge.isOnOrAfter(mStopAge)) {
+                monthlyDeposit = 0;
+            }
+            mCurrentBalance += monthlyDeposit;
+
+            double amount = mCurrentBalance * monthlyInterest;
+            mCurrentBalance += amount;
+        }
+
+        mCurrentAge = new AgeData(month);
+
+        return new IncomeData(mCurrentAge, monthlyWithdraw, mCurrentBalance, 0, "");
     }
 
     @Override
@@ -154,4 +223,28 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
         return listAmountDate;
     }
     */
+
+    private double getMonthlyWithdraw(AgeData age, AgeData startAge, double monthlyWithdraw, double balance, double initWithdrawPercent) {
+        if (age.isOnOrAfter(startAge)) {
+            if (age.equals(startAge)) {
+                monthlyWithdraw = balance * initWithdrawPercent / 12;
+            } else {
+                if (age.getMonth() == 0) {
+                    monthlyWithdraw = monthlyWithdraw + (monthlyWithdraw * mAnnualPercentIncrease / 100);
+                }
+            }
+        } else {
+            monthlyWithdraw = 0;
+        }
+
+        return monthlyWithdraw;
+    }
+
+    private AgeData convertAge(AgeData age) {
+        if(mOwner == OWNER_PRIMARY) {
+            return age;
+        } else {
+            return AgeUtils.getAge(mRO.getPrimaryBirthdate(), mRO.getSpouseBirthdate(), age);
+        }
+    }
 }

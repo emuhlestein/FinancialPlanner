@@ -33,7 +33,7 @@ public class SavingsIncomeTest {
         String startBalance = "1000";
         String interest = "0";
         String monthlyAddition = "0";
-        String initWithdrawPercent = "0";
+        String initWithdrawPercent = "4";
         String annualPercentIncrease = "0";
 
         SavingsData savingsData = new SavingsData(OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
@@ -45,28 +45,24 @@ public class SavingsIncomeTest {
         SavingsIncomeRules rules = new SavingsIncomeRules(ro);
         savingsData.setRules(rules);
         AgeData currentAge = AgeUtils.getAge(selfBirthdate);
+
         AgeData age = new AgeData(currentAge.getYear(), 0);
         IncomeData incomeData = savingsData.getIncomeData(age);
-        double balance;
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         age = age.addYear(1);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(5);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(10);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
     }
 
     @Test
@@ -92,25 +88,21 @@ public class SavingsIncomeTest {
         AgeData currentAge = AgeUtils.getAge(selfBirthdate);
         AgeData age = new AgeData(currentAge.getYear()+1, 0);
         IncomeData incomeData = savingsData.getIncomeData(age);
-        double balance = incomeData.getBalance();
-        assertEquals(balance, 500, 0);
+        assertEquals(500, incomeData.getBalance(), 0);
 
         age = age.addYear(1);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 500, 0);
+        assertEquals(500, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(5);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 500, 0);
+        assertEquals(500, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(10);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 500, 0);
+        assertEquals(500, incomeData.getBalance(), 0);
     }
 
     @Test
@@ -133,26 +125,21 @@ public class SavingsIncomeTest {
         AgeData currentAge = new AgeData(primaryAge);
         AgeData age = new AgeData(currentAge.getYear()+1, 0);
         IncomeData incomeData = savingsData.getIncomeData(age);
-        double balance;
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         age = age.addYear(1);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(5);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(10);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         stopMonthlyAdditionAge = new AgeData(65, 0);
         savingsData = new SavingsData(OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
@@ -162,26 +149,22 @@ public class SavingsIncomeTest {
         currentAge = new AgeData(primaryAge);
         age = new AgeData(currentAge.getYear()+1, 0);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(5);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(6);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(10);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1000.0, 0);
+        assertEquals(1000.0, incomeData.getBalance(), 0);
 
         primaryAge = new AgeData(60, 0);
         spouseAge = new AgeData(55, 0);
@@ -191,23 +174,19 @@ public class SavingsIncomeTest {
 
         age = new AgeData(currentAge.getYear()+1, 0);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 2200, 0);
+        assertEquals(2200, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear()+5, 0);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 7000, 0);
+        assertEquals(7000, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear()+6, 0);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 7000, 0);
+        assertEquals(7000, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear()+10, 0);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 7000, 0);
+        assertEquals(7000, incomeData.getBalance(), 0);
     }
 
     @Test
@@ -231,26 +210,21 @@ public class SavingsIncomeTest {
         AgeData age = new AgeData(currentAge.getYear()+1, 0);
 
         IncomeData incomeData = savingsData.getIncomeData(age);
-        double balance;
-        balance = incomeData.getBalance();
-        assertEquals(balance, 500.0, 0);
+        assertEquals(500.0, incomeData.getBalance(), 0);
 
         age = age.addYear(1);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 500.0, 0);
+        assertEquals(500.0, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(5);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 500.0, 0);
+        assertEquals(500.0, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(10);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 500.0, 0);
+        assertEquals(500.0, incomeData.getBalance(), 0);
 
         stopMonthlyAdditionAge = new AgeData(65, 0);
         savingsData = new SavingsData(OWNER_SPOUSE, startAge, startBalance, interest, monthlyAddition,
@@ -263,26 +237,22 @@ public class SavingsIncomeTest {
         currentAge = new AgeData(primaryAge);
         age = new AgeData(currentAge.getYear()+1, 0);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1700, 0);
+        assertEquals(1700, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(5);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 6500, 0);
+        assertEquals(6500, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(6);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 6500, 0);
+        assertEquals(6500, incomeData.getBalance(), 0);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(10);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 6500, 0);
+        assertEquals(6500, incomeData.getBalance(), 0);
     }
 
     @Test
@@ -304,28 +274,22 @@ public class SavingsIncomeTest {
         AgeData currentAge = new AgeData(primaryAge);
         AgeData age = new AgeData(currentAge.getYear()+1, 0);
         IncomeData incomeData = savingsData.getIncomeData(age);
-        double balance;
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1104.71, 0.01);
+        assertEquals(1104.71, incomeData.getBalance(), 0.01);
 
         age = age.addYear(1);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1220.39, 0.01);
+        assertEquals(1220.39, incomeData.getBalance(), 0.01);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(5);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 1645.31, 0.01);
+        assertEquals(1645.31, incomeData.getBalance(), 0.01);
 
         age = new AgeData(currentAge.getYear(), 0);
         age = age.addYear(10);
         incomeData = savingsData.getIncomeData(age);
-        balance = incomeData.getBalance();
-        assertEquals(balance, 2707.04, 0.01);
+        assertEquals(2707.04, incomeData.getBalance(), 0.01);
     }
-
 
 /*
     @Test
