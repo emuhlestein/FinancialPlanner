@@ -1,7 +1,6 @@
 package com.intelliviz.income.viewmodel;
 
 import com.intelliviz.data.IncomeData;
-import com.intelliviz.data.IncomeDataAccessor;
 import com.intelliviz.data.IncomeDetails;
 import com.intelliviz.data.IncomeTypeRules;
 import com.intelliviz.data.RetirementOptions;
@@ -46,18 +45,17 @@ public abstract class AbstractSavingsIncomeHelper {
         } else {
             IncomeTypeRules sr;
             if(mSD.getType() == RetirementConstants.INCOME_TYPE_401K) {
-                sr = new Savings401kIncomeRules(mRO);
+                sr = new Savings401kIncomeRules(mRO, true);
             } else {
-                sr = new SavingsIncomeRules(mRO);
+                sr = new SavingsIncomeRules(mRO, true);
             }
             mSD.setRules(sr);
-            IncomeDataAccessor accessor = mSD.getIncomeDataAccessor();
             AgeData age = AgeUtils.getAge(mRO.getPrimaryBirthdate());
             AgeData endAge = mRO.getEndAge();
 
             List<IncomeData> incomeDataList = new ArrayList<>();
             for(int year = age.getYear(); year <= endAge.getYear(); year++) {
-                IncomeData benefitData = accessor.getIncomeData(new AgeData(year, 0));
+                IncomeData benefitData = sr.getIncomeData(new AgeData(year, 0));
                 if(benefitData != null) {
                     incomeDataList.add(benefitData);
                 }
@@ -79,9 +77,9 @@ public abstract class AbstractSavingsIncomeHelper {
         }
 
         if(incomeType == RetirementConstants.INCOME_TYPE_401K) {
-            sr = new Savings401kIncomeRules(mRO);
+            sr = new Savings401kIncomeRules(mRO, true);
         } else {
-            sr = new SavingsIncomeRules(mRO);
+            sr = new SavingsIncomeRules(mRO, true);
         }
         sd.setRules(sr);
         return new SavingsViewData(sd, Collections.<IncomeDetails>emptyList(), isSpouseIncluded(), status, "");

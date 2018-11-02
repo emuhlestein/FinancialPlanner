@@ -12,8 +12,8 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.SC_WARNING;
 
 public class SavingsIncomeRules extends BaseSavingsIncomeRules implements IncomeTypeRules {
 
-    public SavingsIncomeRules(RetirementOptions ro) {
-        super(ro);
+    public SavingsIncomeRules(RetirementOptions ro, boolean makeWithdraws) {
+        super(ro, makeWithdraws);
     }
 
     @Override
