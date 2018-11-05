@@ -52,14 +52,4 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules {
 
         return new IncomeData(age, monthlyAmount, balance, status, message);
     }
-
-    @Override
-    public IncomeData getIncomeData() {
-        return null;
-    }
-
-//    @Override
-//    public IncomeDataAccessor getIncomeDataAccessor() {
-//        return new Savings401kIncomeDataAccessor(getOwner(), getIncomeData(), getRetirementOptions());
-//    }
 }

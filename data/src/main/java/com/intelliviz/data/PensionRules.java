@@ -3,7 +3,6 @@ package com.intelliviz.data;
 import android.os.Bundle;
 
 import com.intelliviz.lowlevel.data.AgeData;
-import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import static com.intelliviz.data.IncomeSummaryHelper.getOwnerAge;
@@ -42,31 +41,5 @@ public class PensionRules implements IncomeTypeRules {
         } else {
             return new IncomeData(age, mMonthlyAmount, 0, SC_GOOD, null);
         }
-    }
-
-    @Override
-    public IncomeData getIncomeData(IncomeData incomeData) {
-        if(incomeData == null) {
-            AgeData currentAge = AgeUtils.getAge(mRO.getPrimaryBirthdate());
-            if(currentAge.isBefore(mMinAge)) {
-                return new IncomeData(currentAge, 0, 0, SC_GOOD, null);
-            } else {
-                return new IncomeData(currentAge, mMonthlyAmount, 0, SC_GOOD, null);
-            }
-        } else {
-            AgeData age = incomeData.getAge();
-            age = new AgeData(age.getNumberOfMonths()+1);
-            if(age.isBefore(mMinAge)) {
-                return new IncomeData(age, 0, 0, SC_GOOD, null);
-            } else {
-                return new IncomeData(age, mMonthlyAmount, 0, SC_GOOD, null);
-            }
-        }
-    }
-
-    @Override
-    public IncomeData getIncomeData() {
-        AgeData currentAge = AgeUtils.getAge(mRO.getPrimaryBirthdate());
-        return getIncomeData(currentAge);
     }
 }

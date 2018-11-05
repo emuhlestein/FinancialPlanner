@@ -30,6 +30,7 @@ public class IncomeSummaryHelper {
         List<IncomeData> benefitDataList = new ArrayList<>();
         List<IncomeDataAccessor> accessorList = new ArrayList<>();
         List<GovPension> gpList = new ArrayList<>();
+        List<IncomeSourceData> incomeSourceDataList = new ArrayList<>();
 
         for(IncomeSourceEntityBase entity : incomeSourceList) {
             if(entity instanceof GovPensionEntity) {
@@ -40,18 +41,18 @@ public class IncomeSummaryHelper {
                 PensionIncomeEntity pie = (PensionIncomeEntity)entity;
                 PensionData pd = PensionDataEntityMapper.map(pie);
                 pd.setRules(new PensionRules(ro));
-                //accessorList.add(pd.getIncomeDataAccessor());
+                incomeSourceDataList.add(pd);
             } else if(entity instanceof SavingsIncomeEntity) {
                 SavingsIncomeEntity sie = (SavingsIncomeEntity)entity;
                 SavingsData sd = SavingsDataEntityMapper.map(sie);
                 if (sd.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
                     SavingsIncomeRules sir = new SavingsIncomeRules(ro, true);
                     sd.setRules(sir);
-                    //accessorList.add(sd.getIncomeDataAccessor());
+                    incomeSourceDataList.add(sd);
                 } else if (sd.getType() == RetirementConstants.INCOME_TYPE_401K) {
                     Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro, true);
                     sd.setRules(tdir);
-                    //accessorList.add(sd.getIncomeDataAccessor());
+                    incomeSourceDataList.add(sd);
                 }
             }
         }
@@ -59,11 +60,11 @@ public class IncomeSummaryHelper {
         if(!gpList.isEmpty()) {
             SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro);
             for (GovPension gp : gpList) {
-                //accessorList.add(gp.getIncomeDataAccessor());
+                incomeSourceDataList.add(gp);
             }
         }
 
-        if(accessorList.isEmpty()) {
+        if(incomeSourceDataList.isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -95,11 +96,9 @@ public class IncomeSummaryHelper {
         for(int year = age.getYear(); year <= endAge.getYear(); year++) {
             double sumBalance = 0;
             double sumMonthlyWithdraw = 0;
-            //AgeData age = incomeSourceEntityList.get(0).get(0).getAge();
 
-            for(IncomeDataAccessor accessor : accessorList) {
-                //AgeData ownerAge = accessor.getAge(new AgeData(year, 0));
-                IncomeData benefitData = accessor.getIncomeData(new AgeData(year, 0));
+            for(IncomeSourceData incomeSource : incomeSourceDataList) {
+                IncomeData benefitData = incomeSource.getIncomeData(new AgeData(year, 0));
                 if(benefitData != null) {
                     sumBalance += benefitData.getBalance();
                     sumMonthlyWithdraw += benefitData.getMonthlyAmount();

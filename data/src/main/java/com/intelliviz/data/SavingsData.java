@@ -149,25 +149,4 @@ public class SavingsData extends AbstractIncomeSource {
             return null;
         }
     }
-
-    public IncomeData getIncomeData() {
-        if(mRules != null) {
-            return mRules.getIncomeData();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public IncomeData getIncomeData(IncomeData incomeData) {
-        return null;
-    }
-
-//    public IncomeDataAccessor getIncomeDataAccessor() {
-//        if(mRules != null) {
-//            return mRules.getIncomeDataAccessor();
-//        } else {
-//            return null;
-//        }
-//    }
 }

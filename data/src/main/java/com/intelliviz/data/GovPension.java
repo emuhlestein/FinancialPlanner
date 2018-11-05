@@ -98,21 +98,7 @@ public class GovPension extends AbstractIncomeSource {
     }
 
     @Override
-    public IncomeData getIncomeData() {
-        if(mRules != null) {
-            return mRules.getIncomeData();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public IncomeData getIncomeData(AgeData age) {
         return mRules.getIncomeData(age);
-    }
-
-    @Override
-    public IncomeData getIncomeData(IncomeData incomeData) {
-        return null;
     }
 }

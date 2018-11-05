@@ -18,6 +18,20 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 
 
 /**
+ * This class calculates the savings balance and potential monthly withdraw for a given age. These values
+ * are based on several inputs: balance, monthly deposit, start age, annual interest rate, initial monthly
+ * withdraw, annual percent increase and stop age.
+ *
+ * Monthly withdraws begin at the start age. At the start age, the initial monthly withdrawal is calculated.
+ * This is based on the balance at that age and the initial withdrawal percentage. The initial withdrawal
+ * percentage is the percentage of the balance that will be the initial withdrawal.
+ *
+ * Before the start age, the monthly withdrawal amount is 0.
+ *
+ * The start age can be overridden. The purpose of this is to allow the balance to grow and hence, the monthly
+ * withdraw amount. The purpose of this is to allow the balance to grow without making withdrawals. This
+ * to show how the balance and the monthly withdraw change over time.
+ *
  * Created by edm on 12/30/2017.
  */
 
@@ -28,7 +42,7 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
     private AgeData mStartAge; // age at which withdraws begin
     private AgeData mEndAge; // end of life
     private AgeData mStopAge; // age at which monthly deposits stop
-    private double mBalance; // balance
+    private double mBalance; // starting balance
     private double mInterest; // annual interest (APR)
     private double mMonthlyDeposit; // amount that is deposited each month
     private double mInitialWithdrawPercent; // The percentage of balance for initial withdraw.
@@ -38,6 +52,7 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
 
     private double mCurrentBalance;
     private AgeData mCurrentAge;
+    private AgeData mCurrentStartAge;
     private boolean mMakeWithdraws;
 
     BaseSavingsIncomeRules(RetirementOptions ro, boolean makeWithdraws) {
@@ -85,11 +100,7 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
 
         mCurrentBalance = mBalance;
         mCurrentAge = currentAge;
-    }
-
-    @Override
-    public IncomeData getIncomeData() {
-        return null;
+        mCurrentStartAge = mStartAge;
     }
 
     @Override
@@ -98,54 +109,32 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
         double monthlyDeposit = mMonthlyDeposit;
         double initWithdrawPercent = mInitialWithdrawPercent / 100;
         double monthlyInterest = mInterest / 1200;
-        AgeData startAge = mStartAge;
 
         AgeData age = convertAge(primaryAge);
 
-        if(age.equals(mCurrentAge)) {
+        if (age.equals(mCurrentAge)) {
             monthlyWithdraw = mCurrentBalance * initWithdrawPercent / 12;
-            return new IncomeData(primaryAge, monthlyWithdraw, mCurrentBalance, 0, null);
-        }
-
-        if(age.isBefore(mCurrentAge)) {
-            return new IncomeData();
+            return createIncomeData(primaryAge, monthlyWithdraw, mCurrentBalance);
+        } else if (age.isBefore(mCurrentAge)) {
+            return  createIncomeData(primaryAge, 0, 0);
         }
 
         int numMonths = age.diff(mCurrentAge);
-
-        startAge = new AgeData(mCurrentAge.getNumberOfMonths() + numMonths);
-        monthlyWithdraw = 0;
-
         int month = mCurrentAge.getNumberOfMonths();
         int totalMonths = month + numMonths;
 
         for (; month < totalMonths; month++) {
             AgeData currentAge = new AgeData(month);
             if(mMakeWithdraws) {
-                monthlyWithdraw = getMonthlyWithdraw(currentAge, startAge, monthlyWithdraw, mCurrentBalance, initWithdrawPercent);
-            } else {
-                monthlyWithdraw = mCurrentBalance * initWithdrawPercent / 12;
-            }
-
-//            if (currentAge.isOnOrAfter(mStartAge)) {
-//                if (currentAge.equals(mStartAge)) {
-//                    monthlyWithdraw = balance * initWithdrawPercent / 12;
-//                } else {
-//                    if (currentAge.getMonth() == 0) {
-//                        monthlyWithdraw = monthlyWithdraw + (monthlyWithdraw * mAnnualPercentIncrease / 100);
-//                    }
-//                }
-//            } else {
-//                monthlyWithdraw = 0;
-//            }
-
-            if(mMakeWithdraws) {
+                monthlyWithdraw = getMonthlyWithdraw(currentAge, mStartAge, monthlyWithdraw, mCurrentBalance, initWithdrawPercent);
                 mCurrentBalance -= monthlyWithdraw;
                 if (mCurrentBalance < 0) {
                     mCurrentBalance += monthlyWithdraw;
                     monthlyWithdraw = mCurrentBalance;
                     mCurrentBalance = 0;
                 }
+            } else {
+                monthlyWithdraw = mCurrentBalance * initWithdrawPercent / 12;
             }
 
             if (currentAge.isOnOrAfter(mStopAge)) {
@@ -159,74 +148,8 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
 
         mCurrentAge = new AgeData(month);
 
-        return new IncomeData(mCurrentAge, monthlyWithdraw, mCurrentBalance, 0, "");
+        return createIncomeData(mCurrentAge, monthlyWithdraw, mCurrentBalance);
     }
-
-    @Override
-    public IncomeData getIncomeData(IncomeData incomeData) {
-        /*
-        if(incomeData == null) {
-            AgeData currentAge = AgeUtils.getAge(mPrimartBirthdate);
-            return new IncomeData(currentAge, 0, mStartBalance, BI_GOOD, null);
-        } else {
-            AgeData age = incomeData.getAge();
-            age = new AgeData(age.getNumberOfMonths()+1);
-            double balance = incomeData.getBalance();
-            balance += mMonthlyDeposit;
-            double amount = balance * mMonthlyInterest;
-            balance += amount;
-            double monthlyAmount = balance * mInitialWithdrawPercent;
-            return new IncomeData(age, monthlyAmount, balance, BI_GOOD, null);
-        }
-        */
-        return null;
-    }
-/*
-    public List<IncomeData> getIncomeData() {
-        double monthlyWithdraw = 0;
-        double balance = mBalance;
-        double monthlyDeposit = mMonthlyDeposit;
-        double initWithdrawPercent = mInitialWithdrawPercent / 100;
-        double monthlyInterest = mInterest / 1200;
-        AgeData currentAge = AgeUtils.getAge(mOwnerBirthdate);
-
-        List<IncomeData> listAmountDate = new ArrayList<>();
-
-        for (int month = currentAge.getNumberOfMonths(); month <= mEndAge.getNumberOfMonths(); month++) {
-            AgeData age = new AgeData(month);
-            if (age.isOnOrAfter(mStartAge)) {
-                if (age.equals(mStartAge)) {
-                    monthlyWithdraw = balance * initWithdrawPercent / 12;
-                } else {
-                    if (age.getMonth() == 0) {
-                        monthlyWithdraw = monthlyWithdraw + (monthlyWithdraw * mAnnualPercentIncrease / 100);
-                    }
-                }
-            } else {
-                monthlyWithdraw = 0;
-            }
-
-            balance -= monthlyWithdraw;
-            if(balance < 0) {
-                balance += monthlyWithdraw;
-                monthlyWithdraw = balance;
-                balance = 0;
-            }
-
-            listAmountDate.add(createIncomeData(age, monthlyWithdraw, balance));
-
-            if (age.isOnOrAfter(mStopAge)) {
-                monthlyDeposit = 0;
-            }
-            balance += monthlyDeposit;
-
-            double amount = balance * monthlyInterest;
-            balance += amount;
-        }
-
-        return listAmountDate;
-    }
-    */
 
     private double getMonthlyWithdraw(AgeData age, AgeData startAge, double monthlyWithdraw, double balance, double initWithdrawPercent) {
         if (age.isOnOrAfter(startAge)) {

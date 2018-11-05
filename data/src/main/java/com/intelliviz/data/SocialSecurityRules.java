@@ -118,16 +118,6 @@ public class SocialSecurityRules implements IncomeTypeRules {
         }
     }
 
-    @Override
-    public IncomeData getIncomeData(IncomeData incomeData) {
-        return null;
-    }
-
-    @Override
-    public IncomeData getIncomeData() {
-        return null;
-    }
-
     private Pair<BigDecimal, AgeData> checkForSpousalBenefits(AgeData age, AgeData otherAge) {
         BigDecimal two = new BigDecimal(2);
         MathContext mc = new MathContext(6, RoundingMode.HALF_UP);

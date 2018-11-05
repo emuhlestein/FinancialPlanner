@@ -470,7 +470,7 @@ public class SavingsIncomeTest {
     }
 
     @Test
-    public void testAnnualPercentageANdMonthlyAddition() {
+    public void testAnnualPercentageAndMonthlyAddition() {
         AgeData primaryEndAge = new AgeData(90, 0);
         AgeData spouseEndAge = new AgeData(90, 0);
         String ownerBirthdate = "01-01-1960";
