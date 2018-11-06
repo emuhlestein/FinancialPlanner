@@ -79,7 +79,7 @@ public abstract class AbstractIncomeSourceHelper {
             }
         }
 
-        SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
+        SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO, true);
 
         return incomeSourceList;
     }

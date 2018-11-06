@@ -149,7 +149,7 @@ public class NavigationModelView extends AndroidViewModel {
             }
 
             if(!gpList.isEmpty()) {
-                SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro);
+                SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro, true);
             }
             return new AgeData(70, 0);
         }

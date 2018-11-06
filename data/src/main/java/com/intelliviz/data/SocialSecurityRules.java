@@ -169,7 +169,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return getFullRetirementAgeFromYear(mBirthYear);
     }
 
-    public static void setRulesOnGovPensionEntities(List<GovPension> gpList, RetirementOptions ro) {
+    public static void setRulesOnGovPensionEntities(List<GovPension> gpList, RetirementOptions ro, boolean useStartAge) {
         if(gpList == null || gpList.isEmpty()) {
             return;
         }
@@ -177,7 +177,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         if(gpList.size() == 1) {
             GovPension spouse1 = gpList.get(0);
             SocialSecurityRules ssr = new SocialSecurityRules(ro,
-                    null, null, false);
+                    null, null, useStartAge);
             spouse1.setRules(ssr);
         } else if(gpList.size() == 2) {
             GovPension principleSpouse;
@@ -191,10 +191,10 @@ public class SocialSecurityRules implements IncomeTypeRules {
             }
 
             SocialSecurityRules ssr = new SocialSecurityRules(ro,
-                    spouse.getFullMonthlyBenefit(), spouse.getStartAge(), true);
+                    spouse.getFullMonthlyBenefit(), spouse.getStartAge(), true, useStartAge);
             principleSpouse.setRules(ssr);
             ssr = new SocialSecurityRules(ro,
-                    principleSpouse.getFullMonthlyBenefit(), principleSpouse.getStartAge(), true);
+                    principleSpouse.getFullMonthlyBenefit(), principleSpouse.getStartAge(), true, useStartAge);
             spouse.setRules(ssr);
         }
     }

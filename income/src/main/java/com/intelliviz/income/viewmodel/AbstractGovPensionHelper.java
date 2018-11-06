@@ -44,7 +44,7 @@ public abstract class AbstractGovPensionHelper {
             if (gpList.isEmpty()) {
                 GovPension gp = createDefault(RetirementConstants.OWNER_PRIMARY);
                 gpList.add(gp);
-                SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
+                SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO, true);
                 int status = EC_NO_ERROR;
                 if(isSpouseIncluded()) {
                     status = EC_FOR_SELF_OR_SPOUSE;
@@ -62,14 +62,14 @@ public abstract class AbstractGovPensionHelper {
                     gp = createDefault(RetirementConstants.OWNER_PRIMARY);
                 }
                 gpList.add(gp);
-                SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
+                SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO, true);
                 int status = EC_NO_ERROR;
                 return new GovPensionViewData(gp, isSpouseIncluded(), status, "");
             } else {
                 return new GovPensionViewData(null, isSpouseIncluded(), getSupportedSpouseErrorCode(), getSupportedSpouseErrorMessage());
             }
         } else {
-            SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO);
+            SocialSecurityRules.setRulesOnGovPensionEntities(gpList, mRO, true);
             GovPension gp = getGovPension(gpList, id);
             return new GovPensionViewData(gp, isSpouseIncluded(), EC_NO_ERROR, "");
         }

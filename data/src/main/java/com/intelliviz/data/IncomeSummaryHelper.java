@@ -58,7 +58,7 @@ public class IncomeSummaryHelper {
         }
 
         if(!gpList.isEmpty()) {
-            SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro);
+            SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro, true);
             for (GovPension gp : gpList) {
                 incomeSourceDataList.add(gp);
             }

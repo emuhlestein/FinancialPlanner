@@ -53,7 +53,7 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
     private double mCurrentBalance;
     private AgeData mCurrentAge;
     private AgeData mCurrentStartAge;
-    private boolean mMakeWithdraws;
+    private boolean mMakeWithdraws; // if th is is true, mStartAge needs to apply.
 
     BaseSavingsIncomeRules(RetirementOptions ro, boolean makeWithdraws) {
         mRO = ro;
@@ -113,7 +113,11 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
         AgeData age = convertAge(primaryAge);
 
         if (age.equals(mCurrentAge)) {
-            monthlyWithdraw = mCurrentBalance * initWithdrawPercent / 12;
+            if(age.isOnOrAfter(mStartAge)) {
+                monthlyWithdraw = mCurrentBalance * initWithdrawPercent / 12;
+            } else {
+                monthlyWithdraw = 0;
+            }
             return createIncomeData(primaryAge, monthlyWithdraw, mCurrentBalance);
         } else if (age.isBefore(mCurrentAge)) {
             return  createIncomeData(primaryAge, 0, 0);
