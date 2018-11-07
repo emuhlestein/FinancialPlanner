@@ -94,4 +94,5 @@
     <string name="balance">Balance:</string>
     <string name="current_balance">Current Balance:</string>
     <string name="monthly_increase">Monthly Increase:</string>
+    <string name="included">Included:</string>
 </resources>

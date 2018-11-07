@@ -29,20 +29,20 @@ public class PensionIncomeEntity extends IncomeSourceEntityBase {
 
     @Ignore
     public PensionIncomeEntity(long id, int type) {
-        super(id, type, "", 1);
+        super(id, type, "", RetirementConstants.OWNER_PRIMARY, 1);
         this.minAge = new AgeData(0);
         this.monthlyBenefit = "0";
     }
 
     @Ignore
     public PensionIncomeEntity() {
-        super(0, RetirementConstants.INCOME_TYPE_PENSION, "", 1);
+        super(0, RetirementConstants.INCOME_TYPE_PENSION, "", RetirementConstants.OWNER_PRIMARY, 1);
         this.minAge = new AgeData(0);
         this.monthlyBenefit = "0";
     }
-
-    public PensionIncomeEntity(long id, int type, String name, int owner, AgeData minAge, String monthlyBenefit) {
-        super(id, type, name, owner);
+    //long id, int type, String name, int owner, int included
+    public PensionIncomeEntity(long id, int type, String name, int owner, int included, AgeData minAge, String monthlyBenefit) {
+        super(id, type, name, owner, included);
         this.minAge = minAge;
         this.monthlyBenefit = monthlyBenefit;
     }

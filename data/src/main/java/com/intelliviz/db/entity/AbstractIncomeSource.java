@@ -8,12 +8,14 @@ public abstract class AbstractIncomeSource implements IncomeSourceData, IncomeSo
     private int mType;
     private String mName;
     private int mOwner;
+    private int mIncluded;
 
-    public AbstractIncomeSource(long id, int type, String name, int owner) {
+    public AbstractIncomeSource(long id, int type, String name, int owner, int included) {
         mId = id;
         mType = type;
         mName = name;
         mOwner = owner;
+        mIncluded = included;
     }
 
     @Override
@@ -54,5 +56,15 @@ public abstract class AbstractIncomeSource implements IncomeSourceData, IncomeSo
     @Override
     public void setOwner(int owner) {
         mOwner = owner;
+    }
+
+    @Override
+    public int getIncluded() {
+        return mIncluded;
+    }
+
+    @Override
+    public void setIncluded(int included) {
+        mIncluded = included;
     }
 }

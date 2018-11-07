@@ -34,17 +34,10 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private int mOwner;
     private BigDecimal mOwnerFullBenefit;
     private AgeData mOwnerStartAge;
-
     private AgeData mMinAge = new AgeData(62, 0);
     private AgeData mMaxAge = new AgeData(70, 0);
-    private AgeData mEndAge;
-    private AgeData mOtherEndAge;
-    private AgeData mStartAge;
     private AgeData mActualStartAge;
-    private String mBirthdate;
-    private BigDecimal mFullMonthlyBenefit;
-    private BigDecimal mMonthlyBenefit;
-    private String mOtherBirthdate;
+    private double mMonthlyBenefit;
     private BigDecimal mOtherFullBenefit;
     private AgeData mOtherStartAge;
     private boolean mIsSpouseIncluded;
@@ -93,6 +86,12 @@ public class SocialSecurityRules implements IncomeTypeRules {
         } else {
             mBirthYear = AgeUtils.getBirthYear(mRO.getSpouseBirthdate());
         }
+    }
+
+    public void getIncomeData() {
+        IncomeData incomeData = getIncomeData(mOwnerStartAge);
+        mMonthlyBenefit = incomeData.getMonthlyAmount();
+        mActualStartAge = incomeData.getAge();
     }
 
     /**
@@ -158,7 +157,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     public double getMonthlyBenefit() {
-        return mMonthlyBenefit.doubleValue();
+        return mMonthlyBenefit;
     }
 
     public AgeData getActualStartAge() {

@@ -13,4 +13,6 @@ public interface IncomeSourceType {
     void setName(String name);
     int getOwner();
     void setOwner(int self);
+    int getIncluded();
+    void setIncluded(int included);
 }

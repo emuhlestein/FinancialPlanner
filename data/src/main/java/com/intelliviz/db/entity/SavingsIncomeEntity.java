@@ -6,6 +6,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.TypeConverters;
 
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import static com.intelliviz.db.entity.SavingsIncomeEntity.TABLE_NAME;
 
@@ -53,7 +54,7 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
 
     @Ignore
     public SavingsIncomeEntity(long id, int type) {
-        super(id, type, "", 1);
+        super(id, type, "", RetirementConstants.OWNER_PRIMARY, 1);
         mStartAge = new AgeData(65, 0); // TODO need to create const
         mBalance = "0";
         mInterest = "0";
@@ -64,10 +65,10 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mShowMonths = 0;
     }
 
-    public SavingsIncomeEntity(long id, int type, String name, int owner, AgeData startAge, String balance, String interest,
+    public SavingsIncomeEntity(long id, int type, String name, int owner, int included, AgeData startAge, String balance, String interest,
                                String monthlyAddition, AgeData stopMonthlyAdditionAge,
                                String withdrawPercent, String annualPercentIncrease, int showMonths) {
-        super(id, type, name, owner);
+        super(id, type, name, owner, included);
         mStartAge = startAge;
         mBalance = balance;
         mInterest = interest;

@@ -43,6 +43,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
     private LinearLayout mExpandedTextLayout;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private TextView mOwnerTextView;
+    private TextView mIncomeSourceIncluded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
         FloatingActionButton editPensionFAB = findViewById(R.id.editPensionFAB);
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         mOwnerTextView = findViewById(R.id.owner_text);
+        mIncomeSourceIncluded = findViewById(R.id.included_text_view);
 
         Intent intent = getIntent();
         mId = 0;
@@ -146,7 +148,7 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
             AgeData minAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_SOURCE_START_AGE);
             String monthlyBenefit = bundle.getString(RetirementConstants.EXTRA_INCOME_SOURCE_BENEFIT);
 
-            PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(),
+            PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(), mPD.getIncluded(),
                     minAge, monthlyBenefit);
             //mViewModel.setData(pd);
 
@@ -168,6 +170,12 @@ public class PensionIncomeDetailsActivity extends AppCompatActivity {
             mOwnerTextView.setText(getResources().getString(R.string.self));
         } else if(mPD.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText(getResources().getString(R.string.spouse));
+        }
+
+        if(mPD.getIncluded() == 1) {
+            mIncomeSourceIncluded.setText("Yes");
+        } else {
+            mIncomeSourceIncluded.setText("No");
         }
 
         mNameTextView.setText(name);

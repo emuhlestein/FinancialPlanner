@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -49,6 +50,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
     private TextView mMinAge;
     private EditText mMonthlyBenefit;
     private TextView mOwnerTextView;
+    private CheckBox mIncomeSourceIncluded;
     private MessageMgr mMessageMgr;
     private boolean mStartedFromUserEvent;
 
@@ -58,6 +60,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_edit_pension_income);
 
         mOwnerTextView = findViewById(R.id.owner_text);
+
+        mIncomeSourceIncluded = findViewById(R.id.include_income_source);
 
         if(savedInstanceState == null) {
             Log.d(TAG, "HERE");
@@ -193,6 +197,12 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         } else if(mPD.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText(getResources().getString(R.string.spouse));
         }
+
+        if(mPD.getIncluded() == 1) {
+            mIncomeSourceIncluded.setChecked(true);
+        } else {
+            mIncomeSourceIncluded.setChecked(false);
+        }
         String monthlyBenefit = SystemUtils.getFormattedCurrency(mPD.getMonthlyBenefit());
         AgeData minAge = mPD.getStartAge();
 
@@ -208,6 +218,8 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
         String name = mIncomeSourceName.getText().toString();
         String age = mMinAge.getText().toString();
         String value = mMonthlyBenefit.getText().toString();
+        int included = mIncomeSourceIncluded.isChecked() ? 1 : 0;
+
         String benefit = SystemUtils.getFloatValue(value);
         if(benefit == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.value_not_valid) + " " + value, Snackbar.LENGTH_LONG);
@@ -222,7 +234,7 @@ public class PensionIncomeEditActivity extends AppCompatActivity implements
             return;
         }
 
-        PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(), minAge, benefit);
+        PensionData pd = new PensionData(mId, INCOME_TYPE_PENSION, name, mPD.getOwner(), included, minAge, benefit);
         mViewModel.setData(pd);
 
         finish();

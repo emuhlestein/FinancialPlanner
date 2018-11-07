@@ -28,6 +28,28 @@
                     android:paddingTop="8dp"
                     android:textSize="18sp"/>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="16dp"
+                        android:textSize="22sp"
+                        android:text="@string/included" />
+
+                    <TextView
+                        android:id="@+id/included_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="16dp"
+                        android:textSize="22sp"/>
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/principle_spouse_text_view"
                     android:layout_width="wrap_content"

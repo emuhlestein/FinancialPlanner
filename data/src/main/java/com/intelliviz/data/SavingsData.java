@@ -18,18 +18,18 @@ public class SavingsData extends AbstractIncomeSource {
     private BaseSavingsIncomeRules mRules;
 
     public SavingsData(long id, int type) {
-        super(id, type, "", RetirementConstants.OWNER_PRIMARY);
+        super(id, type, "", RetirementConstants.OWNER_PRIMARY, 1);
     }
 
-    public SavingsData(long id, int type, String name, int owner) {
-        super(id, type, name, owner);
+    public SavingsData(long id, int type, String name, int owner, int included) {
+        super(id, type, name, owner, included);
     }
 
-    public SavingsData(long id, int type, String name, int owner,
+    public SavingsData(long id, int type, String name, int owner, int included,
                          AgeData startAge, String balance, String interest,
                          String monthlyAddition, AgeData stopMonthlyAdditionAge,
                          String withdrawPercent, String annualPercentIncrease, int showMonths) {
-        super(id, type, name, owner);
+        super(id, type, name, owner, included);
         mStartAge = startAge;
         mBalance = balance;
         mInterest = interest;
@@ -44,7 +44,7 @@ public class SavingsData extends AbstractIncomeSource {
                        AgeData startAge, String balance, String interest,
                        String monthlyAddition, AgeData stopMonthlyAdditionAge,
                        String withdrawPercent, String annualPercentIncrease) {
-        super(-1, 0, "", owner);
+        super(-1, 0, "", owner, 1);
         mStartAge = startAge;
         mBalance = balance;
         mInterest = interest;

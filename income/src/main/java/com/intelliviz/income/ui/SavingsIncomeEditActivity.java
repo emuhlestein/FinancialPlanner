@@ -22,7 +22,6 @@ import com.intelliviz.data.SavingsData;
 import com.intelliviz.income.R;
 import com.intelliviz.income.data.SavingsViewData;
 import com.intelliviz.income.viewmodel.SavingsIncomeEditViewModel;
-import com.intelliviz.income.viewmodel.SavingsIncomeViewModel;
 import com.intelliviz.lowlevel.data.AgeData;
 import com.intelliviz.lowlevel.ui.MessageDialog;
 import com.intelliviz.lowlevel.ui.NewAgeDialog;
@@ -311,7 +310,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         String name = mIncomeSourceName.getText().toString();
 
         int showMonths = getShowMonths() ? 1 : 0;
-        SavingsData sie = new SavingsData(mId, mSD.getType(), name, mSD.getOwner(),
+        SavingsData sie = new SavingsData(mId, mSD.getType(), name, mSD.getOwner(), mSD.getIncluded(),
                 startAge, balance, interest, monthlyAddition,
                 stopAge, withdrawPercent, annualPercentIncrease, showMonths);
         mViewModel.setData(sie);

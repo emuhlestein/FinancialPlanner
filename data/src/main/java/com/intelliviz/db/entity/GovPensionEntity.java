@@ -30,7 +30,7 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
 
     @Ignore
     public GovPensionEntity(long id, int type) {
-        super(id, type, "", OWNER_PRIMARY);
+        super(id, type, "", OWNER_PRIMARY, 1);
         mFullMonthlyBenefit = "0";
         mStartAge = new AgeData(0);
     }
@@ -43,8 +43,8 @@ public class GovPensionEntity extends IncomeSourceEntityBase {
      * @param fullMonthlyBenefit Monthly benefit when full retirement age is reached.
      * @param startAge The age at which to start receiving benefits.
      */
-    public GovPensionEntity(long id, int type, String name, int owner, String fullMonthlyBenefit, AgeData startAge) {
-        super(id, type, name, owner);
+    public GovPensionEntity(long id, int type, String name, int owner, int included, String fullMonthlyBenefit, AgeData startAge) {
+        super(id, type, name, owner, included);
         mFullMonthlyBenefit = fullMonthlyBenefit;
         mStartAge = startAge;
     }

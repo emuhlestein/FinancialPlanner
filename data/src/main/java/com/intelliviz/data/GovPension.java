@@ -17,17 +17,17 @@ public class GovPension extends AbstractIncomeSource {
     private int mState;
     private String mMessage;
 
-    public GovPension(long id, int type, String name, int owner) {
-        super(id, type, name, owner);
+    public GovPension(long id, int type, String name, int owner, int included) {
+        super(id, type, name, owner, included);
     }
 
     public GovPension(long id, int type) {
-        this(id, type, "", RetirementConstants.OWNER_PRIMARY);
+        this(id, type, "", RetirementConstants.OWNER_PRIMARY, 1);
     }
 
     public GovPension(long id, int type, String name, int owner,
         String fullBenefit, AgeData startAge) {
-        this(id, type, name, owner);
+        this(id, type, name, owner, 1);
         mFullMonthlyBenefit = fullBenefit;
         mStartAge = startAge;
     }

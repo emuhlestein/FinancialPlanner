@@ -4,7 +4,7 @@ import com.intelliviz.data.SavingsData;
 
 public class SavingsDataEntityMapper {
     public static SavingsData map(SavingsIncomeEntity sie) {
-        SavingsData savingsData = new SavingsData(sie.getId(), sie.getType(), sie.getName(), sie.getOwner());
+        SavingsData savingsData = new SavingsData(sie.getId(), sie.getType(), sie.getName(), sie.getOwner(), sie.getIncluded());
         savingsData.setAnnualPercentIncrease(sie.getAnnualPercentIncrease());
         savingsData.setBalance(sie.getBalance());
         savingsData.setInterest(sie.getInterest());
@@ -18,7 +18,7 @@ public class SavingsDataEntityMapper {
 
     public static SavingsIncomeEntity map(SavingsData sd) {
         SavingsIncomeEntity sie = new SavingsIncomeEntity(sd.getId(), sd.getType(), sd.getName(),
-                sd.getOwner(), sd.getStartAge(),
+                sd.getOwner(), sd.getIncluded(), sd.getStartAge(),
                 sd.getBalance(), sd.getInterest(), sd.getMonthlyAddition(), sd.getStopMonthlyAdditionAge(),
                 sd.getWithdrawPercent(), sd.getAnnualPercentIncrease(), sd.getShowMonths());
         return sie;

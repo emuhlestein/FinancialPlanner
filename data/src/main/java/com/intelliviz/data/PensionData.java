@@ -16,22 +16,22 @@ public class PensionData extends AbstractIncomeSource {
     private PensionRules mRules;
 
     public PensionData(long id, int type) {
-        this(id, type, "", RetirementConstants.OWNER_PRIMARY);
+        this(id, type, "", RetirementConstants.OWNER_PRIMARY, 1);
     }
 
-    public PensionData(long id, int type, String name, int owner) {
-        super(id, type, name, owner);
+    public PensionData(long id, int type, String name, int owner, int included) {
+        super(id, type, name, owner, included);
     }
 
-    public PensionData(long id, int type, String name, int owner,
+    public PensionData(long id, int type, String name, int owner, int included,
                        AgeData startAge, String monthlyBenefit) {
-        this(id, type, name, owner);
+        this(id, type, name, owner, included);
         mStartAge = startAge;
         mMonthlyBenefit = monthlyBenefit;
     }
 
     public PensionData(int owner, AgeData startAge, String monthlyBenefit) {
-        this(-1, 0, "", owner);
+        this(-1, 0, "", owner, 1);
         mStartAge = startAge;
         mMonthlyBenefit = monthlyBenefit;
     }
