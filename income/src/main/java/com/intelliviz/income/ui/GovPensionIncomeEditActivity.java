@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -59,6 +60,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
     private EditText mFullMonthlyBenefit;
     private Toolbar mToolbar;
     private Button mAddIncomeSource;
+    private CheckBox mIncomeSourceIncluded;
     private TextView mOwnerTextView;
     private MessageMgr mMessageMgr;
 
@@ -68,6 +70,8 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_edit_gov_pension_income);
 
         mOwnerTextView = findViewById(R.id.owner_text);
+
+        mIncomeSourceIncluded = findViewById(R.id.include_income_source);
 
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
         mName = findViewById(R.id.name_edit_text);
@@ -197,6 +201,12 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
             mOwnerTextView.setText(getResources().getString(R.string.spouse));
         }
 
+        if(mGP.getIncluded() == 1) {
+            mIncomeSourceIncluded.setChecked(true);
+        } else {
+            mIncomeSourceIncluded.setChecked(false);
+        }
+
         if(mIsPrincipleSpouse) {
             mPrincipleSpouseLabel.setVisibility(View.VISIBLE);
         } else {
@@ -222,6 +232,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
     private void updateIncomeSourceData() {
         String name = mName.getText().toString();
         String value = mFullMonthlyBenefit.getText().toString();
+        int included = mIncomeSourceIncluded.isChecked() ? 1 : 0;
         String fullBenefit = getFloatValue(value);
         if (fullBenefit == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.monthly_benefit_not_valid) + value, Snackbar.LENGTH_LONG);
@@ -231,7 +242,7 @@ public class GovPensionIncomeEditActivity extends AppCompatActivity implements
 
         AgeData startAge = getStartRetirementAge();
 
-        GovPension gp = new GovPension(mGP.getId(), mGP.getType(), name, mGP.getOwner(),
+        GovPension gp = new GovPension(mGP.getId(), mGP.getType(), name, mGP.getOwner(), included,
                 fullBenefit, startAge);
         mViewModel.setData(gp);
 

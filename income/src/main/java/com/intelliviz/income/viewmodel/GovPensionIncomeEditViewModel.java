@@ -90,9 +90,9 @@ public class GovPensionIncomeEditViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(GovPensionEx gpeEx) {
-            RetirementOptions ro = RetirementOptionsMapper.map(gpeEx.getROE());
+            mRO = RetirementOptionsMapper.map(gpeEx.getROE());
             List<GovPensionEntity> gpeList = gpeEx.getGpeList();
-            GovPensionHelper helper = new GovPensionHelper(getApplication(), gpeList, ro);
+            GovPensionHelper helper = new GovPensionHelper(getApplication(), gpeList, mRO);
             GovPensionViewData viewData = helper.get(mId);
 
             mViewData.setValue(viewData);

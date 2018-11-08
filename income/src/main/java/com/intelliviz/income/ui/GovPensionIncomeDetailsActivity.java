@@ -51,6 +51,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
     private FloatingActionButton mEditPensionFAB;
     private CoordinatorLayout mCoordinatorLayout;
     private TextView mOwnerTextView;
+    private TextView mIncomeSourceIncluded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
         mDetailsTextView = findViewById(R.id.details_text);
         mOwnerTextView = findViewById(R.id.owner_text);
+        mIncomeSourceIncluded = findViewById(R.id.included_text_view);
 
         mPrincipleSpouseTextView.setVisibility(GONE);
 
@@ -131,6 +133,12 @@ public class GovPensionIncomeDetailsActivity extends AppCompatActivity implement
             mOwnerTextView.setText("Self");
         } else if(mGP.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");
+        }
+
+        if(mGP.getIncluded() == 1) {
+            mIncomeSourceIncluded.setText("Yes");
+        } else {
+            mIncomeSourceIncluded.setText("No");
         }
 
         //if(mGP.isPrincipleSpouse()) {

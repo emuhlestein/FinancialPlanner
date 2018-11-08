@@ -51,15 +51,12 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     public SocialSecurityRules(RetirementOptions ro, String otherFullBenefit,
-                               AgeData otherStartAge, boolean isSpouseIncluded) {
-        this(ro, otherFullBenefit, otherStartAge, isSpouseIncluded, false);
-    }
-
-    public SocialSecurityRules(RetirementOptions ro, String otherFullBenefit,
                                AgeData otherStartAge, boolean isSpouseIncluded, boolean useStartAge) {
         mRO = ro;
         mOtherStartAge = otherStartAge;
-        mOtherFullBenefit = new BigDecimal(otherFullBenefit);
+        if(otherFullBenefit != null) {
+            mOtherFullBenefit = new BigDecimal(otherFullBenefit);
+        }
         mIsSpouseIncluded = isSpouseIncluded;
 
         mUseStartAge = useStartAge;
@@ -109,24 +106,12 @@ public class SocialSecurityRules implements IncomeTypeRules {
             if(age.isBefore(mOwnerStartAge)) {
                 return new IncomeData(primaryAge, 0, 0, 0, null);
             } else {
-                incomeData = getMonthlyBenefit(mBirthYear, age, mMinAge, mOtherStartAge);
+                incomeData = getMonthlyBenefit(mBirthYear, mOwnerStartAge, mMinAge, mOtherStartAge);
                 return incomeData;
             }
         } else {
             return getMonthlyBenefit(mBirthYear, age, mMinAge, age);
         }
-    }
-
-    private Pair<BigDecimal, AgeData> checkForSpousalBenefits(AgeData age, AgeData otherAge) {
-        BigDecimal two = new BigDecimal(2);
-        MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
-        BigDecimal halfBenefit = mOtherFullBenefit.divide(two, mc);
-
-        if(mOwnerFullBenefit.compareTo(halfBenefit) < 0) {
-            return new Pair<> (halfBenefit, new AgeData(Math.max(age.getNumberOfMonths(), otherAge.getNumberOfMonths())));
-        }
-
-        return null;
     }
 
     private IncomeData getMonthlyBenefit(int birthYear, AgeData age, AgeData minAge, AgeData otherStartAge) {
@@ -156,6 +141,20 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return new IncomeData(age, monthlyBenefit.doubleValue(), 0, 0, null);
     }
 
+
+    private Pair<BigDecimal, AgeData> checkForSpousalBenefits(AgeData age, AgeData otherAge) {
+        BigDecimal two = new BigDecimal(2);
+        MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
+        BigDecimal halfBenefit = mOtherFullBenefit.divide(two, mc);
+
+        if(mOwnerFullBenefit.compareTo(halfBenefit) < 0) {
+            return new Pair<> (halfBenefit, new AgeData(Math.max(age.getNumberOfMonths(), otherAge.getNumberOfMonths())));
+        }
+
+        return null;
+    }
+
+
     public double getMonthlyBenefit() {
         return mMonthlyBenefit;
     }
@@ -176,7 +175,7 @@ public class SocialSecurityRules implements IncomeTypeRules {
         if(gpList.size() == 1) {
             GovPension spouse1 = gpList.get(0);
             SocialSecurityRules ssr = new SocialSecurityRules(ro,
-                    null, null, useStartAge);
+                    null, null, false, useStartAge);
             spouse1.setRules(ssr);
         } else if(gpList.size() == 2) {
             GovPension principleSpouse;

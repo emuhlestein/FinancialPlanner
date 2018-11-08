@@ -92,7 +92,7 @@ public abstract class AbstractGovPensionHelper {
     }
 
     private GovPension createDefault(int owner) {
-        return new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "", owner,
+        return new GovPension(0, RetirementConstants.INCOME_TYPE_GOV_PENSION, "", owner, 1,
                 "0", new AgeData(65, 0));
     }
 }
