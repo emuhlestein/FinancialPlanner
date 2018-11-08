@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -56,6 +57,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
     private TextView mStartAgeTextView;
     private TextView mInitWithdrawPercentTextView;
     private TextView mOwnerTextView;
+    private CheckBox mIncomeSourceIncluded;
     private MessageMgr mMessageMgr;
     private boolean mStartedFromUserEvent;
 
@@ -73,6 +75,8 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.income_source_toolbar);
 
         mOwnerTextView = findViewById(R.id.owner_text);
+
+        mIncomeSourceIncluded = findViewById(R.id.include_income_source);
 
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
         mIncomeSourceName = findViewById(R.id.name_edit_text);
@@ -220,6 +224,12 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
             mOwnerTextView.setText(getResources().getString(R.string.spouse));
         }
 
+        if(mSD.getIncluded() == 1) {
+            mIncomeSourceIncluded.setChecked(true);
+        } else {
+            mIncomeSourceIncluded.setChecked(false);
+        }
+
         mInitWithdrawPercentTextView.setText(mSD.getWithdrawPercent()+"%");
 
         String incomeSourceName = mSD.getName();
@@ -260,6 +270,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
 
     private void updateIncomeSourceData() {
         String value = mBalance.getText().toString();
+        int included = mIncomeSourceIncluded.isChecked() ? 1 : 0;
         String balance = SystemUtils.getFloatValue(value);
         if(balance == null) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, getString(R.string.balance_not_valid) + " " + value, Snackbar.LENGTH_LONG);
@@ -310,7 +321,7 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         String name = mIncomeSourceName.getText().toString();
 
         int showMonths = getShowMonths() ? 1 : 0;
-        SavingsData sie = new SavingsData(mId, mSD.getType(), name, mSD.getOwner(), mSD.getIncluded(),
+        SavingsData sie = new SavingsData(mId, mSD.getType(), name, mSD.getOwner(), included,
                 startAge, balance, interest, monthlyAddition,
                 stopAge, withdrawPercent, annualPercentIncrease, showMonths);
         mViewModel.setData(sie);

@@ -61,6 +61,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private TextView mOwnerTextView;
     private TextView mAddAgeTextView;
+    private TextView mIncomeSourceIncluded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,7 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
         mOwnerTextView = findViewById(R.id.owner_text);
         mInitPercentWithdrawTextView = findViewById(R.id.init_per_withdraw_text_view);
         mAddAgeTextView = findViewById(R.id.stop_add_age);
+        mIncomeSourceIncluded = findViewById(R.id.included_text_view);
 
         setSupportActionBar(mToolbar);
 
@@ -205,6 +207,12 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             mOwnerTextView.setText("Self");
         } else if(mSD.getOwner() == OWNER_SPOUSE) {
             mOwnerTextView.setText("Spouse");
+        }
+
+        if(mSD.getIncluded() == 1) {
+            mIncomeSourceIncluded.setText("Yes");
+        } else {
+            mIncomeSourceIncluded.setText("No");
         }
 
         SystemUtils.setToolbarSubtitle(this, "401(k) - " + mSD.getName());
