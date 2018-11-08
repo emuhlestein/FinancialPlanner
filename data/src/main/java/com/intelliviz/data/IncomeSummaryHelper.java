@@ -35,24 +35,32 @@ public class IncomeSummaryHelper {
         for(IncomeSourceEntityBase entity : incomeSourceList) {
             if(entity instanceof GovPensionEntity) {
                 GovPensionEntity gpe = (GovPensionEntity)entity;
-                GovPension gp = GovPensionEntityMapper.map(gpe);
-                gpList.add(gp);
+                if(gpe.getIncluded() == 1) {
+                    GovPension gp = GovPensionEntityMapper.map(gpe);
+                    gpList.add(gp);
+                }
             } else if(entity instanceof PensionIncomeEntity) {
                 PensionIncomeEntity pie = (PensionIncomeEntity)entity;
                 PensionData pd = PensionDataEntityMapper.map(pie);
-                pd.setRules(new PensionRules(ro));
-                incomeSourceDataList.add(pd);
+                if(pd.getIncluded() == 1) {
+                    pd.setRules(new PensionRules(ro));
+                    incomeSourceDataList.add(pd);
+                }
             } else if(entity instanceof SavingsIncomeEntity) {
                 SavingsIncomeEntity sie = (SavingsIncomeEntity)entity;
                 SavingsData sd = SavingsDataEntityMapper.map(sie);
                 if (sd.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
                     SavingsIncomeRules sir = new SavingsIncomeRules(ro, true);
-                    sd.setRules(sir);
-                    incomeSourceDataList.add(sd);
+                    if(sd.getIncluded() == 1) {
+                        sd.setRules(sir);
+                        incomeSourceDataList.add(sd);
+                    }
                 } else if (sd.getType() == RetirementConstants.INCOME_TYPE_401K) {
                     Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro, true);
-                    sd.setRules(tdir);
-                    incomeSourceDataList.add(sd);
+                    if(sd.getIncluded() == 1) {
+                        sd.setRules(tdir);
+                        incomeSourceDataList.add(sd);
+                    }
                 }
             }
         }
