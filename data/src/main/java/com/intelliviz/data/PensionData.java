@@ -69,4 +69,16 @@ public class PensionData extends AbstractIncomeSource {
     public IncomeData getIncomeData(AgeData age) {
        return mRules.getIncomeData(age);
     }
+
+    @Override
+    public double getMonthlyAmount(AgeData age) {
+        IncomeData incomeData = mRules.getIncomeData(age);
+        return incomeData.getMonthlyAmount();
+    }
+
+    @Override
+    public double getBalance(AgeData age) {
+        IncomeData incomeData = mRules.getIncomeData(age);
+        return incomeData.getBalance();
+    }
 }

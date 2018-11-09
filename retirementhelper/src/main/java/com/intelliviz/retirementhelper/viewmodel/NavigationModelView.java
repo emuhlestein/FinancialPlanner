@@ -7,7 +7,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import com.intelliviz.data.GovPension;
-import com.intelliviz.data.IncomeSourceType;
+import com.intelliviz.data.IncomeSourceData;
 import com.intelliviz.data.PensionData;
 import com.intelliviz.data.PensionRules;
 import com.intelliviz.data.RetirementOptions;
@@ -26,6 +26,7 @@ import com.intelliviz.db.entity.RetirementOptionsMapper;
 import com.intelliviz.db.entity.SavingsDataEntityMapper;
 import com.intelliviz.db.entity.SavingsIncomeEntity;
 import com.intelliviz.lowlevel.data.AgeData;
+import com.intelliviz.lowlevel.util.AgeUtils;
 import com.intelliviz.lowlevel.util.RetirementConstants;
 
 import java.util.ArrayList;
@@ -74,8 +75,8 @@ public class NavigationModelView extends AndroidViewModel {
      * Calculate when one can retire based on when will have a monthly benefit of monthlyBenefit.
      * @param monthlyBenefit The desired monthly benefit at retirement.
      */
-    public void whenCanRetire(String monthlyBenefit) {
-        new GetAllIncomeSummariesAsyncTask().execute();
+    public void whenCanRetire(double monthlyBenefit) {
+        new GetAllIncomeSummariesAsyncTask().execute(monthlyBenefit);
     }
 
     private class GetRetirementOptionsAsyncTask extends android.os.AsyncTask<Void, Void, RetirementOptionsEntity> {
@@ -113,16 +114,16 @@ public class NavigationModelView extends AndroidViewModel {
     }
 
     // TODO this is copied
-    private class GetAllIncomeSummariesAsyncTask extends AsyncTask<String, Void, AgeData> {
+    private class GetAllIncomeSummariesAsyncTask extends AsyncTask<Double, Void, AgeData> {
 
         @Override
-        protected AgeData doInBackground(String... params) {
+        protected AgeData doInBackground(Double... params) {
 
             List<IncomeSourceEntityBase> listIncomeSources = getAllIncomeSources();
             RetirementOptionsEntity roe = mDB.retirementOptionsDao().get();
             RetirementOptions ro = RetirementOptionsMapper.map(roe);
 
-            List<IncomeSourceType> incomeSources = new ArrayList<>();
+            List<IncomeSourceData> incomeSources = new ArrayList<>();
             List<GovPension> gpList = new ArrayList<>();
             for(IncomeSourceEntityBase incomeSource : listIncomeSources) {
                 if(incomeSource instanceof GovPensionEntity) {
@@ -134,14 +135,13 @@ public class NavigationModelView extends AndroidViewModel {
                     pd.setRules(new PensionRules(ro));
                     incomeSources.add(pd);
                 } else if(incomeSource instanceof SavingsIncomeEntity) {
-                    SavingsIncomeEntity sie = (SavingsIncomeEntity)incomeSources;
-                    SavingsData sd = SavingsDataEntityMapper.map(sie);
+                    SavingsData sd = SavingsDataEntityMapper.map((SavingsIncomeEntity)incomeSource);
                     if (sd.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
-                        SavingsIncomeRules sir = new SavingsIncomeRules(ro, true);
+                        SavingsIncomeRules sir = new SavingsIncomeRules(ro, false);
                         sd.setRules(sir);
                         incomeSources.add(sd);
                     } else if (sd.getType() == RetirementConstants.INCOME_TYPE_401K) {
-                        Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro, true);
+                        Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro, false);
                         sd.setRules(tdir);
                         incomeSources.add(sd);
                     }
@@ -151,7 +151,26 @@ public class NavigationModelView extends AndroidViewModel {
             if(!gpList.isEmpty()) {
                 SocialSecurityRules.setRulesOnGovPensionEntities(gpList, ro, true);
             }
-            return new AgeData(70, 0);
+
+            AgeData age = AgeUtils.getAge(ro.getPrimaryBirthdate());
+
+            int numYears = 0;
+            while(true) {
+                double sumMonthlyAmount = 0;
+                for (IncomeSourceData incomeSource : incomeSources) {
+                    double monthlyAmount = incomeSource.getMonthlyAmount(age);
+                    sumMonthlyAmount += monthlyAmount;
+                }
+                if(sumMonthlyAmount > params[0]) {
+                    break;
+                }
+                numYears++;
+                if(numYears > 100) {
+                    break;
+                }
+                age = age.add(12);
+            }
+            return age;
         }
 
         @Override

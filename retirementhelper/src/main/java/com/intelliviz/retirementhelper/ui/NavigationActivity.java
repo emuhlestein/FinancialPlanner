@@ -160,7 +160,7 @@ public class NavigationActivity extends AppCompatActivity implements
                 dialog.show(fm, "year");
                 break;
             case R.id.when_can_i_retire:
-                dialog = SimpleTextDialog.newInstance(WHEN_CAN_I_RETIRE_DIALOG_ID, "When can I retire", "");
+                dialog = SimpleTextDialog.newInstance(WHEN_CAN_I_RETIRE_DIALOG_ID, "When can I retire? Enter desired monthly amount.", "");
                 fm = getSupportFragmentManager();
                 dialog.show(fm, "year");
                 break;
@@ -344,7 +344,13 @@ public class NavigationActivity extends AppCompatActivity implements
         FragmentManager fm;
         switch(id) {
             case WHEN_CAN_I_RETIRE_DIALOG_ID:
-                mViewModel.whenCanRetire(message);
+                double monthlyAmount;
+                try {
+                    monthlyAmount = Double.parseDouble(message);
+                } catch (NumberFormatException e) {
+                    return;
+                }
+                mViewModel.whenCanRetire(monthlyAmount);
                 break;
             case FRA_DIALOG_ID:
                 int year = Integer.parseInt(message);

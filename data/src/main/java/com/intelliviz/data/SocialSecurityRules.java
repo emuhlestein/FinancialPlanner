@@ -154,6 +154,17 @@ public class SocialSecurityRules implements IncomeTypeRules {
         return null;
     }
 
+    @Override
+    public double getMonthlyAmount(AgeData age) {
+        IncomeData incomeData = getIncomeData(age);
+        return incomeData.getMonthlyAmount();
+    }
+
+    @Override
+    public double getBalance(AgeData age) {
+        IncomeData incomeData = getIncomeData(age);
+        return incomeData.getBalance();
+    }
 
     public double getMonthlyBenefit() {
         return mMonthlyBenefit;

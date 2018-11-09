@@ -4,4 +4,6 @@ import com.intelliviz.lowlevel.data.AgeData;
 
 public interface IncomeSourceData {
     IncomeData getIncomeData(AgeData age);
+    double getMonthlyAmount(AgeData age);
+    double getBalance(AgeData age);
 }

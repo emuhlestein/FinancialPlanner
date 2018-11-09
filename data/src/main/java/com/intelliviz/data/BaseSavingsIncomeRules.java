@@ -155,6 +155,18 @@ public abstract class BaseSavingsIncomeRules implements IncomeTypeRules {
         return createIncomeData(mCurrentAge, monthlyWithdraw, mCurrentBalance);
     }
 
+    @Override
+    public double getMonthlyAmount(AgeData age) {
+        IncomeData incomeData = getIncomeData(age);
+        return incomeData.getMonthlyAmount();
+    }
+
+    @Override
+    public double getBalance(AgeData age) {
+        IncomeData incomeData = getIncomeData(age);
+        return incomeData.getBalance();
+    }
+
     private double getMonthlyWithdraw(AgeData age, AgeData startAge, double monthlyWithdraw, double balance, double initWithdrawPercent) {
         if (age.isOnOrAfter(startAge)) {
             if (age.equals(startAge)) {

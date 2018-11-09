@@ -34,6 +34,7 @@ public class PensionRules implements IncomeTypeRules {
         mMinAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_START_AGE);
     }
 
+    @Override
     public IncomeData getIncomeData(AgeData age) {
         AgeData ownerAge = getOwnerAge(age, mOwner, mRO);
         if(ownerAge.isBefore(mMinAge)) {
@@ -41,5 +42,17 @@ public class PensionRules implements IncomeTypeRules {
         } else {
             return new IncomeData(age, mMonthlyAmount, 0, SC_GOOD, null);
         }
+    }
+
+    @Override
+    public double getMonthlyAmount(AgeData age) {
+        IncomeData incomeData = getIncomeData(age);
+        return incomeData.getMonthlyAmount();
+    }
+
+    @Override
+    public double getBalance(AgeData age) {
+        IncomeData incomeData = getIncomeData(age);
+        return incomeData.getBalance();
     }
 }

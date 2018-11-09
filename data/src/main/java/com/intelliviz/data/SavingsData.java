@@ -149,4 +149,16 @@ public class SavingsData extends AbstractIncomeSource {
             return null;
         }
     }
+
+    @Override
+    public double getMonthlyAmount(AgeData age) {
+        IncomeData incomeData = mRules.getIncomeData(age);
+        return incomeData.getMonthlyAmount();
+    }
+
+    @Override
+    public double getBalance(AgeData age) {
+        IncomeData incomeData = mRules.getIncomeData(age);
+        return incomeData.getBalance();
+    }
 }
