@@ -68,6 +68,11 @@ public class SocialSecurityRules implements IncomeTypeRules {
     }
 
     @Override
+    public int getOwner() {
+        return mOwner;
+    }
+
+    @Override
     public void setValues(Bundle bundle) {
 
         mOwner = bundle.getInt(RetirementConstants.EXTRA_INCOME_OWNER);

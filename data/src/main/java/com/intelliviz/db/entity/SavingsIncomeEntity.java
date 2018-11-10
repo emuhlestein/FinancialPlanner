@@ -49,9 +49,6 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
     @ColumnInfo(name = ANNUAL_PERCENT_INCREASE_FIELD)
     private String mAnnualPercentIncrease;
 
-    @ColumnInfo(name = SHOW_MONTHLY_AMOUNTS)
-    private int mShowMonths;
-
     @Ignore
     public SavingsIncomeEntity(long id, int type) {
         super(id, type, "", RetirementConstants.OWNER_PRIMARY, 1);
@@ -62,12 +59,11 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mStopMonthlyAdditionAge = new AgeData(65, 0); // TODO need to create consst
         mWithdrawPercent = "0";
         mAnnualPercentIncrease = "0";
-        mShowMonths = 0;
     }
 
     public SavingsIncomeEntity(long id, int type, String name, int owner, int included, AgeData startAge, String balance, String interest,
                                String monthlyAddition, AgeData stopMonthlyAdditionAge,
-                               String withdrawPercent, String annualPercentIncrease, int showMonths) {
+                               String withdrawPercent, String annualPercentIncrease) {
         super(id, type, name, owner, included);
         mStartAge = startAge;
         mBalance = balance;
@@ -76,7 +72,6 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
         mStopMonthlyAdditionAge = stopMonthlyAdditionAge;
         mWithdrawPercent = withdrawPercent;
         mAnnualPercentIncrease = annualPercentIncrease;
-        mShowMonths = showMonths;
     }
 
     public AgeData getStartAge() {
@@ -133,13 +128,5 @@ public class SavingsIncomeEntity extends IncomeSourceEntityBase {
 
     public void setAnnualPercentIncrease(String annualPercentIncrease) {
         mAnnualPercentIncrease = annualPercentIncrease;
-    }
-
-    public int getShowMonths() {
-        return mShowMonths;
-    }
-
-    public void setShowMonths(int showMonths) {
-        mShowMonths = showMonths;
     }
 }

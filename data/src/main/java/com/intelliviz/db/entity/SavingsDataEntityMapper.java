@@ -9,7 +9,6 @@ public class SavingsDataEntityMapper {
         savingsData.setBalance(sie.getBalance());
         savingsData.setInterest(sie.getInterest());
         savingsData.setMonthlyAddition(sie.getMonthlyAddition());
-        savingsData.setShowMonths(sie.getShowMonths());
         savingsData.setStartAge(sie.getStartAge());
         savingsData.setStopMonthlyAdditionAge(sie.getStopMonthlyAdditionAge());
         savingsData.setWithdrawPercent(sie.getWithdrawPercent());
@@ -20,7 +19,7 @@ public class SavingsDataEntityMapper {
         SavingsIncomeEntity sie = new SavingsIncomeEntity(sd.getId(), sd.getType(), sd.getName(),
                 sd.getOwner(), sd.getIncluded(), sd.getStartAge(),
                 sd.getBalance(), sd.getInterest(), sd.getMonthlyAddition(), sd.getStopMonthlyAdditionAge(),
-                sd.getWithdrawPercent(), sd.getAnnualPercentIncrease(), sd.getShowMonths());
+                sd.getWithdrawPercent(), sd.getAnnualPercentIncrease());
         return sie;
     }
 }

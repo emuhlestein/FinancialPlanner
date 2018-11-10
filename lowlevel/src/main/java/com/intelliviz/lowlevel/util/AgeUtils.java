@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -153,7 +154,6 @@ public class AgeUtils {
         return day + "-" + newMonth + "-" + newYear;
     }
 
-
     /**
      * Get the age for person2, given person1's age.
      * @param birthdate1 The birthdate for person1.
@@ -183,5 +183,13 @@ public class AgeUtils {
         AgeData spouseCurrentAge = AgeUtils.getAge(spouseBirthdate);
         int numMonths = spouseCurrentAge.diff(currentAge);
         return new AgeData(numMonths);
+    }
+
+    public static AgeData convertAge(AgeData age, int owner, String primaryBIrthdate, String spouseBirthdate) {
+        if(owner == OWNER_PRIMARY) {
+            return age;
+        } else {
+            return AgeUtils.getAge(primaryBIrthdate, spouseBirthdate, age);
+        }
     }
 }

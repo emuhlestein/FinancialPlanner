@@ -13,6 +13,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static org.junit.Assert.assertEquals;
 
 public class NewSocialSecurityRulesTest {
+    private final static int INCLUDED = 1;
     @Test
     public void useAppContext() throws Exception {
         // Context of the app under test.
@@ -30,7 +31,7 @@ public class NewSocialSecurityRulesTest {
 
         RetirementOptions ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
 
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         SocialSecurityRules ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -60,7 +61,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "11-05-1962";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -77,7 +78,7 @@ public class NewSocialSecurityRulesTest {
 
         RetirementOptions ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
 
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         SocialSecurityRules ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -95,7 +96,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1925";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -113,7 +114,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1927";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -131,7 +132,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1929";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -149,7 +150,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1931";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -167,7 +168,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1933";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -185,7 +186,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1935";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -203,7 +204,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1937";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -221,7 +222,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1938";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -242,7 +243,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1939";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -263,7 +264,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1941";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -284,7 +285,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1942";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -305,7 +306,7 @@ public class NewSocialSecurityRulesTest {
 
         principleSpouseBirthdate = "01-01-1943";
         ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
-        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         ssr1 = new SocialSecurityRules(ro);
         principleSpouse.setRules(ssr1);
 
@@ -337,14 +338,14 @@ public class NewSocialSecurityRulesTest {
         String spouseBirthdate = "01-01-1958";
 
         RetirementOptions ro = new RetirementOptions(endAge, spouseEndAge, principleSpouseBirthdate, spouseBirthdate);
-        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true);
+        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true, true);
 
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         principleSpouse.setRules(ssr1);
 
         SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit,
-                spouseStartAge, true);
-        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, fullSpouseMonthlyBenefit, spouseStartAge);
+                spouseStartAge, true, true);
+        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, INCLUDED, fullSpouseMonthlyBenefit, spouseStartAge);
         spouse.setRules(ssr2);
 
         IncomeData incomeData = principleSpouse.getIncomeData(new AgeData(62, 0));
@@ -386,12 +387,12 @@ public class NewSocialSecurityRulesTest {
         String spouseBirthdate = "01-01-1960";
 
         RetirementOptions ro = new RetirementOptions(endAge, spouseEndAge, principleSpouseBirthdate, spouseBirthdate);
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
-        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
+        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true, false);
         principleSpouse.setRules(ssr1);
 
-        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, fullSpouseMonthlyBenefit, spouseStartAge);
-        SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true);
+        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, INCLUDED, fullSpouseMonthlyBenefit, spouseStartAge);
+        SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true, false);
         spouse.setRules(ssr2);
 
         AgeData primaryAge = new AgeData(62, 0);
@@ -463,14 +464,14 @@ public class NewSocialSecurityRulesTest {
         String spouseBirthdate = "01-01-1960";
 
         RetirementOptions ro = new RetirementOptions(endAge, spouseEndAge, principleSpouseBirthdate, spouseBirthdate);
-        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true);
+        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true, true);
 
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         principleSpouse.setRules(ssr1);
 
         SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit,
-                spouseStartAge, true);
-        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, fullSpouseMonthlyBenefit, spouseStartAge);
+                spouseStartAge, true, true);
+        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, INCLUDED, fullSpouseMonthlyBenefit, spouseStartAge);
         spouse.setRules(ssr2);
 
         AgeData primaryAge = new AgeData(62, 0);
@@ -543,12 +544,12 @@ public class NewSocialSecurityRulesTest {
 
         RetirementOptions ro = new RetirementOptions(endAge, spouseEndAge, principleSpouseBirthdate, spouseBirthdate);
 
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
-        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
+        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true, true);
         principleSpouse.setRules(ssr1);
 
-        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, fullSpouseMonthlyBenefit, spouseStartAge);
-        SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true);
+        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, INCLUDED, fullSpouseMonthlyBenefit, spouseStartAge);
+        SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true, true);
         spouse.setRules(ssr2);
 
         AgeData primaryAge = new AgeData(62, 0);
@@ -621,12 +622,12 @@ public class NewSocialSecurityRulesTest {
 
         RetirementOptions ro = new RetirementOptions(endAge, spouseEndAge, principleSpouseBirthdate, spouseBirthdate);
 
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
-        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
+        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true, true);
         principleSpouse.setRules(ssr1);
 
-        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, fullSpouseMonthlyBenefit, spouseStartAge);
-        SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true);
+        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, INCLUDED, fullSpouseMonthlyBenefit, spouseStartAge);
+        SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true, true);
         spouse.setRules(ssr2);
 
         AgeData primaryAge = new AgeData(62, 0);
@@ -699,12 +700,12 @@ public class NewSocialSecurityRulesTest {
 
         RetirementOptions ro = new RetirementOptions(endAge, spouseEndAge, principleSpouseBirthdate, spouseBirthdate);
 
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
-        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
+        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true, true);
         principleSpouse.setRules(ssr1);
 
-        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, fullSpouseMonthlyBenefit, spouseStartAge);
-        SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true);
+        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, INCLUDED, fullSpouseMonthlyBenefit, spouseStartAge);
+        SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true, true);
         spouse.setRules(ssr2);
 
         AgeData primaryAge = new AgeData(62, 0);
@@ -777,11 +778,11 @@ public class NewSocialSecurityRulesTest {
 
         RetirementOptions ro = new RetirementOptions(endAge, spouseEndAge, principleSpouseBirthdate, spouseBirthdate);
 
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true, true);
         principleSpouse.setRules(ssr1);
 
-        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, fullSpouseMonthlyBenefit, spouseStartAge);
+        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, INCLUDED, fullSpouseMonthlyBenefit, spouseStartAge);
         SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true, true);
         spouse.setRules(ssr2);
 
@@ -855,11 +856,11 @@ public class NewSocialSecurityRulesTest {
 
         RetirementOptions ro = new RetirementOptions(endAge, spouseEndAge, principleSpouseBirthdate, spouseBirthdate);
 
-        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, fullMonthlyBenefit, startAge);
+        GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
         SocialSecurityRules ssr1 = new SocialSecurityRules(ro, fullSpouseMonthlyBenefit, spouseStartAge, true, true);
         principleSpouse.setRules(ssr1);
 
-        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, fullSpouseMonthlyBenefit, spouseStartAge);
+        GovPension spouse = new GovPension(0, 0, "SS2", OWNER_SPOUSE, INCLUDED, fullSpouseMonthlyBenefit, spouseStartAge);
         SocialSecurityRules ssr2 = new SocialSecurityRules(ro, fullMonthlyBenefit, startAge, true, true);
         spouse.setRules(ssr2);
 
@@ -875,21 +876,21 @@ public class NewSocialSecurityRulesTest {
         assertEquals(0, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
-        assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(488.889, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = ssr1.getFullRetirementAge();
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1000, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(977.778, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
-        assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(488.889, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(68, 0);
         incomeData = principleSpouse.getIncomeData(primaryAge);
-        assertEquals(1080, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(977.778, incomeData.getMonthlyAmount(), 0.001);
 
         incomeData = spouse.getIncomeData(primaryAge);
-        assertEquals(500, incomeData.getMonthlyAmount(), 0.001);
+        assertEquals(488.889, incomeData.getMonthlyAmount(), 0.001);
 
         primaryAge = new AgeData(68, 8);
         incomeData = principleSpouse.getIncomeData(primaryAge);

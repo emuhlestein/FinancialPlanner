@@ -153,6 +153,7 @@ public class NavigationModelView extends AndroidViewModel {
             }
 
             AgeData age = AgeUtils.getAge(ro.getPrimaryBirthdate());
+            age = new AgeData(age.getYear(), 0);
 
             int numYears = 0;
             while(true) {

@@ -22,6 +22,11 @@ public class PensionRules implements IncomeTypeRules {
         mRO = ro;
     }
 
+    @Override
+    public int getOwner() {
+        return mOwner;
+    }
+
     /**
      * These parameters should come from PensionData.
      * @param bundle Values to set.

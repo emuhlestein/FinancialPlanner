@@ -14,7 +14,6 @@ public class SavingsData extends AbstractIncomeSource {
     private AgeData mStopMonthlyAdditionAge;
     private String mWithdrawPercent;
     private String mAnnualPercentIncrease;
-    private int mShowMonths;
     private BaseSavingsIncomeRules mRules;
 
     public SavingsData(long id, int type) {
@@ -28,7 +27,7 @@ public class SavingsData extends AbstractIncomeSource {
     public SavingsData(long id, int type, String name, int owner, int included,
                          AgeData startAge, String balance, String interest,
                          String monthlyAddition, AgeData stopMonthlyAdditionAge,
-                         String withdrawPercent, String annualPercentIncrease, int showMonths) {
+                         String withdrawPercent, String annualPercentIncrease) {
         super(id, type, name, owner, included);
         mStartAge = startAge;
         mBalance = balance;
@@ -37,7 +36,6 @@ public class SavingsData extends AbstractIncomeSource {
         mStopMonthlyAdditionAge = stopMonthlyAdditionAge;
         mWithdrawPercent = withdrawPercent;
         mAnnualPercentIncrease = annualPercentIncrease;
-        mShowMonths = showMonths;
     }
 
     public SavingsData(int owner,
@@ -52,7 +50,6 @@ public class SavingsData extends AbstractIncomeSource {
         mStopMonthlyAdditionAge = stopMonthlyAdditionAge;
         mWithdrawPercent = withdrawPercent;
         mAnnualPercentIncrease = annualPercentIncrease;
-        mShowMonths = 0;
     }
 
     public void setStartAge(AgeData startAge) {
@@ -83,10 +80,6 @@ public class SavingsData extends AbstractIncomeSource {
         mAnnualPercentIncrease = annualPercentIncrease;
     }
 
-    public void setShowMonths(int showMonths) {
-        mShowMonths = showMonths;
-    }
-
     public AgeData getStartAge() {
         return mStartAge;
     }
@@ -115,10 +108,6 @@ public class SavingsData extends AbstractIncomeSource {
         return mAnnualPercentIncrease;
     }
 
-    public int getShowMonths() {
-        return mShowMonths;
-    }
-
     public void setRules(IncomeTypeRules rules) {
         if(rules instanceof SavingsIncomeRules) {
             mRules = (SavingsIncomeRules)rules;
@@ -136,7 +125,6 @@ public class SavingsData extends AbstractIncomeSource {
             bundle.putDouble(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE, Double.parseDouble(mAnnualPercentIncrease));
             bundle.putParcelable(RetirementConstants.EXTRA_INCOME_START_AGE, mStartAge);
             bundle.putParcelable(RetirementConstants.EXTRA_INCOME_STOP_AGE, mStopMonthlyAdditionAge);
-            bundle.putInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS, mShowMonths);
             mRules.setValues(bundle);
         }
     }

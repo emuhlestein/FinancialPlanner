@@ -14,6 +14,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static org.junit.Assert.assertEquals;
 
 public class SavingsIncomeTest {
+    private final static int INCLUDED = 1;
     private AgeData mEndAge = new AgeData(90, 0);
     private AgeData mSpouseEndAge = new AgeData(90, 0);
     @Test
@@ -120,7 +121,7 @@ public class SavingsIncomeTest {
 
         AgeData primaryAge = new AgeData(65, 0);
         AgeData spouseAge = new AgeData(60, 0);
-        SavingsIncomeRules rules = createRules(primaryAge, spouseAge);
+        SavingsIncomeRules rules = createRules(primaryAge, spouseAge, true);
         savingsData.setRules(rules);
         AgeData currentAge = new AgeData(primaryAge);
         AgeData age = new AgeData(currentAge.getYear()+1, 0);
@@ -168,7 +169,7 @@ public class SavingsIncomeTest {
 
         primaryAge = new AgeData(60, 0);
         spouseAge = new AgeData(55, 0);
-        rules = createRules(primaryAge, spouseAge);
+        rules = createRules(primaryAge, spouseAge, true);
         savingsData.setRules(rules);
         currentAge = new AgeData(primaryAge);
 
@@ -204,7 +205,7 @@ public class SavingsIncomeTest {
 
         AgeData primaryAge = new AgeData(60, 0);
         AgeData spouseAge = new AgeData(65, 0);
-        SavingsIncomeRules rules = createRules(primaryAge, spouseAge);
+        SavingsIncomeRules rules = createRules(primaryAge, spouseAge, true);
         savingsData.setRules(rules);
         AgeData currentAge = new AgeData(primaryAge);
         AgeData age = new AgeData(currentAge.getYear()+1, 0);
@@ -232,7 +233,7 @@ public class SavingsIncomeTest {
 
         primaryAge = new AgeData(55, 0);
         spouseAge = new AgeData(60, 0);
-        rules = createRules(primaryAge, spouseAge);
+        rules = createRules(primaryAge, spouseAge, true);
         savingsData.setRules(rules);
         currentAge = new AgeData(primaryAge);
         age = new AgeData(currentAge.getYear()+1, 0);
@@ -269,7 +270,7 @@ public class SavingsIncomeTest {
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
 
         AgeData primaryAge = new AgeData(65, 0);
-        SavingsIncomeRules rules = createRules(primaryAge, null);
+        SavingsIncomeRules rules = createRules(primaryAge, null, true);
         savingsData.setRules(rules);
         AgeData currentAge = new AgeData(primaryAge);
         AgeData age = new AgeData(currentAge.getYear()+1, 0);
@@ -309,8 +310,8 @@ public class SavingsIncomeTest {
         age = new AgeData(currentAge.getNumberOfMonths());
         monthlyAddition = "100";
         startAge = age.add(1);
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
-                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_PRIMARY, INCLUDED, startAge, startBalance, interest, monthlyAddition,
+                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
         RetirementOptions ro = new  RetirementOptions(primaryEndAge, spouseEndAge, ownerBirthdate, spouseBirthdate);
         SavingsIncomeRules rules = new SavingsIncomeRules(ro, false);
         savingsData.setRules(rules);
@@ -345,7 +346,7 @@ public class SavingsIncomeTest {
         String ownerBirthdate = "01-01-1960";
         String spouseBirthdate = "01-06-1965";
         AgeData endAge = new AgeData(90, 0);
-        AgeData startAge = new AgeData(90, 0);
+        AgeData startWithdrawalAge = new AgeData(90, 0);
         AgeData stopMonthlyAdditionAge = new AgeData(90, 0);
         String startBalance = "1000";
         String interest = "0";
@@ -354,8 +355,8 @@ public class SavingsIncomeTest {
         String annualPercentIncrease = "0";
 
         RetirementOptions ro = new  RetirementOptions(primaryEndAge, spouseEndAge, ownerBirthdate, spouseBirthdate);
-        SavingsIncomeRules rules = new SavingsIncomeRules(ro, false);
-        SavingsData savingsData = new SavingsData(OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
+        SavingsIncomeRules rules = new SavingsIncomeRules(ro, true);
+        SavingsData savingsData = new SavingsData(OWNER_PRIMARY, startWithdrawalAge, startBalance, interest, monthlyAddition,
                 stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
         savingsData.setRules(rules);
 
@@ -367,32 +368,37 @@ public class SavingsIncomeTest {
         AgeData age = new AgeData(currentAge.getNumberOfMonths() + 1);
         incomeData = savingsData.getIncomeData(age);
         assertEquals(1100.0, incomeData.getBalance(), 0);
-        assertEquals(8.33, incomeData.getMonthlyAmount(), 0.01);
+        assertEquals(9.1666, incomeData.getMonthlyAmount(), 0.01);
+
+        age = new AgeData(currentAge.getNumberOfMonths() + 2);
+        incomeData = savingsData.getIncomeData(age);
+        assertEquals(1200.0, incomeData.getBalance(), 0);
+        assertEquals(10, incomeData.getMonthlyAmount(), 0.01);
 
         age = new AgeData(currentAge.getNumberOfMonths() + 12);
         incomeData = savingsData.getIncomeData(age);
         assertEquals(2200, incomeData.getBalance(), 0);
-        assertEquals(17.5, incomeData.getMonthlyAmount(), 0);
+        assertEquals(18.333, incomeData.getMonthlyAmount(), 0.001);
 
         age = new AgeData(currentAge.getNumberOfMonths() + 20);
         incomeData = savingsData.getIncomeData(age);
         assertEquals(3000.0, incomeData.getBalance(), 0);
-        assertEquals(24.16, incomeData.getMonthlyAmount(), 0.01);
+        assertEquals(25.0, incomeData.getMonthlyAmount(), 0.01);
 
         age = new AgeData(currentAge.getNumberOfMonths() + 25);
         incomeData = savingsData.getIncomeData(age);
         assertEquals(3500.0, incomeData.getBalance(), 0);
-        assertEquals(28.33, incomeData.getMonthlyAmount(), 0.01);
+        assertEquals(29.166, incomeData.getMonthlyAmount(), 0.01);
 
         age = new AgeData(currentAge.getNumberOfMonths() + 26);
         incomeData = savingsData.getIncomeData(age);
         assertEquals(3600.0, incomeData.getBalance(),0);
-        assertEquals(29.16, incomeData.getMonthlyAmount(), 0.01);
+        assertEquals(30.0, incomeData.getMonthlyAmount(), 0.01);
 
         age = new AgeData(currentAge.getNumberOfMonths() + 36);
         incomeData = savingsData.getIncomeData(age);
         assertEquals(4600.0, incomeData.getBalance(), 0);
-        assertEquals(37.5, incomeData.getMonthlyAmount(), 0.01);
+        assertEquals(38.333, incomeData.getMonthlyAmount(), 0.01);
     }
 
     @Test
@@ -402,18 +408,18 @@ public class SavingsIncomeTest {
         String ownerBirthdate = "01-01-1960";
         String spouseBirthdate = "01-06-1965";
         AgeData endAge = new AgeData(90, 0);
-        AgeData startAge = new AgeData(65, 0);
+        AgeData startWithdrawalAge = new AgeData(65, 0);
         AgeData stopMonthlyAdditionAge = new AgeData(60, 0);
         String startBalance = "1000";
-        String interest = "2";
+        String interest = "10";
         String monthlyAddition = "0";
         String initWithdrawPercent = "10";
         String annualPercentIncrease = "0";
 
         RetirementOptions ro = new  RetirementOptions(primaryEndAge, spouseEndAge, ownerBirthdate, spouseBirthdate);
-        SavingsIncomeRules rules = new SavingsIncomeRules(ro, false);
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
-                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
+        SavingsIncomeRules rules = new SavingsIncomeRules(ro, true);
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_PRIMARY, INCLUDED, startWithdrawalAge, startBalance, interest, monthlyAddition,
+                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
         savingsData.setRules(rules);
 
         AgeData currentAge = AgeUtils.getAge(ownerBirthdate);
@@ -421,14 +427,19 @@ public class SavingsIncomeTest {
 
         IncomeData incomeData = savingsData.getIncomeData(age);
         assertEquals(1000.0, incomeData.getBalance(), 0);
+        assertEquals(8.333, incomeData.getMonthlyAmount(), 0.001);
+
+        age = new AgeData(currentAge.getNumberOfMonths() + 1);
+        incomeData = savingsData.getIncomeData(age);
+        assertEquals(1008.333, incomeData.getBalance(), 0.001);
 
         age = new AgeData(currentAge.getNumberOfMonths() + 12);
         incomeData = savingsData.getIncomeData(age);
-        assertEquals(1020.1843, incomeData.getBalance(), 0.0001);
+        assertEquals(1104.713, incomeData.getBalance(), 0.01);
 
         interest = "3";
-        savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
-                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
+        savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_PRIMARY, INCLUDED, startWithdrawalAge, startBalance, interest, monthlyAddition,
+                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
         savingsData.setRules(rules);
 
         currentAge = AgeUtils.getAge(ownerBirthdate);
@@ -446,8 +457,8 @@ public class SavingsIncomeTest {
         initWithdrawPercent = "0";
         monthlyAddition = "0";
         annualPercentIncrease = "0";
-        savingsData = new SavingsData(0, 0, "SAVINGS", 1, startAge, startBalance, interest, monthlyAddition,
-                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
+        savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_PRIMARY, INCLUDED, startWithdrawalAge, startBalance, interest, monthlyAddition,
+                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
         savingsData.setRules(rules);
 
         currentAge = AgeUtils.getAge(ownerBirthdate);
@@ -484,9 +495,9 @@ public class SavingsIncomeTest {
         String annualPercentIncrease = "0";
 
         RetirementOptions ro = new  RetirementOptions(primaryEndAge, spouseEndAge, ownerBirthdate, spouseBirthdate);
-        SavingsIncomeRules rules = new SavingsIncomeRules(ro, false);
-        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_PRIMARY, startAge, startBalance, interest, monthlyAddition,
-                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease, 0);
+        SavingsIncomeRules rules = new SavingsIncomeRules(ro, true);
+        SavingsData savingsData = new SavingsData(0, 0, "SAVINGS", OWNER_PRIMARY, INCLUDED, startAge, startBalance, interest, monthlyAddition,
+                stopMonthlyAdditionAge, initWithdrawPercent, annualPercentIncrease);
         savingsData.setRules(rules);
 
         AgeData currentAge = AgeUtils.getAge(ownerBirthdate);
@@ -502,13 +513,13 @@ public class SavingsIncomeTest {
         assertEquals(1040741.5429, incomeData.getBalance(), 0.0001);
     }
 
-    private SavingsIncomeRules createRules(AgeData primaryAge, AgeData spouseAge) {
+    private SavingsIncomeRules createRules(AgeData primaryAge, AgeData spouseAge, boolean override) {
         String primaryBirthdate = AgeUtils.getBirthdate(primaryAge);
         String spouseBirthdate = null;
         if(spouseAge != null) {
             spouseBirthdate = AgeUtils.getBirthdate(spouseAge);
         }
         RetirementOptions ro = new RetirementOptions(mEndAge, mSpouseEndAge, primaryBirthdate, spouseBirthdate);
-        return new SavingsIncomeRules(ro, false);
+        return new SavingsIncomeRules(ro, override);
     }
 }

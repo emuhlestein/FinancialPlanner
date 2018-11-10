@@ -178,11 +178,10 @@ public class SavingsIncomeDetailsActivity extends AppCompatActivity {
             AgeData stopMonthlyAddtionAge = bundle.getParcelable(RetirementConstants.EXTRA_INCOME_STOP_MONTHLY_ADDITION_AGE);
             String withdrawAmount = bundle.getString(RetirementConstants.EXTRA_INCOME_WITHDRAW_PERCENT);
             String annualPercentIncrease = bundle.getString(RetirementConstants.EXTRA_ANNUAL_PERCENT_INCREASE);
-            int showMonths = bundle.getInt(RetirementConstants.EXTRA_INCOME_SHOW_MONTHS);
 
             SavingsData sdata = new SavingsData(mId, mSD.getType(), name, mSD.getOwner(), mSD.getIncluded(), startAge,
                     balance, interest, monthlyAddition, stopMonthlyAddtionAge,
-                    withdrawAmount, annualPercentIncrease, showMonths);
+                    withdrawAmount, annualPercentIncrease);
             if(sdata != null) {
                 try {
                     throw new IllegalAccessException("SHOULD NOt BE HERE!!!!!");

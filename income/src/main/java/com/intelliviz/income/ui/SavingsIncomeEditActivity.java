@@ -264,8 +264,6 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
 
         String increase = mSD.getAnnualPercentIncrease()+"%";
         setAnnualPercentIncrease(increase);
-
-        setShowMonths(mSD.getShowMonths() == 1);
     }
 
     private void updateIncomeSourceData() {
@@ -320,10 +318,9 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
 
         String name = mIncomeSourceName.getText().toString();
 
-        int showMonths = getShowMonths() ? 1 : 0;
         SavingsData sie = new SavingsData(mId, mSD.getType(), name, mSD.getOwner(), included,
                 startAge, balance, interest, monthlyAddition,
-                stopAge, withdrawPercent, annualPercentIncrease, showMonths);
+                stopAge, withdrawPercent, annualPercentIncrease);
         mViewModel.setData(sie);
 
         finish();
@@ -386,23 +383,6 @@ public class SavingsIncomeEditActivity extends AppCompatActivity implements
         if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
             ((SavingsAdvancedFragment)fragment).setMonthlyAddition(monthlyIncrease);
         }
-    }
-
-    private void setShowMonths(boolean showMonths) {
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
-        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
-            ((SavingsAdvancedFragment)fragment).setShowMonths(showMonths);
-        }
-    }
-
-    private boolean getShowMonths() {
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.savings_advanced_fragment);
-        if(fragment != null && fragment instanceof SavingsAdvancedFragment) {
-            return ((SavingsAdvancedFragment)fragment).getShowMonths();
-        }
-        return false;
     }
 
     @Override
