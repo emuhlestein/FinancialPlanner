@@ -137,11 +137,11 @@ public class NavigationModelView extends AndroidViewModel {
                 } else if(incomeSource instanceof SavingsIncomeEntity) {
                     SavingsData sd = SavingsDataEntityMapper.map((SavingsIncomeEntity)incomeSource);
                     if (sd.getType() == RetirementConstants.INCOME_TYPE_SAVINGS) {
-                        SavingsIncomeRules sir = new SavingsIncomeRules(ro, false);
+                        SavingsIncomeRules sir = new SavingsIncomeRules(ro, true);
                         sd.setRules(sir);
                         incomeSources.add(sd);
                     } else if (sd.getType() == RetirementConstants.INCOME_TYPE_401K) {
-                        Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro, false);
+                        Savings401kIncomeRules tdir = new Savings401kIncomeRules(ro, true);
                         sd.setRules(tdir);
                         incomeSources.add(sd);
                     }

@@ -16,8 +16,8 @@ public class Savings401kIncomeRules extends BaseSavingsIncomeRules {
     private AgeData mMinAge;
     private double mPenalty;
 
-    public Savings401kIncomeRules(RetirementOptions ro, boolean makeWithdraws) {
-        super(ro, makeWithdraws);
+    public Savings401kIncomeRules(RetirementOptions ro, boolean override) {
+        super(ro, override);
         mMinAge = PENALTY_AGE;
         mPenalty = PENALTY_PERCENT;
     }

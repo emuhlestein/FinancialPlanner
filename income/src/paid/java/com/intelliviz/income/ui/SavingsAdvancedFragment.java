@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -31,7 +30,6 @@ public class SavingsAdvancedFragment extends Fragment implements NewAgeDialog.On
     private EditText mMonthlyAddition;
     private TextView mStopMonthlyAdditionAgeTextView;
     private EditText mAnnualPercentIncrease;
-    private CheckBox mShowMonths;
 
     public SavingsAdvancedFragment() {
         // Required empty public constructor
@@ -46,7 +44,6 @@ public class SavingsAdvancedFragment extends Fragment implements NewAgeDialog.On
         mMonthlyAddition = view.findViewById(R.id.monthly_addition_text);
         mStopMonthlyAdditionAgeTextView = view.findViewById(R.id.stop_age_text_view);
         mAnnualPercentIncrease = view.findViewById(R.id.annual_percent_increase_edit_text);
-        mShowMonths = view.findViewById(R.id.show_months_check_box);
         Button editStopAgeButton = view.findViewById(R.id.edit_stop_age_button);
         editStopAgeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,14 +129,6 @@ public class SavingsAdvancedFragment extends Fragment implements NewAgeDialog.On
 
     public String getAnnualPercentIncrease() {
         return mAnnualPercentIncrease.getText().toString();
-    }
-
-    public void setShowMonths(boolean checked) {
-        mShowMonths.setChecked(checked);
-    }
-
-    public boolean getShowMonths() {
-        return mShowMonths.isChecked();
     }
 
     @Override
