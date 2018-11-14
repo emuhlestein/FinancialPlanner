@@ -111,7 +111,14 @@ public class SocialSecurityRules implements IncomeTypeRules {
             if(age.isBefore(mOwnerStartAge)) {
                 return new IncomeData(primaryAge, 0, 0, 0, null);
             } else {
-                incomeData = getMonthlyBenefit(mBirthYear, mOwnerStartAge, mMinAge, mOtherStartAge);
+                int numMonths = mOwnerStartAge.getNumberOfMonths() > mMinAge.getNumberOfMonths() ?
+                        mOwnerStartAge.getNumberOfMonths() : mMinAge.getNumberOfMonths();
+                AgeData minAge = new AgeData(numMonths);
+
+                if(age.isOnOrAfter(mOwnerStartAge)) {
+                    age = mOwnerStartAge;
+                }
+                incomeData = getMonthlyBenefit(mBirthYear, age, minAge, mOtherStartAge);
                 return incomeData;
             }
         } else {
@@ -128,7 +135,10 @@ public class SocialSecurityRules implements IncomeTypeRules {
             if(pair != null) {
                 fullMonthlyBenefit = pair.first;
                 spousalBenefits = fullMonthlyBenefit;
-                minAge = pair.second;
+                AgeData spouseMinAge = pair.second;
+                int numMonths = spouseMinAge.getNumberOfMonths() > minAge.getNumberOfMonths() ?
+                        spouseMinAge.getNumberOfMonths() : minAge.getNumberOfMonths();
+                minAge = new AgeData(numMonths);
             } else {
                 fullMonthlyBenefit = mOwnerFullBenefit;
             }
@@ -143,9 +153,8 @@ public class SocialSecurityRules implements IncomeTypeRules {
                 monthlyBenefit = fullMonthlyBenefit;
             }
         }
-        return new IncomeData(age, monthlyBenefit.doubleValue(), 0, 0, null);
+        return new IncomeData(convertAge(age), monthlyBenefit.doubleValue(), 0, 0, null);
     }
-
 
     private Pair<BigDecimal, AgeData> checkForSpousalBenefits(AgeData age, AgeData otherAge) {
         BigDecimal two = new BigDecimal(2);
