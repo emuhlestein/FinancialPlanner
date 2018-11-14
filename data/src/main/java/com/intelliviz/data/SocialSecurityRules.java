@@ -115,10 +115,8 @@ public class SocialSecurityRules implements IncomeTypeRules {
                         mOwnerStartAge.getNumberOfMonths() : mMinAge.getNumberOfMonths();
                 AgeData minAge = new AgeData(numMonths);
 
-                if(age.isOnOrAfter(mOwnerStartAge)) {
-                    age = mOwnerStartAge;
-                }
-                incomeData = getMonthlyBenefit(mBirthYear, age, minAge, mOtherStartAge);
+                AgeData otherStartAge = convertAge(mOtherStartAge);
+                incomeData = getMonthlyBenefit(mBirthYear, age, minAge, otherStartAge);
                 return incomeData;
             }
         } else {
@@ -144,6 +142,14 @@ public class SocialSecurityRules implements IncomeTypeRules {
             }
         } else {
             fullMonthlyBenefit = mOwnerFullBenefit;
+        }
+
+        if(mUseStartAge) {
+            if(age.isOnOrAfter(minAge)) {
+                age = minAge;
+            } else {
+                return new IncomeData(convertAge(age), 0, 0, 0, null);
+            }
         }
 
         BigDecimal monthlyBenefit = getActualMonthlyBenefit(birthYear, age, minAge, fullMonthlyBenefit);
