@@ -46,8 +46,8 @@ public class SocialSecurityRules implements IncomeTypeRules {
     private boolean mUseStartAge;
     private int mBirthYear;
 
-    public SocialSecurityRules(RetirementOptions ro) {
-        this(ro, "0", null, false, false);
+    public SocialSecurityRules(RetirementOptions ro, boolean useStartAge) {
+        this(ro, "0", null, false, useStartAge);
     }
 
     public SocialSecurityRules(RetirementOptions ro, String otherFullBenefit,

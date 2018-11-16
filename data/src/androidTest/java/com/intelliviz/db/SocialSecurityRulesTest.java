@@ -37,10 +37,10 @@ public class SocialSecurityRulesTest {
         RetirementOptions ro = new RetirementOptions(endAge, null, principleSpouseBirthdate, null);
 
         GovPension principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
-        SocialSecurityRules ssr1 = new SocialSecurityRules(ro);
+        SocialSecurityRules ssr1 = new SocialSecurityRules(ro, true);
         principleSpouse.setRules(ssr1);
         double monthlyBenefit = principleSpouse.getMonthlyBenefit();
-        assertEquals(monthlyBenefit, 1000, 1);
+        assertEquals(1000, monthlyBenefit, 1);
 
         startAge = new AgeData(61, 11);
         principleSpouse = new GovPension(0, 0, "SS1", OWNER_PRIMARY, INCLUDED, fullMonthlyBenefit, startAge);
