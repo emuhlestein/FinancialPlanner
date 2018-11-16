@@ -12,7 +12,7 @@ import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_PRIMARY;
 import static com.intelliviz.lowlevel.util.RetirementConstants.OWNER_SPOUSE;
 import static org.junit.Assert.assertEquals;
 
-public class NewSocialSecurityRulesTest {
+public class SocialSecurityRulesTest {
     private final static int INCLUDED = 1;
     @Test
     public void useAppContext() throws Exception {
